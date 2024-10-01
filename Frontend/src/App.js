@@ -12,10 +12,7 @@ const LinguaSyncApp = () => {
   const [file, setFile] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState('');
   const [processing, setProcessing] = useState(false);
-  const [result, setResult] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [originalText, setOriginalText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
   const [error, setError] = useState('');
 
   const handleFileChange = (event) => {
@@ -46,7 +43,24 @@ const LinguaSyncApp = () => {
               <Mic className="mr-2" size={18} />
               Upload Audio
             </Label>
-            <Input id="audio" type="file" accept="audio/*" onChange={handleFileChange} className="mt-1 bg-white border-fuchsia-300" />
+            <div className="relative mt-1">
+              <Input 
+                id="audio" 
+                type="file" 
+                accept="audio/*" 
+                onChange={handleFileChange} 
+                className="hidden"
+              />
+              <label 
+                htmlFor="audio" 
+                className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-fuchsia-300 rounded-md font-semibold text-xs text-fuchsia-700 uppercase tracking-widest shadow-sm hover:bg-fuchsia-50 focus:outline-none focus:border-fuchsia-300 focus:ring focus:ring-fuchsia-200 active:bg-fuchsia-100 disabled:opacity-25 transition"
+              >
+                Choose file
+              </label>
+              <span className="ml-3 text-sm text-fuchsia-600 hover:text-fuchsia-800 cursor-default">
+                {file ? file.name : "No file chosen"}
+              </span>
+            </div>
           </div>
           <div>
             <Label htmlFor="language" className="text-sm font-medium text-fuchsia-800 flex items-center">
@@ -54,7 +68,7 @@ const LinguaSyncApp = () => {
               Target Language
             </Label>
             <Select value={targetLanguage} onValueChange={handleLanguageChange}>
-              <SelectTrigger className="w-full mt-1 border-fuchsia-300">
+              <SelectTrigger className="w-full mt-1 border-fuchsia-300 cursor-pointer hover:bg-fuchsia-50">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
@@ -84,7 +98,7 @@ const LinguaSyncApp = () => {
           <Button 
             onClick={processAudio} 
             disabled={!file || !targetLanguage || processing}
-            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white"
+            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white cursor-default hover:cursor-pointer disabled:cursor-not-allowed"
           >
             {processing ? 'Processing...' : 'Translate Audio'}
           </Button>
