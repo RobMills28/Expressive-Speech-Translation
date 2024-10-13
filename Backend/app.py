@@ -9,14 +9,23 @@ import tempfile
 import os
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3001"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load pre-trained SeamlessM4T model
-model = SeamlessM4TModel.from_pretrained("facebook/seamless-m4t-large")
-processor = AutoProcessor.from_pretrained("facebook/seamless-m4t-large")
+MODEL_NAME = "facebook/seamless-m4t-medium"
+auth_token = os.getenv('HUGGINGFACE_TOKEN')
+
+try:
+    logger.info(f"Loading SeamlessM4T model: {MODEL_NAME}")
+    model = SeamlessM4TModel.from_pretrained(MODEL_NAME, use_auth_token=auth_token)
+    processor = AutoProcessor.from_pretrained(MODEL_NAME, use_auth_token=auth_token)
+    logger.info("Model loaded successfully!")
+except Exception as e:
+    logger.error(f"Error loading model: {str(e)}")
+    model = None
+    processor = None
 
 # Language code mapping
 LANGUAGE_CODES = {
@@ -88,4 +97,7 @@ def translate_audio_route():
             os.unlink(output_audio.name)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    if model is None or processor is None:
+        logger.error("Could not start the app due to model loading failure.")
+    else:
+        app.run(debug=True, host='0.0.0.0', port=5000)
