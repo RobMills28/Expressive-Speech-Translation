@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card"
 import { Button } from "./components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select"
 import { Label } from "./components/ui/label"
 import { Input } from "./components/ui/input"
-import { AlertCircle, Globe, Mic, Download } from 'lucide-react'
+import { AlertCircle, Globe, Mic, Play, Pause } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert"
 import { Progress } from "./components/ui/progress"
 
@@ -15,16 +15,64 @@ const LinguaSyncApp = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [translatedAudioUrl, setTranslatedAudioUrl] = useState('');
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      console.log('Selected file:', selectedFile.name, 'Type:', selectedFile.type);
+      
+      // Check file extension
+      const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a'];
+      const fileExtension = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'));
+      
+      // Check MIME type
+      const validMimeTypes = [
+        'audio/mp3',
+        'audio/mpeg',
+        'audio/wav',
+        'audio/wave',
+        'audio/x-wav',
+        'audio/ogg',
+        'audio/x-m4a',
+        'audio/mp4',
+        'audio/aac'
+      ];
+
+      if (!validExtensions.includes(fileExtension)) {
+        setError(`Invalid file extension. Please upload a file with extension: ${validExtensions.join(', ')}`);
+        return;
+      }
+
+      if (!validMimeTypes.includes(selectedFile.type) && selectedFile.type !== '') {
+        console.warn('File MIME type:', selectedFile.type);
+        console.warn('Valid MIME types:', validMimeTypes);
+      }
+
+      setFile(selectedFile);
+      setError('');
+      setTranslatedAudioUrl('');
+    }
+  };
+
+  const handleLanguageChange = (value) => {
+    console.log('Language selected:', value); // Debug log
+    setTargetLanguage(value);
     setError('');
     setTranslatedAudioUrl('');
   };
 
-  const handleLanguageChange = (value) => {
-    setTargetLanguage(value);
-    setError('');
+  const handlePlayPause = () => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+        setIsPlaying(true);
+      } else {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+    }
   };
 
   const processAudio = async () => {
@@ -43,17 +91,31 @@ const LinguaSyncApp = () => {
     formData.append('target_language', targetLanguage);
 
     try {
-      const response = await fetch('http://localhost:5000/translate', {
+      console.log('Sending request with language:', targetLanguage); // Debug log
+
+      const response = await fetch('http://localhost:5001/translate', {
         method: 'POST',
         body: formData,
       });
 
+      // Log the raw response for debugging
+      console.log('Response status:', response.status);
+      const responseText = await response.text();
+      console.log('Response text:', responseText);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        let errorMessage;
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error;
+        } catch (e) {
+          errorMessage = `HTTP error! status: ${response.status}`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const blob = await response.blob();
+      // Convert the response back to a blob
+      const blob = new Blob([responseText], { type: 'audio/wav' });
       const url = URL.createObjectURL(blob);
       setTranslatedAudioUrl(url);
       setProgress(100);
@@ -78,32 +140,54 @@ const LinguaSyncApp = () => {
               <Mic className="mr-2" size={18} />
               Upload Audio
             </Label>
-            <Input id="audio" type="file" accept="audio/*" onChange={handleFileChange} className="mt-1 bg-white border-fuchsia-300" />
+            <div className="relative mt-1">
+              <Input 
+                id="audio" 
+                type="file" 
+                accept=".mp3,.wav,.ogg,.m4a,audio/*" 
+                onChange={handleFileChange} 
+                className="hidden"
+              />
+              <label 
+                htmlFor="audio" 
+                className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-fuchsia-300 rounded-md font-semibold text-xs text-fuchsia-700 uppercase tracking-widest shadow-sm hover:bg-fuchsia-50 focus:outline-none focus:border-fuchsia-300 focus:ring focus:ring-fuchsia-200 active:bg-fuchsia-100 disabled:opacity-25 transition"
+              >
+                Choose file
+              </label>
+              <span className="ml-3 text-sm text-fuchsia-600 hover:text-fuchsia-800 cursor-default">
+                {file ? file.name : "No file chosen"}
+              </span>
+            </div>
           </div>
           <div>
             <Label htmlFor="language" className="text-sm font-medium text-fuchsia-800 flex items-center">
               <Globe className="mr-2" size={18} />
               Target Language
             </Label>
-            <Select value={targetLanguage} onValueChange={handleLanguageChange}>
-              <SelectTrigger className="w-full mt-1 border-fuchsia-300">
+            <Select 
+              value={targetLanguage} 
+              onValueChange={handleLanguageChange}
+            >
+              <SelectTrigger className="w-full mt-1 border-fuchsia-300 cursor-pointer hover:bg-fuchsia-50">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="fr">🇫🇷 French</SelectItem>
                 <SelectItem value="es">🇪🇸 Spanish</SelectItem>
                 <SelectItem value="de">🇩🇪 German</SelectItem>
-                <SelectItem value="zh">🇨🇳 Chinese</SelectItem>
-                <SelectItem value="ja">🇯🇵 Japanese</SelectItem>
+                <SelectItem value="it">🇮🇹 Italian</SelectItem>
+                <SelectItem value="pt">🇵🇹 Portuguese</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
           {processing && (
             <div className="space-y-2">
               <Progress value={progress} className="w-full" />
               <p className="text-center text-sm text-fuchsia-800">Processing: {progress}%</p>
             </div>
           )}
+
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -111,22 +195,19 @@ const LinguaSyncApp = () => {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
+
           {translatedAudioUrl && (
-            <div className="space-y-2">
-              <audio controls src={translatedAudioUrl} className="w-full" />
+            <div className="mt-4 space-y-2">
+              <audio ref={audioRef} src={translatedAudioUrl} onEnded={() => setIsPlaying(false)} />
               <Button
-                onClick={() => {
-                  const a = document.createElement('a');
-                  a.href = translatedAudioUrl;
-                  a.download = 'translated_audio.mp3';
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                }}
-                className="w-full flex items-center justify-center"
+                onClick={handlePlayPause}
+                className="w-full bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
               >
-                <Download className="mr-2" size={18} />
-                Download Translated Audio
+                {isPlaying ? (
+                  <><Pause className="mr-2" size={18} /> Pause</>
+                ) : (
+                  <><Play className="mr-2" size={18} /> Play Translation</>
+                )}
               </Button>
             </div>
           )}
@@ -135,7 +216,7 @@ const LinguaSyncApp = () => {
           <Button 
             onClick={processAudio} 
             disabled={!file || !targetLanguage || processing}
-            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white"
+            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white cursor-default hover:cursor-pointer disabled:cursor-not-allowed"
           >
             {processing ? 'Processing...' : 'Translate Audio'}
           </Button>
