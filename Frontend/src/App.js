@@ -23,11 +23,9 @@ const LinguaSyncApp = () => {
     if (selectedFile) {
       console.log('Selected file:', selectedFile.name, 'Type:', selectedFile.type);
       
-      // Check file extension
       const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a'];
       const fileExtension = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'));
       
-      // Check MIME type
       const validMimeTypes = [
         'audio/mp3',
         'audio/mpeg',
@@ -57,7 +55,7 @@ const LinguaSyncApp = () => {
   };
 
   const handleLanguageChange = (value) => {
-    console.log('Language selected (raw value):', value);
+    console.log('Language selected:', value);
     setTargetLanguage(value);
     setError('');
     setTranslatedAudioUrl('');
@@ -90,16 +88,9 @@ const LinguaSyncApp = () => {
     formData.append('file', file);
     formData.append('target_language', targetLanguage);
 
-    // Debug logging
-    console.log('About to send request:');
-    console.log('Target Language:', targetLanguage);
-    for (let [key, value] of formData.entries()) {
-      console.log('FormData:', key, '=', value);
-    }
+    console.log('Sending request with language:', targetLanguage);
 
     try {
-      console.log('Sending request with language:', targetLanguage);
-
       const response = await fetch('http://localhost:5001/translate', {
         method: 'POST',
         body: formData,
@@ -109,7 +100,7 @@ const LinguaSyncApp = () => {
       
       if (!response.ok) {
         const errorData = await response.json();
-        console.log('Error response:', errorData);
+        console.log('Response text:', errorData);
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
@@ -152,7 +143,7 @@ const LinguaSyncApp = () => {
               >
                 Choose file
               </label>
-              <span className="ml-3 text-sm text-fuchsia-600 hover:text-fuchsia-800 cursor-default">
+              <span className="ml-3 text-sm text-fuchsia-600">
                 {file ? file.name : "No file chosen"}
               </span>
             </div>
@@ -166,7 +157,7 @@ const LinguaSyncApp = () => {
               value={targetLanguage} 
               onValueChange={handleLanguageChange}
             >
-              <SelectTrigger className="w-full mt-1 border-fuchsia-300 cursor-pointer hover:bg-fuchsia-50">
+              <SelectTrigger id="language" className="w-full mt-1 border-fuchsia-300">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
@@ -214,7 +205,7 @@ const LinguaSyncApp = () => {
           <Button 
             onClick={processAudio} 
             disabled={!file || !targetLanguage || processing}
-            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white cursor-default hover:cursor-pointer disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white"
           >
             {processing ? 'Processing...' : 'Translate Audio'}
           </Button>
