@@ -1,0 +1,30 @@
+2024-10-29 01:34:42,130 - __main__ - INFO - [app.py:156] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-29 01:34:52,643 - __main__ - INFO - [app.py:173] - Model loaded on CPU
+2024-10-29 01:34:52,643 - __main__ - INFO - [app.py:176] - Model initialization successful
+2024-10-29 01:34:52,644 - __main__ - INFO - [app.py:522] - Starting Flask app on port 5001 using cpu
+2024-10-29 01:34:52,644 - __main__ - INFO - [app.py:523] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-29 01:35:37,870 - __main__ - INFO - [app.py:318] - Starting translation request 03464da9
+2024-10-29 01:35:38,082 - __main__ - ERROR - [app.py:371] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-29 01:35:38,088 - __main__ - INFO - [app.py:296] - Performance - Function: translate_audio, Duration: 0.22s, Memory Change: 322.53MB
+2024-10-29 01:35:59,652 - __main__ - INFO - [app.py:318] - Starting translation request 4bd3ed4e
+2024-10-29 01:35:59,813 - __main__ - ERROR - [app.py:371] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-29 01:35:59,816 - __main__ - INFO - [app.py:296] - Performance - Function: translate_audio, Duration: 0.16s, Memory Change: 3.62MB
+2024-10-29 01:41:51,802 - __main__ - INFO - [app.py:493] - Application shutting down...
+2024-10-29 01:41:51,805 - __main__ - INFO - [app.py:498] - Cleanup completed successfully
+2024-10-29 01:43:16,521 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-29 01:43:26,937 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-29 01:43:26,937 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-29 01:43:26,938 - __main__ - INFO - [app.py:548] - Starting Flask app on port 5001 using cpu
+2024-10-29 01:43:26,938 - __main__ - INFO - [app.py:549] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-29 01:44:16,669 - __main__ - INFO - [app.py:340] - Starting translation request 8764c406
+2024-10-29 01:44:16,683 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpee5cwve0.mp3
+2024-10-29 01:44:16,687 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-29 01:44:16,687 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpee5cwve0.mp3
+2024-10-29 01:44:16,687 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-29 01:44:16,784 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-29 01:44:16,784 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-29 01:44:16,850 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-29 01:44:16,858 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-29 01:44:16,861 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-29 01:44:17,237 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['src_lang'] (note: typos in the generate arguments will also show up in this list)
+2024-10-29 01:44:17,241 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.57s, Memory Change: 379.62MB

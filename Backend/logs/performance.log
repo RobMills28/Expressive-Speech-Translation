@@ -1,0 +1,202 @@
+2024-10-29 01:34:42,130 - __main__ - INFO - [app.py:156] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-29 01:34:52,643 - __main__ - INFO - [app.py:173] - Model loaded on CPU
+2024-10-29 01:34:52,643 - __main__ - INFO - [app.py:176] - Model initialization successful
+2024-10-29 01:34:52,644 - __main__ - INFO - [app.py:522] - Starting Flask app on port 5001 using cpu
+2024-10-29 01:34:52,644 - __main__ - INFO - [app.py:523] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-29 01:35:37,870 - __main__ - INFO - [app.py:318] - Starting translation request 03464da9
+2024-10-29 01:35:38,082 - __main__ - ERROR - [app.py:371] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-29 01:35:38,088 - __main__ - INFO - [app.py:296] - Performance - Function: translate_audio, Duration: 0.22s, Memory Change: 322.53MB
+2024-10-29 01:35:59,652 - __main__ - INFO - [app.py:318] - Starting translation request 4bd3ed4e
+2024-10-29 01:35:59,813 - __main__ - ERROR - [app.py:371] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-29 01:35:59,816 - __main__ - INFO - [app.py:296] - Performance - Function: translate_audio, Duration: 0.16s, Memory Change: 3.62MB
+2024-10-29 01:41:51,802 - __main__ - INFO - [app.py:493] - Application shutting down...
+2024-10-29 01:41:51,805 - __main__ - INFO - [app.py:498] - Cleanup completed successfully
+2024-10-29 01:43:16,521 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-29 01:43:26,937 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-29 01:43:26,937 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-29 01:43:26,938 - __main__ - INFO - [app.py:548] - Starting Flask app on port 5001 using cpu
+2024-10-29 01:43:26,938 - __main__ - INFO - [app.py:549] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-29 01:44:16,669 - __main__ - INFO - [app.py:340] - Starting translation request 8764c406
+2024-10-29 01:44:16,683 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpee5cwve0.mp3
+2024-10-29 01:44:16,687 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-29 01:44:16,687 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpee5cwve0.mp3
+2024-10-29 01:44:16,687 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-29 01:44:16,784 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-29 01:44:16,784 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-29 01:44:16,850 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-29 01:44:16,858 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-29 01:44:16,861 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-29 01:44:17,237 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['src_lang'] (note: typos in the generate arguments will also show up in this list)
+2024-10-29 01:44:17,241 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.57s, Memory Change: 379.62MB
+2024-10-30 23:28:06,076 - __main__ - INFO - [app.py:340] - Starting translation request e0b23b80
+2024-10-30 23:28:06,099 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp5re6hkc5.mp3
+2024-10-30 23:28:06,109 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-30 23:28:06,110 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp5re6hkc5.mp3
+2024-10-30 23:28:06,110 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-30 23:28:06,208 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-30 23:28:06,208 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-30 23:28:06,347 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-30 23:28:06,354 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-30 23:28:06,355 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-30 23:28:06,776 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['src_lang'] (note: typos in the generate arguments will also show up in this list)
+2024-10-30 23:28:06,779 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.71s, Memory Change: 451.88MB
+2024-10-30 23:58:41,229 - __main__ - INFO - [app.py:519] - Application shutting down...
+2024-10-30 23:58:41,284 - __main__ - INFO - [app.py:524] - Cleanup completed successfully
+2024-10-30 23:59:11,620 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-30 23:59:22,214 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-30 23:59:22,215 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-30 23:59:22,216 - __main__ - INFO - [app.py:548] - Starting Flask app on port 5001 using cpu
+2024-10-30 23:59:22,216 - __main__ - INFO - [app.py:549] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-30 23:59:47,245 - __main__ - INFO - [app.py:340] - Starting translation request d3698398
+2024-10-30 23:59:47,265 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpbhsuncpf.mp3
+2024-10-30 23:59:47,272 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-30 23:59:47,272 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpbhsuncpf.mp3
+2024-10-30 23:59:47,272 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-30 23:59:47,362 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-30 23:59:47,362 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-30 23:59:47,463 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-30 23:59:47,475 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-30 23:59:47,479 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-30 23:59:47,846 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['task'] (note: typos in the generate arguments will also show up in this list)
+2024-10-30 23:59:47,850 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.61s, Memory Change: 306.02MB
+2024-10-31 00:07:11,839 - __main__ - INFO - [app.py:519] - Application shutting down...
+2024-10-31 00:07:11,847 - __main__ - INFO - [app.py:524] - Cleanup completed successfully
+2024-10-31 00:07:50,460 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-31 00:08:00,952 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-31 00:08:00,953 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-31 00:08:00,954 - __main__ - INFO - [app.py:548] - Starting Flask app on port 5001 using cpu
+2024-10-31 00:08:00,954 - __main__ - INFO - [app.py:549] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-31 00:08:20,213 - __main__ - INFO - [app.py:340] - Starting translation request 78c3fcf4
+2024-10-31 00:08:20,252 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpiod6do24.mp3
+2024-10-31 00:08:20,254 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 00:08:20,254 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpiod6do24.mp3
+2024-10-31 00:08:20,255 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 00:08:20,349 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 00:08:20,349 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 00:08:20,427 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 00:08:20,435 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 00:08:20,442 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 00:08:20,748 - __main__ - INFO - [app.py:401] - Starting translation to deu
+2024-10-31 00:08:20,748 - __main__ - ERROR - [app.py:413] - Translation error: `input_ids`,`input_features` and `inputs_embeds` are all empty. Make sure at least one of them is not.
+2024-10-31 00:08:20,750 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.54s, Memory Change: 424.83MB
+2024-10-31 00:40:50,649 - __main__ - INFO - [app.py:519] - Application shutting down...
+2024-10-31 00:40:50,653 - __main__ - INFO - [app.py:524] - Cleanup completed successfully
+2024-10-31 00:41:00,218 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-31 00:41:10,655 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-31 00:41:10,656 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-31 00:41:10,658 - __main__ - INFO - [app.py:548] - Starting Flask app on port 5001 using cpu
+2024-10-31 00:41:10,658 - __main__ - INFO - [app.py:549] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-31 00:41:36,891 - __main__ - INFO - [app.py:340] - Starting translation request e0b5fc36
+2024-10-31 00:41:36,903 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpl91rn5em.mp3
+2024-10-31 00:41:36,904 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 00:41:36,904 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpl91rn5em.mp3
+2024-10-31 00:41:36,904 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 00:41:37,008 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 00:41:37,008 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 00:41:37,082 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 00:41:37,095 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 00:41:37,100 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 00:41:37,100 - __main__ - ERROR - [app.py:397] - Input processing error: name 'audio_numpy' is not defined
+2024-10-31 00:41:37,103 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.21s, Memory Change: 328.03MB
+2024-10-31 00:50:46,385 - __main__ - INFO - [app.py:519] - Application shutting down...
+2024-10-31 00:50:46,391 - __main__ - INFO - [app.py:524] - Cleanup completed successfully
+2024-10-31 00:51:03,493 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-31 00:51:13,880 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-31 00:51:13,881 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-31 00:51:13,882 - __main__ - INFO - [app.py:552] - Starting Flask app on port 5001 using cpu
+2024-10-31 00:51:13,882 - __main__ - INFO - [app.py:553] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-31 00:51:59,888 - __main__ - INFO - [app.py:340] - Starting translation request eaa3ed8b
+2024-10-31 00:52:00,059 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp61xxqi6w.mp3
+2024-10-31 00:52:00,060 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 00:52:00,061 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp61xxqi6w.mp3
+2024-10-31 00:52:00,061 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 00:52:00,170 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 00:52:00,170 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 00:52:00,259 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 00:52:00,266 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 00:52:00,269 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 00:52:00,269 - __main__ - INFO - [app.py:376] - Audio shape after processing: (3653800,)
+2024-10-31 00:52:00,270 - __main__ - INFO - [app.py:377] - Audio min/max values: -0.998/1.000
+2024-10-31 00:52:00,270 - __main__ - ERROR - [app.py:401] - Input processing error: name 'processor' is not defined
+2024-10-31 00:52:00,274 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.39s, Memory Change: 344.59MB
+2024-10-31 20:45:38,526 - __main__ - INFO - [app.py:340] - Starting translation request baf0952b
+2024-10-31 20:45:38,552 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_fge6oc1.mp3
+2024-10-31 20:45:38,560 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 20:45:38,561 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_fge6oc1.mp3
+2024-10-31 20:45:38,561 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 20:45:38,659 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 20:45:38,659 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 20:45:38,778 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 20:45:38,807 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 20:45:38,809 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 20:45:38,811 - __main__ - INFO - [app.py:376] - Audio shape after processing: (3653800,)
+2024-10-31 20:45:38,816 - __main__ - INFO - [app.py:377] - Audio min/max values: -0.998/1.000
+2024-10-31 20:45:38,816 - __main__ - ERROR - [app.py:401] - Input processing error: name 'processor' is not defined
+2024-10-31 20:45:38,819 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.30s, Memory Change: 320.61MB
+2024-10-31 21:02:23,664 - __main__ - INFO - [app.py:523] - Application shutting down...
+2024-10-31 21:02:23,676 - __main__ - INFO - [app.py:528] - Cleanup completed successfully
+2024-10-31 21:07:01,400 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-31 21:07:12,228 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-31 21:07:12,229 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-31 21:07:12,230 - __main__ - INFO - [app.py:553] - Starting Flask app on port 5001 using cpu
+2024-10-31 21:07:12,230 - __main__ - INFO - [app.py:554] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-31 21:09:10,805 - __main__ - INFO - [app.py:340] - Starting translation request b49bf6f7
+2024-10-31 21:09:10,826 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgybro9gi.mp3
+2024-10-31 21:09:10,833 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 21:09:10,833 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgybro9gi.mp3
+2024-10-31 21:09:10,834 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 21:09:10,927 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 21:09:10,927 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 21:09:11,018 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 21:09:11,039 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 21:09:11,042 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 21:09:11,043 - __main__ - INFO - [app.py:380] - Audio shape after processing: (3653800,)
+2024-10-31 21:09:11,045 - __main__ - INFO - [app.py:381] - Audio min/max values: -0.998/1.000
+2024-10-31 21:09:11,045 - __main__ - INFO - [app.py:389] - Preparing model inputs...
+2024-10-31 21:09:11,045 - __main__ - ERROR - [app.py:402] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-31 21:09:11,046 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 0.24s, Memory Change: 343.48MB
+2024-10-31 21:15:48,106 - __main__ - INFO - [app.py:524] - Application shutting down...
+2024-10-31 21:15:48,114 - __main__ - INFO - [app.py:529] - Cleanup completed successfully
+2024-10-31 21:16:38,875 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-31 21:16:49,505 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-31 21:16:49,506 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-31 21:16:49,507 - __main__ - INFO - [app.py:555] - Starting Flask app on port 5001 using cpu
+2024-10-31 21:16:49,507 - __main__ - INFO - [app.py:556] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-31 21:17:17,911 - __main__ - INFO - [app.py:340] - Starting translation request 5ec8f01d
+2024-10-31 21:17:17,950 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpiry6x2qm.mp3
+2024-10-31 21:17:17,958 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 21:17:17,958 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpiry6x2qm.mp3
+2024-10-31 21:17:17,958 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 21:17:18,057 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 21:17:18,058 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 21:17:18,150 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 21:17:18,163 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 21:17:18,166 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 21:17:18,167 - __main__ - INFO - [app.py:380] - Audio shape after processing: (3653800,)
+2024-10-31 21:17:18,168 - __main__ - INFO - [app.py:381] - Audio min/max values: -0.998/1.000
+2024-10-31 21:17:18,168 - __main__ - INFO - [app.py:389] - Preparing model inputs...
+2024-10-31 21:17:18,473 - __main__ - INFO - [app.py:398] - Input keys available: dict_keys(['input_features', 'attention_mask'])
+2024-10-31 21:17:18,473 - __main__ - INFO - [app.py:409] - Starting translation to por
+2024-10-31 21:39:24,992 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-10-31 21:39:35,121 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-10-31 21:39:35,121 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-10-31 21:39:35,122 - __main__ - INFO - [app.py:555] - Starting Flask app on port 5001 using cpu
+2024-10-31 21:39:35,122 - __main__ - INFO - [app.py:556] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-10-31 21:40:40,442 - __main__ - INFO - [app.py:340] - Starting translation request da0218d7
+2024-10-31 21:40:40,456 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpyf6aepe1.mp3
+2024-10-31 21:40:40,460 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-10-31 21:40:40,460 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpyf6aepe1.mp3
+2024-10-31 21:40:40,460 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-10-31 21:40:40,559 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-10-31 21:40:40,559 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-10-31 21:40:40,627 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-10-31 21:40:40,636 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-10-31 21:40:40,639 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-10-31 21:40:40,640 - __main__ - INFO - [app.py:380] - Audio shape after processing: (3653800,)
+2024-10-31 21:40:40,641 - __main__ - INFO - [app.py:381] - Audio min/max values: -0.998/1.000
+2024-10-31 21:40:40,641 - __main__ - INFO - [app.py:389] - Preparing model inputs...
+2024-10-31 21:40:40,943 - __main__ - INFO - [app.py:398] - Input keys available: dict_keys(['input_features', 'attention_mask'])
+2024-10-31 21:40:40,944 - __main__ - INFO - [app.py:409] - Starting translation to ita
+2024-10-31 21:47:39,430 - __main__ - INFO - [app.py:418] - Translation generation completed
+2024-10-31 21:47:39,443 - __main__ - ERROR - [app.py:426] - Output processing error: 'tuple' object has no attribute 'waveform'
+2024-10-31 21:47:39,460 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 419.02s, Memory Change: 5902.95MB

@@ -1,0 +1,11 @@
+2024-10-29 01:35:38,082 - __main__ - ERROR - [app.py:371] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-29 01:35:59,813 - __main__ - ERROR - [app.py:371] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-29 01:44:17,237 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['src_lang'] (note: typos in the generate arguments will also show up in this list)
+2024-10-30 23:28:06,776 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['src_lang'] (note: typos in the generate arguments will also show up in this list)
+2024-10-30 23:59:47,846 - __main__ - ERROR - [app.py:412] - Translation error: The following `model_kwargs` are not used by the model: ['task'] (note: typos in the generate arguments will also show up in this list)
+2024-10-31 00:08:20,748 - __main__ - ERROR - [app.py:413] - Translation error: `input_ids`,`input_features` and `inputs_embeds` are all empty. Make sure at least one of them is not.
+2024-10-31 00:41:37,100 - __main__ - ERROR - [app.py:397] - Input processing error: name 'audio_numpy' is not defined
+2024-10-31 00:52:00,270 - __main__ - ERROR - [app.py:401] - Input processing error: name 'processor' is not defined
+2024-10-31 20:45:38,816 - __main__ - ERROR - [app.py:401] - Input processing error: name 'processor' is not defined
+2024-10-31 21:09:11,045 - __main__ - ERROR - [app.py:402] - Input processing error: You have to specify either text or audios. Both cannot be none.
+2024-10-31 21:47:39,443 - __main__ - ERROR - [app.py:426] - Output processing error: 'tuple' object has no attribute 'waveform'
