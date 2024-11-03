@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify, send_file, Response, current_app
-from flask_cors import CORS
+from flask_cors import CORS 
+from translate_speech import translate_audio as process_audio  # Give it an alias to avoid conflictfrom flask_cors import CORS
 import logging
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 import torch
@@ -34,7 +35,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Constants
-MAX_AUDIO_LENGTH = 600  # seconds
+MAX_AUDIO_LENGTH = 60  # seconds
+MAX_DURATION = 60 # seconds
 SAMPLE_RATE = 16000
 CHUNK_SIZE = 8192
 MAX_RETRIES = 3
@@ -328,7 +330,7 @@ def performance_logger(f):
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @require_model
 @performance_logger
-def translate_audio():
+def translate_audio_endpoint():
     if request.method == 'OPTIONS':
         return '', 204
     
@@ -357,7 +359,7 @@ def translate_audio():
         if model_language not in LANGUAGE_CODES:
             return jsonify({'error': f'Unsupported language: {target_language}'}), 400
 
-        # Save and process audio file
+# Save and process audio file
         file_extension = Path(file.filename).suffix.lower()
         with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
             temp_files.append(temp_input.name)
@@ -365,8 +367,14 @@ def translate_audio():
             logger.info(f"Saved input file: {temp_input.name}")
             
             # Validate audio file
+            metadata = torchaudio.info(temp_input.name)
+            duration = metadata.num_frames / metadata.sample_rate
+            
+            if duration > MAX_DURATION:
+                return jsonify({'error': f'Audio file too long (max {MAX_DURATION} seconds)'}), 400
+            
             if not AudioProcessor.validate_audio_length(temp_input.name):
-                return jsonify({'error': 'Audio file too long (max 10 minutes)'}), 400
+                return jsonify({'error': 'Invalid audio file'}), 400
             
 # Get model components first
             model_manager = ModelManager()
@@ -404,7 +412,7 @@ def translate_audio():
                 logger.error(f"Input processing error: {str(e)}")
                 return jsonify({'error': f'Failed to prepare audio for translation: {str(e)}'}), 500
 
-            # Generate translation
+# Generate translation
             try:
                 logger.info(f"Starting translation to {model_language}")
                 with torch.no_grad():
@@ -416,47 +424,58 @@ def translate_audio():
                         use_cache=True
                     )
                 logger.info("Translation generation completed")
+
+                try:
+                    # Process output
+                    if hasattr(outputs, 'waveform'):
+                        audio_output = outputs.waveform[0].cpu().numpy()
+                        logger.info("Processed output using waveform attribute")
+                    elif isinstance(outputs, tuple) and len(outputs) > 0:
+                        # Handle 3D tensor by taking the first element
+                        audio_output = outputs[0].squeeze(0).cpu().numpy()  # Add squeeze here
+                        logger.info("Processed output using tuple format")
+                    else:
+                        raise ValueError("Unexpected output format from model")
+                    
+                    logger.info(f"Audio output shape: {audio_output.shape}")
+                    
+                    # Save to temporary file
+                    with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
+                        temp_files.append(temp_output.name)
+                        # Ensure audio is 2D for torchaudio.save
+                        if len(audio_output.shape) == 1:
+                            waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
+                        else:
+                            waveform_tensor = torch.tensor(audio_output)
+                            
+                        torchaudio.save(
+                            temp_output.name,
+                            waveform_tensor,
+                            sample_rate=SAMPLE_RATE
+                        )
+
+                        # Clean up GPU memory if needed
+                        if DEVICE.type == 'cuda':
+                            torch.cuda.empty_cache()
+                            gc.collect()
+
+                        duration = time.time() - start_time
+                        logger.info(f"Translation {request_id} completed in {duration:.2f} seconds")
+                        
+                        return send_file(
+                            temp_output.name,
+                            mimetype='audio/wav',
+                            as_attachment=True,
+                            download_name=f"translated_{Path(file.filename).stem}.wav"
+                        )
+
+                except Exception as e:
+                    logger.error(f"Output processing error: {str(e)}")
+                    return jsonify({'error': f'Failed to process translated audio: {str(e)}'}), 500
+
             except Exception as e:
                 logger.error(f"Translation error: {str(e)}")
                 return jsonify({'error': f'Translation failed: {str(e)}'}), 500
-            # Process output
-            try:
-                audio_output = outputs.waveform[0].cpu().numpy()
-            except Exception as e:
-                logger.error(f"Output processing error: {str(e)}")
-                return jsonify({'error': f'Failed to process translated audio: {str(e)}'}), 500
-            
-            # Save output
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
-                temp_files.append(temp_output.name)
-                try:
-                    torchaudio.save(
-                        temp_output.name,
-                        torch.tensor(audio_output).unsqueeze(0),
-                        sample_rate=SAMPLE_RATE
-                    )
-                except Exception as e:
-                    logger.error(f"Error saving output audio: {str(e)}")
-                    return jsonify({'error': 'Failed to save translated audio'}), 500
-                
-                # Clean up GPU memory if needed
-                if DEVICE.type == 'cuda':
-                    torch.cuda.empty_cache()
-                    gc.collect()
-
-                duration = time.time() - start_time
-                logger.info(f"Translation {request_id} completed in {duration:.2f} seconds")
-                
-                try:
-                    return send_file(
-                        temp_output.name,
-                        mimetype='audio/wav',
-                        as_attachment=True,
-                        download_name=f"translated_{Path(file.filename).stem}.wav"
-                    )
-                except Exception as e:
-                    logger.error(f"Error sending file: {str(e)}")
-                    return jsonify({'error': 'Failed to send translated audio'}), 500
 
     except Exception as e:
         return ErrorHandler.handle_error(e)

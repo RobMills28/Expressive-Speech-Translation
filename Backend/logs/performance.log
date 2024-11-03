@@ -200,3 +200,396 @@
 2024-10-31 21:47:39,430 - __main__ - INFO - [app.py:418] - Translation generation completed
 2024-10-31 21:47:39,443 - __main__ - ERROR - [app.py:426] - Output processing error: 'tuple' object has no attribute 'waveform'
 2024-10-31 21:47:39,460 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 419.02s, Memory Change: 5902.95MB
+2024-11-02 20:11:26,788 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-11-02 20:11:37,148 - __main__ - INFO - [app.py:174] - Model loaded on CPU
+2024-11-02 20:11:37,148 - __main__ - INFO - [app.py:177] - Model initialization successful
+2024-11-02 20:11:37,149 - __main__ - INFO - [app.py:555] - Starting Flask app on port 5001 using cpu
+2024-11-02 20:11:37,149 - __main__ - INFO - [app.py:556] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-11-02 20:12:58,788 - __main__ - INFO - [app.py:340] - Starting translation request a1b8940d
+2024-11-02 20:12:58,799 - __main__ - INFO - [app.py:365] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpbdk8b7zq.mp3
+2024-11-02 20:12:58,803 - __main__ - INFO - [app.py:208] - Audio duration: 228.81 seconds
+2024-11-02 20:12:58,803 - __main__ - INFO - [app.py:217] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpbdk8b7zq.mp3
+2024-11-02 20:12:58,803 - __main__ - INFO - [app.py:220] - Audio info - Sample rate: 44100, Channels: 2
+2024-11-02 20:12:58,905 - __main__ - INFO - [app.py:224] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-11-02 20:12:58,905 - __main__ - INFO - [app.py:228] - Resampling from 44100Hz to 16000Hz
+2024-11-02 20:12:58,976 - __main__ - INFO - [app.py:233] - Converting from stereo to mono
+2024-11-02 20:12:58,984 - __main__ - INFO - [app.py:238] - Normalizing audio
+2024-11-02 20:12:58,988 - __main__ - INFO - [app.py:241] - Processed audio shape: torch.Size([1, 3653800])
+2024-11-02 20:12:58,988 - __main__ - INFO - [app.py:380] - Audio shape after processing: (3653800,)
+2024-11-02 20:12:58,989 - __main__ - INFO - [app.py:381] - Audio min/max values: -0.998/1.000
+2024-11-02 20:12:58,990 - __main__ - INFO - [app.py:389] - Preparing model inputs...
+2024-11-02 20:12:59,303 - __main__ - INFO - [app.py:398] - Input keys available: dict_keys(['input_features', 'attention_mask'])
+2024-11-02 20:12:59,303 - __main__ - INFO - [app.py:409] - Starting translation to spa
+2024-11-02 20:19:26,977 - __main__ - INFO - [app.py:418] - Translation generation completed
+2024-11-02 20:19:26,988 - __main__ - ERROR - [app.py:426] - Output processing error: 'tuple' object has no attribute 'waveform'
+2024-11-02 20:19:27,004 - __main__ - INFO - [app.py:318] - Performance - Function: translate_audio, Duration: 388.22s, Memory Change: 6023.70MB
+2024-11-02 22:04:55,812 - __main__ - INFO - [app.py:526] - Application shutting down...
+2024-11-02 22:04:55,816 - __main__ - INFO - [app.py:531] - Cleanup completed successfully
+2024-11-02 22:05:03,953 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-medium
+2024-11-02 22:05:04,132 - __main__ - ERROR - [app.py:180] - Error initializing model: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 406, in hf_raise_for_status
+    response.raise_for_status()
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 403, in cached_file
+    resolved_file = hf_hub_download(
+                    ^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 862, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 925, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, head_call_error) = _get_metadata_or_catch_error(
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1376, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1296, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 277, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 301, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 417, in hf_raise_for_status
+    raise _format(EntryNotFoundError, message, response) from e
+huggingface_hub.errors.EntryNotFoundError: 404 Client Error. (Request ID: Root=1-6726a210-7d000b0436bcc7d712bb1501;de1b4673-91f1-4b82-a310-2bb423d6715e)
+
+Entry Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 166, in _load_model
+    self.processor = SeamlessM4TProcessor.from_pretrained(MODEL_NAME, token=auth_token)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 944, in from_pretrained
+    args = cls._get_arguments_from_pretrained(pretrained_model_name_or_path, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 990, in _get_arguments_from_pretrained
+    args.append(attribute_class.from_pretrained(pretrained_model_name_or_path, **kwargs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 383, in from_pretrained
+    feature_extractor_dict, kwargs = cls.get_feature_extractor_dict(pretrained_model_name_or_path, **kwargs)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 509, in get_feature_extractor_dict
+    resolved_feature_extractor_file = cached_file(
+                                      ^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 459, in cached_file
+    raise EnvironmentError(
+OSError: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+2024-11-02 22:05:04,139 - __main__ - ERROR - [app.py:568] - Failed to start application: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 406, in hf_raise_for_status
+    response.raise_for_status()
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 403, in cached_file
+    resolved_file = hf_hub_download(
+                    ^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 862, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 925, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, head_call_error) = _get_metadata_or_catch_error(
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1376, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1296, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 277, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 301, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 417, in hf_raise_for_status
+    raise _format(EntryNotFoundError, message, response) from e
+huggingface_hub.errors.EntryNotFoundError: 404 Client Error. (Request ID: Root=1-6726a210-7d000b0436bcc7d712bb1501;de1b4673-91f1-4b82-a310-2bb423d6715e)
+
+Entry Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 546, in <module>
+    if None in ModelManager().get_model_components():
+               ^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/app.py", line 146, in __new__
+    cls._instance._initialize()
+  File "/Users/robmills/audio-translation/Backend/app.py", line 155, in _initialize
+    self._load_model()
+  File "/Users/robmills/audio-translation/Backend/app.py", line 166, in _load_model
+    self.processor = SeamlessM4TProcessor.from_pretrained(MODEL_NAME, token=auth_token)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 944, in from_pretrained
+    args = cls._get_arguments_from_pretrained(pretrained_model_name_or_path, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 990, in _get_arguments_from_pretrained
+    args.append(attribute_class.from_pretrained(pretrained_model_name_or_path, **kwargs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 383, in from_pretrained
+    feature_extractor_dict, kwargs = cls.get_feature_extractor_dict(pretrained_model_name_or_path, **kwargs)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 509, in get_feature_extractor_dict
+    resolved_feature_extractor_file = cached_file(
+                                      ^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 459, in cached_file
+    raise EnvironmentError(
+OSError: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+2024-11-02 22:05:04,141 - __main__ - INFO - [app.py:525] - Application shutting down...
+2024-11-02 22:05:04,142 - __main__ - INFO - [app.py:530] - Cleanup completed successfully
+2024-11-02 22:05:22,357 - __main__ - INFO - [app.py:159] - Loading SeamlessM4T model: facebook/seamless-m4t-medium
+2024-11-02 22:05:22,520 - __main__ - ERROR - [app.py:180] - Error initializing model: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 406, in hf_raise_for_status
+    response.raise_for_status()
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 403, in cached_file
+    resolved_file = hf_hub_download(
+                    ^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 862, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 925, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, head_call_error) = _get_metadata_or_catch_error(
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1376, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1296, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 277, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 301, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 417, in hf_raise_for_status
+    raise _format(EntryNotFoundError, message, response) from e
+huggingface_hub.errors.EntryNotFoundError: 404 Client Error. (Request ID: Root=1-6726a222-6387461414fd3c042eb1a605;f46e9a1b-c939-4011-970a-a97d11cc6f30)
+
+Entry Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 166, in _load_model
+    self.processor = SeamlessM4TProcessor.from_pretrained(MODEL_NAME, token=auth_token)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 944, in from_pretrained
+    args = cls._get_arguments_from_pretrained(pretrained_model_name_or_path, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 990, in _get_arguments_from_pretrained
+    args.append(attribute_class.from_pretrained(pretrained_model_name_or_path, **kwargs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 383, in from_pretrained
+    feature_extractor_dict, kwargs = cls.get_feature_extractor_dict(pretrained_model_name_or_path, **kwargs)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 509, in get_feature_extractor_dict
+    resolved_feature_extractor_file = cached_file(
+                                      ^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 459, in cached_file
+    raise EnvironmentError(
+OSError: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+2024-11-02 22:05:22,522 - __main__ - ERROR - [app.py:568] - Failed to start application: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 406, in hf_raise_for_status
+    response.raise_for_status()
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 403, in cached_file
+    resolved_file = hf_hub_download(
+                    ^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 862, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 925, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, head_call_error) = _get_metadata_or_catch_error(
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1376, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1296, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 277, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 301, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 417, in hf_raise_for_status
+    raise _format(EntryNotFoundError, message, response) from e
+huggingface_hub.errors.EntryNotFoundError: 404 Client Error. (Request ID: Root=1-6726a222-6387461414fd3c042eb1a605;f46e9a1b-c939-4011-970a-a97d11cc6f30)
+
+Entry Not Found for url: https://huggingface.co/facebook/seamless-m4t-medium/resolve/main/preprocessor_config.json.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 546, in <module>
+    if None in ModelManager().get_model_components():
+               ^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/app.py", line 146, in __new__
+    cls._instance._initialize()
+  File "/Users/robmills/audio-translation/Backend/app.py", line 155, in _initialize
+    self._load_model()
+  File "/Users/robmills/audio-translation/Backend/app.py", line 166, in _load_model
+    self.processor = SeamlessM4TProcessor.from_pretrained(MODEL_NAME, token=auth_token)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 944, in from_pretrained
+    args = cls._get_arguments_from_pretrained(pretrained_model_name_or_path, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/processing_utils.py", line 990, in _get_arguments_from_pretrained
+    args.append(attribute_class.from_pretrained(pretrained_model_name_or_path, **kwargs))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 383, in from_pretrained
+    feature_extractor_dict, kwargs = cls.get_feature_extractor_dict(pretrained_model_name_or_path, **kwargs)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/feature_extraction_utils.py", line 509, in get_feature_extractor_dict
+    resolved_feature_extractor_file = cached_file(
+                                      ^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 459, in cached_file
+    raise EnvironmentError(
+OSError: facebook/seamless-m4t-medium does not appear to have a file named preprocessor_config.json. Checkout 'https://huggingface.co/facebook/seamless-m4t-medium/tree/main' for available files.
+2024-11-02 22:05:22,523 - __main__ - INFO - [app.py:525] - Application shutting down...
+2024-11-02 22:05:22,523 - __main__ - INFO - [app.py:530] - Cleanup completed successfully
+2024-11-02 22:54:53,060 - __main__ - INFO - [app.py:160] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-11-02 22:55:03,105 - __main__ - INFO - [app.py:175] - Model loaded on CPU
+2024-11-02 22:55:03,105 - __main__ - INFO - [app.py:178] - Model initialization successful
+2024-11-02 22:55:03,106 - __main__ - INFO - [app.py:555] - Starting Flask app on port 5001 using cpu
+2024-11-02 22:55:03,106 - __main__ - INFO - [app.py:556] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-11-02 22:55:18,887 - __main__ - INFO - [app.py:341] - Starting translation request f9c6983c
+2024-11-02 22:55:18,902 - __main__ - INFO - [app.py:366] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp0o05q573.mp3
+2024-11-02 22:55:18,905 - __main__ - INFO - [app.py:209] - Audio duration: 228.81 seconds
+2024-11-02 22:55:18,905 - __main__ - INFO - [app.py:218] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp0o05q573.mp3
+2024-11-02 22:55:18,905 - __main__ - INFO - [app.py:221] - Audio info - Sample rate: 44100, Channels: 2
+2024-11-02 22:55:19,003 - __main__ - INFO - [app.py:225] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
+2024-11-02 22:55:19,003 - __main__ - INFO - [app.py:229] - Resampling from 44100Hz to 16000Hz
+2024-11-02 22:55:19,064 - __main__ - INFO - [app.py:234] - Converting from stereo to mono
+2024-11-02 22:55:19,071 - __main__ - INFO - [app.py:239] - Normalizing audio
+2024-11-02 22:55:19,074 - __main__ - INFO - [app.py:242] - Processed audio shape: torch.Size([1, 3653800])
+2024-11-02 22:55:19,074 - __main__ - INFO - [app.py:381] - Audio shape after processing: (3653800,)
+2024-11-02 22:55:19,075 - __main__ - INFO - [app.py:382] - Audio min/max values: -0.998/1.000
+2024-11-02 22:55:19,075 - __main__ - INFO - [app.py:390] - Preparing model inputs...
+2024-11-02 22:55:19,352 - __main__ - INFO - [app.py:399] - Input keys available: dict_keys(['input_features', 'attention_mask'])
+2024-11-02 22:55:19,352 - __main__ - INFO - [app.py:410] - Starting translation to ita
+2024-11-02 23:02:41,953 - __main__ - INFO - [app.py:419] - Translation generation completed
+2024-11-02 23:02:41,963 - __main__ - INFO - [app.py:428] - Processed output using tuple format
+2024-11-02 23:02:41,963 - __main__ - INFO - [app.py:432] - Audio output shape: (1, 64000)
+2024-11-02 23:02:41,976 - __main__ - INFO - [app.py:319] - Performance - Function: translate_audio, Duration: 443.09s, Memory Change: 5210.12MB
+2024-11-02 23:02:41,987 - app - ERROR - [app.py:838] - Exception on /translate [POST]
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/flask/app.py", line 883, in full_dispatch_request
+    return self.finalize_request(rv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/flask/app.py", line 902, in finalize_request
+    response = self.make_response(rv)
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/.venv/lib/python3.12/site-packages/flask/app.py", line 1174, in make_response
+    raise TypeError(
+TypeError: The view function for 'translate_audio' did not return a valid response. The function either returned None or ended without a return statement.
+2024-11-02 23:37:16,700 - __main__ - INFO - [app.py:526] - Application shutting down...
+2024-11-02 23:37:16,703 - __main__ - INFO - [app.py:531] - Cleanup completed successfully
+2024-11-02 23:39:55,217 - __main__ - INFO - [app.py:161] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-11-02 23:40:04,755 - __main__ - INFO - [app.py:176] - Model loaded on CPU
+2024-11-02 23:40:04,755 - __main__ - INFO - [app.py:179] - Model initialization successful
+2024-11-02 23:40:04,756 - __main__ - INFO - [app.py:570] - Starting Flask app on port 5001 using cpu
+2024-11-02 23:40:04,756 - __main__ - INFO - [app.py:571] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-11-02 23:40:34,265 - __main__ - INFO - [app.py:342] - Starting translation request 781463e8
+2024-11-02 23:40:34,279 - __main__ - INFO - [app.py:367] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_ypnrdnx.wav
+2024-11-02 23:40:34,281 - __main__ - INFO - [app.py:210] - Audio duration: 18.36 seconds
+2024-11-02 23:40:34,281 - __main__ - INFO - [app.py:219] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_ypnrdnx.wav
+2024-11-02 23:40:34,282 - __main__ - INFO - [app.py:222] - Audio info - Sample rate: 44100, Channels: 2
+2024-11-02 23:40:34,285 - __main__ - INFO - [app.py:226] - Original audio shape: torch.Size([2, 809508]), Frequency: 44100Hz
+2024-11-02 23:40:34,285 - __main__ - INFO - [app.py:230] - Resampling from 44100Hz to 16000Hz
+2024-11-02 23:40:34,292 - __main__ - INFO - [app.py:235] - Converting from stereo to mono
+2024-11-02 23:40:34,294 - __main__ - INFO - [app.py:240] - Normalizing audio
+2024-11-02 23:40:34,294 - __main__ - INFO - [app.py:243] - Processed audio shape: torch.Size([1, 293700])
+2024-11-02 23:40:34,294 - __main__ - INFO - [app.py:388] - Audio shape after processing: (293700,)
+2024-11-02 23:40:34,294 - __main__ - INFO - [app.py:389] - Audio min/max values: -1.000/0.616
+2024-11-02 23:40:34,295 - __main__ - INFO - [app.py:397] - Preparing model inputs...
+2024-11-02 23:40:34,324 - __main__ - INFO - [app.py:406] - Input keys available: dict_keys(['input_features', 'attention_mask'])
+2024-11-02 23:40:34,324 - __main__ - INFO - [app.py:417] - Starting translation to deu
+2024-11-02 23:41:00,195 - __main__ - INFO - [app.py:426] - Translation generation completed
+2024-11-02 23:41:00,195 - __main__ - INFO - [app.py:436] - Processed output using tuple format
+2024-11-02 23:41:00,195 - __main__ - INFO - [app.py:440] - Audio output shape: (1, 64000)
+2024-11-02 23:41:00,196 - __main__ - ERROR - [app.py:469] - Output processing error: Expected 2D Tensor, got 3D.
+2024-11-02 23:41:00,197 - __main__ - INFO - [app.py:320] - Performance - Function: translate_audio_endpoint, Duration: 25.93s, Memory Change: 7781.53MB
+2024-11-03 00:07:30,338 - __main__ - INFO - [app.py:541] - Application shutting down...
+2024-11-03 00:07:30,340 - __main__ - INFO - [app.py:546] - Cleanup completed successfully
+2024-11-03 00:08:01,190 - __main__ - INFO - [app.py:161] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2024-11-03 00:08:10,814 - __main__ - INFO - [app.py:176] - Model loaded on CPU
+2024-11-03 00:08:10,814 - __main__ - INFO - [app.py:179] - Model initialization successful
+2024-11-03 00:08:10,815 - __main__ - INFO - [app.py:574] - Starting Flask app on port 5001 using cpu
+2024-11-03 00:08:10,815 - __main__ - INFO - [app.py:575] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2024-11-03 00:08:56,156 - __main__ - INFO - [app.py:342] - Starting translation request e63c800a
+2024-11-03 00:08:56,170 - __main__ - INFO - [app.py:367] - Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpqdg4tlh8.wav
+2024-11-03 00:08:56,171 - __main__ - INFO - [app.py:210] - Audio duration: 18.36 seconds
+2024-11-03 00:08:56,171 - __main__ - INFO - [app.py:219] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpqdg4tlh8.wav
+2024-11-03 00:08:56,172 - __main__ - INFO - [app.py:222] - Audio info - Sample rate: 44100, Channels: 2
+2024-11-03 00:08:56,179 - __main__ - INFO - [app.py:226] - Original audio shape: torch.Size([2, 809508]), Frequency: 44100Hz
+2024-11-03 00:08:56,179 - __main__ - INFO - [app.py:230] - Resampling from 44100Hz to 16000Hz
+2024-11-03 00:08:56,186 - __main__ - INFO - [app.py:235] - Converting from stereo to mono
+2024-11-03 00:08:56,186 - __main__ - INFO - [app.py:240] - Normalizing audio
+2024-11-03 00:08:56,187 - __main__ - INFO - [app.py:243] - Processed audio shape: torch.Size([1, 293700])
+2024-11-03 00:08:56,187 - __main__ - INFO - [app.py:388] - Audio shape after processing: (293700,)
+2024-11-03 00:08:56,187 - __main__ - INFO - [app.py:389] - Audio min/max values: -1.000/0.616
+2024-11-03 00:08:56,187 - __main__ - INFO - [app.py:397] - Preparing model inputs...
+2024-11-03 00:08:56,215 - __main__ - INFO - [app.py:406] - Input keys available: dict_keys(['input_features', 'attention_mask'])
+2024-11-03 00:08:56,215 - __main__ - INFO - [app.py:417] - Starting translation to fra
+2024-11-03 00:09:14,998 - __main__ - INFO - [app.py:426] - Translation generation completed
+2024-11-03 00:09:14,998 - __main__ - INFO - [app.py:436] - Processed output using tuple format
+2024-11-03 00:09:14,998 - __main__ - INFO - [app.py:440] - Audio output shape: (64000,)
+2024-11-03 00:09:15,000 - __main__ - INFO - [app.py:463] - Translation e63c800a completed in 18.84 seconds
+2024-11-03 00:09:15,001 - __main__ - INFO - [app.py:320] - Performance - Function: translate_audio_endpoint, Duration: 18.85s, Memory Change: 7698.55MB

@@ -32,7 +32,7 @@ def verify_token_and_model_access():
         return
 
     # Attempt to access SeamlessM4T model
-    model_name = "facebook/seamless-m4t-medium"
+    model_name = "facebook/seamless-m4t-v2-large"
     print(f"\nAttempting to access {model_name}")
 
     try:
