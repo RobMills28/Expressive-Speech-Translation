@@ -9,6 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert"
 import { Progress } from "./components/ui/progress"
 
 const LinguaSyncApp = () => {
+  const [audioStatus, setAudioStatus] = useState('idle');
+  const [audioReady, setAudioReady] = useState(false);
   const [file, setFile] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -20,181 +22,273 @@ const LinguaSyncApp = () => {
   const audioRef = useRef(null);
   const abortControllerRef = useRef(null);
 
-  // Cleanup audio URL on unmount
   useEffect(() => {
-    return () => {
+    const cleanup = () => {
       if (translatedAudioUrl) {
         URL.revokeObjectURL(translatedAudioUrl);
       }
+      if (audioRef.current) {
+        audioRef.current.src = '';
+        audioRef.current.load();
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
-  }, [translatedAudioUrl]);
+  
+    window.addEventListener('beforeunload', cleanup);
+    return () => {
+      window.removeEventListener('beforeunload', cleanup);
+      cleanup();
+    };
+  }, []);
+  
 
   const handleFileChange = (event) => {
-    // Clear previous state first
     setError('');
     setProgress(0);
     setProgressText('');
+    setAudioStatus('idle');
     
-    // Clean up any existing audio URL
     if (translatedAudioUrl) {
-        URL.revokeObjectURL(translatedAudioUrl);
-        setTranslatedAudioUrl('');
+      URL.revokeObjectURL(translatedAudioUrl);
+      setTranslatedAudioUrl('');
     }
 
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-        console.log('Selected file:', selectedFile.name, 'Type:', selectedFile.type);
-        
-        const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a'];
-        const fileExtension = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'));
-        
-        const validMimeTypes = [
-            'audio/mp3',
-            'audio/mpeg',
-            'audio/wav',
-            'audio/wave',
-            'audio/x-wav',
-            'audio/ogg',
-            'audio/x-m4a',
-            'audio/mp4',
-            'audio/aac'
-        ];
+      console.log('Selected file:', selectedFile.name, 'Type:', selectedFile.type);
+      
+      const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a'];
+      const fileExtension = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'));
+      
+      const validMimeTypes = [
+        'audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/wave',
+        'audio/x-wav', 'audio/ogg', 'audio/x-m4a', 'audio/mp4', 'audio/aac'
+      ];
 
-        if (!validExtensions.includes(fileExtension)) {
-            setError(`Invalid file extension. Please upload a file with extension: ${validExtensions.join(', ')}`);
-            setFile(null);
-            return;
-        }
-
-        if (!validMimeTypes.includes(selectedFile.type) && selectedFile.type !== '') {
-            console.warn('File MIME type:', selectedFile.type);
-            console.warn('Valid MIME types:', validMimeTypes);
-        }
-
-        setFile(selectedFile);
-    } else {
+      if (!validExtensions.includes(fileExtension)) {
+        setError(`Invalid file extension. Please upload a file with extension: ${validExtensions.join(', ')}`);
         setFile(null);
-    }
-};
+        return;
+      }
 
-const handleLanguageChange = (value) => {
-  // Clear states first
-  setError('');
-  setProgress(0);
-  setProgressText('');
-  
-  // Clean up any existing audio URL
-  if (translatedAudioUrl) {
+      if (!validMimeTypes.includes(selectedFile.type) && selectedFile.type !== '') {
+        console.warn('File MIME type:', selectedFile.type);
+        console.warn('Valid MIME types:', validMimeTypes);
+      }
+
+      setFile(selectedFile);
+    } else {
+      setFile(null);
+    }
+  };
+
+  const handleLanguageChange = (value) => {
+    setError('');
+    setProgress(0);
+    setProgressText('');
+    setAudioStatus('idle');
+    
+    if (translatedAudioUrl) {
       URL.revokeObjectURL(translatedAudioUrl);
       setTranslatedAudioUrl('');
-  }
+    }
 
-  console.log('Language selected:', value);
-  setTargetLanguage(value);
-};
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
 
-const handlePlayPause = async () => {
-  if (!audioRef.current) {
+    setIsPlaying(false);
+    setTargetLanguage(value);
+  };
+
+  const handlePlayPause = async () => {
+    if (!audioRef.current) {
       console.error('No audio element reference');
       return;
-  }
+    }
 
-  try {
+    try {
       if (audioRef.current.paused) {
-          // Create a new promise to handle the play attempt
-          const playAttempt = audioRef.current.play();
-          
-          if (playAttempt !== undefined) {
-              await playAttempt;
-              setIsPlaying(true);
-          }
+        setAudioStatus('loading');
+        const playAttempt = audioRef.current.play();
+        
+        if (playAttempt !== undefined) {
+          await playAttempt;
+          setIsPlaying(true);
+          setAudioStatus('playing');
+        }
       } else {
-          audioRef.current.pause();
-          setIsPlaying(false);
+        audioRef.current.pause();
+        setIsPlaying(false);
+        setAudioStatus('ready');
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Playback error:', {
-          error,
-          audioState: {
-              currentTime: audioRef.current.currentTime,
-              duration: audioRef.current.duration,
-              readyState: audioRef.current.readyState,
-              networkState: audioRef.current.networkState,
-              src: audioRef.current.currentSrc
-          }
+        error,
+        audioState: {
+          currentTime: audioRef.current.currentTime,
+          duration: audioRef.current.duration,
+          readyState: audioRef.current.readyState,
+          networkState: audioRef.current.networkState,
+          src: audioRef.current.currentSrc
+        }
       });
       setError(`Playback failed: ${error.message}`);
-  }
-};
+      setAudioStatus('error');
+      setIsPlaying(false);
+    }
+  };
 
-const processAudio = async () => {
+  const processAudio = async () => {
+    // Create new abort controller for this request
+    if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
     try {
         setProcessing(true);
         setError('');
+        setProgressText('Preparing translation...');
+        setProgress(10);
+        setAudioStatus('loading');
+        setAudioReady(false);
 
         const formData = new FormData();
         formData.append('file', file);
         formData.append('target_language', targetLanguage);
 
-        console.log('Sending request...');
+        setProgressText('Sending request...');
+        setProgress(30);
+      
         const response = await fetch('http://localhost:5001/translate', {
             method: 'POST',
             body: formData,
+            signal: abortControllerRef.current.signal,
+            headers: {
+                'Accept': 'audio/wav'
+            }
         });
 
-        console.log('Response status:', response.status);
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            throw new Error(errorData.error || `Server error: ${response.status}`);
         }
 
-        // Create blob directly from response
-        const blob = await response.blob();
-        console.log('Response blob:', {
-            size: blob.size,
-            type: blob.type
+        setProgressText('Processing audio data...');
+        setProgress(60);
+
+        // Get the full response data as arrayBuffer
+        const audioData = await response.arrayBuffer();
+        if (!audioData || audioData.byteLength === 0) {
+            throw new Error('Received empty audio data from server');
+        }
+
+        // Create blob with explicit MIME type from response
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || !contentType.includes('audio/')) {
+            throw new Error(`Invalid content type: ${contentType}`);
+        }
+
+        const audioBlob = new Blob([audioData], { 
+            type: contentType
         });
 
-        // Clean up old URL
+        console.log('Audio data:', {
+            size: audioBlob.size,
+            type: audioBlob.type,
+            byteLength: audioData.byteLength,
+            contentType: contentType,
+            headers: Object.fromEntries(response.headers.entries())
+        });
+
+        // Clean up existing resources
         if (translatedAudioUrl) {
             URL.revokeObjectURL(translatedAudioUrl);
         }
 
-        const url = URL.createObjectURL(blob);
-        
-        // Test audio playback before setting state
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            audioRef.current.src = '';
+            audioRef.current.load();
+        }
+
+        setProgressText('Validating audio...');
+        setProgress(80);
+
+        // Test audio playability with better error handling
         await new Promise((resolve, reject) => {
-            const audio = new Audio();
-            audio.oncanplaythrough = resolve;
-            audio.onerror = () => reject(new Error('Audio format not supported'));
-            audio.src = url;
+            const testAudio = new Audio();
+            const tempUrl = URL.createObjectURL(audioBlob);
             
-            // Set timeout in case loading hangs
-            const timeout = setTimeout(() => {
-                audio.src = '';
+            const cleanup = () => {
+                testAudio.src = '';
+                testAudio.remove();
+                URL.revokeObjectURL(tempUrl);
+            };
+            
+            const timeoutId = setTimeout(() => {
+                cleanup();
                 reject(new Error('Audio loading timed out'));
             }, 5000);
             
-            // Clear timeout if audio loads
-            audio.oncanplaythrough = () => {
-                clearTimeout(timeout);
+            testAudio.addEventListener('canplaythrough', () => {
+                if (testAudio.duration === 0 || isNaN(testAudio.duration)) {
+                    clearTimeout(timeoutId);
+                    cleanup();
+                    reject(new Error('Invalid audio duration'));
+                    return;
+                }
+                clearTimeout(timeoutId);
+                cleanup();
                 resolve();
-            };
+            }, { once: true });
+            
+            testAudio.addEventListener('error', (e) => {
+                clearTimeout(timeoutId);
+                cleanup();
+                console.error('Audio validation error:', {
+                    error: e.target.error,
+                    code: e.target.error?.code,
+                    message: e.target.error?.message,
+                    state: testAudio.readyState
+                });
+                reject(new Error(`Audio validation failed: ${e.target.error?.message || 'Unknown error'} (code: ${e.target.error?.code || 'unknown'})`));
+            }, { once: true });
+
+            testAudio.src = tempUrl;
+            testAudio.load();
         });
 
-        setTranslatedAudioUrl(url);
+        // Create final URL after validation
+        const finalUrl = URL.createObjectURL(audioBlob);
+        setTranslatedAudioUrl(finalUrl);
         setProgress(100);
         setProgressText('Translation complete!');
+        setAudioStatus('ready');
+        setIsPlaying(false);
+        setAudioReady(true);
 
     } catch (e) {
+        if (e.name === 'AbortError') {
+            console.log('Request aborted');
+            return;
+        }
         console.error('Error details:', e);
-        setError(`An error occurred: ${e.message}`);
+        setError(`Translation failed: ${e.message}`);
+        setAudioStatus('error');
+        setAudioReady(false);
         if (translatedAudioUrl) {
             URL.revokeObjectURL(translatedAudioUrl);
             setTranslatedAudioUrl('');
         }
     } finally {
         setProcessing(false);
+        abortControllerRef.current = null;
     }
 };
 
@@ -277,38 +371,87 @@ const processAudio = async () => {
                 className="w-full"
                 src={translatedAudioUrl}
                 preload="auto"
+                // Add onLoadStart handler
+                onLoadStart={() => {
+                    console.log('Audio loading started');
+                    setAudioReady(false);
+                    setAudioStatus('loading');
+                }}
+                onLoadedMetadata={() => {
+                    console.log('Audio metadata loaded');
+                    if (audioRef.current) {
+                        console.log('Duration:', audioRef.current.duration);
+                    }
+                }}
                 onLoadedData={() => {
                     console.log('Audio loaded successfully');
+                    if (audioRef.current) {
+                        console.log('Audio duration:', audioRef.current.duration);
+                        console.log('Audio ready state:', audioRef.current.readyState);
+                    }
                     setProgress(100);
+                    setAudioStatus('ready');
+                    setAudioReady(true);
                 }}
-                onEnded={() => setIsPlaying(false)}
+                onCanPlay={() => {
+                    console.log('Audio can play');
+                    setAudioReady(true);
+                }}
+                onPlaying={() => {
+                    console.log('Audio playing');
+                    setIsPlaying(true);
+                    setAudioStatus('playing');
+                }}
+                onEnded={() => {
+                    console.log('Audio playback ended');
+                    setIsPlaying(false);
+                    setAudioStatus('ready');
+                }}
                 onError={(e) => {
+                    const errorDetail = e.target.error?.message || 'Unknown error';
+                    const errorCode = e.target.error?.code;
                     console.error('Audio error:', {
                         error: e.target.error,
-                        code: e.target.error?.code,
-                        message: e.target.error?.message
+                        code: errorCode,
+                        message: errorDetail,
+                        src: e.target.src,
+                        readyState: audioRef.current?.readyState,
+                        networkState: audioRef.current?.networkState
                     });
-                    setError('Error playing audio: ' + (e.target.error?.message || 'Unknown error'));
+                    setError(`Error playing audio (${errorCode}): ${errorDetail}`);
+                    setAudioStatus('error');
+                    setAudioReady(false);
                 }}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
+                onPlay={() => {
+                    if (!audioReady) {
+                        console.warn('Attempting to play before audio is ready');
+                        return;
+                    }
+                    console.log('Play requested');
+                    setIsPlaying(true);
+                    setAudioStatus('playing');
+                }}
+                onPause={() => {
+                    console.log('Audio paused');
+                    setIsPlaying(false);
+                    setAudioStatus('ready');
+                }}
+                onWaiting={() => {
+                    console.log('Audio buffering');
+                    setAudioStatus('loading');
+                }}
+                onSeeking={() => {
+                    console.log('Audio seeking');
+                }}
+                onSeeked={() => {
+                    console.log('Audio seek completed');
+                }}
             />
         </div>
         <Button
-            onClick={() => {
-                if (audioRef.current) {
-                    if (audioRef.current.paused) {
-                        audioRef.current.play().catch(error => {
-                            console.error('Play error:', error);
-                            setError('Failed to play audio: ' + error.message);
-                        });
-                    } else {
-                        audioRef.current.pause();
-                    }
-                }
-            }}
+            onClick={handlePlayPause}
             className="w-full bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
-            disabled={!audioRef.current}
+            disabled={!audioRef.current || !audioReady || audioStatus === 'error'}
         >
             {isPlaying ? (
                 <><Pause className="mr-2" size={18} /> Pause</>

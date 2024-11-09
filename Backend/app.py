@@ -1,32 +1,55 @@
+# Standard library imports
 import os
-from flask import Flask, request, jsonify, send_file, Response, current_app
-from flask_cors import CORS 
-from flask import Response
-from translate_speech import translate_audio as process_audio  # Give it an alias to avoid conflictfrom flask_cors import CORS
-import logging
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
-import torch
-import torchaudio
-import tempfile
-from pathlib import Path
-from transformers import SeamlessM4TModel, SeamlessM4TProcessor, SeamlessM4TTokenizer
-import numpy as np
-import json
-import gc
-from functools import wraps
-import time
 import sys
-import signal
+import gc
+import json
+import time
 import atexit
-import psutil
-import warnings
-from datetime import datetime
-import traceback
-from typing import Optional, Dict, Any, Tuple, List
-import threading
-import queue
-import hashlib
+import signal
 import shutil
+import hashlib
+import warnings
+import tempfile
+import threading
+import traceback
+import platform
+import queue
+from datetime import datetime
+from pathlib import Path
+from functools import wraps
+from typing import Optional, Dict, Any, Tuple, List
+
+# Third-party imports
+import torch
+import psutil
+import numpy as np
+import torchaudio
+from transformers import (
+    SeamlessM4TModel, 
+    SeamlessM4TProcessor, 
+    SeamlessM4TTokenizer
+)
+
+# Flask imports
+from flask import (
+    Flask, 
+    request, 
+    jsonify, 
+    send_file, 
+    Response, 
+    current_app
+)
+from flask_cors import CORS
+
+# Logging imports
+import logging
+from logging.handlers import (
+    RotatingFileHandler, 
+    TimedRotatingFileHandler
+)
+
+# Local imports
+from translate_speech import translate_audio as process_audio  # Give it an alias to avoid conflict
 
 # Suppress warnings
 warnings.filterwarnings('ignore')
@@ -44,19 +67,7 @@ MAX_RETRIES = 3
 TIMEOUT = 300  # seconds
 MEMORY_THRESHOLD = 0.9  # 90% memory usage threshold
 BATCH_SIZE = 1
-
-# Initialize Flask app
-app = Flask(__name__)
-CORS(app, resources={
-    r"/translate": {
-        "origins": ["http://localhost:3000"],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"],
-        "expose_headers": ["Content-Type", "Content-Length", "Accept-Ranges", "Content-Disposition"],
-        "supports_credentials": False,
-        "max_age": 120  # Cache preflight requests
-    }
-})
+START_TIME = time.time()
 
 # Configure logging
 def setup_logging():
@@ -111,8 +122,48 @@ def setup_logging():
     # Disable other loggers
     logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
+# Set up logging
 setup_logging()
 logger = logging.getLogger(__name__)
+
+# Signal Handlers 
+def sigterm_handler(signum, frame):
+    """Handle SIGTERM signal"""
+    logger.info("Received SIGTERM signal")
+    sys.exit(0)
+
+def sigint_handler(signum, frame):
+    """Handle SIGINT signal (Ctrl+C)"""
+    logger.info("Received SIGINT signal")
+    sys.exit(0)
+
+# Initialize Flask app
+app = Flask(__name__)
+CORS(app, resources={
+    r"/translate": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": [
+            "Content-Type",
+            "Accept",
+            "Authorization",
+            "X-Requested-With"
+        ],
+        "expose_headers": [
+            "Content-Type", 
+            "Content-Length", 
+            "Accept-Ranges", 
+            "Content-Disposition",
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Methods",
+            "Access-Control-Allow-Headers",
+            "Access-Control-Expose-Headers"
+        ],
+        "supports_credentials": False,
+        "max_age": 120,  # Cache preflight requests
+        "vary": "Origin"  # Important for browser caching
+    }
+})
 
 # Model configuration
 MODEL_NAME = "facebook/seamless-m4t-v2-large"
@@ -500,76 +551,154 @@ def translate_audio_endpoint():
 @performance_logger
 def health_check():
     """Health check endpoint with detailed system information"""
-    model_manager = ModelManager()
-    processor, model, tokenizer = model_manager.get_model_components()
-    
-    gpu_info = None
-    if DEVICE.type == 'cuda':
-        try:
-            gpu_properties = torch.cuda.get_device_properties(0)
-            gpu_info = {
-                'name': gpu_properties.name,
-                'total_memory': f"{gpu_properties.total_memory/1024**2:.2f}MB",
-                'memory_allocated': f"{torch.cuda.memory_allocated()/1024**2:.2f}MB",
-                'memory_reserved': f"{torch.cuda.memory_reserved()/1024**2:.2f}MB"
-            }
-        except Exception as e:
-            logger.error(f"Error getting GPU info: {str(e)}")
-    
-    system_info = {
-        'cpu_usage': psutil.cpu_percent(),
-        'memory_usage': psutil.virtual_memory().percent,
-        'disk_usage': psutil.disk_usage('/').percent
-    }
-    
-    return jsonify({
-        'status': 'healthy',
-        'timestamp': datetime.now().isoformat(),
-        'model': {
-            'name': MODEL_NAME,
-            'loaded': None not in (processor, model, tokenizer),
-            'device': DEVICE.type,
-            'last_used': model_manager.last_used
-        },
-        'system': system_info,
-        'gpu': gpu_info,
-        'languages_supported': LANGUAGE_CODES
-    })
+    try:
+        # Check Hugging Face token
+        token = os.getenv('HUGGINGFACE_TOKEN')
+        token_status = bool(token)
+
+        # Check model components
+        model_manager = ModelManager()
+        processor, model, tokenizer = model_manager.get_model_components()
+        
+        # Get GPU information if available
+        gpu_info = None
+        if DEVICE.type == 'cuda':
+            try:
+                gpu_properties = torch.cuda.get_device_properties(0)
+                gpu_info = {
+                    'name': gpu_properties.name,
+                    'total_memory': f"{gpu_properties.total_memory/1024**2:.2f}MB",
+                    'memory_allocated': f"{torch.cuda.memory_allocated()/1024**2:.2f}MB",
+                    'memory_reserved': f"{torch.cuda.memory_reserved()/1024**2:.2f}MB",
+                    'utilization': f"{torch.cuda.utilization()}%",
+                    'device_count': torch.cuda.device_count()
+                }
+            except Exception as e:
+                logger.error(f"Error getting GPU info: {str(e)}")
+                gpu_info = {'error': str(e)}
+        
+        # Get system information
+        system_info = {
+            'cpu_usage': psutil.cpu_percent(interval=1),  # 1 second interval
+            'memory': {
+                'total': f"{psutil.virtual_memory().total/1024**3:.2f}GB",
+                'available': f"{psutil.virtual_memory().available/1024**3:.2f}GB",
+                'used_percent': psutil.virtual_memory().percent
+            },
+            'disk': {
+                'total': f"{psutil.disk_usage('/').total/1024**3:.2f}GB",
+                'free': f"{psutil.disk_usage('/').free/1024**3:.2f}GB",
+                'used_percent': psutil.disk_usage('/').percent
+            },
+            'python_version': sys.version,
+            'platform': platform.platform()
+        }
+
+        # Check CORS configuration
+        cors_info = {
+            'enabled': True,
+            'allowed_origins': app.config.get('CORS_ALLOWED_ORIGINS', ['http://localhost:3000']),
+            'allowed_methods': ['GET', 'POST', 'OPTIONS'],
+            'max_age': 120
+        }
+        
+        # Get temp directory status
+        temp_dir = tempfile.gettempdir()
+        temp_files = list(Path(temp_dir).glob("*.wav"))
+        temp_info = {
+            'path': temp_dir,
+            'wav_file_count': len(temp_files),
+            'total_size_mb': sum(f.stat().st_size for f in temp_files) / (1024 * 1024)
+        }
+
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'model': {
+                'name': MODEL_NAME,
+                'loaded': None not in (processor, model, tokenizer),
+                'device': DEVICE.type,
+                'last_used': model_manager.last_used,
+                'huggingface_token_configured': token_status
+            },
+            'system': system_info,
+            'gpu': gpu_info,
+            'languages_supported': LANGUAGE_CODES,
+            'cors': cors_info,
+            'temp_files': temp_info,
+            'uptime': time.time() - START_TIME  # Add START_TIME at the top of your file
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}", exc_info=True)
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
 
 def cleanup_temp_files():
     """Clean up any temporary files in the temp directory"""
     try:
         temp_dir = tempfile.gettempdir()
         pattern = Path(temp_dir) / "*.wav"
+        files_removed = 0
+        bytes_freed = 0
+        
         for file in Path(temp_dir).glob("*.wav"):
-            cleanup_file(str(file))
+            try:
+                size = file.stat().st_size
+                cleanup_file(str(file))
+                files_removed += 1
+                bytes_freed += size
+                logger.debug(f"Removed temp file: {file}")
+            except Exception as e:
+                logger.warning(f"Failed to remove file {file}: {str(e)}")
+        
+        logger.info(f"Cleanup complete: removed {files_removed} files, freed {bytes_freed/1024**2:.2f}MB")
     except Exception as e:
-        logger.error(f"Error during temp file cleanup: {str(e)}")
+        logger.error(f"Error during temp file cleanup: {str(e)}", exc_info=True)
+
 
 def shutdown_handler():
     """Clean up resources during shutdown"""
     logger.info("Application shutting down...")
     try:
+        # Release GPU memory if using CUDA
+        if DEVICE.type == 'cuda':
+            torch.cuda.empty_cache()
+        
+        # Cleanup model resources
         model_manager = ModelManager()
         model_manager.cleanup()
+        
+        # Remove temporary files
         cleanup_temp_files()
+        
         logger.info("Cleanup completed successfully")
     except Exception as e:
-        logger.error(f"Error during shutdown cleanup: {str(e)}")
+        logger.error(f"Error during shutdown cleanup: {str(e)}", exc_info=True)
 
-# Register shutdown handler
+
+# Add at the top of your file
+START_TIME = time.time()
+
+# Register shutdown handlers
 atexit.register(shutdown_handler)
-
-# Handle SIGTERM gracefully
-def sigterm_handler(signum, frame):
-    logger.info("Received SIGTERM signal")
-    sys.exit(0)
-
 signal.signal(signal.SIGTERM, sigterm_handler)
+signal.signal(signal.SIGINT, sigint_handler)  # Changed to use sigint_handler
 
 if __name__ == '__main__':
     try:
-        if None in ModelManager().get_model_components():
+        # Validate environment
+        if not os.getenv('HUGGINGFACE_TOKEN'):
+            logger.error("HUGGINGFACE_TOKEN not set in environment")
+            sys.exit(1)
+
+        # Check model loading
+        model_manager = ModelManager()  # Create instance first
+        if None in model_manager.get_model_components():
             logger.error("Could not start the app due to model loading failure")
             sys.exit(1)
         
@@ -577,10 +706,17 @@ if __name__ == '__main__':
         cleanup_temp_files()
         
         # Log startup information
+        logger.info("="*50)  # Add visual separator in logs
+        logger.info("Starting LinguaSync Backend")
         logger.info(f"Starting Flask app on port 5001 using {DEVICE}")
+        logger.info(f"Python version: {sys.version}")
         logger.info(f"Supported languages: {list(LANGUAGE_CODES.keys())}")
+        
         if DEVICE.type == 'cuda':
+            logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
             ResourceMonitor.check_gpu()
+            
+        logger.info("="*50)  # Add visual separator in logs
         
         # Start the application
         app.run(
