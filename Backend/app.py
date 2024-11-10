@@ -34,7 +34,8 @@ from transformers import (
 from flask import (
     Flask, 
     request, 
-    jsonify, 
+    jsonify,
+    make_response, 
     send_file, 
     Response, 
     current_app
@@ -140,30 +141,95 @@ def sigint_handler(signum, frame):
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app, resources={
-    r"/translate": {
+    r"/*": {  # Single catch-all configuration
         "origins": ["http://localhost:3000"],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": [
             "Content-Type",
             "Accept",
             "Authorization",
-            "X-Requested-With"
+            "X-Requested-With",
+            "Range",
+            "Accept-Ranges",
+            "Origin"  # Added Origin
         ],
         "expose_headers": [
             "Content-Type", 
             "Content-Length", 
-            "Accept-Ranges", 
+            "Content-Range",
             "Content-Disposition",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Methods",
-            "Access-Control-Allow-Headers",
-            "Access-Control-Expose-Headers"
+            "Accept-Ranges",
+            "Access-Control-Allow-Origin",  # Added
+            "Access-Control-Allow-Credentials"  # Added
         ],
-        "supports_credentials": False,
-        "max_age": 120,  # Cache preflight requests
-        "vary": "Origin"  # Important for browser caching
+        "supports_credentials": True,
+        "max_age": 120,
+        "automatic_options": True  # Added
     }
 })
+
+# Unified CORS headers handler
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get('Origin', 'http://localhost:3000')
+    
+    # Basic CORS headers
+    response.headers.update({
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, Range, Accept-Ranges, Origin',
+        'Access-Control-Expose-Headers': 'Content-Range, Content-Length, Accept-Ranges, Access-Control-Allow-Origin',
+        'Access-Control-Max-Age': '120',
+        'Vary': 'Origin'
+    })
+    
+    # Additional headers for audio responses
+    if response.mimetype == 'audio/wav':
+        response.headers.update({
+            'Accept-Ranges': 'bytes',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            'Content-Type': 'audio/wav'
+        })
+    
+    return response
+
+# Handle OPTIONS preflight requests
+@app.route('/translate', methods=['OPTIONS'])
+def handle_preflight():
+    response = make_response()
+    origin = request.headers.get('Origin', 'http://localhost:3000')
+    
+    response.headers.update({
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, Range, Accept-Ranges, Origin',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '120',
+        'Content-Type': 'text/plain'
+    })
+    return response
+
+# Error handler for server errors
+@app.errorhandler(500)
+def handle_error(e):
+    if request.method == 'OPTIONS':
+        response = make_response()
+        origin = request.headers.get('Origin', 'http://localhost:3000')
+        
+        response.headers.update({
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, Range, Accept-Ranges, Origin',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Max-Age': '120',
+            'Content-Type': 'text/plain'
+        })
+        return response, 200
+    
+    return jsonify(error=str(e)), 500
 
 # Model configuration
 MODEL_NAME = "facebook/seamless-m4t-v2-large"
@@ -398,19 +464,23 @@ def translate_audio_endpoint():
         
         # Validate request
         if 'file' not in request.files:
+            logger.error(f"Request {request_id}: No file in request")
             return jsonify({'error': 'No file uploaded'}), 400
         
         file = request.files['file']
         if not file.filename:
+            logger.error(f"Request {request_id}: Empty filename")
             return jsonify({'error': 'No selected file'}), 400
         
         target_language = request.form.get('target_language')
         if not target_language:
+            logger.error(f"Request {request_id}: No target language specified")
             return jsonify({'error': 'No target language specified'}), 400
 
         # Validate language
         model_language = LANGUAGE_MAP.get(target_language, target_language)
         if model_language not in LANGUAGE_CODES:
+            logger.error(f"Request {request_id}: Unsupported language {target_language}")
             return jsonify({'error': f'Unsupported language: {target_language}'}), 400
 
         # Save and process audio file
@@ -418,83 +488,80 @@ def translate_audio_endpoint():
         with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
             temp_files.append(temp_input.name)
             file.save(temp_input.name)
-            logger.info(f"Saved input file: {temp_input.name}")
+            logger.info(f"Request {request_id}: Saved input file: {temp_input.name}")
             
             # Validate audio file
             metadata = torchaudio.info(temp_input.name)
             duration = metadata.num_frames / metadata.sample_rate
+            logger.info(f"Request {request_id}: Audio duration: {duration:.2f}s, Sample rate: {metadata.sample_rate}Hz")
             
             if duration > MAX_DURATION:
+                logger.error(f"Request {request_id}: Audio duration {duration:.2f}s exceeds limit of {MAX_DURATION}s")
                 return jsonify({'error': f'Audio file too long (max {MAX_DURATION} seconds)'}), 400
             
             if not AudioProcessor.validate_audio_length(temp_input.name):
+                logger.error(f"Request {request_id}: Audio validation failed")
                 return jsonify({'error': 'Invalid audio file'}), 400
             
             # Get model components and process audio
             model_manager = ModelManager()
             processor, model, tokenizer = model_manager.get_model_components()
+            logger.info(f"Request {request_id}: Model components loaded successfully")
 
-            try:
-                audio = AudioProcessor.process_audio(temp_input.name)
-                audio_numpy = audio.squeeze().numpy()
-                logger.info(f"Audio shape after processing: {audio_numpy.shape}")
-                logger.info(f"Audio min/max values: {audio_numpy.min():.3f}/{audio_numpy.max():.3f}")
-            except Exception as e:
-                logger.error(f"Audio processing error: {str(e)}")
-                return jsonify({'error': f'Failed to process audio file: {str(e)}'}), 400
-            finally:
-                logger.info("Audio processing try block completed")
+            audio = AudioProcessor.process_audio(temp_input.name)
+            audio_numpy = audio.squeeze().numpy()
+            logger.info(f"Request {request_id}: Audio processed - Shape: {audio_numpy.shape}, "
+                      f"Min/Max: {audio_numpy.min():.3f}/{audio_numpy.max():.3f}")
 
             # Prepare model inputs
-            try:
-                logger.info("Preparing model inputs...")
-                inputs = processor(
-                    audios=audio_numpy,
-                    sampling_rate=SAMPLE_RATE,
-                    return_tensors="pt",
-                    src_lang="eng",
-                    tgt_lang=model_language
+            logger.info(f"Request {request_id}: Preparing model inputs...")
+            inputs = processor(
+                audios=audio_numpy,
+                sampling_rate=SAMPLE_RATE,
+                return_tensors="pt",
+                src_lang="eng",
+                tgt_lang=model_language
+            )
+            
+            input_keys = inputs.keys()
+            logger.info(f"Request {request_id}: Input keys available: {input_keys}")
+            
+            if not input_keys:
+                logger.error(f"Request {request_id}: No input keys generated")
+                return jsonify({'error': 'Failed to process audio input'}), 500
+            
+            if DEVICE.type == 'cuda':
+                inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
+                logger.info(f"Request {request_id}: Inputs moved to GPU")
+
+            # Generate translation
+            logger.info(f"Request {request_id}: Starting translation to {model_language}")
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    tgt_lang=model_language,
+                    num_beams=5,
+                    max_new_tokens=200,
+                    use_cache=True
                 )
-                logger.info(f"Input keys available: {inputs.keys()}")
-                
-                if DEVICE.type == 'cuda':
-                    inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
-            except Exception as e:
-                logger.error(f"Input processing error: {str(e)}")
-                return jsonify({'error': f'Failed to prepare audio for translation: {str(e)}'}), 500
+            logger.info(f"Request {request_id}: Translation generation completed")
 
-# Generate translation
-            try:
-                logger.info(f"Starting translation to {model_language}")
-                with torch.no_grad():
-                    outputs = model.generate(
-                        **inputs,
-                        tgt_lang=model_language,
-                        num_beams=5,
-                        max_new_tokens=200,
-                        use_cache=True
-                    )
-                logger.info("Translation generation completed")
+            # Process the output
+            audio_output = None
+            if hasattr(outputs, 'waveform'):
+                audio_output = outputs.waveform[0].cpu().numpy()
+                logger.info(f"Request {request_id}: Processed output using waveform attribute")
+            elif isinstance(outputs, tuple) and len(outputs) > 0:
+                audio_output = outputs[0].squeeze(0).cpu().numpy()
+                logger.info(f"Request {request_id}: Processed output using tuple format")
+            else:
+                raise ValueError("Unexpected output format from model")
 
-                # Process the output
-                audio_output = None
-                if hasattr(outputs, 'waveform'):
-                    audio_output = outputs.waveform[0].cpu().numpy()
-                    logger.info("Processed output using waveform attribute")
-                elif isinstance(outputs, tuple) and len(outputs) > 0:
-                    audio_output = outputs[0].squeeze(0).cpu().numpy()
-                    logger.info("Processed output using tuple format")
-                else:
-                    raise ValueError("Unexpected output format from model")
-                
-                if audio_output is None:
-                    raise ValueError("No audio data generated")
-                
-                logger.info(f"Audio output shape: {audio_output.shape}")
-            except Exception as e:
-                logger.error(f"Translation generation failed: {str(e)}")
-                raise ValueError(f"Failed to generate translation: {str(e)}")
-                
+            if audio_output is None:
+                raise ValueError("No audio data generated")
+            
+            logger.info(f"Request {request_id}: Audio output shape: {audio_output.shape}")
+
             # Save and send the translated audio
             with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
                 temp_files.append(temp_output.name)
@@ -502,18 +569,22 @@ def translate_audio_endpoint():
                 torchaudio.save(
                     temp_output.name,
                     waveform_tensor,
-                    sample_rate=16000  # SeamlessM4T uses 16kHz
+                    sample_rate=16000
                 )
                 
                 with open(temp_output.name, 'rb') as audio_file:
                     audio_data = audio_file.read()
                 
-                # Add debug logging
-                logger.info(f"Audio data length: {len(audio_data)}, First few bytes: {audio_data[:20]}")
+                if not audio_data:
+                    logger.error(f"Request {request_id}: Generated audio data is empty")
+                    return jsonify({'error': 'Generated audio is empty'}), 500
+
+                logger.info(f"Request {request_id}: Audio data length: {len(audio_data)}, "
+                          f"First few bytes: {audio_data[:20]}")
                 
                 response = Response(
                     audio_data,
-                    status=200,  # Force 200 OK instead of 206 Partial Content
+                    status=200,
                     mimetype='audio/wav',
                     headers={
                         'Content-Type': 'audio/wav',
@@ -528,17 +599,17 @@ def translate_audio_endpoint():
                     }
                 )
                 
-                # Add more debug logging
-                logger.info(f"Sending response with {len(audio_data)} bytes of audio data")
+                logger.info(f"Request {request_id}: Response prepared successfully - "
+                          f"Size: {len(audio_data)} bytes, "
+                          f"Content-Type: {response.mimetype}, "
+                          f"Status: {response.status}")
+                
                 return response
 
     except Exception as e:
-            logger.error(f"Translation error: {str(e)}")
-            return jsonify({'error': f'Translation failed: {str(e)}'}), 500
-
-    except Exception as e:
+        logger.error(f"Request {request_id}: Unhandled error: {str(e)}", exc_info=True)
         return ErrorHandler.handle_error(e)
-    
+
     finally:
         for temp_file in temp_files:
             cleanup_file(temp_file)
