@@ -22,27 +22,39 @@ const LinguaSyncApp = () => {
   const audioRef = useRef(null);
   const abortControllerRef = useRef(null);
 
+  const getProgressMessage = (progress) => {
+    if (progress < 20) return "Preparing your audio for translation...";
+    if (progress < 40) return "Analyzing speech patterns...";
+    if (progress < 60) return "Converting to target language...";
+    if (progress < 80) return "Generating natural speech...";
+    if (progress < 100) return "Finalizing your translation...";
+    return "Translation complete!";
+  };
+
   useEffect(() => {
+    // Define cleanup function
     const cleanup = () => {
-      if (translatedAudioUrl) {
-        URL.revokeObjectURL(translatedAudioUrl);
-      }
-      if (audioRef.current) {
-        audioRef.current.src = '';
-        audioRef.current.load();
-      }
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+        if (translatedAudioUrl) {
+            URL.revokeObjectURL(translatedAudioUrl);
+        }
+        if (audioRef.current) {
+            audioRef.current.src = '';
+            audioRef.current.load();
+        }
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
     };
-  
+
+    // Add event listener
     window.addEventListener('beforeunload', cleanup);
+
+    // Return cleanup function
     return () => {
-      window.removeEventListener('beforeunload', cleanup);
-      cleanup();
+        window.removeEventListener('beforeunload', cleanup);
+        cleanup();
     };
-  }, []);
-  
+}, [translatedAudioUrl]); // Added translatedAudioUrl as dependency
 
   const handleFileChange = (event) => {
     setError('');
@@ -150,19 +162,34 @@ const LinguaSyncApp = () => {
     abortControllerRef.current = new AbortController();
 
     try {
+        // Set initial states
         setProcessing(true);
         setError('');
-        setProgressText('Preparing translation...');
         setProgress(10);
         setAudioStatus('loading');
         setAudioReady(false);
 
+        // Prepare form data
         const formData = new FormData();
         formData.append('file', file);
         formData.append('target_language', targetLanguage);
 
-        setProgressText('Sending request...');
-        setProgress(30);
+        // Create progress update interval
+        const progressInterval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 90) {
+                    clearInterval(progressInterval);
+                    return prev;
+                }
+                const increment = Math.random() * 15;
+                const newProgress = Math.min(prev + increment, 90);
+                setProgressText(getProgressMessage(newProgress));
+                return newProgress;
+            });
+        }, 2000);
+
+        // Set initial progress message
+        setProgressText(getProgressMessage(10));
       
         const response = await fetch('http://localhost:5001/translate', {
             method: 'POST',
@@ -174,12 +201,10 @@ const LinguaSyncApp = () => {
         });
 
         if (!response.ok) {
+            clearInterval(progressInterval);
             const errorData = await response.json();
             throw new Error(errorData.error || `Server error: ${response.status}`);
         }
-
-        setProgressText('Processing audio data...');
-        setProgress(60);
 
         // Get the full response data as arrayBuffer
         const audioData = await response.arrayBuffer();
@@ -216,9 +241,6 @@ const LinguaSyncApp = () => {
             audioRef.current.src = '';
             audioRef.current.load();
         }
-
-        setProgressText('Validating audio...');
-        setProgress(80);
 
         // Test audio playability with better error handling
         await new Promise((resolve, reject) => {
@@ -267,8 +289,11 @@ const LinguaSyncApp = () => {
         // Create final URL after validation
         const finalUrl = URL.createObjectURL(audioBlob);
         setTranslatedAudioUrl(finalUrl);
+        
+        // Clear interval and set completion states
+        clearInterval(progressInterval);
         setProgress(100);
-        setProgressText('Translation complete!');
+        setProgressText('Translation complete! 🎉');
         setAudioStatus('ready');
         setIsPlaying(false);
         setAudioReady(true);
@@ -347,10 +372,13 @@ const LinguaSyncApp = () => {
             </Select>
           </div>
 
+          {/* Progress indicator */}
           {processing && (
-            <div className="space-y-2">
-              <Progress value={progress} className="w-full" />
-              <p className="text-center text-sm text-fuchsia-800">{progressText}</p>
+            <div className="space-y-2 p-4">
+              <Progress value={progress} className="w-full h-2" />
+              <p className="text-center text-sm text-fuchsia-800 animate-pulse">
+                {progressText}
+              </p>
             </div>
           )}
 
@@ -447,32 +475,48 @@ const LinguaSyncApp = () => {
                     console.log('Audio seek completed');
                 }}
             />
+</div>
+            <Button
+                onClick={handlePlayPause}
+                className="w-full bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
+                disabled={!audioRef.current || !audioReady || audioStatus === 'error'}
+            >
+                {isPlaying ? (
+                    <><Pause className="mr-2" size={18} /> Pause</>
+                ) : (
+                    <><Play className="mr-2" size={18} /> Play Translation</>
+                )}
+            </Button>
         </div>
-        <Button
-            onClick={handlePlayPause}
-            className="w-full bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
-            disabled={!audioRef.current || !audioReady || audioStatus === 'error'}
-        >
-            {isPlaying ? (
-                <><Pause className="mr-2" size={18} /> Pause</>
-            ) : (
-                <><Play className="mr-2" size={18} /> Play Translation</>
-            )}
-        </Button>
-    </div>
-)}
-        </CardContent>
-        <CardFooter>
-          <Button 
+    )}
+    </CardContent>
+    <CardFooter>
+        <Button 
             onClick={processAudio} 
             disabled={!file || !targetLanguage || processing}
-            className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white"
-          >
-            {processing ? progressText : 'Translate Audio'}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+            className={`
+                w-full 
+                transition-all 
+                duration-200 
+                ${processing 
+                    ? 'bg-fuchsia-300 cursor-not-allowed opacity-70'
+                    : 'bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700'
+                } 
+                text-white
+            `}
+        >
+            {processing ? (
+                <div className="flex items-center justify-center">
+                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                    {progressText}
+                </div>
+            ) : (
+                'Translate Audio'
+            )}
+        </Button>
+    </CardFooter>
+</Card>
+</div>
   );
 };
 
