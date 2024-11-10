@@ -375,7 +375,10 @@ const LinguaSyncApp = () => {
           {/* Progress indicator */}
           {processing && (
             <div className="space-y-2 p-4">
-              <Progress value={progress} className="w-full h-2" />
+              <Progress 
+              value={Math.round(progress)}
+              className="w-full h-2 bg-fuchsia-100" 
+              />
               <p className="text-center text-sm text-fuchsia-800 animate-pulse">
                 {progressText}
               </p>
@@ -391,129 +394,140 @@ const LinguaSyncApp = () => {
           )}
 
 {translatedAudioUrl && (
-    <div className="mt-4 space-y-2">
-        <div className="w-full bg-white rounded-lg p-2">
-            <audio 
-                ref={audioRef} 
-                controls
-                className="w-full"
-                src={translatedAudioUrl}
-                preload="auto"
-                // Add onLoadStart handler
-                onLoadStart={() => {
-                    console.log('Audio loading started');
-                    setAudioReady(false);
-                    setAudioStatus('loading');
-                }}
-                onLoadedMetadata={() => {
-                    console.log('Audio metadata loaded');
-                    if (audioRef.current) {
-                        console.log('Duration:', audioRef.current.duration);
-                    }
-                }}
-                onLoadedData={() => {
-                    console.log('Audio loaded successfully');
-                    if (audioRef.current) {
-                        console.log('Audio duration:', audioRef.current.duration);
-                        console.log('Audio ready state:', audioRef.current.readyState);
-                    }
-                    setProgress(100);
-                    setAudioStatus('ready');
-                    setAudioReady(true);
-                }}
-                onCanPlay={() => {
-                    console.log('Audio can play');
-                    setAudioReady(true);
-                }}
-                onPlaying={() => {
-                    console.log('Audio playing');
-                    setIsPlaying(true);
-                    setAudioStatus('playing');
-                }}
-                onEnded={() => {
-                    console.log('Audio playback ended');
-                    setIsPlaying(false);
-                    setAudioStatus('ready');
-                }}
-                onError={(e) => {
-                    const errorDetail = e.target.error?.message || 'Unknown error';
-                    const errorCode = e.target.error?.code;
-                    console.error('Audio error:', {
-                        error: e.target.error,
-                        code: errorCode,
-                        message: errorDetail,
-                        src: e.target.src,
-                        readyState: audioRef.current?.readyState,
-                        networkState: audioRef.current?.networkState
-                    });
-                    setError(`Error playing audio (${errorCode}): ${errorDetail}`);
-                    setAudioStatus('error');
-                    setAudioReady(false);
-                }}
-                onPlay={() => {
-                    if (!audioReady) {
-                        console.warn('Attempting to play before audio is ready');
-                        return;
-                    }
-                    console.log('Play requested');
-                    setIsPlaying(true);
-                    setAudioStatus('playing');
-                }}
-                onPause={() => {
-                    console.log('Audio paused');
-                    setIsPlaying(false);
-                    setAudioStatus('ready');
-                }}
-                onWaiting={() => {
-                    console.log('Audio buffering');
-                    setAudioStatus('loading');
-                }}
-                onSeeking={() => {
-                    console.log('Audio seeking');
-                }}
-                onSeeked={() => {
-                    console.log('Audio seek completed');
-                }}
-            />
-</div>
-            <Button
-                onClick={handlePlayPause}
-                className="w-full bg-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-200"
-                disabled={!audioRef.current || !audioReady || audioStatus === 'error'}
-            >
-                {isPlaying ? (
-                    <><Pause className="mr-2" size={18} /> Pause</>
-                ) : (
-                    <><Play className="mr-2" size={18} /> Play Translation</>
-                )}
-            </Button>
-        </div>
+  <div className="mt-4 space-y-4">
+    <div className="w-full bg-fuchsia-50 rounded-lg p-4">
+      <audio 
+        ref={audioRef} 
+        src={translatedAudioUrl}
+        className="hidden"
+        preload="auto"
+        onLoadStart={() => {
+          console.log('Audio loading started');
+          setAudioReady(false);
+          setAudioStatus('loading');
+        }}
+        onLoadedMetadata={() => {
+          console.log('Audio metadata loaded');
+          if (audioRef.current) {
+            console.log('Duration:', audioRef.current.duration);
+          }
+        }}
+        onLoadedData={() => {
+          console.log('Audio loaded successfully');
+          if (audioRef.current) {
+            console.log('Audio duration:', audioRef.current.duration);
+            console.log('Audio ready state:', audioRef.current.readyState);
+          }
+          setProgress(100);
+          setAudioStatus('ready');
+          setAudioReady(true);
+        }}
+        onCanPlay={() => {
+          console.log('Audio can play');
+          setAudioReady(true);
+        }}
+        onPlaying={() => {
+          console.log('Audio playing');
+          setIsPlaying(true);
+          setAudioStatus('playing');
+        }}
+        onEnded={() => {
+          console.log('Audio playback ended');
+          setIsPlaying(false);
+          setAudioStatus('ready');
+        }}
+        onError={(e) => {
+          const errorDetail = e.target.error?.message || 'Unknown error';
+          const errorCode = e.target.error?.code;
+          console.error('Audio error:', {
+            error: e.target.error,
+            code: errorCode,
+            message: errorDetail,
+            src: e.target.src,
+            readyState: audioRef.current?.readyState,
+            networkState: audioRef.current?.networkState
+          });
+          setError(`Error playing audio (${errorCode}): ${errorDetail}`);
+          setAudioStatus('error');
+          setAudioReady(false);
+        }}
+        onPlay={() => {
+          if (!audioReady) {
+            console.warn('Attempting to play before audio is ready');
+            return;
+          }
+          console.log('Play requested');
+          setIsPlaying(true);
+          setAudioStatus('playing');
+        }}
+        onPause={() => {
+          console.log('Audio paused');
+          setIsPlaying(false);
+          setAudioStatus('ready');
+        }}
+        onWaiting={() => {
+          console.log('Audio buffering');
+          setAudioStatus('loading');
+        }}
+        onSeeking={() => {
+          console.log('Audio seeking');
+        }}
+        onSeeked={() => {
+          console.log('Audio seek completed');
+        }}
+      />
+    </div>
+    <Button
+      onClick={handlePlayPause}
+      className={`w-full ${isPlaying 
+        ? 'bg-fuchsia-600 hover:bg-fuchsia-700' 
+        : 'bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700'
+      } text-white transition-all duration-300`}
+      disabled={!audioReady || audioStatus === 'error'}
+    >
+{isPlaying ? (
+  <div className="flex items-center justify-center">
+    {audioStatus === 'loading' ? (
+      <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+    ) : (
+      <Pause className="mr-2" size={18} />
+    )}
+    {audioStatus === 'loading' ? 'Loading...' : 'Pause Translation'}
+  </div>
+) : (
+  <div className="flex items-center justify-center">
+    <Play className="mr-2" size={18} />
+    <span>Play Translation</span>
+  </div>
+)}
+    </Button>
+  </div>
     )}
     </CardContent>
     <CardFooter>
-        <Button 
-            onClick={processAudio} 
-            disabled={!file || !targetLanguage || processing}
-            className={`
-                w-full 
-                transition-all 
-                duration-200 
-                ${processing 
-                    ? 'bg-fuchsia-300 cursor-not-allowed opacity-70'
-                    : 'bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700'
-                } 
-                text-white
-            `}
-        >
-            {processing ? (
-                <div className="flex items-center justify-center">
-                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-                    {progressText}
-                </div>
-            ) : (
-                'Translate Audio'
-            )}
-        </Button>
+    <Button 
+  onClick={processAudio} 
+  disabled={!file || !targetLanguage || processing}
+  className={`
+    w-full 
+    text-white 
+    transition-all 
+    duration-200 
+    ${processing 
+      ? 'bg-fuchsia-300 cursor-not-allowed'
+      : 'bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 cursor-pointer'
+    }
+  `}
+>
+  {processing ? (
+    <div className="flex items-center justify-center">
+      <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+      {progressText}
+    </div>
+  ) : (
+    'Translate Audio'
+  )}
+</Button>
     </CardFooter>
 </Card>
 </div>
