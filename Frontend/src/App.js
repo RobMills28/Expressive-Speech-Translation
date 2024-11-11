@@ -12,7 +12,7 @@ const LinguaSyncApp = () => {
   const [audioStatus, setAudioStatus] = useState('idle');
   const [audioReady, setAudioReady] = useState(false);
   const [file, setFile] = useState(null);
-  const [targetLanguage, setTargetLanguage] = useState('');
+  const [targetLanguage, setTargetLanguage] = useState('fra');
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
@@ -96,7 +96,7 @@ const LinguaSyncApp = () => {
     }
   };
 
-  const handleLanguageChange = (value) => {
+  const handleLanguageSelect = (value) => {
     setError('');
     setProgress(0);
     setProgressText('');
@@ -409,31 +409,32 @@ const validateAudio = async (audioBlob) => {
                 {file ? file.name : "No file chosen"}
               </span>
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-fuchsia-800 flex items-center">
-              <Globe className="mr-2" size={18} />
-              Target Language
-            </Label>
-            <Select 
-              value={targetLanguage} 
-              onValueChange={handleLanguageChange}
-            >
-              <SelectTrigger className="w-full border-fuchsia-300">
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="deu">🇩🇪 German</SelectItem>
-                <SelectItem value="fra">🇫🇷 French</SelectItem>
-                <SelectItem value="spa">🇪🇸 Spanish</SelectItem>
-                <SelectItem value="ita">🇮🇹 Italian</SelectItem>
-                <SelectItem value="por">🇵🇹 Portuguese</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            </div>
+         
+         <div className="space-y-2">
+           <Label className="text-sm font-medium text-fuchsia-800 flex items-center">
+             <Globe className="mr-2" size={18} />
+             Target Language
+           </Label>
+           <Select 
+             defaultValue="fra"
+             value={targetLanguage} 
+             onValueChange={handleLanguageSelect}
+           >
+             <SelectTrigger className="w-full border-fuchsia-300">
+               <SelectValue />
+             </SelectTrigger>
+             <SelectContent>
+               <SelectItem value="fra">🇫🇷 French</SelectItem>
+               <SelectItem value="deu">🇩🇪 German</SelectItem>
+               <SelectItem value="ita">🇮🇹 Italian</SelectItem>
+               <SelectItem value="por">🇵🇹 Portuguese</SelectItem>
+               <SelectItem value="spa">🇪🇸 Spanish</SelectItem>
+             </SelectContent>
+           </Select>
+         </div>
 
-          {/* Progress indicator */}
+         {/* Progress indicator */}
           {processing && (
             <div className="space-y-2 p-4">
               <Progress 
@@ -689,17 +690,18 @@ const validateAudio = async (audioBlob) => {
 {/* Translate Button */}
 <Button 
   onClick={processAudio} 
-  disabled={!file || !targetLanguage || processing}
+  disabled={!file || processing}
   className={`
     w-full 
     mt-4
     text-white 
     transition-all 
     duration-200 
-    ${processing 
-      ? 'bg-fuchsia-300 cursor-not-allowed'
+    ${!file
+      ? 'bg-gradient-to-r from-fuchsia-300 to-pink-300 cursor-not-allowed'
       : 'bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 cursor-pointer'
     }
+    ${processing ? 'cursor-not-allowed hover:cursor-not-allowed' : ''}
   `}
 >
   {processing ? (

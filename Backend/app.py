@@ -17,11 +17,15 @@ import queue
 from datetime import datetime
 from pathlib import Path
 from functools import wraps
-from typing import Optional, Dict, Any, Tuple, List
+from contextlib import contextmanager
+from typing import Optional, Dict, Any, Tuple, List, Callable
 
-# Third-party imports
-import torch
+# Third-party imports: Monitoring and Metrics
+from prometheus_client import Counter, Histogram, start_http_server
 import psutil
+
+# Third-party imports: ML and Audio
+import torch
 import numpy as np
 import torchaudio
 from transformers import (
@@ -30,7 +34,7 @@ from transformers import (
     SeamlessM4TTokenizer
 )
 
-# Flask imports
+# Flask and Extensions
 from flask import (
     Flask, 
     request, 
@@ -41,8 +45,10 @@ from flask import (
     current_app
 )
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
-# Logging imports
+# Logging
 import logging
 from logging.handlers import (
     RotatingFileHandler, 
@@ -50,14 +56,16 @@ from logging.handlers import (
 )
 
 # Local imports
-from translate_speech import translate_audio as process_audio  # Give it an alias to avoid conflict
+from translate_speech import translate_audio as process_audio
+
+# Environment variables
+from dotenv import load_dotenv
+
+# Initialize environment
+load_dotenv()
 
 # Suppress warnings
 warnings.filterwarnings('ignore')
-
-# Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
 
 # Constants
 MAX_AUDIO_LENGTH = 60  # seconds
@@ -69,6 +77,18 @@ TIMEOUT = 300  # seconds
 MEMORY_THRESHOLD = 0.9  # 90% memory usage threshold
 BATCH_SIZE = 1
 START_TIME = time.time()
+
+# Metrics configuration
+TRANSLATION_REQUESTS = Counter('translation_requests_total', 'Total translation requests')
+TRANSLATION_ERRORS = Counter('translation_errors_total', 'Total translation errors')
+PROCESSING_TIME = Histogram('translation_processing_seconds', 'Time spent processing translations')
+
+# Rate limiting configuration
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 # Configure logging
 def setup_logging():
@@ -127,16 +147,26 @@ def setup_logging():
 setup_logging()
 logger = logging.getLogger(__name__)
 
-# Signal Handlers 
+def graceful_shutdown():
+    """Graceful shutdown handler"""
+    try:
+        logger.info("Initiating graceful shutdown...")
+        app.config['IS_SHUTTING_DOWN'] = True
+        time.sleep(5)
+        shutdown_handler()
+        logger.info("Graceful shutdown completed")
+    except Exception as e:
+        logger.error(f"Error during graceful shutdown: {str(e)}")
+    finally:
+        sys.exit(0)
+
 def sigterm_handler(signum, frame):
-    """Handle SIGTERM signal"""
     logger.info("Received SIGTERM signal")
-    sys.exit(0)
+    graceful_shutdown()
 
 def sigint_handler(signum, frame):
-    """Handle SIGINT signal (Ctrl+C)"""
     logger.info("Received SIGINT signal")
-    sys.exit(0)
+    graceful_shutdown()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -151,7 +181,7 @@ CORS(app, resources={
             "X-Requested-With",
             "Range",
             "Accept-Ranges",
-            "Origin"  # Added Origin
+            "Origin"
         ],
         "expose_headers": [
             "Content-Type", 
@@ -159,16 +189,29 @@ CORS(app, resources={
             "Content-Range",
             "Content-Disposition",
             "Accept-Ranges",
-            "Access-Control-Allow-Origin",  # Added
-            "Access-Control-Allow-Credentials"  # Added
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Credentials"
         ],
         "supports_credentials": True,
         "max_age": 120,
-        "automatic_options": True  # Added
+        "automatic_options": True
     }
 })
 
-# Unified CORS headers handler
+# Request Validation Middleware
+@app.before_request
+def validate_request():
+    if request.method not in ['GET', 'POST', 'OPTIONS']:
+        return jsonify({'error': 'Method not allowed'}), 405
+    if request.method == 'POST' and not request.is_json and not request.files:
+        return jsonify({'error': 'Invalid content type'}), 400
+
+# Request Timer Middleware
+@app.before_request
+def start_timer():
+    request.start_time = time.time()
+
+# Response Handlers
 @app.after_request
 def add_cors_headers(response):
     origin = request.headers.get('Origin', 'http://localhost:3000')
@@ -193,6 +236,11 @@ def add_cors_headers(response):
             'Expires': '0',
             'Content-Type': 'audio/wav'
         })
+    
+    # Log request duration
+    if hasattr(request, 'start_time'):
+        duration = time.time() - request.start_time
+        logger.info(f"Request to {request.path} took {duration:.2f}s")
     
     return response
 
@@ -276,6 +324,21 @@ class ModelManager:
         self.is_initializing = False
         self._load_model()
     
+    def _verify_model(self):
+        """Verify model loaded correctly"""
+        try:
+            # Try a small test inference
+            dummy_input = torch.zeros((1, 16000))
+            if DEVICE.type == 'cuda':
+                dummy_input = dummy_input.to(DEVICE)
+            with torch.no_grad():
+                _ = self.model(dummy_input)
+            logger.info("Model verification successful")
+            return True
+        except Exception as e:
+            logger.error(f"Model verification failed: {str(e)}")
+            return False
+
     def _load_model(self):
         try:
             logger.info(f"Loading SeamlessM4T model: {MODEL_NAME}")
@@ -285,15 +348,37 @@ class ModelManager:
                 torch.cuda.empty_cache()
                 gc.collect()
             
-            self.processor = SeamlessM4TProcessor.from_pretrained(MODEL_NAME, token=auth_token)
-            self.model = SeamlessM4TModel.from_pretrained(MODEL_NAME, token=auth_token)
-            self.tokenizer = SeamlessM4TTokenizer.from_pretrained(MODEL_NAME, token=auth_token)
+            # Load model components with timeout and performance tracking
+            with PROCESSING_TIME.time():
+                self.processor = SeamlessM4TProcessor.from_pretrained(
+                    MODEL_NAME, 
+                    token=auth_token,
+                    cache_dir="./model_cache"  # Added cache directory
+                )
+                self.model = SeamlessM4TModel.from_pretrained(
+                    MODEL_NAME, 
+                    token=auth_token,
+                    cache_dir="./model_cache"
+                )
+                self.tokenizer = SeamlessM4TTokenizer.from_pretrained(
+                    MODEL_NAME, 
+                    token=auth_token,
+                    cache_dir="./model_cache"
+                )
             
             if DEVICE.type == 'cuda':
                 self.model = self.model.to(DEVICE)
                 logger.info(f"Model loaded on GPU: {torch.cuda.get_device_name(0)}")
+                # Log GPU memory usage after loading
+                memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
+                memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
+                logger.info(f"GPU Memory after loading - Allocated: {memory_allocated:.2f}MB, Reserved: {memory_reserved:.2f}MB")
             else:
                 logger.info("Model loaded on CPU")
+            
+            # Verify model immediately after loading
+            if not self._verify_model():
+                raise ValueError("Model verification failed after loading")
             
             self.last_used = time.time()
             logger.info("Model initialization successful")
@@ -306,44 +391,132 @@ class ModelManager:
             raise
         finally:
             self.is_initializing = False
-    
+            
     def get_model_components(self):
-        self.last_used = time.time()
-        return self.processor, self.model, self.tokenizer
+        """Get model components with validation and monitoring"""
+        try:
+            # Check if model needs reloading (e.g., if it's been too long since last use)
+            if self.last_used and time.time() - self.last_used > 3600:  # 1 hour
+                logger.info("Model inactive for too long, reloading...")
+                self._load_model()
+            
+            # Verify model state
+            if not self._verify_model():
+                logger.error("Model verification failed during component request")
+                return None, None, None
+            
+            # Update last used timestamp
+            self.last_used = time.time()
+            
+            # Log memory usage
+            if DEVICE.type == 'cuda':
+                memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
+                logger.debug(f"GPU Memory at component request: {memory_allocated:.2f}MB")
+            
+            return self.processor, self.model, self.tokenizer
+            
+        except Exception as e:
+            logger.error(f"Error getting model components: {str(e)}")
+            return None, None, None
     
     def cleanup(self):
-        if DEVICE.type == 'cuda':
-            try:
+        """Clean up model resources"""
+        try:
+            logger.info("Cleaning up model resources")
+            if DEVICE.type == 'cuda':
                 if self.model is not None:
                     self.model.cpu()
                 torch.cuda.empty_cache()
                 gc.collect()
-            except Exception as e:
-                logger.error(f"Error during model cleanup: {str(e)}")
+                
+            self.processor = None
+            self.model = None
+            self.tokenizer = None
+            logger.info("Model cleanup completed successfully")
+            
+        except Exception as e:
+            logger.error(f"Error during model cleanup: {str(e)}")
+            
+    def __del__(self):
+        """Destructor to ensure cleanup"""
+        self.cleanup()
 
+# Replace your existing AudioProcessor class
 class AudioProcessor:
+    SUPPORTED_FORMATS = {'.wav', '.mp3', '.ogg', '.flac'}
+
     @staticmethod
-    def validate_audio_length(audio_path: str) -> bool:
+    def validate_audio_length(audio_path: str) -> tuple[bool, str]:
+        """
+        Validates audio file length and basic integrity
+        Returns: (is_valid: bool, error_message: str)
+        """
         try:
+            # Format validation
+            if Path(audio_path).suffix.lower() not in AudioProcessor.SUPPORTED_FORMATS:
+                return False, f"Unsupported audio format. Supported: {AudioProcessor.SUPPORTED_FORMATS}"
+
+            # File checks
+            if not os.path.exists(audio_path):
+                return False, "Audio file not found"
+                
+            file_size = os.path.getsize(audio_path)
+            if file_size == 0:
+                return False, "Audio file is empty"
+
+            # Get audio metadata
             metadata = torchaudio.info(audio_path)
+            
+            # Check sample rate
+            if metadata.sample_rate <= 0:
+                return False, "Invalid sample rate detected"
+                
+            # Check number of frames
+            if metadata.num_frames <= 0:
+                return False, "No audio frames detected"
+
+            # Calculate duration
             duration = metadata.num_frames / metadata.sample_rate
             logger.info(f"Audio duration: {duration:.2f} seconds")
-            return duration <= MAX_AUDIO_LENGTH
+            
+            if duration <= 0:
+                return False, "Invalid audio duration"
+                
+            if duration > MAX_AUDIO_LENGTH:
+                return False, f"Audio duration ({duration:.1f}s) exceeds maximum allowed ({MAX_AUDIO_LENGTH}s)"
+
+            return True, ""
+
         except Exception as e:
-            logger.error(f"Error validating audio length: {str(e)}")
-            return False
+            error_msg = f"Error validating audio: {str(e)}"
+            logger.error(error_msg)
+            return False, error_msg
 
     @staticmethod
     def process_audio(audio_path: str) -> torch.Tensor:
         try:
             logger.info(f"Loading audio from: {audio_path}")
-            # Get audio file info
+            
+            # Load and check audio
             info = torchaudio.info(audio_path)
             logger.info(f"Audio info - Sample rate: {info.sample_rate}, Channels: {info.num_channels}")
             
-            # Load audio
             audio, orig_freq = torchaudio.load(audio_path)
+            
+            # Quality checks
+            if torch.isnan(audio).any():
+                raise ValueError("Audio contains NaN values")
+            if torch.isinf(audio).any():
+                raise ValueError("Audio contains infinite values")
+            if audio.abs().max() == 0:
+                raise ValueError("Audio is silent")
+            
             logger.info(f"Original audio shape: {audio.shape}, Frequency: {orig_freq}Hz")
+            
+            # Process in chunks if large
+            if audio.shape[1] > 1_000_000:  # If longer than 1M samples
+                chunks = audio.split(1_000_000, dim=1)
+                audio = torch.cat([chunk for chunk in chunks], dim=1)
             
             # Resample if needed
             if orig_freq != SAMPLE_RATE:
@@ -383,6 +556,26 @@ class ResourceMonitor:
             memory_allocated = torch.cuda.memory_allocated(0)
             memory_reserved = torch.cuda.memory_reserved(0)
             logger.info(f"GPU Memory - Allocated: {memory_allocated/1024**2:.2f}MB, Reserved: {memory_reserved/1024**2:.2f}MB")
+
+    @staticmethod
+    def check_resources() -> tuple[bool, str]:
+        """Check system resources before processing"""
+        try:
+            # Check system memory
+            memory = psutil.virtual_memory()
+            if memory.percent > MEMORY_THRESHOLD * 100:
+                return False, f"System memory usage too high ({memory.percent}%)"
+
+            # Check GPU memory if available
+            if DEVICE.type == 'cuda':
+                gpu_memory_used = torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated() if torch.cuda.max_memory_allocated() > 0 else 0
+                if gpu_memory_used > 0.9:
+                    return False, f"GPU memory usage too high ({gpu_memory_used*100:.1f}%)"
+
+            return True, ""
+        except Exception as e:
+            logger.error(f"Resource check failed: {str(e)}")
+            return False, "Resource check failed"
 
 class ErrorHandler:
     @staticmethod
@@ -448,9 +641,13 @@ def performance_logger(f):
     return decorated_function
 
 @app.route('/translate', methods=['POST', 'OPTIONS'])
+@limiter.limit("10 per minute")
 @require_model
 @performance_logger
 def translate_audio_endpoint():
+    # Initialize metrics
+    TRANSLATION_REQUESTS.inc()
+    
     if request.method == 'OPTIONS':
         return '', 204
     
@@ -460,7 +657,11 @@ def translate_audio_endpoint():
     
     try:
         logger.info(f"Starting translation request {request_id}")
-        ResourceMonitor.check_memory()
+        
+        # Resource check
+        resources_ok, resource_error = ResourceMonitor.check_resources()
+        if not resources_ok:
+            raise ValueError(f"Resource check failed: {resource_error}")
         
         # Validate request
         if 'file' not in request.files:
@@ -491,17 +692,10 @@ def translate_audio_endpoint():
             logger.info(f"Request {request_id}: Saved input file: {temp_input.name}")
             
             # Validate audio file
-            metadata = torchaudio.info(temp_input.name)
-            duration = metadata.num_frames / metadata.sample_rate
-            logger.info(f"Request {request_id}: Audio duration: {duration:.2f}s, Sample rate: {metadata.sample_rate}Hz")
-            
-            if duration > MAX_DURATION:
-                logger.error(f"Request {request_id}: Audio duration {duration:.2f}s exceeds limit of {MAX_DURATION}s")
-                return jsonify({'error': f'Audio file too long (max {MAX_DURATION} seconds)'}), 400
-            
-            if not AudioProcessor.validate_audio_length(temp_input.name):
-                logger.error(f"Request {request_id}: Audio validation failed")
-                return jsonify({'error': 'Invalid audio file'}), 400
+            is_valid, error_message = AudioProcessor.validate_audio_length(temp_input.name)
+            if not is_valid:
+                logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
+                return jsonify({'error': error_message}), 400
             
             # Get model components and process audio
             model_manager = ModelManager()
@@ -607,13 +801,16 @@ def translate_audio_endpoint():
                 return response
 
     except Exception as e:
+        TRANSLATION_ERRORS.inc()
         logger.error(f"Request {request_id}: Unhandled error: {str(e)}", exc_info=True)
         return ErrorHandler.handle_error(e)
 
     finally:
+        # Cleanup
         for temp_file in temp_files:
             cleanup_file(temp_file)
         logger.info(f"Request {request_id} completed in {time.time() - start_time:.2f}s")
+        PROCESSING_TIME.observe(time.time() - start_time)
         ResourceMonitor.check_memory()
         if DEVICE.type == 'cuda':
             ResourceMonitor.check_gpu()
@@ -707,6 +904,38 @@ def health_check():
             'error': str(e),
             'timestamp': datetime.now().isoformat()
         }), 500
+    
+@app.route('/health/model', methods=['GET'])
+@performance_logger
+def model_health():
+    """Detailed model health check"""
+    try:
+        model_manager = ModelManager()
+        
+        health_info = {
+            'status': 'healthy',
+            'model_loaded': all(x is not None for x in model_manager.get_model_components()),
+            'last_used': model_manager.last_used,
+            'memory_usage': {
+                'system': psutil.Process().memory_info().rss / 1024**2,
+                'system_percent': psutil.virtual_memory().percent,
+            }
+        }
+        
+        if DEVICE.type == 'cuda':
+            health_info['memory_usage']['gpu'] = {
+                'allocated': torch.cuda.memory_allocated() / 1024**2,
+                'reserved': torch.cuda.memory_reserved() / 1024**2,
+            }
+        
+        return jsonify(health_info)
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}", exc_info=True)
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
 
 
 def cleanup_temp_files():
@@ -762,32 +991,66 @@ signal.signal(signal.SIGINT, sigint_handler)  # Changed to use sigint_handler
 
 if __name__ == '__main__':
     try:
+        # Start metrics server
+        start_http_server(8000)
+        logger.info("Metrics server started on port 8000")
+
         # Validate environment
         if not os.getenv('HUGGINGFACE_TOKEN'):
             logger.error("HUGGINGFACE_TOKEN not set in environment")
             sys.exit(1)
 
         # Check model loading
-        model_manager = ModelManager()  # Create instance first
-        if None in model_manager.get_model_components():
+        model_manager = ModelManager()  
+        processor, model, tokenizer = model_manager.get_model_components()
+        if None in (processor, model, tokenizer):
             logger.error("Could not start the app due to model loading failure")
+            sys.exit(1)
+        
+        # Initial resource check
+        resources_ok, resource_error = ResourceMonitor.check_resources()
+        if not resources_ok:
+            logger.error(f"Resource check failed during startup: {resource_error}")
             sys.exit(1)
         
         # Initial cleanup
         cleanup_temp_files()
         
         # Log startup information
-        logger.info("="*50)  # Add visual separator in logs
+        logger.info("="*50)
         logger.info("Starting LinguaSync Backend")
         logger.info(f"Starting Flask app on port 5001 using {DEVICE}")
         logger.info(f"Python version: {sys.version}")
         logger.info(f"Supported languages: {list(LANGUAGE_CODES.keys())}")
+        logger.info(f"Maximum audio length: {MAX_AUDIO_LENGTH} seconds")
+        logger.info(f"Sample rate: {SAMPLE_RATE} Hz")
+        
+        # Log system information
+        memory = psutil.virtual_memory()
+        logger.info(f"System memory: {memory.total/1024**3:.1f}GB total, {memory.available/1024**3:.1f}GB available")
+        logger.info(f"CPU cores: {psutil.cpu_count()}")
         
         if DEVICE.type == 'cuda':
             logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
+            logger.info(f"CUDA version: {torch.version.cuda}")
             ResourceMonitor.check_gpu()
             
-        logger.info("="*50)  # Add visual separator in logs
+        # Log configuration information
+        logger.info("Configuration:")
+        logger.info(f"- Debug mode: {app.debug}")
+        logger.info(f"- CORS enabled: {bool(app.config.get('CORS_ENABLED', True))}")
+        logger.info(f"- Rate limiting: 10 requests per minute")
+        logger.info(f"- Metrics enabled: True (port 8000)")
+        
+        logger.info("="*50)
+        
+        # Initialize rate limiter storage
+        limiter.init_app(app)
+        
+        # Register shutdown handlers
+        atexit.register(shutdown_handler)
+        signal.signal(signal.SIGTERM, sigterm_handler)
+        signal.signal(signal.SIGINT, sigint_handler)
         
         # Start the application
         app.run(
@@ -795,8 +1058,23 @@ if __name__ == '__main__':
             host='0.0.0.0',
             port=5001,
             use_reloader=False,  # Prevent duplicate model loading
-            threaded=True
+            threaded=True,
+            # Additional configurations for production
+            use_x_sendfile=False,
+            request_handler=None,  # You can specify a custom request handler if needed
+            passthrough_errors=False,
+            ssl_context=None  # Set up SSL if needed
         )
+        
     except Exception as e:
         logger.error(f"Failed to start application: {str(e)}", exc_info=True)
+        # Log full stack trace
+        logger.error("Stack trace:", exc_info=True)
+        # Try to clean up resources if possible
+        try:
+            if 'model_manager' in locals():
+                model_manager.cleanup()
+            cleanup_temp_files()
+        except Exception as cleanup_error:
+            logger.error(f"Cleanup failed during error handling: {str(cleanup_error)}")
         sys.exit(1)
