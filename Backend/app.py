@@ -55,9 +55,6 @@ from logging.handlers import (
     TimedRotatingFileHandler
 )
 
-# Local imports
-from translate_speech import translate_audio as process_audio
-
 # Environment variables
 from dotenv import load_dotenv
 
@@ -78,12 +75,44 @@ MEMORY_THRESHOLD = 0.9  # 90% memory usage threshold
 BATCH_SIZE = 1
 START_TIME = time.time()
 
+# Initialize Flask app first
+app = Flask(__name__)
+
+# Configure CORS
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": [
+            "Content-Type",
+            "Accept",
+            "Authorization",
+            "X-Requested-With",
+            "Range",
+            "Accept-Ranges",
+            "Origin"
+        ],
+        "expose_headers": [
+            "Content-Type", 
+            "Content-Length", 
+            "Content-Range",
+            "Content-Disposition",
+            "Accept-Ranges",
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Credentials"
+        ],
+        "supports_credentials": True,
+        "max_age": 120,
+        "automatic_options": True
+    }
+})
+
 # Metrics configuration
 TRANSLATION_REQUESTS = Counter('translation_requests_total', 'Total translation requests')
 TRANSLATION_ERRORS = Counter('translation_errors_total', 'Total translation errors')
 PROCESSING_TIME = Histogram('translation_processing_seconds', 'Time spent processing translations')
 
-# Rate limiting configuration
+# Initialize rate limiter after Flask app
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
@@ -95,12 +124,10 @@ def setup_logging():
     log_dir = Path('logs')
     log_dir.mkdir(exist_ok=True)
     
-    # Create formatters
     detailed_formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
     )
     
-    # Main application log
     main_handler = TimedRotatingFileHandler(
         log_dir / 'app.log',
         when='midnight',
@@ -110,37 +137,32 @@ def setup_logging():
     )
     main_handler.setFormatter(detailed_formatter)
     
-    # Error log
     error_handler = RotatingFileHandler(
         log_dir / 'error.log',
-        maxBytes=10*1024*1024,  # 10MB
+        maxBytes=10*1024*1024,
         backupCount=5,
         encoding='utf-8'
     )
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(detailed_formatter)
     
-    # Performance log
     perf_handler = RotatingFileHandler(
         log_dir / 'performance.log',
-        maxBytes=5*1024*1024,  # 5MB
+        maxBytes=5*1024*1024,
         backupCount=3,
         encoding='utf-8'
     )
     perf_handler.setFormatter(detailed_formatter)
     
-    # Configure root logger
     logging.basicConfig(
         level=logging.INFO,
         handlers=[main_handler, error_handler, perf_handler]
     )
     
-    # Also log to console for development
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(detailed_formatter)
     logging.getLogger().addHandler(console_handler)
     
-    # Disable other loggers
     logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
 # Set up logging
@@ -168,36 +190,6 @@ def sigint_handler(signum, frame):
     logger.info("Received SIGINT signal")
     graceful_shutdown()
 
-# Initialize Flask app
-app = Flask(__name__)
-CORS(app, resources={
-    r"/*": {  # Single catch-all configuration
-        "origins": ["http://localhost:3000"],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": [
-            "Content-Type",
-            "Accept",
-            "Authorization",
-            "X-Requested-With",
-            "Range",
-            "Accept-Ranges",
-            "Origin"
-        ],
-        "expose_headers": [
-            "Content-Type", 
-            "Content-Length", 
-            "Content-Range",
-            "Content-Disposition",
-            "Accept-Ranges",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Credentials"
-        ],
-        "supports_credentials": True,
-        "max_age": 120,
-        "automatic_options": True
-    }
-})
-
 # Request Validation Middleware
 @app.before_request
 def validate_request():
@@ -210,6 +202,22 @@ def validate_request():
 @app.before_request
 def start_timer():
     request.start_time = time.time()
+
+# Handle OPTIONS preflight requests
+@app.route('/translate', methods=['OPTIONS'])
+def handle_preflight():
+    response = make_response()
+    origin = request.headers.get('Origin', 'http://localhost:3000')
+    
+    response.headers.update({
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, Range, Accept-Ranges, Origin',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '120',
+        'Content-Type': 'text/plain'
+    })
+    return response
 
 # Response Handlers
 @app.after_request
@@ -242,22 +250,6 @@ def add_cors_headers(response):
         duration = time.time() - request.start_time
         logger.info(f"Request to {request.path} took {duration:.2f}s")
     
-    return response
-
-# Handle OPTIONS preflight requests
-@app.route('/translate', methods=['OPTIONS'])
-def handle_preflight():
-    response = make_response()
-    origin = request.headers.get('Origin', 'http://localhost:3000')
-    
-    response.headers.update({
-        'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization, Range, Accept-Ranges, Origin',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Max-Age': '120',
-        'Content-Type': 'text/plain'
-    })
     return response
 
 # Error handler for server errors
@@ -323,18 +315,38 @@ class ModelManager:
         self.last_used = None
         self.is_initializing = False
         self._load_model()
-    
+
     def _verify_model(self):
         """Verify model loaded correctly"""
         try:
-            # Try a small test inference
-            dummy_input = torch.zeros((1, 16000))
+            # Create proper dummy inputs for verification
+            sample_audio = torch.randn(1, 16000)  # 1 second of audio at 16kHz
+            
+            # Process through the processor correctly
+            inputs = self.processor(
+                audios=sample_audio.numpy(),
+                sampling_rate=16000,
+                return_tensors="pt",
+                src_lang="eng",  # Source language English
+                tgt_lang="fra"   # Target language French for testing
+            )
+            
+            # Move to device if using CUDA
             if DEVICE.type == 'cuda':
-                dummy_input = dummy_input.to(DEVICE)
+                inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
+            
             with torch.no_grad():
-                _ = self.model(dummy_input)
+                # Try generating output using generate() instead of forward()
+                outputs = self.model.generate(
+                    **inputs,
+                    tgt_lang="fra",
+                    num_beams=1,
+                    max_new_tokens=50
+                )
+                
             logger.info("Model verification successful")
             return True
+            
         except Exception as e:
             logger.error(f"Model verification failed: {str(e)}")
             return False
@@ -353,7 +365,7 @@ class ModelManager:
                 self.processor = SeamlessM4TProcessor.from_pretrained(
                     MODEL_NAME, 
                     token=auth_token,
-                    cache_dir="./model_cache"  # Added cache directory
+                    cache_dir="./model_cache"
                 )
                 self.model = SeamlessM4TModel.from_pretrained(
                     MODEL_NAME, 
@@ -391,7 +403,7 @@ class ModelManager:
             raise
         finally:
             self.is_initializing = False
-            
+    
     def get_model_components(self):
         """Get model components with validation and monitoring"""
         try:
@@ -684,11 +696,16 @@ def translate_audio_endpoint():
             logger.error(f"Request {request_id}: Unsupported language {target_language}")
             return jsonify({'error': f'Unsupported language: {target_language}'}), 400
 
-        # Save and process audio file
+        # Save and process audio file with proper error handling
         file_extension = Path(file.filename).suffix.lower()
         with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
             temp_files.append(temp_input.name)
             file.save(temp_input.name)
+            
+            # Validate file was actually saved
+            if not os.path.exists(temp_input.name) or os.path.getsize(temp_input.name) == 0:
+                raise ValueError("Failed to save audio file")
+            
             logger.info(f"Request {request_id}: Saved input file: {temp_input.name}")
             
             # Validate audio file
@@ -697,108 +714,123 @@ def translate_audio_endpoint():
                 logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
                 return jsonify({'error': error_message}), 400
             
-            # Get model components and process audio
-            model_manager = ModelManager()
-            processor, model, tokenizer = model_manager.get_model_components()
-            logger.info(f"Request {request_id}: Model components loaded successfully")
+            # Process audio with enhanced error checking
+            try:
+                audio = AudioProcessor.process_audio(temp_input.name)
+                audio_numpy = audio.squeeze().numpy()
+                
+                if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
+                    raise ValueError("Invalid audio data detected")
+                
+                logger.info(f"Request {request_id}: Audio processed successfully")
+            except Exception as e:
+                logger.error(f"Audio processing error: {str(e)}")
+                return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
 
-            audio = AudioProcessor.process_audio(temp_input.name)
-            audio_numpy = audio.squeeze().numpy()
-            logger.info(f"Request {request_id}: Audio processed - Shape: {audio_numpy.shape}, "
-                      f"Min/Max: {audio_numpy.min():.3f}/{audio_numpy.max():.3f}")
-
-            # Prepare model inputs
-            logger.info(f"Request {request_id}: Preparing model inputs...")
-            inputs = processor(
-                audios=audio_numpy,
-                sampling_rate=SAMPLE_RATE,
-                return_tensors="pt",
-                src_lang="eng",
-                tgt_lang=model_language
-            )
-            
-            input_keys = inputs.keys()
-            logger.info(f"Request {request_id}: Input keys available: {input_keys}")
-            
-            if not input_keys:
-                logger.error(f"Request {request_id}: No input keys generated")
-                return jsonify({'error': 'Failed to process audio input'}), 500
-            
-            if DEVICE.type == 'cuda':
-                inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
-                logger.info(f"Request {request_id}: Inputs moved to GPU")
-
-            # Generate translation
-            logger.info(f"Request {request_id}: Starting translation to {model_language}")
-            with torch.no_grad():
-                outputs = model.generate(
-                    **inputs,
-                    tgt_lang=model_language,
-                    num_beams=5,
-                    max_new_tokens=200,
-                    use_cache=True
-                )
-            logger.info(f"Request {request_id}: Translation generation completed")
-
-            # Process the output
-            audio_output = None
-            if hasattr(outputs, 'waveform'):
-                audio_output = outputs.waveform[0].cpu().numpy()
-                logger.info(f"Request {request_id}: Processed output using waveform attribute")
-            elif isinstance(outputs, tuple) and len(outputs) > 0:
-                audio_output = outputs[0].squeeze(0).cpu().numpy()
-                logger.info(f"Request {request_id}: Processed output using tuple format")
-            else:
-                raise ValueError("Unexpected output format from model")
-
-            if audio_output is None:
-                raise ValueError("No audio data generated")
-            
-            logger.info(f"Request {request_id}: Audio output shape: {audio_output.shape}")
-
-            # Save and send the translated audio
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
-                temp_files.append(temp_output.name)
-                waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
-                torchaudio.save(
-                    temp_output.name,
-                    waveform_tensor,
-                    sample_rate=16000
+            # Prepare model inputs with validation
+            try:
+                inputs = processor(
+                    audios=audio_numpy,
+                    sampling_rate=SAMPLE_RATE,
+                    return_tensors="pt",
+                    src_lang="eng",
+                    tgt_lang=model_language
                 )
                 
-                with open(temp_output.name, 'rb') as audio_file:
-                    audio_data = audio_file.read()
+                if not inputs or not inputs.keys():
+                    raise ValueError("Failed to prepare model inputs")
                 
-                if not audio_data:
-                    logger.error(f"Request {request_id}: Generated audio data is empty")
-                    return jsonify({'error': 'Generated audio is empty'}), 500
+                if DEVICE.type == 'cuda':
+                    inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
+                
+            except Exception as e:
+                logger.error(f"Input processing error: {str(e)}")
+                return jsonify({'error': f'Failed to prepare audio: {str(e)}'}), 400
 
-                logger.info(f"Request {request_id}: Audio data length: {len(audio_data)}, "
-                          f"First few bytes: {audio_data[:20]}")
+            # Generate translation with enhanced error handling
+            try:
+                with torch.no_grad():
+                    outputs = model.generate(
+                        **inputs,
+                        tgt_lang=model_language,
+                        num_beams=5,
+                        max_new_tokens=200,
+                        use_cache=True
+                    )
                 
-                response = Response(
-                    audio_data,
-                    status=200,
-                    mimetype='audio/wav',
-                    headers={
-                        'Content-Type': 'audio/wav',
-                        'Content-Length': str(len(audio_data)),
-                        'Accept-Ranges': 'bytes',
-                        'Access-Control-Allow-Origin': 'http://localhost:3000',
-                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                        'Access-Control-Allow-Headers': 'Content-Type',
-                        'Access-Control-Expose-Headers': 'Content-Length',
-                        'Cache-Control': 'no-cache',
-                        'Content-Disposition': f'attachment; filename=translated_{Path(file.filename).stem}.wav'
-                    }
-                )
+                if outputs is None:
+                    raise ValueError("Model generated no output")
+                    
+            except Exception as e:
+                logger.error(f"Translation error: {str(e)}")
+                return jsonify({'error': f'Translation failed: {str(e)}'}), 500
+
+            # Process the output with validation
+            try:
+                if hasattr(outputs, 'waveform'):
+                    audio_output = outputs.waveform[0].cpu().numpy()
+                elif isinstance(outputs, tuple) and len(outputs) > 0:
+                    audio_output = outputs[0].squeeze(0).cpu().numpy()
+                else:
+                    raise ValueError("Unexpected output format from model")
+
+                if audio_output is None or audio_output.size == 0:
+                    raise ValueError("No audio data generated")
                 
-                logger.info(f"Request {request_id}: Response prepared successfully - "
-                          f"Size: {len(audio_data)} bytes, "
-                          f"Content-Type: {response.mimetype}, "
-                          f"Status: {response.status}")
+                # Normalize audio if needed
+                if np.abs(audio_output).max() > 1.0:
+                    audio_output = audio_output / np.abs(audio_output).max()
                 
-                return response
+                logger.info(f"Request {request_id}: Audio output processed successfully")
+                
+            except Exception as e:
+                logger.error(f"Output processing error: {str(e)}")
+                return jsonify({'error': f'Failed to process translation: {str(e)}'}), 500
+
+            # Save and send the translated audio with proper headers
+            try:
+                with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
+                    temp_files.append(temp_output.name)
+                    waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
+                    torchaudio.save(
+                        temp_output.name,
+                        waveform_tensor,
+                        sample_rate=16000
+                    )
+                    
+                    # Verify the saved file
+                    if not os.path.exists(temp_output.name) or os.path.getsize(temp_output.name) == 0:
+                        raise ValueError("Failed to save translated audio")
+                    
+                    with open(temp_output.name, 'rb') as audio_file:
+                        audio_data = audio_file.read()
+                    
+                    if not audio_data:
+                        raise ValueError("Generated audio data is empty")
+
+                    response = Response(
+                        audio_data,
+                        mimetype='audio/wav',
+                        headers={
+                            'Content-Type': 'audio/wav',
+                            'Content-Length': str(len(audio_data)),
+                            'Content-Disposition': f'attachment; filename=translated_{Path(file.filename).stem}.wav',
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0',
+                            'Access-Control-Allow-Origin': request.headers.get('Origin', 'http://localhost:3000'),
+                            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                            'Access-Control-Allow-Headers': 'Content-Type',
+                            'Access-Control-Allow-Credentials': 'true'
+                        }
+                    )
+                    
+                    logger.info(f"Request {request_id}: Response prepared successfully")
+                    return response
+
+            except Exception as e:
+                logger.error(f"Response preparation error: {str(e)}")
+                return jsonify({'error': f'Failed to prepare response: {str(e)}'}), 500
 
     except Exception as e:
         TRANSLATION_ERRORS.inc()
@@ -806,104 +838,18 @@ def translate_audio_endpoint():
         return ErrorHandler.handle_error(e)
 
     finally:
-        # Cleanup
+        # Cleanup temp files
         for temp_file in temp_files:
             cleanup_file(temp_file)
-        logger.info(f"Request {request_id} completed in {time.time() - start_time:.2f}s")
-        PROCESSING_TIME.observe(time.time() - start_time)
+        
+        duration = time.time() - start_time
+        logger.info(f"Request {request_id} completed in {duration:.2f}s")
+        PROCESSING_TIME.observe(duration)
+        
+        # Resource monitoring
         ResourceMonitor.check_memory()
         if DEVICE.type == 'cuda':
             ResourceMonitor.check_gpu()
-
-@app.route('/health', methods=['GET'])
-@performance_logger
-def health_check():
-    """Health check endpoint with detailed system information"""
-    try:
-        # Check Hugging Face token
-        token = os.getenv('HUGGINGFACE_TOKEN')
-        token_status = bool(token)
-
-        # Check model components
-        model_manager = ModelManager()
-        processor, model, tokenizer = model_manager.get_model_components()
-        
-        # Get GPU information if available
-        gpu_info = None
-        if DEVICE.type == 'cuda':
-            try:
-                gpu_properties = torch.cuda.get_device_properties(0)
-                gpu_info = {
-                    'name': gpu_properties.name,
-                    'total_memory': f"{gpu_properties.total_memory/1024**2:.2f}MB",
-                    'memory_allocated': f"{torch.cuda.memory_allocated()/1024**2:.2f}MB",
-                    'memory_reserved': f"{torch.cuda.memory_reserved()/1024**2:.2f}MB",
-                    'utilization': f"{torch.cuda.utilization()}%",
-                    'device_count': torch.cuda.device_count()
-                }
-            except Exception as e:
-                logger.error(f"Error getting GPU info: {str(e)}")
-                gpu_info = {'error': str(e)}
-        
-        # Get system information
-        system_info = {
-            'cpu_usage': psutil.cpu_percent(interval=1),  # 1 second interval
-            'memory': {
-                'total': f"{psutil.virtual_memory().total/1024**3:.2f}GB",
-                'available': f"{psutil.virtual_memory().available/1024**3:.2f}GB",
-                'used_percent': psutil.virtual_memory().percent
-            },
-            'disk': {
-                'total': f"{psutil.disk_usage('/').total/1024**3:.2f}GB",
-                'free': f"{psutil.disk_usage('/').free/1024**3:.2f}GB",
-                'used_percent': psutil.disk_usage('/').percent
-            },
-            'python_version': sys.version,
-            'platform': platform.platform()
-        }
-
-        # Check CORS configuration
-        cors_info = {
-            'enabled': True,
-            'allowed_origins': app.config.get('CORS_ALLOWED_ORIGINS', ['http://localhost:3000']),
-            'allowed_methods': ['GET', 'POST', 'OPTIONS'],
-            'max_age': 120
-        }
-        
-        # Get temp directory status
-        temp_dir = tempfile.gettempdir()
-        temp_files = list(Path(temp_dir).glob("*.wav"))
-        temp_info = {
-            'path': temp_dir,
-            'wav_file_count': len(temp_files),
-            'total_size_mb': sum(f.stat().st_size for f in temp_files) / (1024 * 1024)
-        }
-
-        return jsonify({
-            'status': 'healthy',
-            'timestamp': datetime.now().isoformat(),
-            'model': {
-                'name': MODEL_NAME,
-                'loaded': None not in (processor, model, tokenizer),
-                'device': DEVICE.type,
-                'last_used': model_manager.last_used,
-                'huggingface_token_configured': token_status
-            },
-            'system': system_info,
-            'gpu': gpu_info,
-            'languages_supported': LANGUAGE_CODES,
-            'cors': cors_info,
-            'temp_files': temp_info,
-            'uptime': time.time() - START_TIME  # Add START_TIME at the top of your file
-        }), 200
-
-    except Exception as e:
-        logger.error(f"Health check failed: {str(e)}", exc_info=True)
-        return jsonify({
-            'status': 'error',
-            'error': str(e),
-            'timestamp': datetime.now().isoformat()
-        }), 500
     
 @app.route('/health/model', methods=['GET'])
 @performance_logger
@@ -1052,18 +998,13 @@ if __name__ == '__main__':
         signal.signal(signal.SIGTERM, sigterm_handler)
         signal.signal(signal.SIGINT, sigint_handler)
         
-        # Start the application
+        # Start the application with simplified configuration
         app.run(
-            debug=False,  # Set to False for production
             host='0.0.0.0',
             port=5001,
-            use_reloader=False,  # Prevent duplicate model loading
-            threaded=True,
-            # Additional configurations for production
-            use_x_sendfile=False,
-            request_handler=None,  # You can specify a custom request handler if needed
-            passthrough_errors=False,
-            ssl_context=None  # Set up SSL if needed
+            debug=False,
+            use_reloader=False,
+            threaded=True
         )
         
     except Exception as e:
