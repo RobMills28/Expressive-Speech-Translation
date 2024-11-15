@@ -24,6 +24,46 @@ const LinguaSyncApp = () => {
   const abortControllerRef = useRef(null);
   const progressIntervalRef = useRef(null);
 
+    // Add this new cleanup function
+    const cleanup = () => {
+      try {
+        // Clean up URLs
+        if (translatedAudioUrl) {
+          URL.revokeObjectURL(translatedAudioUrl);
+          setTranslatedAudioUrl('');
+        }
+        
+        // Clean up audio element
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+          audioRef.current.removeAttribute('src');
+          audioRef.current.load();
+        }
+        
+        // Clean up pending requests
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+          abortControllerRef.current = null;
+        }
+        
+        // Clean up progress interval
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
+        }
+        
+        // Reset states
+        setAudioReady(false);
+        setAudioStatus('idle');
+        setError('');
+        setProgress(0);
+        setProgressText('');
+        setIsPlaying(false);
+      } catch (e) {
+        console.error('Cleanup error:', e);
+      }
+    };
 
   const getProgressMessage = (progress) => {
     if (progress < 20) return "Preparing your audio for translation...";
@@ -35,28 +75,13 @@ const LinguaSyncApp = () => {
 };
 
 useEffect(() => {
-  const cleanup = () => {
-      if (translatedAudioUrl) {
-          URL.revokeObjectURL(translatedAudioUrl);
-      }
-      if (audioRef.current) {
-          audioRef.current.src = '';
-          audioRef.current.load();
-      }
-      if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-      }
-      if (progressIntervalRef.current) {
-          clearInterval(progressIntervalRef.current);
-      }
-  };
-
   window.addEventListener('beforeunload', cleanup);
   return () => {
       window.removeEventListener('beforeunload', cleanup);
       cleanup();
   };
-}, [translatedAudioUrl]);
+}, []);
+
 
   const handleFileChange = (event) => {
     setError('');
@@ -99,24 +124,9 @@ useEffect(() => {
   };
 
   const handleLanguageSelect = (value) => {
-    setError('');
-    setProgress(0);
-    setProgressText('');
-    setAudioStatus('idle');
-    
-    if (translatedAudioUrl) {
-      URL.revokeObjectURL(translatedAudioUrl);
-      setTranslatedAudioUrl('');
-    }
-
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-
-    setIsPlaying(false);
+    cleanup();  // This handles all the cleanup we need
     setTargetLanguage(value);
-  };
+};
 
   const handlePlayPause = async () => {
     if (!audioRef.current) {
@@ -157,34 +167,14 @@ useEffect(() => {
   };
 
   const processAudio = async () => {
-    if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-    }
-    if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-    }
-    
+    cleanup();  // This replaces all the manual cleanup at the start
     abortControllerRef.current = new AbortController();
 
     try {
         setProcessing(true);
-        setError('');
         setProgress(10);
         setProgressText(getProgressMessage(10));
         setAudioStatus('loading');
-        setAudioReady(false);
-
-        // Clean up previous audio
-        if (translatedAudioUrl) {
-            URL.revokeObjectURL(translatedAudioUrl);
-            setTranslatedAudioUrl('');
-        }
-
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.removeAttribute('src'); // Change this line
-            audioRef.current.load();
-        }
 
         progressIntervalRef.current = setInterval(() => {
             setProgress(prev => {
@@ -216,43 +206,37 @@ useEffect(() => {
 
         const audioData = await response.arrayBuffer();
         
-        // Create blob and URL
+        // Create blob and validate
         const blob = new Blob([audioData], { type: 'audio/wav' });
+        if (blob.size === 0) {
+            throw new Error('Received empty audio data');
+        }
+        
         const url = URL.createObjectURL(blob);
 
-        // Important: Set up audio element before updating state
+        // Set up audio element before updating state
         if (audioRef.current) {
             audioRef.current.src = url;
+            await audioRef.current.load(); // Important: wait for load
         }
 
-        // Now update state
         setTranslatedAudioUrl(url);
         setProgress(100);
         setProgressText(getProgressMessage(100));
-
-        // Wait a moment before setting ready state
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
         setAudioReady(true);
         setAudioStatus('ready');
-        setError('');
 
     } catch (e) {
         console.error('Translation error:', e);
         setError(e.message);
         setAudioStatus('error');
-        setAudioReady(false);
-        
-        if (translatedAudioUrl) {
-            URL.revokeObjectURL(translatedAudioUrl);
-            setTranslatedAudioUrl('');
-        }
+        cleanup(); // Use cleanup instead of manual cleanup
     } finally {
+        setProcessing(false);
         if (progressIntervalRef.current) {
             clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
         }
-        setProcessing(false);
-        abortControllerRef.current = null;
     }
 };
 
