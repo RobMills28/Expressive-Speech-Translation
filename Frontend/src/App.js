@@ -297,7 +297,7 @@ const validateAudio = async (audioBlob) => {
           <CardTitle className="text-3xl font-bold">LinguaSync AI</CardTitle>
           <CardDescription className="text-pink-100">Audio Translation</CardDescription>
         </CardHeader>
-        <CardContent className="mt-4 space-y-6">
+        <CardContent className="mt-4 space-y-6 pb-6">
           <div className="bg-fuchsia-100 p-4 rounded-lg shadow-inner">
             <Label htmlFor="audio-input" className="text-sm font-medium text-fuchsia-800 flex items-center">
               <Mic className="mr-2" size={18} />
@@ -369,7 +369,7 @@ const validateAudio = async (audioBlob) => {
 
 {translatedAudioUrl && (
   <div className="mt-4 space-y-4">
-    <div className="w-full bg-fuchsia-50 rounded-lg p-4 min-h-[100px]">
+    <div>
       <audio 
         ref={audioRef} 
         src={translatedAudioUrl}
