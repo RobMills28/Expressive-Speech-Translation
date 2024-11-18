@@ -28,6 +28,7 @@ import psutil
 import torch
 import numpy as np
 import torchaudio
+import scipy.signal
 from transformers import (
     SeamlessM4TModel, 
     SeamlessM4TProcessor, 
@@ -65,13 +66,14 @@ load_dotenv()
 warnings.filterwarnings('ignore')
 
 # Constants
-MAX_AUDIO_LENGTH = 60  # seconds
-MAX_DURATION = 60 # seconds
+MAX_AUDIO_LENGTH = 300  # seconds (5 minutes)
+MAX_DURATION = 300 # seconds
+MAX_TOKENS = 1500
 SAMPLE_RATE = 16000
-CHUNK_SIZE = 8192
+CHUNK_SIZE = 16384  # Increased for better processing
 MAX_RETRIES = 3
-TIMEOUT = 300  # seconds
-MEMORY_THRESHOLD = 0.9  # 90% memory usage threshold
+TIMEOUT = 600  # seconds (increased for longer audio)
+MEMORY_THRESHOLD = 0.9
 BATCH_SIZE = 1
 START_TIME = time.time()
 
@@ -754,10 +756,19 @@ def translate_audio_endpoint():
                         **inputs,
                         tgt_lang=model_language,
                         num_beams=5,
-                        max_new_tokens=200,
-                        use_cache=True
+                        max_new_tokens=500,  # Increased from 200
+                        min_new_tokens=50,   # Added minimum
+                        use_cache=True,
+                        temperature=0.7,     # Added temperature
+                        length_penalty=1.2,  # Increased from 1.0
+                        no_repeat_ngram_size=3,  # Added to prevent repetition
+                        early_stopping=True
                     )
-                
+
+                # Add output debugging
+                logger.info(f"Model output shape: {outputs.shape if hasattr(outputs, 'shape') else 'No shape'}")
+                logger.info(f"Model output type: {type(outputs)}")
+
                 if outputs is None:
                     raise ValueError("Model generated no output")
                     
