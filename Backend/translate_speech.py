@@ -5,6 +5,7 @@ import os
 import numpy as np
 from pathlib import Path
 import logging
+import scipy.signal
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -40,8 +41,16 @@ def process_audio(input_path):
         audio, orig_freq = torchaudio.load(input_path)
         logger.info(f"Original audio shape: {audio.shape}, frequency: {orig_freq}Hz")
         
-        # Resample to 16kHz
-        audio = torchaudio.functional.resample(audio, orig_freq=orig_freq, new_freq=SAMPLE_RATE)
+        # Resample to 16kHz with high-quality settings
+        resampler = torchaudio.transforms.Resample(
+            orig_freq=orig_freq,
+            new_freq=SAMPLE_RATE,
+            lowpass_filter_width=64,
+            rolloff=0.9475937167399596,
+            resampling_method="kaiser_window",
+            beta=14.769656459379492
+        )
+        audio = resampler(audio)
         logger.info(f"Resampled audio shape: {audio.shape}")
         
         # Convert to mono if stereo
@@ -49,10 +58,17 @@ def process_audio(input_path):
             audio = torch.mean(audio, dim=0, keepdim=True)
             logger.info("Converted stereo to mono")
         
-        # Normalize audio
-        if audio.abs().max() > 1.0:
-            audio = audio / audio.abs().max()
-            logger.info("Normalized audio")
+        # Remove DC offset
+        audio = audio - torch.mean(audio, dim=1, keepdim=True)
+        
+        # Apply pre-emphasis filter
+        pre_emphasis = 0.97
+        audio = torch.cat([audio[:, :1], audio[:, 1:] - pre_emphasis * audio[:, :-1]], dim=1)
+        
+        # Normalize with headroom
+        max_val = audio.abs().max()
+        if max_val > 0:
+            audio = audio * (0.95 / max_val)
             
         return audio
         
@@ -62,33 +78,37 @@ def process_audio(input_path):
 
 def translate_audio(input_path, target_language="fra"):
     """
-    Process and translate audio file
-    
-    Args:
-        input_path (str): Path to input audio file
-        target_language (str): Target language code (default: "fra")
-    
-    Returns:
-        tuple: (waveform_tensor, sample_rate)
+    Process and translate audio file with improved audio quality
     """
     try:
         logger.info(f"Starting translation to {target_language}")
         
-        # Process audio
+        # Enhanced audio processing
         audio = process_audio(input_path)
+        
+        # Apply bandpass filter for speech frequencies
         audio_numpy = audio.squeeze().numpy()
+        nyquist = SAMPLE_RATE // 2
+        low_cutoff = 80 / nyquist
+        high_cutoff = 7500 / nyquist
+        b, a = scipy.signal.butter(4, [low_cutoff, high_cutoff], btype='band')
+        filtered_audio = scipy.signal.filtfilt(b, a, audio_numpy)
+        
+        # Normalize filtered audio
+        filtered_audio = filtered_audio / np.max(np.abs(filtered_audio)) * 0.95
+        filtered_audio = filtered_audio - np.mean(filtered_audio)
         
         # Prepare model inputs
         logger.info("Preparing model inputs")
         inputs = processor(
-            audios=audio_numpy,
+            audios=filtered_audio,
             sampling_rate=SAMPLE_RATE,
-            src_lang="eng",  # Source language is English
+            src_lang="eng",
             tgt_lang=target_language,
             return_tensors="pt"
         )
         
-        # Generate translation
+        # Generate translation with improved parameters
         logger.info("Generating translation")
         with torch.no_grad():
             outputs = model.generate(
@@ -96,10 +116,12 @@ def translate_audio(input_path, target_language="fra"):
                 tgt_lang=target_language,
                 num_beams=5,
                 max_new_tokens=200,
-                use_cache=True
+                use_cache=True,
+                temperature=0.7,
+                length_penalty=1.0
             )
         
-        # Process the output
+        # Process the output with enhanced audio quality
         logger.info("Processing model outputs")
         if hasattr(outputs, 'waveform'):
             audio_output = outputs.waveform[0].cpu().numpy()
@@ -110,15 +132,21 @@ def translate_audio(input_path, target_language="fra"):
         else:
             raise ValueError("Unexpected output format from model")
         
+        # Post-process the output audio
+        audio_output = audio_output - np.mean(audio_output)  # Remove DC offset
+        audio_output = np.tanh(audio_output)  # Gentle limiting
+        
+        # Final normalization with headroom
+        max_val = np.abs(audio_output).max()
+        if max_val > 0:
+            audio_output = audio_output * (0.95 / max_val)
+        
         # Convert to torch tensor
         waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
         
-        # Normalize output audio
-        if waveform_tensor.abs().max() > 1.0:
-            waveform_tensor = waveform_tensor / waveform_tensor.abs().max()
-            logger.info("Normalized output audio")
-        
         logger.info(f"Translation complete. Output shape: {waveform_tensor.shape}")
+        logger.info(f"Output range: {waveform_tensor.min():.3f} to {waveform_tensor.max():.3f}")
+        
         return waveform_tensor, SAMPLE_RATE
         
     except Exception as e:
