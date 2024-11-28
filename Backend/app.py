@@ -1,24 +1,14 @@
 # Standard library imports
 import os
 import sys
-import gc
-import json
 import time
 import atexit
 import signal
-import shutil
 import hashlib
 import warnings
 import tempfile
-import threading
-import traceback
-import platform
-import queue
 from datetime import datetime
 from pathlib import Path
-from functools import wraps
-from contextlib import contextmanager
-from typing import Optional, Dict, Any, Tuple, List, Callable
 
 # Third-party imports: Monitoring and Metrics
 from prometheus_client import Counter, Histogram, start_http_server
@@ -28,12 +18,6 @@ import psutil
 import torch
 import numpy as np
 import torchaudio
-import scipy.signal
-from transformers import (
-    SeamlessM4TModel, 
-    SeamlessM4TProcessor, 
-    SeamlessM4TTokenizer
-)
 
 # Flask and Extensions
 from flask import (
@@ -41,9 +25,7 @@ from flask import (
     request, 
     jsonify,
     make_response, 
-    send_file, 
-    Response, 
-    current_app
+    Response
 )
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -58,6 +40,17 @@ from logging.handlers import (
 
 # Environment variables
 from dotenv import load_dotenv
+
+# Local imports
+from services.audio_processor import AudioProcessor
+from services.model_manager import ModelManager
+from services.resource_monitor import ResourceMonitor
+from services.error_handler import ErrorHandler
+from services.utils import (
+    cleanup_file,
+    require_model,
+    performance_logger
+)
 
 # Initialize environment
 load_dotenv()
@@ -298,361 +291,6 @@ LANGUAGE_MAP = {
     'it': 'ita',
     'pt': 'por'
 }
-
-class ModelManager:
-    _instance = None
-    _lock = threading.Lock()
-    
-    def __new__(cls):
-        with cls._lock:
-            if cls._instance is None:
-                cls._instance = super().__new__(cls)
-                cls._instance._initialize()
-            return cls._instance
-    
-    def _initialize(self):
-        self.processor = None
-        self.model = None
-        self.tokenizer = None
-        self.last_used = None
-        self.is_initializing = False
-        self._load_model()
-
-    def _verify_model(self):
-        """Verify model loaded correctly"""
-        try:
-            # Create proper dummy inputs for verification
-            sample_audio = torch.randn(1, 16000)  # 1 second of audio at 16kHz
-            
-            # Process through the processor correctly
-            inputs = self.processor(
-                audios=sample_audio.numpy(),
-                sampling_rate=16000,
-                return_tensors="pt",
-                src_lang="eng",  # Source language English
-                tgt_lang="fra"   # Target language French for testing
-            )
-            
-            # Move to device if using CUDA
-            if DEVICE.type == 'cuda':
-                inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
-            
-            with torch.no_grad():
-                # Try generating output using generate() instead of forward()
-                outputs = self.model.generate(
-                    **inputs,
-                    tgt_lang="fra",
-                    num_beams=1,
-                    max_new_tokens=50
-                )
-                
-            logger.info("Model verification successful")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Model verification failed: {str(e)}")
-            return False
-
-    def _load_model(self):
-        try:
-            logger.info(f"Loading SeamlessM4T model: {MODEL_NAME}")
-            self.is_initializing = True
-            
-            if DEVICE.type == 'cuda':
-                torch.cuda.empty_cache()
-                gc.collect()
-            
-            # Load model components with timeout and performance tracking
-            with PROCESSING_TIME.time():
-                self.processor = SeamlessM4TProcessor.from_pretrained(
-                    MODEL_NAME, 
-                    token=auth_token,
-                    cache_dir="./model_cache"
-                )
-                self.model = SeamlessM4TModel.from_pretrained(
-                    MODEL_NAME, 
-                    token=auth_token,
-                    cache_dir="./model_cache"
-                )
-                self.tokenizer = SeamlessM4TTokenizer.from_pretrained(
-                    MODEL_NAME, 
-                    token=auth_token,
-                    cache_dir="./model_cache"
-                )
-            
-            if DEVICE.type == 'cuda':
-                self.model = self.model.to(DEVICE)
-                logger.info(f"Model loaded on GPU: {torch.cuda.get_device_name(0)}")
-                # Log GPU memory usage after loading
-                memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
-                memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
-                logger.info(f"GPU Memory after loading - Allocated: {memory_allocated:.2f}MB, Reserved: {memory_reserved:.2f}MB")
-            else:
-                logger.info("Model loaded on CPU")
-            
-            # Verify model immediately after loading
-            if not self._verify_model():
-                raise ValueError("Model verification failed after loading")
-            
-            self.last_used = time.time()
-            logger.info("Model initialization successful")
-            
-        except Exception as e:
-            logger.error(f"Error initializing model: {str(e)}", exc_info=True)
-            self.processor = None
-            self.model = None
-            self.tokenizer = None
-            raise
-        finally:
-            self.is_initializing = False
-    
-    def get_model_components(self):
-        """Get model components with validation and monitoring"""
-        try:
-            # Check if model needs reloading (e.g., if it's been too long since last use)
-            if self.last_used and time.time() - self.last_used > 3600:  # 1 hour
-                logger.info("Model inactive for too long, reloading...")
-                self._load_model()
-            
-            # Verify model state
-            if not self._verify_model():
-                logger.error("Model verification failed during component request")
-                return None, None, None
-            
-            # Update last used timestamp
-            self.last_used = time.time()
-            
-            # Log memory usage
-            if DEVICE.type == 'cuda':
-                memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
-                logger.debug(f"GPU Memory at component request: {memory_allocated:.2f}MB")
-            
-            return self.processor, self.model, self.tokenizer
-            
-        except Exception as e:
-            logger.error(f"Error getting model components: {str(e)}")
-            return None, None, None
-    
-    def cleanup(self):
-        """Clean up model resources"""
-        try:
-            logger.info("Cleaning up model resources")
-            if DEVICE.type == 'cuda':
-                if self.model is not None:
-                    self.model.cpu()
-                torch.cuda.empty_cache()
-                gc.collect()
-                
-            self.processor = None
-            self.model = None
-            self.tokenizer = None
-            logger.info("Model cleanup completed successfully")
-            
-        except Exception as e:
-            logger.error(f"Error during model cleanup: {str(e)}")
-            
-    def __del__(self):
-        """Destructor to ensure cleanup"""
-        self.cleanup()
-
-# Replace your existing AudioProcessor class
-class AudioProcessor:
-    SUPPORTED_FORMATS = {'.wav', '.mp3', '.ogg', '.flac'}
-
-    @staticmethod
-    def validate_audio_length(audio_path: str) -> tuple[bool, str]:
-        """
-        Validates audio file length and basic integrity
-        Returns: (is_valid: bool, error_message: str)
-        """
-        try:
-            # Format validation
-            if Path(audio_path).suffix.lower() not in AudioProcessor.SUPPORTED_FORMATS:
-                return False, f"Unsupported audio format. Supported: {AudioProcessor.SUPPORTED_FORMATS}"
-
-            # File checks
-            if not os.path.exists(audio_path):
-                return False, "Audio file not found"
-                
-            file_size = os.path.getsize(audio_path)
-            if file_size == 0:
-                return False, "Audio file is empty"
-
-            # Get audio metadata
-            metadata = torchaudio.info(audio_path)
-            
-            # Check sample rate
-            if metadata.sample_rate <= 0:
-                return False, "Invalid sample rate detected"
-                
-            # Check number of frames
-            if metadata.num_frames <= 0:
-                return False, "No audio frames detected"
-
-            # Calculate duration
-            duration = metadata.num_frames / metadata.sample_rate
-            logger.info(f"Audio duration: {duration:.2f} seconds")
-            
-            if duration <= 0:
-                return False, "Invalid audio duration"
-                
-            if duration > MAX_AUDIO_LENGTH:
-                return False, f"Audio duration ({duration:.1f}s) exceeds maximum allowed ({MAX_AUDIO_LENGTH}s)"
-
-            return True, ""
-
-        except Exception as e:
-            error_msg = f"Error validating audio: {str(e)}"
-            logger.error(error_msg)
-            return False, error_msg
-
-    @staticmethod
-    def process_audio(audio_path: str) -> torch.Tensor:
-        try:
-            logger.info(f"Loading audio from: {audio_path}")
-            
-            # Load and check audio
-            info = torchaudio.info(audio_path)
-            logger.info(f"Audio info - Sample rate: {info.sample_rate}, Channels: {info.num_channels}")
-            
-            audio, orig_freq = torchaudio.load(audio_path)
-            
-            # Quality checks
-            if torch.isnan(audio).any():
-                raise ValueError("Audio contains NaN values")
-            if torch.isinf(audio).any():
-                raise ValueError("Audio contains infinite values")
-            if audio.abs().max() == 0:
-                raise ValueError("Audio is silent")
-            
-            logger.info(f"Original audio shape: {audio.shape}, Frequency: {orig_freq}Hz")
-            
-            # Process in chunks if large
-            if audio.shape[1] > 1_000_000:  # If longer than 1M samples
-                chunks = audio.split(1_000_000, dim=1)
-                audio = torch.cat([chunk for chunk in chunks], dim=1)
-            
-            # Resample if needed
-            if orig_freq != SAMPLE_RATE:
-                logger.info(f"Resampling from {orig_freq}Hz to {SAMPLE_RATE}Hz")
-                audio = torchaudio.functional.resample(audio, orig_freq=orig_freq, new_freq=SAMPLE_RATE)
-            
-            # Convert to mono if stereo
-            if audio.shape[0] > 1:
-                logger.info("Converting from stereo to mono")
-                audio = torch.mean(audio, dim=0, keepdim=True)
-            
-            # Normalize audio
-            if audio.abs().max() > 1.0:
-                logger.info("Normalizing audio")
-                audio = audio / audio.abs().max()
-            
-            logger.info(f"Processed audio shape: {audio.shape}")
-            return audio
-            
-        except Exception as e:
-            logger.error(f"Audio processing failed: {str(e)}", exc_info=True)
-            raise ValueError(f"Failed to process audio: {str(e)}")
-
-class ResourceMonitor:
-    @staticmethod
-    def check_memory():
-        memory = psutil.virtual_memory()
-        if memory.percent > MEMORY_THRESHOLD * 100:
-            logger.warning(f"High memory usage: {memory.percent}%")
-            gc.collect()
-            if DEVICE.type == 'cuda':
-                torch.cuda.empty_cache()
-
-    @staticmethod
-    def check_gpu():
-        if DEVICE.type == 'cuda':
-            memory_allocated = torch.cuda.memory_allocated(0)
-            memory_reserved = torch.cuda.memory_reserved(0)
-            logger.info(f"GPU Memory - Allocated: {memory_allocated/1024**2:.2f}MB, Reserved: {memory_reserved/1024**2:.2f}MB")
-
-    @staticmethod
-    def check_resources() -> tuple[bool, str]:
-        """Check system resources before processing"""
-        try:
-            # Check system memory
-            memory = psutil.virtual_memory()
-            if memory.percent > MEMORY_THRESHOLD * 100:
-                return False, f"System memory usage too high ({memory.percent}%)"
-
-            # Check GPU memory if available
-            if DEVICE.type == 'cuda':
-                gpu_memory_used = torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated() if torch.cuda.max_memory_allocated() > 0 else 0
-                if gpu_memory_used > 0.9:
-                    return False, f"GPU memory usage too high ({gpu_memory_used*100:.1f}%)"
-
-            return True, ""
-        except Exception as e:
-            logger.error(f"Resource check failed: {str(e)}")
-            return False, "Resource check failed"
-
-class ErrorHandler:
-    @staticmethod
-    def handle_error(e: Exception) -> Tuple[dict, int]:
-        error_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
-        error_info = {
-            'error_id': error_id,
-            'type': type(e).__name__,
-            'message': str(e),
-            'timestamp': datetime.now().isoformat()
-        }
-        
-        logger.error(f"Error {error_id}: {str(e)}", exc_info=True)
-        
-        user_message = f"An error occurred (ID: {error_id}). Please try again or contact support if the problem persists."
-        return {'error': user_message}, 500
-
-def generate_progress_event(progress: int, status: str) -> str:
-    return f"data: {json.dumps({'progress': progress, 'status': status})}\n\n"
-
-def cleanup_file(file_path: str) -> None:
-    try:
-        if file_path and os.path.exists(file_path):
-            os.unlink(file_path)
-            logger.debug(f"Cleaned up file: {file_path}")
-    except Exception as e:
-        logger.error(f"Error cleaning up file {file_path}: {str(e)}")
-
-def require_model(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        model_manager = ModelManager()
-        processor, model, tokenizer = model_manager.get_model_components()
-        
-        if None in (processor, model, tokenizer):
-            return jsonify({'error': 'Model not initialized properly'}), 503
-            
-        return f(*args, **kwargs)
-    return decorated_function
-
-def performance_logger(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        start_time = time.time()
-        start_memory = psutil.Process().memory_info().rss
-        
-        try:
-            result = f(*args, **kwargs)
-            
-            end_time = time.time()
-            end_memory = psutil.Process().memory_info().rss
-            duration = end_time - start_time
-            memory_diff = end_memory - start_memory
-            
-            logger.info(f"Performance - Function: {f.__name__}, Duration: {duration:.2f}s, "
-                       f"Memory Change: {memory_diff/1024/1024:.2f}MB")
-            
-            return result
-        except Exception as e:
-            logger.error(f"Error in {f.__name__}: {str(e)}")
-            raise
-            
-    return decorated_function
 
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
