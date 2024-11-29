@@ -336,6 +336,9 @@ def translate_audio_endpoint():
             logger.error(f"Request {request_id}: Unsupported language {target_language}")
             return jsonify({'error': f'Unsupported language: {target_language}'}), 400
 
+        # Initialize audio processor
+        audio_processor = AudioProcessor()
+
         # Save and process audio file with proper error handling
         file_extension = Path(file.filename).suffix.lower()
         with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
@@ -349,14 +352,30 @@ def translate_audio_endpoint():
             logger.info(f"Request {request_id}: Saved input file: {temp_input.name}")
             
             # Validate audio file
-            is_valid, error_message = AudioProcessor.validate_audio_length(temp_input.name)
+            is_valid, error_message = audio_processor.validate_audio_length(temp_input.name)
             if not is_valid:
                 logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
                 return jsonify({'error': error_message}), 400
             
-            # Process audio with enhanced error checking
+            # Process audio with enhanced error checking and diagnostics
             try:
-                audio = AudioProcessor.process_audio(temp_input.name)
+                # Process audio with enhanced features and diagnostics
+                audio, diagnostics = audio_processor.process_audio_enhanced(
+                    temp_input.name,
+                    target_language=model_language,
+                    return_diagnostics=True
+                )
+                
+                # Log diagnostic information
+                logger.info(f"Audio quality diagnostics for {model_language}:")
+                if diagnostics:
+                    logger.info(f"Quality metrics: {diagnostics.get('metrics', {})}")
+                    logger.info(f"Technical analysis: {diagnostics.get('waveform_analysis', {})}")
+                    if diagnostics.get('issues'):
+                        logger.info(f"Detected issues: {diagnostics['issues']}")
+                    if diagnostics.get('language_specific'):
+                        logger.info(f"Language-specific issues: {diagnostics['language_specific']}")
+                
                 audio_numpy = audio.squeeze().numpy()
                 
                 if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
@@ -394,16 +413,15 @@ def translate_audio_endpoint():
                         **inputs,
                         tgt_lang=model_language,
                         num_beams=5,
-                        max_new_tokens=500,  # Increased from 200
-                        min_new_tokens=50,   # Added minimum
+                        max_new_tokens=500,
+                        min_new_tokens=50,
                         use_cache=True,
-                        temperature=0.7,     # Added temperature
-                        length_penalty=1.2,  # Increased from 1.0
-                        no_repeat_ngram_size=3,  # Added to prevent repetition
+                        temperature=0.7,
+                        length_penalty=1.2,
+                        no_repeat_ngram_size=3,
                         early_stopping=True
                     )
 
-                # Add output debugging
                 logger.info(f"Model output shape: {outputs.shape if hasattr(outputs, 'shape') else 'No shape'}")
                 logger.info(f"Model output type: {type(outputs)}")
 
@@ -429,6 +447,12 @@ def translate_audio_endpoint():
                 # Normalize audio if needed
                 if np.abs(audio_output).max() > 1.0:
                     audio_output = audio_output / np.abs(audio_output).max()
+                
+                # Run diagnostics on output audio
+                output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
+                output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
+                output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
+                logger.info(f"\nTranslated Audio Quality Report for request {request_id}:\n{output_report}")
                 
                 logger.info(f"Request {request_id}: Audio output processed successfully")
                 
