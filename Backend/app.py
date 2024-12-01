@@ -7,6 +7,8 @@ import signal
 import hashlib
 import warnings
 import tempfile
+from pydub import AudioSegment
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -341,169 +343,200 @@ def translate_audio_endpoint():
 
         # Save and process audio file with proper error handling
         file_extension = Path(file.filename).suffix.lower()
-        with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
-            temp_files.append(temp_input.name)
-            file.save(temp_input.name)
-            
-            # Validate file was actually saved
-            if not os.path.exists(temp_input.name) or os.path.getsize(temp_input.name) == 0:
-                raise ValueError("Failed to save audio file")
-            
-            logger.info(f"Request {request_id}: Saved input file: {temp_input.name}")
-            
-            # Validate audio file
-            is_valid, error_message = audio_processor.validate_audio_length(temp_input.name)
-            if not is_valid:
-                logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
-                return jsonify({'error': error_message}), 400
+        
+        # Handle MP3 conversion
+        if file_extension == '.mp3':
+            # Convert MP3 to WAV for processing
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wav_file:
+                temp_files.append(wav_file.name)  # Add to cleanup list
+                file.save(wav_file.name + '.mp3')  # Save MP3 temporarily
+                temp_files.append(wav_file.name + '.mp3')  # Add MP3 to cleanup list
+                sound = AudioSegment.from_mp3(wav_file.name + '.mp3')
+                sound.export(wav_file.name, format='wav')
+                audio_path = wav_file.name
+        else:
+            # For WAV files, use directly
+            with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
+                temp_files.append(temp_input.name)
+                file.save(temp_input.name)
+                audio_path = temp_input.name
+
+        # Validate file was actually saved
+        if not os.path.exists(audio_path) or os.path.getsize(audio_path) == 0:
+            raise ValueError("Failed to save audio file")
+        
+        logger.info(f"Request {request_id}: Saved input file: {audio_path}")
+        
+        # Validate audio file
+        is_valid, error_message = audio_processor.validate_audio_length(audio_path)
+        if not is_valid:
+            logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
+            return jsonify({'error': error_message}), 400
             
             # Process audio with enhanced error checking and diagnostics
-            try:
+        try:
                 # Process audio with enhanced features and diagnostics
-                audio, diagnostics = audio_processor.process_audio_enhanced(
-                    temp_input.name,
-                    target_language=model_language,
-                    return_diagnostics=True
-                )
+            audio, diagnostics = audio_processor.process_audio_enhanced(
+            temp_input.name,
+            target_language=model_language,
+            return_diagnostics=True
+        )
                 
-                # Log diagnostic information
-                logger.info(f"Audio quality diagnostics for {model_language}:")
-                if diagnostics:
-                    logger.info(f"Quality metrics: {diagnostics.get('metrics', {})}")
-                    logger.info(f"Technical analysis: {diagnostics.get('waveform_analysis', {})}")
-                    if diagnostics.get('issues'):
-                        logger.info(f"Detected issues: {diagnostics['issues']}")
-                    if diagnostics.get('language_specific'):
-                        logger.info(f"Language-specific issues: {diagnostics['language_specific']}")
+            # Log diagnostic information
+            logger.info(f"Audio quality diagnostics for {model_language}:")
+            if diagnostics:
+                logger.info(f"Quality metrics: {diagnostics.get('metrics', {})}")
+                logger.info(f"Technical analysis: {diagnostics.get('waveform_analysis', {})}")
+                if diagnostics.get('issues'):
+                    logger.info(f"Detected issues: {diagnostics['issues']}")
+                if diagnostics.get('language_specific'):
+                    logger.info(f"Language-specific issues: {diagnostics['language_specific']}")
                 
-                audio_numpy = audio.squeeze().numpy()
+            audio_numpy = audio.squeeze().numpy()
                 
-                if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
-                    raise ValueError("Invalid audio data detected")
+            if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
+                raise ValueError("Invalid audio data detected")
                 
-                logger.info(f"Request {request_id}: Audio processed successfully")
-            except Exception as e:
-                logger.error(f"Audio processing error: {str(e)}")
-                return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
+            logger.info(f"Request {request_id}: Audio processed successfully")
+        except Exception as e:
+            logger.error(f"Audio processing error: {str(e)}")
+            return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
 
-            # Prepare model inputs with validation
-            try:
-                inputs = processor(
-                    audios=audio_numpy,
-                    sampling_rate=SAMPLE_RATE,
-                    return_tensors="pt",
-                    src_lang="eng",
-                    tgt_lang=model_language
-                )
+        # Prepare model inputs with validation
+        try:
+            inputs = processor(
+                audios=audio_numpy,
+                sampling_rate=SAMPLE_RATE,
+                return_tensors="pt",
+                src_lang="eng",
+                tgt_lang=model_language
+            )
                 
-                if not inputs or not inputs.keys():
-                    raise ValueError("Failed to prepare model inputs")
+            if not inputs or not inputs.keys():
+                raise ValueError("Failed to prepare model inputs")
                 
-                if DEVICE.type == 'cuda':
-                    inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
+            if DEVICE.type == 'cuda':
+                inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
                 
-            except Exception as e:
-                logger.error(f"Input processing error: {str(e)}")
-                return jsonify({'error': f'Failed to prepare audio: {str(e)}'}), 400
+        except Exception as e:
+            logger.error(f"Input processing error: {str(e)}")
+            return jsonify({'error': f'Failed to prepare audio: {str(e)}'}), 400
 
             # Generate translation with enhanced error handling
-            try:
-                with torch.no_grad():
-                    outputs = model.generate(
-                        **inputs,
-                        tgt_lang=model_language,
-                        num_beams=5,
-                        max_new_tokens=500,
-                        min_new_tokens=50,
-                        use_cache=True,
-                        temperature=0.7,
-                        length_penalty=1.2,
-                        no_repeat_ngram_size=3,
-                        early_stopping=True
-                    )
+        # Generate translation with v2-specific parameters
+        try:
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    tgt_lang=model_language,
+                    num_beams=5,
+                    max_new_tokens=200,
+                    do_sample=True,
+                    temperature=0.7,
+                    top_k=50,
+                    top_p=0.95,
+                    length_penalty=1.0,
+                    repetition_penalty=1.2,
+                    no_repeat_ngram_size=3
+                )
 
-                logger.info(f"Model output shape: {outputs.shape if hasattr(outputs, 'shape') else 'No shape'}")
-                logger.info(f"Model output type: {type(outputs)}")
+            logger.info(f"Model output shape: {outputs.shape if hasattr(outputs, 'shape') else 'No shape'}")
+            logger.info(f"Model output type: {type(outputs)}")
 
-                if outputs is None:
-                    raise ValueError("Model generated no output")
+            if outputs is None:
+                raise ValueError("Model generated no output")
                     
-            except Exception as e:
-                logger.error(f"Translation error: {str(e)}")
-                return jsonify({'error': f'Translation failed: {str(e)}'}), 500
+        except Exception as e:
+            logger.error(f"Translation error: {str(e)}")
+            return jsonify({'error': f'Translation failed: {str(e)}'}), 500
 
-            # Process the output with validation
-            try:
-                if hasattr(outputs, 'waveform'):
-                    audio_output = outputs.waveform[0].cpu().numpy()
-                elif isinstance(outputs, tuple) and len(outputs) > 0:
-                    audio_output = outputs[0].squeeze(0).cpu().numpy()
-                else:
-                    raise ValueError("Unexpected output format from model")
+        # Process the v2 output with validation
+        try:
+            # Get the first element of the tuple which is the waveform
+            if isinstance(outputs, tuple) and len(outputs) > 0:
+                audio_output = outputs[0].cpu().numpy().squeeze()
+            else:
+                raise ValueError("Unexpected output format from model")
 
-                if audio_output is None or audio_output.size == 0:
-                    raise ValueError("No audio data generated")
+            if audio_output is None or audio_output.size == 0:
+                raise ValueError("No audio data generated")
+                    
+        except Exception as e:
+            logger.error(f"Translation error: {str(e)}")
+            return jsonify({'error': f'Translation failed: {str(e)}'}), 500
+
+        # Process the output with validation
+        try:
+            if hasattr(outputs, 'waveform'):
+                audio_output = outputs.waveform[0].cpu().numpy()
+            elif isinstance(outputs, tuple) and len(outputs) > 0:
+                audio_output = outputs[0].squeeze(0).cpu().numpy()
+            else:
+                raise ValueError("Unexpected output format from model")
+
+            if audio_output is None or audio_output.size == 0:
+                raise ValueError("No audio data generated")
                 
                 # Normalize audio if needed
-                if np.abs(audio_output).max() > 1.0:
-                    audio_output = audio_output / np.abs(audio_output).max()
+            if np.abs(audio_output).max() > 1.0:
+                audio_output = audio_output / np.abs(audio_output).max()
                 
                 # Run diagnostics on output audio
-                output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
-                output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
-                output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
-                logger.info(f"\nTranslated Audio Quality Report for request {request_id}:\n{output_report}")
+            output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
+            output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
+            output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
+            logger.info(f"\nTranslated Audio Quality Report for request {request_id}:\n{output_report}")
                 
-                logger.info(f"Request {request_id}: Audio output processed successfully")
+            logger.info(f"Request {request_id}: Audio output processed successfully")
                 
-            except Exception as e:
-                logger.error(f"Output processing error: {str(e)}")
-                return jsonify({'error': f'Failed to process translation: {str(e)}'}), 500
+        except Exception as e:
+            logger.error(f"Output processing error: {str(e)}")
+            return jsonify({'error': f'Failed to process translation: {str(e)}'}), 500
 
             # Save and send the translated audio with proper headers
-            try:
-                with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
-                    temp_files.append(temp_output.name)
-                    waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
-                    torchaudio.save(
-                        temp_output.name,
-                        waveform_tensor,
-                        sample_rate=16000
-                    )
+        try:
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
+                temp_files.append(temp_output.name)
+                waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
+                torchaudio.save(
+                    temp_output.name,
+                    waveform_tensor,
+                    sample_rate=16000
+                )
                     
                     # Verify the saved file
-                    if not os.path.exists(temp_output.name) or os.path.getsize(temp_output.name) == 0:
-                        raise ValueError("Failed to save translated audio")
+                if not os.path.exists(temp_output.name) or os.path.getsize(temp_output.name) == 0:
+                    raise ValueError("Failed to save translated audio")
                     
-                    with open(temp_output.name, 'rb') as audio_file:
-                        audio_data = audio_file.read()
+                with open(temp_output.name, 'rb') as audio_file:
+                    audio_data = audio_file.read()
                     
-                    if not audio_data:
-                        raise ValueError("Generated audio data is empty")
+                if not audio_data:
+                    raise ValueError("Generated audio data is empty")
 
-                    response = Response(
-                        audio_data,
-                        mimetype='audio/wav',
-                        headers={
-                            'Content-Type': 'audio/wav',
-                            'Content-Length': str(len(audio_data)),
-                            'Content-Disposition': f'attachment; filename=translated_{Path(file.filename).stem}.wav',
-                            'Cache-Control': 'no-cache, no-store, must-revalidate',
-                            'Pragma': 'no-cache',
-                            'Expires': '0',
-                            'Access-Control-Allow-Origin': request.headers.get('Origin', 'http://localhost:3000'),
-                            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                            'Access-Control-Allow-Headers': 'Content-Type',
-                            'Access-Control-Allow-Credentials': 'true'
-                        }
-                    )
+                response = Response(
+                    audio_data,
+                    mimetype='audio/wav',
+                    headers={
+                        'Content-Type': 'audio/wav',
+                        'Content-Length': str(len(audio_data)),
+                        'Content-Disposition': f'attachment; filename=translated_{Path(file.filename).stem}.wav',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                        'Access-Control-Allow-Origin': request.headers.get('Origin', 'http://localhost:3000'),
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Credentials': 'true'
+                    }
+                )
                     
-                    logger.info(f"Request {request_id}: Response prepared successfully")
-                    return response
+                logger.info(f"Request {request_id}: Response prepared successfully")
+                return response
 
-            except Exception as e:
-                logger.error(f"Response preparation error: {str(e)}")
-                return jsonify({'error': f'Failed to prepare response: {str(e)}'}), 500
+        except Exception as e:
+            logger.error(f"Response preparation error: {str(e)}")
+            return jsonify({'error': f'Failed to prepare response: {str(e)}'}), 500
 
     except Exception as e:
         TRANSLATION_ERRORS.inc()
