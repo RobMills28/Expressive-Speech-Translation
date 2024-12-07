@@ -226,12 +226,14 @@ class AudioProcessor:
                 is_silence = torch.abs(audio) < silence_threshold
             
                 # Reduce silence duration while maintaining natural pauses
-                silence_segments = torch.nonzero(is_silence.squeeze())
-                if len(silence_segments) > 0:
-                    segments = torch.split(silence_segments, 1600)  # ~100ms at 16kHz
+                is_silence = (torch.abs(audio) < silence_threshold).squeeze(0)  # Convert to 1D
+                silence_segments = torch.nonzero(is_silence).squeeze()  # Get 1D indices
+                if silence_segments.dim() > 0:  # Check if any silence found
+                    segments = torch.split(silence_segments, 1600)
                     for segment in segments:
-                        if len(segment) > 800:  # If silence is longer than 50ms
-                            audio[:, segment[800:]] = audio[:, segment[:800]]
+                        if segment.numel() > 800:  # Check length using numel()
+                            segment = segment[:800]  # Limit segment length
+                            audio[0, segment] = audio[0, segment[:800]]  # Apply to 2D tensor properly
                         
             except RuntimeError as e:
                 logger.error(f"Silence processing failed: {str(e)}")

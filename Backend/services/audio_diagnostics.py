@@ -397,8 +397,11 @@ class AudioDiagnostics:
                     report.append("No issues detected")
                     
             # Add language-specific issues
+            logger.debug(f"Analysis data: {analysis}")  # Debug log to see what's coming in
+
+            
             if 'language_specific' in analysis and analysis['language_specific']:
-                report.append("\nLanguage_Specific Issues:")
+                report.append("\nLanguage-Specific Issues:")
                 report.append("-" * 20)
                 detected = False
                 for issue, present in analysis['language_specific'].items():
@@ -869,7 +872,416 @@ class AudioDiagnostics:
         except Exception as e:
             logger.error(f"Report generation failed: {str(e)}")
             return {'error': str(e)}
+    
+    def _analyze_french_liaison(self, audio: torch.Tensor) -> bool:
+        """Analyze French liaison patterns."""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+            liaison_score = self._analyze_temporal_stability(mag)
+            return liaison_score < 0.6
+        except Exception as e:
+            logger.error(f"French liaison analysis failed: {str(e)}")
+            return False
+
+    def _check_french_prosody(self, audio: torch.Tensor) -> bool:
+        """Check French prosodic patterns."""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+            energy_contour = torch.mean(mag, dim=1)
+            prosody_score = torch.std(energy_contour) / torch.mean(energy_contour)
+            return float(prosody_score) < 0.5
         
+        except Exception as e:
+            logger.error(f"French prosody check failed: {str(e)}")
+            return False
+
+    def _check_french_vowels(self, audio: torch.Tensor) -> bool:
+        """Check French vowel quality."""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+            vowel_region = mag[:, :mag.shape[1]//2]
+            vowel_score = torch.mean(vowel_region) / torch.max(vowel_region)
+            return float(vowel_score) < 0.6
+        
+        except Exception as e:
+            logger.error(f"French vowel check failed: {str(e)}")
+            return False
+        
+    def _analyze_german_vowel_length(self, audio: torch.Tensor) -> Dict[str, Any]:
+        """Analyze German vowel length and formant structure."""
+        try:
+            # Convert to frequency domain
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+        
+            # Analyze formant regions for German vowels (approx. 300-2500 Hz)
+            formant_region = mag[:, 15:125]
+        
+            analysis = {
+                'formant_structure': {
+                    'accuracy': float(torch.mean(formant_region).item()),
+                    'stability': float(torch.std(formant_region).item()),
+                },
+                'temporal_evolution': {
+                    'precision': self._analyze_temporal_stability(formant_region),
+                },
+                'prosody': {
+                    'accuracy': self._analyze_german_prosody(mag),
+                },
+                'consonant_features': {
+                    'precision': self._analyze_german_consonant_precision(mag),
+                }
+            }
+        
+            return analysis
+        except Exception as e:
+            logger.error(f"German vowel analysis failed: {str(e)}")
+            return {
+                'formant_structure': {'accuracy': 0.0, 'stability': 0.0},
+                'temporal_evolution': {'precision': 0.0},
+                'prosody': {'accuracy': 0.0},
+                'consonant_features': {'precision': 0.0}
+            }
+
+    def _analyze_german_prosody(self, mag: torch.Tensor) -> float:
+        """Analyze German prosodic patterns."""
+        try:
+            # Analyze energy distribution for stress patterns
+            energy_contour = torch.mean(mag, dim=1)
+            stress_variation = torch.std(energy_contour) / torch.mean(energy_contour)
+            return float(min(1.0, stress_variation))
+        except Exception as e:
+            logger.error(f"German prosody analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_german_consonant_precision(self, mag: torch.Tensor) -> float:
+        """Analyze precision of German consonant articulation."""
+        try:
+            # Focus on high-frequency content for consonants
+            consonant_region = mag[:, mag.shape[1]//2:]
+            precision = torch.mean(consonant_region) / torch.max(consonant_region)
+            return float(min(1.0, precision))
+        except Exception as e:
+            logger.error(f"German consonant analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_italian_gemination(self, audio: torch.Tensor) -> Dict[str, Any]:
+        """Analyze Italian gemination and related features."""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+        
+            analysis = {
+                'consonant_features': {
+                    'precision': self._analyze_italian_consonants(mag),
+                },
+                'vowel_features': {
+                    'accuracy': self._analyze_italian_vowels(mag),
+                },
+                'articulation': {
+                    'clarity': self._analyze_italian_articulation(mag),
+                },
+                'prosody': {
+                    'rhythm': self._analyze_italian_rhythm(mag),
+                }
+            }
+        
+            return analysis
+        except Exception as e:
+            logger.error(f"Italian gemination analysis failed: {str(e)}")
+            return {
+                'consonant_features': {'precision': 0.0},
+                'vowel_features': {'accuracy': 0.0},
+                'articulation': {'clarity': 0.0},
+                'prosody': {'rhythm': 0.0}
+            }
+
+    def _analyze_italian_consonants(self, mag: torch.Tensor) -> float:
+        """Analyze Italian consonant characteristics."""
+        try:
+            consonant_region = mag[:, mag.shape[1]//2:]
+            precision = torch.mean(consonant_region) / torch.max(consonant_region)
+            return float(min(1.0, precision))
+        except Exception as e:
+            logger.error(f"Italian consonant analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_italian_vowels(self, mag: torch.Tensor) -> float:
+        """Analyze Italian vowel characteristics."""
+        try:
+            vowel_region = mag[:, :mag.shape[1]//2]
+            accuracy = torch.mean(vowel_region) / torch.max(vowel_region)
+            return float(min(1.0, accuracy))
+        except Exception as e:
+            logger.error(f"Italian vowel analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_italian_articulation(self, mag: torch.Tensor) -> float:
+        """Analyze clarity of Italian articulation."""
+        try:
+            clarity = torch.std(torch.mean(mag, dim=1)) / torch.mean(mag)
+            return float(min(1.0, clarity))
+        except Exception as e:
+            logger.error(f"Italian articulation analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_italian_rhythm(self, mag: torch.Tensor) -> float:
+        """Analyze Italian rhythmic patterns."""
+        try:
+            energy_contour = torch.mean(mag, dim=1)
+            rhythm_score = torch.std(energy_contour) / torch.mean(energy_contour)
+            return float(min(1.0, rhythm_score))
+        except Exception as e:
+            logger.error(f"Italian rhythm analysis failed: {str(e)}")
+            return 0.0
+        
+    def _analyze_portuguese_nasalization(self, audio: torch.Tensor) -> Dict[str, Any]:
+        """Analyze Portuguese nasalization and related features."""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+        
+            analysis = {
+                'vowel_features': {
+                    'authenticity': self._analyze_portuguese_vowels(mag),
+                    'reduction': self._analyze_portuguese_reduction(mag),
+                },
+                'prosody': {
+                    'accuracy': self._analyze_portuguese_prosody(mag),
+                },
+                'consonant_features': {
+                    'precision': self._analyze_portuguese_consonants(mag),
+                }
+            }
+        
+            return analysis
+        except Exception as e:
+            logger.error(f"Portuguese nasalization analysis failed: {str(e)}")
+            return {
+                'vowel_features': {'authenticity': 0.0, 'reduction': 0.0},
+                'prosody': {'accuracy': 0.0},
+                'consonant_features': {'precision': 0.0}
+            }
+
+    def _analyze_portuguese_vowels(self, mag: torch.Tensor) -> float:
+        """Analyze Portuguese vowel characteristics."""
+        try:
+            vowel_region = mag[:, :mag.shape[1]//2]
+            authenticity = torch.mean(vowel_region) / torch.max(vowel_region)
+            return float(min(1.0, authenticity))
+        except Exception as e:
+            logger.error(f"Portuguese vowel analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_portuguese_reduction(self, mag: torch.Tensor) -> float:
+        """Analyze Portuguese vowel reduction patterns."""
+        try:
+            energy_contour = torch.mean(mag, dim=1)
+            reduction = torch.std(energy_contour) / torch.mean(energy_contour)
+            return float(min(1.0, reduction))
+        except Exception as e:
+            logger.error(f"Portuguese reduction analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_portuguese_prosody(self, mag: torch.Tensor) -> float:
+        """Analyze Portuguese prosodic patterns."""
+        try:
+            energy_contour = torch.mean(mag, dim=1)
+            accuracy = torch.std(energy_contour) / torch.mean(energy_contour)
+            return float(min(1.0, accuracy))
+        except Exception as e:
+            logger.error(f"Portuguese prosody analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_portuguese_consonants(self, mag: torch.Tensor) -> float:
+        """Analyze Portuguese consonant characteristics."""
+        try:
+            consonant_region = mag[:, mag.shape[1]//2:]
+            precision = torch.mean(consonant_region) / torch.max(consonant_region)
+            return float(min(1.0, precision))
+        except Exception as e:
+            logger.error(f"Portuguese consonant analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_spanish_trill(self, audio: torch.Tensor) -> Dict[str, Any]:
+        """Analyze Spanish trill and related features."""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=4096,
+                hop_length=1024,
+                win_length=4096,
+                window=torch.hann_window(4096).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+        
+            analysis = {
+                'consonant_features': {
+                    'precision': self._analyze_spanish_consonants(mag),
+                },
+                'vowel_features': {
+                    'clarity': self._analyze_spanish_vowels(mag),
+                },
+                'prosody': {
+                    'accuracy': self._analyze_spanish_prosody(mag),
+                },
+                'articulation': {
+                    'precision': self._analyze_spanish_articulation(mag),
+                }
+            }
+        
+            return analysis
+        except Exception as e:
+            logger.error(f"Spanish trill analysis failed: {str(e)}")
+            return {
+                'consonant_features': {'precision': 0.0},
+                'vowel_features': {'clarity': 0.0},
+                'prosody': {'accuracy': 0.0},
+                'articulation': {'precision': 0.0}
+            }
+
+    def _analyze_spanish_consonants(self, mag: torch.Tensor) -> float:
+        """Analyze Spanish consonant characteristics."""
+        try:
+            consonant_region = mag[:, mag.shape[1]//2:]
+            precision = torch.mean(consonant_region) / torch.max(consonant_region)
+            return float(min(1.0, precision))
+        except Exception as e:
+            logger.error(f"Spanish consonant analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_spanish_vowels(self, mag: torch.Tensor) -> float:
+        """Analyze Spanish vowel characteristics."""
+        try:
+            vowel_region = mag[:, :mag.shape[1]//2]
+            clarity = torch.mean(vowel_region) / torch.max(vowel_region)
+            return float(min(1.0, clarity))
+        except Exception as e:
+            logger.error(f"Spanish vowel analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_spanish_prosody(self, mag: torch.Tensor) -> float:
+        """Analyze Spanish prosodic patterns."""
+        try:
+            energy_contour = torch.mean(mag, dim=1)
+            accuracy = torch.std(energy_contour) / torch.mean(energy_contour)
+            return float(min(1.0, accuracy))
+        except Exception as e:
+            logger.error(f"Spanish prosody analysis failed: {str(e)}")
+            return 0.0
+
+    def _analyze_spanish_articulation(self, mag: torch.Tensor) -> float:
+        """Analyze Spanish articulation precision."""
+        try:
+            precision = torch.std(torch.mean(mag, dim=1)) / torch.mean(mag)
+            return float(min(1.0, precision))
+        except Exception as e:
+            logger.error(f"Spanish articulation analysis failed: {str(e)}")
+            return 0.0
+    
+    def _analyze_language_specific(self, audio: torch.Tensor, target_language: str, spectral_bands: Dict[str, float]) -> None:
+        """Analyze language-specific characteristics and update language_specific_issues."""
+        try:
+        
+            # French analysis
+            if target_language == 'fra':
+                nasal_analysis = self._analyze_french_nasalization(audio)
+                self.language_specific_issues['fra'] = {
+                    'nasalization': nasal_analysis['quality_assessment']['authenticity'] < 0.6,
+                    'liaison': self._analyze_french_liaison(audio),
+                    'prosody': self._check_french_prosody(audio),
+                    'vowel_quality': self._check_french_vowels(audio)
+                }
+                
+            # German analysis
+            elif target_language == 'deu':
+                vowel_analysis = self._analyze_german_vowel_length(audio)
+                self.language_specific_issues['deu'] = {
+                    'umlaut_issues': vowel_analysis['formant_structure']['accuracy'] < 0.6,
+                    'consonant_clusters': vowel_analysis['temporal_evolution']['precision'] < 0.5,
+                    'word_stress': vowel_analysis['prosody']['accuracy'] < 0.6,
+                    'final_devoicing': vowel_analysis['consonant_features']['precision'] < 0.5
+                }
+                
+            # Italian analysis
+            elif target_language == 'ita':
+                italian_analysis = self._analyze_italian_gemination(audio)
+                self.language_specific_issues['ita'] = {
+                    'gemination': italian_analysis['consonant_features']['precision'] < 0.6,
+                    'vowel_length': italian_analysis['vowel_features']['accuracy'] < 0.6,
+                    'consonant_precision': italian_analysis['articulation']['clarity'] < 0.5,
+                    'stress_timing': italian_analysis['prosody']['rhythm'] < 0.6
+                }
+                
+            # Spanish analysis
+            elif target_language == 'spa':
+                spanish_analysis = self._analyze_spanish_trill(audio)
+                self.language_specific_issues['spa'] = {
+                    'trill': spanish_analysis['consonant_features']['precision'] < 0.6,
+                    'vowel_clarity': spanish_analysis['vowel_features']['clarity'] < 0.6,
+                    'stress_patterns': spanish_analysis['prosody']['accuracy'] < 0.5,
+                    'consonant_precision': spanish_analysis['articulation']['precision'] < 0.6
+                }
+            
+            # Portuguese analysis
+            elif target_language == 'por':
+                portuguese_analysis = self._analyze_portuguese_nasalization(audio)
+                self.language_specific_issues['por'] = {
+                    'nasalization': portuguese_analysis['vowel_features']['authenticity'] < 0.6,
+                    'vowel_reduction': portuguese_analysis['vowel_features']['reduction'] < 0.5,
+                    'stress_patterns': portuguese_analysis['prosody']['accuracy'] < 0.6,
+                    'consonant_palatalization': portuguese_analysis['consonant_features']['precision'] < 0.5
+                }
+        except Exception as e:
+            logger.error(f"Language-specific analysis failed for {target_language}: {str(e)}")
+    
+    
     def analyze_translation(self, audio: torch.Tensor, target_language: str) -> dict:
         """
         Analyze translation output comprehensively.
@@ -892,15 +1304,30 @@ class AudioDiagnostics:
             if target_language in self.language_specific_issues:
                 self._analyze_language_specific(audio, target_language, spectral_bands)
             
+            # Calculate quality metrics
+            quality_metrics = {
+                'robotic_voice': self._calculate_robotic_score(audio),
+                'pronunciation': self._calculate_pronunciation_score(audio),
+                'audio_clarity': self._calculate_clarity_score(audio),
+                'background_noise': self._calculate_noise_score(audio),
+                'voice_consistency': self._calculate_consistency_score(audio),
+                'spectral_balance': self._calculate_balance_score(spectral_bands)
+            }
+
+            # Calculate spectral balance score
+            spectral_metrics = {
+                'band_balance_score': self._calculate_spectral_balance_score(spectral_bands)
+            }
+
             # Compile analysis
             analysis = {
-                'metrics': self.quality_metrics.copy(),
+                'metrics': quality_metrics,
                 'issues': self.common_issues.copy(),
                 'language_specific': self.language_specific_issues.get(target_language, {}),
                 'waveform_analysis': waveform_analysis,
                 'spectral_analysis': {
                     'frequency_bands': spectral_bands,
-                    'spectral_metrics': self.spectral_metrics
+                    'spectral_metrics': spectral_metrics
                 }
             }
             
@@ -915,6 +1342,32 @@ class AudioDiagnostics:
                 'waveform_analysis': {},
                 'spectral_analysis': {'frequency_bands': {}, 'spectral_metrics': {}}
             }
+    def _calculate_spectral_balance_score(self, spectral_bands: Dict[str, float]) -> float:
+        """Calculate spectral balance score based on energy distribution."""
+        try:
+            if not spectral_bands or not all(k in spectral_bands for k in ['low', 'mid', 'high']):
+                return 0.0
+            
+            # Calculate relative energies
+            total_energy = sum(spectral_bands.values())
+            if total_energy == 0:
+                return 0.0
+            
+            ratios = {k: v/total_energy for k, v in spectral_bands.items()}
+        
+            # Ideal ratios for speech
+            ideal_ratios = {'low': 0.3, 'mid': 0.5, 'high': 0.2}
+        
+            # Calculate deviation from ideal
+            deviation = sum(abs(ratios[k] - ideal_ratios[k]) for k in ratios)
+        
+            # Convert to 1-5 score (lower deviation is better)
+            score = 5.0 * (1.0 - deviation)
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Spectral balance score calculation failed: {str(e)}")
+            return 0.0
 
     def _measure_metallic_resonance(self, audio: torch.Tensor) -> Dict[str, Any]:
         """
@@ -1280,3 +1733,154 @@ class AudioDiagnostics:
             
         except Exception as e:
             logger.error(f"Export failed: {str(e)}")
+    
+    def _calculate_robotic_score(self, audio: torch.Tensor) -> float:
+        """Calculate roboticness score (1-5 scale) based on harmonic regularity"""
+        try:
+            # Convert to frequency domain
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=2048,
+                hop_length=512,
+                window=torch.hann_window(2048).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+        
+            # Calculate harmonic regularity
+            harmonic_peaks = torch.max(mag, dim=1)[0]
+            peak_variance = torch.var(harmonic_peaks)
+        
+            # More robotic speech has very regular harmonics (lower variance)
+            score = 5.0 - (4.0 * (1.0 - peak_variance / torch.mean(harmonic_peaks)))
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Robotic score calculation failed: {str(e)}")
+            return 0.0
+
+    def _calculate_pronunciation_score(self, audio: torch.Tensor) -> float:
+        """Calculate pronunciation score based on spectral clarity and formant strength"""
+        try:
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=2048,
+                hop_length=512,
+                window=torch.hann_window(2048).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+        
+            # Analyze formant regions (approximately 500-3500 Hz)
+            formant_region = mag[:, 50:350]  # Adjust indices based on your sampling rate
+            formant_strength = torch.mean(formant_region)
+        
+            # Normalize to 1-5 scale
+            score = 1.0 + 4.0 * (formant_strength / torch.max(mag))
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Pronunciation score calculation failed: {str(e)}")
+            return 0.0
+
+    def _calculate_clarity_score(self, audio: torch.Tensor) -> float:
+        """Calculate clarity score based on signal-to-noise ratio and spectral contrast"""
+        try:
+            # Calculate RMS energy
+            rms = torch.sqrt(torch.mean(audio ** 2))
+        
+            # Calculate spectral contrast
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=2048,
+                hop_length=512,
+                window=torch.hann_window(2048).to(audio.device),
+            return_complex=True
+            )
+            mag = torch.abs(spec)
+            contrast = torch.mean(torch.max(mag, dim=1)[0] / torch.mean(mag, dim=1))
+        
+            # Combine metrics
+            score = 1.0 + 2.0 * float(rms) + 2.0 * float(contrast / 10.0)
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Clarity score calculation failed: {str(e)}")
+            return 0.0
+
+    def _calculate_noise_score(self, audio: torch.Tensor) -> float:
+        """Calculate noise score based on signal-to-noise ratio"""
+        try:
+            # Calculate signal power
+            signal_power = torch.mean(audio ** 2)
+        
+            # Estimate noise floor from silent regions
+            sorted_amplitudes = torch.sort(torch.abs(audio.squeeze()))[0]
+            noise_floor = torch.mean(sorted_amplitudes[:int(len(sorted_amplitudes)*0.1)]) ** 2
+        
+            # Calculate SNR and convert to score
+            if noise_floor > 0:
+                snr = 10 * torch.log10(signal_power / noise_floor)
+                score = 1.0 + 4.0 * (torch.clamp(snr, 0, 50) / 50)
+            else:
+                score = 5.0
+            
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Noise score calculation failed: {str(e)}")
+            return 0.0
+
+    def _calculate_consistency_score(self, audio: torch.Tensor) -> float:
+        """Calculate voice consistency score based on amplitude and spectral stability"""
+        try:
+            # Analyze amplitude stability
+            segments = torch.split(audio.squeeze(), 2048)
+            segment_rms = torch.tensor([torch.sqrt(torch.mean(seg ** 2)) for seg in segments if len(seg) == 2048])
+            amplitude_stability = 1.0 - torch.std(segment_rms) / torch.mean(segment_rms)
+        
+            # Analyze spectral stability
+            spec = torch.stft(
+                audio.squeeze(),
+                n_fft=2048,
+                hop_length=512,
+                window=torch.hann_window(2048).to(audio.device),
+                return_complex=True
+            )
+            mag = torch.abs(spec)
+            spectral_stability = 1.0 - torch.std(torch.mean(mag, dim=1)) / torch.mean(mag)
+        
+            # Combine metrics
+            score = 1.0 + 4.0 * (amplitude_stability + spectral_stability) / 2
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Consistency score calculation failed: {str(e)}")
+            return 0.0
+
+    def _calculate_balance_score(self, spectral_bands: Dict[str, float]) -> float:
+        """Calculate spectral balance score based on energy distribution"""
+        try:
+            if not spectral_bands or not all(k in spectral_bands for k in ['low', 'mid', 'high']):
+                return 0.0
+            
+            # Calculate relative energies
+            total_energy = sum(spectral_bands.values())
+            if total_energy == 0:
+                return 0.0
+            
+            ratios = {k: v/total_energy for k, v in spectral_bands.items()}
+        
+            # Ideal ratios for speech
+            ideal_ratios = {'low': 0.3, 'mid': 0.5, 'high': 0.2}
+        
+            # Calculate deviation from ideal
+            deviation = sum(abs(ratios[k] - ideal_ratios[k]) for k in ratios)
+        
+            # Convert to 1-5 score (lower deviation is better)
+            score = 5.0 * (1.0 - deviation)
+            return float(max(1.0, min(5.0, score)))
+        
+        except Exception as e:
+            logger.error(f"Balance score calculation failed: {str(e)}")
+            return 0.0
