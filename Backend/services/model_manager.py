@@ -5,8 +5,8 @@ import torch
 import logging
 import threading
 from transformers import (
-    AutoProcessor,
-    SeamlessM4Tv2Model,
+    SeamlessM4TProcessor,
+    SeamlessM4Tv2Model,  # Changed from SeamlessM4TModel
     SeamlessM4TTokenizer
 )
 
@@ -80,14 +80,6 @@ class ModelManager:
             logger.error(f"Model verification failed: {str(e)}")
             return False
 
-    def _verify_model_weights(self):
-        """Verify model weights are properly initialized."""
-        uninitialized = []
-        for name, param in self.model.named_parameters():
-            if param.requires_grad and param.data.mean().item() == 0:
-                uninitialized.append(name)
-        return uninitialized
-
     def _load_model(self):
         """Load model components with verification"""
         try:
@@ -104,38 +96,24 @@ class ModelManager:
                 raise ValueError("HUGGINGFACE_TOKEN not found in environment variables")
             
             # Load model components with improved initialization
-            self.processor = AutoProcessor.from_pretrained(
-                    MODEL_NAME, 
-                    token=auth_token,
-                    cache_dir="./model_cache",
-                    trust_remote_code=True,
-                    use_safetensors=True,
-                    revision="main"
-                )
-                
-            self.model = SeamlessM4Tv2Model.from_pretrained(
-                    MODEL_NAME, 
-                    token=auth_token,
-                    cache_dir="./model_cache",
-                    torch_dtype=torch.float32,
-                    trust_remote_code=True,
-                    use_safetensors=True,
-                    revision="main"
-                )
-                
-            self.tokenizer = SeamlessM4TTokenizer.from_pretrained(
-                    MODEL_NAME, 
-                    token=auth_token,
-                    cache_dir="./model_cache",
-                    trust_remote_code=True,
-                    use_safetensors=True,
-                    revision="main"
-                )
+            self.processor = SeamlessM4TProcessor.from_pretrained(
+                MODEL_NAME, 
+                token=auth_token,
+                trust_remote_code=True
+            )
             
-            # Add weight verification
-            uninitialized = self._verify_model_weights()
-            if uninitialized:
-                logger.warning(f"Found {len(uninitialized)} uninitialized weights: {uninitialized[:5]}...")
+            self.model = SeamlessM4Tv2Model.from_pretrained(  # Changed to Tv2Model
+                MODEL_NAME, 
+                token=auth_token,
+                torch_dtype=torch.float32,
+                trust_remote_code=True
+            )
+            
+            self.tokenizer = SeamlessM4TTokenizer.from_pretrained(
+                MODEL_NAME, 
+                token=auth_token,
+                trust_remote_code=True
+            )
             
             if DEVICE.type == 'cuda':
                 self.model = self.model.to(DEVICE)

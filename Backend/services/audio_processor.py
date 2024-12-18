@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Any, Tuple, Union
 
-from .audio_diagnostics import AudioDiagnostics
+from .diagnostics import AudioDiagnostics
 
 logger = logging.getLogger(__name__)
 
