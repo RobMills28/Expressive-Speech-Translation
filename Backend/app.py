@@ -7,6 +7,8 @@ import signal
 import hashlib
 import warnings
 import tempfile
+import json
+import base64
 import traceback  # Add this for the improved error handling
 from datetime import datetime
 from pathlib import Path
@@ -301,7 +303,6 @@ LANGUAGE_MAP = {
 @require_model
 @performance_logger
 def translate_audio_endpoint():
-    # Initialize metrics
     TRANSLATION_REQUESTS.inc()
     
     if request.method == 'OPTIONS':
@@ -310,6 +311,8 @@ def translate_audio_endpoint():
     request_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
     start_time = time.time()
     temp_files = []
+    source_text = "Text extraction unavailable"
+    target_text = "Text extraction unavailable"
     
     try:
         logger.info(f"Starting translation request {request_id}")
@@ -352,7 +355,6 @@ def translate_audio_endpoint():
         # Save and process audio file with proper error handling
         file_extension = Path(file.filename).suffix.lower()
         
-        # Handle MP3 conversion
         try:
             if file_extension == '.mp3':
                 with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wav_file:
@@ -368,7 +370,6 @@ def translate_audio_endpoint():
                     file.save(temp_input.name)
                     audio_path = temp_input.name
 
-            # Validate file was actually saved
             if not os.path.exists(audio_path) or os.path.getsize(audio_path) == 0:
                 raise ValueError("Failed to save audio file")
             
@@ -377,24 +378,20 @@ def translate_audio_endpoint():
             logger.error(f"File handling error: {str(e)}")
             return jsonify({'error': 'Failed to process uploaded file'}), 400
 
-        # Validate audio file
         is_valid, error_message = audio_processor.validate_audio_length(audio_path)
         if not is_valid:
             logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
             return jsonify({'error': error_message}), 400
 
-        # Process audio with enhanced error checking and diagnostics
         try:
             logger.info(f"Request {request_id}: Beginning audio processing with diagnostics")
             
-            # Process audio with enhanced features and diagnostics
             audio, input_diagnostics = audio_processor.process_audio_enhanced(
                 audio_path,
                 target_language=model_language,
                 return_diagnostics=True
             )
             
-            # Generate and log input audio diagnostics report
             if input_diagnostics:
                 input_report = audio_processor.diagnostics.generate_report(input_diagnostics, model_language)
                 if input_report:
@@ -407,7 +404,6 @@ def translate_audio_endpoint():
                     logger.info(input_report)
                     logger.info("="*50 + "\n")
                 
-                # Log detailed metrics for monitoring
                 if 'metrics' in input_diagnostics:
                     for metric, value in input_diagnostics['metrics'].items():
                         logger.debug(f"Input Quality Metric - {metric}: {value}")
@@ -422,8 +418,7 @@ def translate_audio_endpoint():
         except Exception as e:
             logger.error(f"Audio processing error: {str(e)}")
             return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
-
-        # Prepare model inputs with validation
+        
         try:
             inputs = processor(
                 audios=audio_numpy,
@@ -433,19 +428,16 @@ def translate_audio_endpoint():
                 tgt_lang=model_language
             )
             
+            logger.info(f"Input keys: {inputs.keys()}")
+            
             if not inputs or not inputs.keys():
                 raise ValueError("Failed to prepare model inputs")
             
             if DEVICE.type == 'cuda':
                 inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
-            
-        except Exception as e:
-            logger.error(f"Input processing error: {str(e)}")
-            return jsonify({'error': f'Failed to prepare audio: {str(e)}'}), 400
 
-        # Generate translation with enhanced error handling
-        try:
             with torch.no_grad():
+                # Generate translation
                 outputs = model.generate(
                     **inputs,
                     tgt_lang=model_language,
@@ -459,90 +451,94 @@ def translate_audio_endpoint():
                     repetition_penalty=1.2,
                     no_repeat_ngram_size=3
                 )
+                
+                # Handle outputs based on type
+                if isinstance(outputs, tuple):
+                    logger.info("Processing tuple output from model")
+                    audio_output = outputs[0].cpu().numpy()
+                    sequences = outputs[1] if len(outputs) > 1 else outputs[0]
+                else:
+                    logger.info("Processing tensor output from model")
+                    audio_output = outputs.cpu().numpy()
+                    sequences = outputs
 
-            logger.info(f"Model output shape: {outputs.shape if hasattr(outputs, 'shape') else 'No shape'}")
-            logger.info(f"Model output type: {type(outputs)}")
+                # Extract texts
+                try:
+                    # Generate source text
+                    with torch.no_grad():
+                        source_sequences = model.generate(
+                            input_features=inputs["input_features"],
+                            attention_mask=inputs.get("attention_mask"),
+                            tgt_lang="eng",
+                            num_beams=5,
+                            max_new_tokens=200
+                        )
+                        source_text = processor.decode(source_sequences[0] if source_sequences.dim() > 1 else source_sequences, skip_special_tokens=True)
+                except Exception as e:
+                    logger.error(f"Source text generation error: {str(e)}")
+                    source_text = "Text extraction unavailable"
 
-            if outputs is None:
-                raise ValueError("Model generated no output")
-            
+                try:
+                    target_text = processor.decode(sequences[0] if sequences.dim() > 1 else sequences, skip_special_tokens=True)
+                except Exception as e:
+                    logger.error(f"Target text generation error: {str(e)}")
+                    target_text = "Text extraction unavailable"
+
+                logger.info(f"Source text: {source_text}")
+                logger.info(f"Target text: {target_text}")
+
+                if audio_output is None or audio_output.size == 0:
+                    raise ValueError("No audio data generated")
+
+                if np.abs(audio_output).max() > 1.0:
+                    audio_output = audio_output / np.abs(audio_output).max()
+
         except Exception as e:
             logger.error(f"Translation error: {str(e)}")
             return jsonify({'error': f'Translation failed: {str(e)}'}), 500
 
-        # Process the output with validation
         try:
-            if hasattr(outputs, 'waveform'):
-                audio_output = outputs.waveform[0].cpu().numpy()
-            elif isinstance(outputs, tuple) and len(outputs) > 0:
-                audio_output = outputs[0].squeeze(0).cpu().numpy()
-            else:
-                raise ValueError("Unexpected output format from model")
-
-            if audio_output is None or audio_output.size == 0:
-                raise ValueError("No audio data generated")
+            output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
+            output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
             
-            # Normalize audio if needed
-            if np.abs(audio_output).max() > 1.0:
-                audio_output = audio_output / np.abs(audio_output).max()
-            
-            # Run comprehensive diagnostics on output audio
-            try:
-                logger.info("Running translation quality diagnostics...")
-                output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
-                
-                # Run comprehensive diagnostics
-                output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
-                
-                if output_diagnostics:
-                    # Generate detailed report with sections
-                    output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
-                    if output_report:
-                        logger.info("\n" + "="*50)
-                        logger.info("Translated Audio Quality Report")
-                        logger.info("="*50)
-                        logger.info(f"Request ID: {request_id}")
-                        logger.info(f"Target Language: {model_language}")
-                        logger.info("-"*50)
-                        logger.info(output_report)
-                        logger.info("="*50 + "\n")
-                        
-                        # Log individual metrics for monitoring
-                        if 'metrics' in output_diagnostics:
-                            for metric, value in output_diagnostics['metrics'].items():
-                                logger.debug(f"Quality Metric - {metric}: {value}")
-                else:
-                    logger.warning(
-                        f"Request {request_id}: Unable to generate diagnostics data. "
-                        "This may indicate an issue with audio processing."
-                    )
-
-            except Exception as e:
-                logger.error(
-                    f"Diagnostics error for request {request_id}: {str(e)}\n"
-                    f"Traceback: {traceback.format_exc()}"
-                )
-                # Continue processing despite diagnostics failure
-                logger.warning("Continuing with translation despite diagnostics failure")
+            if output_diagnostics:
+                output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
+                if output_report:
+                    logger.info("\n" + "="*50)
+                    logger.info("Translated Audio Quality Report")
+                    logger.info("="*50)
+                    logger.info(f"Request ID: {request_id}")
+                    logger.info(f"Target Language: {model_language}")
+                    logger.info("-"*50)
+                    logger.info(output_report)
+                    logger.info("="*50 + "\n")
+                    
+                    if 'metrics' in output_diagnostics:
+                        for metric, value in output_diagnostics['metrics'].items():
+                            logger.debug(f"Quality Metric - {metric}: {value}")
             
             logger.info(f"Request {request_id}: Audio output processed successfully")
             
         except Exception as e:
-            logger.error(f"Output processing error: {str(e)}")
-            return jsonify({'error': f'Failed to process translation: {str(e)}'}), 500
+            logger.error(f"Diagnostics error for request {request_id}: {str(e)}\n"
+                      f"Traceback: {traceback.format_exc()}")
+            logger.warning("Continuing with translation despite diagnostics failure")
 
-        # Save and send the translated audio with proper headers
         try:
             with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
                 temp_files.append(temp_output.name)
-                waveform_tensor = torch.tensor(audio_output).unsqueeze(0)
+                
+                # Ensure audio output is properly shaped
+                waveform_tensor = torch.tensor(audio_output)
+                if len(waveform_tensor.shape) == 1:
+                    waveform_tensor = waveform_tensor.unsqueeze(0)
+                
                 torchaudio.save(
                     temp_output.name,
                     waveform_tensor,
                     sample_rate=16000
                 )
                 
-                # Verify the saved file
                 if not os.path.exists(temp_output.name) or os.path.getsize(temp_output.name) == 0:
                     raise ValueError("Failed to save translated audio")
                 
@@ -551,14 +547,20 @@ def translate_audio_endpoint():
                 
                 if not audio_data:
                     raise ValueError("Generated audio data is empty")
+                
+                response_data = {
+                    'audio': base64.b64encode(audio_data).decode('utf-8'),
+                    'transcripts': {
+                        'source': source_text,
+                        'target': target_text
+                    }
+                }
 
                 response = Response(
-                    audio_data,
-                    mimetype='audio/wav',
+                    json.dumps(response_data),
+                    mimetype='application/json',
                     headers={
-                        'Content-Type': 'audio/wav',
-                        'Content-Length': str(len(audio_data)),
-                        'Content-Disposition': f'attachment; filename=translated_{Path(file.filename).stem}.wav',
+                        'Content-Type': 'application/json',
                         'Cache-Control': 'no-cache, no-store, must-revalidate',
                         'Pragma': 'no-cache',
                         'Expires': '0',
@@ -582,7 +584,7 @@ def translate_audio_endpoint():
         return ErrorHandler.handle_error(e)
 
     finally:
-        # Cleanup temp files
+        # Cleanup
         for temp_file in temp_files:
             cleanup_file(temp_file)
         
@@ -590,11 +592,10 @@ def translate_audio_endpoint():
         logger.info(f"Request {request_id} completed in {duration:.2f}s")
         PROCESSING_TIME.observe(duration)
         
-        # Resource monitoring
         ResourceMonitor.check_memory()
         if DEVICE.type == 'cuda':
             ResourceMonitor.check_gpu()
-    
+
 @app.route('/health/model', methods=['GET'])
 @performance_logger
 def model_health():

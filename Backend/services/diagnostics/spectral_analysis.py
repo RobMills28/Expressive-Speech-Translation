@@ -465,20 +465,24 @@ class SpectralAnalyzer:
 
             for band_name, band_info in self.FREQUENCY_BANDS.items():
                 try:
+                    # Calculate actual frequency range from Hz to bins with better validation
                     low_bin = max(1, int(band_info.low_freq * window_size / self.sample_rate))
-                    high_bin = min(mag.shape[1], int(band_info.high_freq * window_size / self.sample_rate))
+                    high_bin = min(mag.shape[1] - 1, int(band_info.high_freq * window_size / self.sample_rate))
                 
                     if low_bin >= high_bin:
-                        logger.warning(f"Invalid bin range for {band_name}: {low_bin}-{high_bin}")
+                        logger.debug(f"Skipping {band_name} band: invalid bin range {low_bin}-{high_bin}")
                         continue
 
-                    # Proper reshaping for band analysis
+                    # Ensure valid dimension ranges
+                    low_bin = min(low_bin, mag.shape[1] - 1)
+                    high_bin = min(high_bin, mag.shape[1])
+                
                     band_content = mag[:, low_bin:high_bin].reshape(-1, high_bin - low_bin)
-                    
+                
                     if band_content.numel() == 0:
                         continue
 
-                    # Calculate detailed band metrics
+                    # Keep your original detailed metrics
                     band_data[band_name] = {
                         'mean_energy': float(torch.mean(band_content).item()),
                         'peak_energy': float(torch.max(band_content).item()),
@@ -489,7 +493,7 @@ class SpectralAnalyzer:
                     }
 
                 except Exception as e:
-                    logger.error(f"Error processing {band_name} band: {str(e)}")
+                    logger.debug(f"Error processing {band_name} band: {str(e)}")  # Changed to debug level
                     continue
 
             return band_data

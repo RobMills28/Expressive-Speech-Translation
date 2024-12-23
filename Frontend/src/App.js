@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card"
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card"
 import { Button } from "./components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select"
 import { Label } from "./components/ui/label"
 import { Input } from "./components/ui/input"
+import TranscriptView from "./components/ui/TranscriptView"  // Changed this line
 import { AlertCircle, Globe, Mic, Play, Pause } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert"
 import { Progress } from "./components/ui/progress"
-
 
 const LinguaSyncApp = () => {
   const [audioStatus, setAudioStatus] = useState('idle');
@@ -20,50 +20,59 @@ const LinguaSyncApp = () => {
   const [translatedAudioUrl, setTranslatedAudioUrl] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [progressText, setProgressText] = useState('');
+  const [sourceText, setSourceText] = useState('');
+  const [targetText, setTargetText] = useState('');
+  const [showTranscript, setShowTranscript] = useState(false);
   const audioRef = useRef(null);
   const abortControllerRef = useRef(null);
   const progressIntervalRef = useRef(null);
+  
 
-    // Add this new cleanup function
-    const cleanup = () => {
-      try {
-        // Clean up URLs
-        if (translatedAudioUrl) {
-          URL.revokeObjectURL(translatedAudioUrl);
-          setTranslatedAudioUrl('');
-        }
-        
-        // Clean up audio element
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-          audioRef.current.removeAttribute('src');
-          audioRef.current.load();
-        }
-        
-        // Clean up pending requests
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-          abortControllerRef.current = null;
-        }
-        
-        // Clean up progress interval
-        if (progressIntervalRef.current) {
-          clearInterval(progressIntervalRef.current);
-          progressIntervalRef.current = null;
-        }
-        
-        // Reset states
-        setAudioReady(false);
-        setAudioStatus('idle');
-        setError('');
-        setProgress(0);
-        setProgressText('');
-        setIsPlaying(false);
-      } catch (e) {
-        console.error('Cleanup error:', e);
+   // Add this new cleanup function
+   const cleanup = useCallback(() => {
+    try {
+      // Clean up URLs
+      if (translatedAudioUrl) {
+        URL.revokeObjectURL(translatedAudioUrl);
+        setTranslatedAudioUrl('');
       }
-    };
+      
+      // Clean up audio element
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.removeAttribute('src');
+        audioRef.current.load();
+      }
+      
+      // Clean up pending requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      
+      // Clean up progress interval
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      
+      // Reset states
+      setAudioReady(false);
+      setAudioStatus('idle');
+      setError('');
+      setProgress(0);
+      setProgressText('');
+      setIsPlaying(false);
+      
+      // Add these three new transcript-related resets
+      setSourceText('');
+      setTargetText('');
+      setShowTranscript(false);
+    } catch (e) {
+      console.error('Cleanup error:', e);
+    }
+  }, []);  // Add dependencies if needed
 
   const getProgressMessage = (progress) => {
     if (progress < 20) return "Preparing your audio for translation...";
@@ -80,7 +89,7 @@ useEffect(() => {
       window.removeEventListener('beforeunload', cleanup);
       cleanup();
   };
-}, []);
+}, [cleanup]);
 
 
   const handleFileChange = (event) => {
@@ -167,7 +176,7 @@ useEffect(() => {
   };
 
   const processAudio = async () => {
-    cleanup();  // This replaces all the manual cleanup at the start
+    cleanup();
     abortControllerRef.current = new AbortController();
 
     try {
@@ -204,33 +213,41 @@ useEffect(() => {
             throw new Error(await response.text());
         }
 
-        const audioData = await response.arrayBuffer();
+        // Parse the JSON response
+        const responseData = await response.json();
         
-        // Create blob and validate
-        const blob = new Blob([audioData], { type: 'audio/wav' });
-        if (blob.size === 0) {
+        // Convert base64 audio data to blob
+        const audioBuffer = Uint8Array.from(atob(responseData.audio), c => c.charCodeAt(0));
+        const audioBlob = new Blob([audioBuffer], { type: 'audio/wav' });
+        
+        if (audioBlob.size === 0) {
             throw new Error('Received empty audio data');
         }
-        
-        const url = URL.createObjectURL(blob);
 
-        // Set up audio element before updating state
+        const url = URL.createObjectURL(audioBlob);
+
+        // Set up audio element
         if (audioRef.current) {
             audioRef.current.src = url;
-            await audioRef.current.load(); // Important: wait for load
+            await audioRef.current.load();
         }
+
+        // Set transcript data
+        setSourceText(responseData.transcripts.source);
+        setTargetText(responseData.transcripts.target);
 
         setTranslatedAudioUrl(url);
         setProgress(100);
         setProgressText(getProgressMessage(100));
         setAudioReady(true);
         setAudioStatus('ready');
+        setShowTranscript(true);
 
     } catch (e) {
         console.error('Translation error:', e);
         setError(e.message);
         setAudioStatus('error');
-        cleanup(); // Use cleanup instead of manual cleanup
+        cleanup();
     } finally {
         setProcessing(false);
         if (progressIntervalRef.current) {
@@ -240,55 +257,55 @@ useEffect(() => {
     }
 };
 
-// Helper function to validate audio
-const validateAudio = async (audioBlob) => {
-    return new Promise((resolve, reject) => {
-        const testAudio = new Audio();
-        const tempUrl = URL.createObjectURL(audioBlob);
-        let timeoutId;
+// // Helper function to validate audio
+// const validateAudio = async (audioBlob) => {
+//     return new Promise((resolve, reject) => {
+//         const testAudio = new Audio();
+//         const tempUrl = URL.createObjectURL(audioBlob);
+//         let timeoutId;
 
-        const cleanup = () => {
-            if (timeoutId) clearTimeout(timeoutId);
-            testAudio.removeEventListener('canplaythrough', onCanPlay);
-            testAudio.removeEventListener('error', onError);
-            testAudio.src = '';
-            testAudio.remove();
-            URL.revokeObjectURL(tempUrl);
-        };
+//         const cleanup = () => {
+//             if (timeoutId) clearTimeout(timeoutId);
+//             testAudio.removeEventListener('canplaythrough', onCanPlay);
+//             testAudio.removeEventListener('error', onError);
+//             testAudio.src = '';
+//             testAudio.remove();
+//             URL.revokeObjectURL(tempUrl);
+//         };
 
-        const onCanPlay = () => {
-            if (testAudio.duration === 0 || isNaN(testAudio.duration)) {
-                cleanup();
-                resolve(false);
-                return;
-            }
-            cleanup();
-            resolve(true);
-        };
+//         const onCanPlay = () => {
+//             if (testAudio.duration === 0 || isNaN(testAudio.duration)) {
+//                 cleanup();
+//                 resolve(false);
+//                 return;
+//             }
+//             cleanup();
+//             resolve(true);
+//         };
 
-        const onError = (e) => {
-            console.error('Audio validation error:', {
-                error: e.target.error,
-                code: e.target.error?.code,
-                message: e.target.error?.message,
-                state: testAudio.readyState
-            });
-            cleanup();
-            resolve(false);
-        };
+//         const onError = (e) => {
+//             console.error('Audio validation error:', {
+//                 error: e.target.error,
+//                 code: e.target.error?.code,
+//                 message: e.target.error?.message,
+//                 state: testAudio.readyState
+//             });
+//             cleanup();
+//             resolve(false);
+//         };
 
-        timeoutId = setTimeout(() => {
-            cleanup();
-            resolve(false);
-        }, 5000);
+//         timeoutId = setTimeout(() => {
+//             cleanup();
+//             resolve(false);
+//         }, 5000);
 
-        testAudio.addEventListener('canplaythrough', onCanPlay, { once: true });
-        testAudio.addEventListener('error', onError, { once: true });
+//         testAudio.addEventListener('canplaythrough', onCanPlay, { once: true });
+//         testAudio.addEventListener('error', onError, { once: true });
         
-        testAudio.src = tempUrl;
-        testAudio.load();
-    });
-};
+//         testAudio.src = tempUrl;
+//         testAudio.load();
+//     });
+// };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-700 via-fuchsia-500 to-pink-500">
@@ -444,6 +461,15 @@ const validateAudio = async (audioBlob) => {
         )}
       </div>
     </Button>
+
+    {showTranscript && (
+      <TranscriptView 
+        sourceText={sourceText}
+        targetText={targetText}
+        sourceLang="English"
+        targetLang={targetLanguage}
+      />
+    )}
 
     {audioStatus === 'error' && (
       <Button

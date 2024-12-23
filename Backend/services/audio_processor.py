@@ -105,25 +105,25 @@ class AudioProcessor:
             'phase_coherence': 0.73
         },
         'por': {  # Portuguese
-            'noise_reduction': 1.3,
-            'compression_threshold': 0.45,
-            'compression_ratio': 1.7,
-            'brightness': 0.95,
-            'clarity': 1.2,
-            'formant_boost': 1.18,
-            'high_freq_damping': 0.87,
-            'temporal_smoothing': 0.88,
+            'noise_reduction': 1.1,
+            'compression_threshold': 0.6,
+            'compression_ratio': 1.4,
+            'brightness': 0.98,
+            'clarity': 1.15,
+            'formant_boost': 1.12,
+            'high_freq_damping': 0.92,
+            'temporal_smoothing': 0.85,
             'band_multipliers': {
                 'sub_bass': (0.0, 0.03, 0.9),
                 'bass': (0.03, 0.125, 1.0),
                 'low_mid': (0.125, 0.25, 1.15),
                 'mid': (0.25, 1.0, 1.2),
-                'high_mid': (1.0, 2.0, 1.1),
-                'presence': (2.0, 3.0, 0.9),
-                'brilliance': (3.0, 10.0, 0.85)
+                'high_mid': (1.0, 2.0, 1.05),
+                'presence': (2.0, 3.0, 0.95),
+                'brilliance': (3.0, 10.0, 0.9)
             },
-            'spectral_tilt': -1.8,
-            'phase_coherence': 0.76
+            'spectral_tilt': -1.5,
+            'phase_coherence': 0.8
         }
     }
 
