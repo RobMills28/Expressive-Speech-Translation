@@ -6,7 +6,7 @@ import logging
 import threading
 from transformers import (
     SeamlessM4TProcessor,
-    SeamlessM4Tv2Model,  # Changed from SeamlessM4TModel
+    SeamlessM4Tv2Model,
     SeamlessM4TTokenizer
 )
 
@@ -25,7 +25,6 @@ class ModelManager:
     _lock = threading.Lock()
     
     def __new__(cls):
-        with cls._lock:
             if cls._instance is None:
                 cls._instance = super().__new__(cls)
                 cls._instance._initialize()

@@ -5,8 +5,7 @@ from huggingface_hub import HfApi
 from transformers import (
     AutoConfig,
     SeamlessM4TProcessor,
-    SeamlessM4Tv2Model,
-    SeamlessM4TModel
+    SeamlessM4Tv2Model
 )
 import torch
 
@@ -69,26 +68,18 @@ def verify_token_and_model_access():
         # Try loading v2 model
         print("\nAttempting to load SeamlessM4Tv2Model...")
         try:
-            model_v2 = SeamlessM4Tv2Model.from_pretrained(
+            model = SeamlessM4Tv2Model.from_pretrained(
                 model_name,
                 token=token,
                 trust_remote_code=True
             )
             print("Successfully loaded SeamlessM4Tv2Model")
-            model = model_v2
         except Exception as e:
             print(f"Error loading SeamlessM4Tv2Model: {str(e)}")
-            print("\nTrying SeamlessM4TModel instead...")
-            try:
-                model = SeamlessM4TModel.from_pretrained(
-                    model_name,
-                    token=token,
-                    trust_remote_code=True
-                )
-                print("Successfully loaded SeamlessM4TModel")
-            except Exception as e2:
-                print(f"Error loading SeamlessM4TModel: {str(e2)}")
-                raise Exception("Failed to load either model version")
+            print("\nFull error traceback:")
+            import traceback
+            traceback.print_exc()
+            raise
 
         # Verify model can be moved to GPU if available
         if device.type == 'cuda':

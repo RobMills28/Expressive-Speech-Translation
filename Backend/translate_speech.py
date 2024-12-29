@@ -1,4 +1,4 @@
-from transformers import SeamlessM4TProcessor, SeamlessM4TModel
+from transformers import SeamlessM4TProcessor, SeamlessM4Tv2Model
 import torch
 import torchaudio
 import os
@@ -21,7 +21,7 @@ try:
         MODEL_NAME,
         token=os.getenv('HUGGINGFACE_TOKEN')
     )
-    model = SeamlessM4TModel.from_pretrained(
+    model = SeamlessM4Tv2Model.from_pretrained(
         MODEL_NAME,
         token=os.getenv('HUGGINGFACE_TOKEN')
     )
