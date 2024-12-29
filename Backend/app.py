@@ -76,7 +76,14 @@ MEMORY_THRESHOLD = 0.9
 BATCH_SIZE = 1
 START_TIME = time.time()
 
-# Initialize Flask app first
+# Global model components - Added this section
+global processor, model, text_model, tokenizer
+processor = None
+model = None
+text_model = None
+tokenizer = None
+
+# Initialize Flask app
 app = Flask(__name__)
 
 # Configure CORS
@@ -303,6 +310,7 @@ LANGUAGE_MAP = {
 @require_model
 @performance_logger
 def translate_audio_endpoint():
+    global processor, model, text_model, tokenizer
     TRANSLATION_REQUESTS.inc()
     
     if request.method == 'OPTIONS':
@@ -436,8 +444,34 @@ def translate_audio_endpoint():
             if DEVICE.type == 'cuda':
                 inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
 
+            # First generate source text (English transcription)
+            try:
+                with torch.no_grad():
+                    source_outputs = text_model.generate(
+                        input_features=inputs["input_features"],
+                        tgt_lang="eng"
+                    )
+                    source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
+                    logger.info(f"Source text: {source_text}")
+            except Exception as e:
+                logger.error(f"Source text generation error: {str(e)}")
+                source_text = "Text extraction unavailable"
+
+            # Then generate target text (translation)
+            try:
+                with torch.no_grad():
+                    target_outputs = text_model.generate(
+                        input_features=inputs["input_features"],
+                        tgt_lang=model_language
+                    )
+                    target_text = processor.batch_decode(target_outputs, skip_special_tokens=True)[0]
+                    logger.info(f"Target text: {target_text}")
+            except Exception as e:
+                logger.error(f"Target text generation error: {str(e)}")
+                target_text = "Text extraction unavailable"
+
+            # Finally generate the audio
             with torch.no_grad():
-                # Generate translation
                 outputs = model.generate(
                     **inputs,
                     tgt_lang=model_language,
@@ -451,47 +485,20 @@ def translate_audio_endpoint():
                     repetition_penalty=1.2,
                     no_repeat_ngram_size=3
                 )
-                
-                # Handle outputs based on type
-                if isinstance(outputs, tuple):
-                    logger.info("Processing tuple output from model")
-                    audio_output = outputs[0].cpu().numpy()
-                    sequences = outputs[1] if len(outputs) > 1 else outputs[0]
-                else:
-                    logger.info("Processing tensor output from model")
-                    audio_output = outputs.cpu().numpy()
-                    sequences = outputs
+            
+            # Handle outputs based on type
+            if isinstance(outputs, tuple):
+                logger.info("Processing tuple output from model")
+                audio_output = outputs[0].cpu().numpy()
+            else:
+                logger.info("Processing tensor output from model")
+                audio_output = outputs.cpu().numpy()
 
-                # Extract texts
-                try:
-                    # Generate source text
-                    with torch.no_grad():
-                        source_sequences = model.generate(
-                            input_features=inputs["input_features"],
-                            attention_mask=inputs.get("attention_mask"),
-                            tgt_lang="eng",
-                            num_beams=5,
-                            max_new_tokens=200
-                        )
-                        source_text = processor.decode(source_sequences[0] if source_sequences.dim() > 1 else source_sequences, skip_special_tokens=True)
-                except Exception as e:
-                    logger.error(f"Source text generation error: {str(e)}")
-                    source_text = "Text extraction unavailable"
+            if audio_output is None or audio_output.size == 0:
+                raise ValueError("No audio data generated")
 
-                try:
-                    target_text = processor.decode(sequences[0] if sequences.dim() > 1 else sequences, skip_special_tokens=True)
-                except Exception as e:
-                    logger.error(f"Target text generation error: {str(e)}")
-                    target_text = "Text extraction unavailable"
-
-                logger.info(f"Source text: {source_text}")
-                logger.info(f"Target text: {target_text}")
-
-                if audio_output is None or audio_output.size == 0:
-                    raise ValueError("No audio data generated")
-
-                if np.abs(audio_output).max() > 1.0:
-                    audio_output = audio_output / np.abs(audio_output).max()
+            if np.abs(audio_output).max() > 1.0:
+                audio_output = audio_output / np.abs(audio_output).max()
 
         except Exception as e:
             logger.error(f"Translation error: {str(e)}")
@@ -693,8 +700,8 @@ if __name__ == '__main__':
 
         # Check model loading
         model_manager = ModelManager()  
-        processor, model, tokenizer = model_manager.get_model_components()
-        if None in (processor, model, tokenizer):
+        processor, model, text_model, tokenizer = model_manager.get_model_components()
+        if None in (processor, model, text_model, tokenizer):
             logger.error("Could not start the app due to model loading failure")
             sys.exit(1)
         

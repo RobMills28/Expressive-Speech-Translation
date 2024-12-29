@@ -7,7 +7,8 @@ import threading
 from transformers import (
     SeamlessM4TProcessor,
     SeamlessM4Tv2Model,
-    SeamlessM4TTokenizer
+    SeamlessM4TTokenizer,
+    SeamlessM4Tv2ForSpeechToText
 )
 
 # Set up logging
@@ -34,6 +35,7 @@ class ModelManager:
         """Initialize model manager state"""
         self.processor = None
         self.model = None
+        self.text_model = None  # Added for speech-to-text
         self.tokenizer = None
         self.last_used = None
         self.is_initializing = False
@@ -64,12 +66,18 @@ class ModelManager:
                 inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
             
             with torch.no_grad():
-                # Try generating output using generate()
+                # Test main model
                 outputs = self.model.generate(
                     **inputs,
                     tgt_lang="fra",
                     num_beams=1,
                     max_new_tokens=50
+                )
+                
+                # Test speech-to-text model
+                text_outputs = self.text_model.generate(
+                    input_features=inputs["input_features"],
+                    tgt_lang="fra"
                 )
                 
             logger.info("Model verification successful")
@@ -101,8 +109,16 @@ class ModelManager:
                 trust_remote_code=True
             )
             
-            self.model = SeamlessM4Tv2Model.from_pretrained(  # Changed to Tv2Model
+            self.model = SeamlessM4Tv2Model.from_pretrained(
                 MODEL_NAME, 
+                token=auth_token,
+                torch_dtype=torch.float32,
+                trust_remote_code=True
+            )
+            
+            # Load speech-to-text model
+            self.text_model = SeamlessM4Tv2ForSpeechToText.from_pretrained(
+                MODEL_NAME,
                 token=auth_token,
                 torch_dtype=torch.float32,
                 trust_remote_code=True
@@ -116,6 +132,7 @@ class ModelManager:
             
             if DEVICE.type == 'cuda':
                 self.model = self.model.to(DEVICE)
+                self.text_model = self.text_model.to(DEVICE)
                 logger.info(f"Model loaded on GPU: {torch.cuda.get_device_name(0)}")
                 memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
                 memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
@@ -134,6 +151,7 @@ class ModelManager:
             logger.error(f"Error initializing model: {str(e)}", exc_info=True)
             self.processor = None
             self.model = None
+            self.text_model = None
             self.tokenizer = None
             raise
         finally:
@@ -144,7 +162,7 @@ class ModelManager:
         Get model components with validation and monitoring
         
         Returns:
-            tuple: (processor, model, tokenizer) or (None, None, None) if error
+            tuple: (processor, model, text_model, tokenizer) or (None, None, None, None) if error
         """
         try:
             # Check if model needs reloading
@@ -155,7 +173,7 @@ class ModelManager:
             # Verify model state
             if not self._verify_model():
                 logger.error("Model verification failed during component request")
-                return None, None, None
+                return None, None, None, None
             
             # Update last used timestamp
             self.last_used = time.time()
@@ -165,11 +183,11 @@ class ModelManager:
                 memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
                 logger.debug(f"GPU Memory at component request: {memory_allocated:.2f}MB")
             
-            return self.processor, self.model, self.tokenizer
+            return self.processor, self.model, self.text_model, self.tokenizer
             
         except Exception as e:
             logger.error(f"Error getting model components: {str(e)}")
-            return None, None, None
+            return None, None, None, None
     
     def cleanup(self):
         """Clean up model resources"""
@@ -178,11 +196,14 @@ class ModelManager:
             if DEVICE.type == 'cuda':
                 if self.model is not None:
                     self.model.cpu()
+                if self.text_model is not None:
+                    self.text_model.cpu()
                 torch.cuda.empty_cache()
                 gc.collect()
                 
             self.processor = None
             self.model = None
+            self.text_model = None
             self.tokenizer = None
             logger.info("Model cleanup completed successfully")
             

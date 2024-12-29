@@ -28,15 +28,17 @@ def require_model(f):
     """Decorator to ensure model is loaded before processing"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        model_manager = ModelManager()
-        processor, model, tokenizer = model_manager.get_model_components()
+        global processor, model, text_model, tokenizer
         
-        if None in (processor, model, tokenizer):
+        model_manager = ModelManager()
+        processor, model, text_model, tokenizer = model_manager.get_model_components()
+
+        if None in (processor, model, text_model, tokenizer):
             return jsonify({'error': 'Model not initialized properly'}), 503
-            
+
         return f(*args, **kwargs)
     return decorated_function
-
+        
 def performance_logger(f):
     """Decorator to log function performance metrics"""
     @wraps(f)
@@ -61,5 +63,5 @@ def performance_logger(f):
         except Exception as e:
             logger.error(f"Error in {f.__name__}: {str(e)}")
             raise
-            
+        
     return decorated_function
