@@ -428,12 +428,16 @@ def translate_audio_endpoint():
             return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
         
         try:
+            # IMPROVED: Enhanced input processing for better transcription
             inputs = processor(
                 audios=audio_numpy,
                 sampling_rate=SAMPLE_RATE,
                 return_tensors="pt",
                 src_lang="eng",
-                tgt_lang=model_language
+                tgt_lang=model_language,
+                padding=True,              # Add padding
+                truncation=True,           # Enable truncation if needed
+                max_length=256000         # Set reasonable max length for audio
             )
             
             logger.info(f"Input keys: {inputs.keys()}")
@@ -444,15 +448,43 @@ def translate_audio_endpoint():
             if DEVICE.type == 'cuda':
                 inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
 
-            # First generate source text (English transcription)
+            # IMPROVED: Enhanced source text generation (English transcription)
             try:
                 with torch.no_grad():
+                    # First pass - get initial transcription
                     source_outputs = text_model.generate(
                         input_features=inputs["input_features"],
-                        tgt_lang="eng"
+                        tgt_lang="eng",
+                        num_beams=5,                    # Use beam search
+                        do_sample=False,                # Disable sampling for accurate transcription
+                        max_new_tokens=300,             # Allow longer transcriptions
+                        min_new_tokens=10,              # Ensure minimum output length
+                        length_penalty=1.0,             # Balanced length penalty
+                        repetition_penalty=1.5,         # Increased repetition penalty
+                        no_repeat_ngram_size=3,         # Prevent 3-gram repetitions
+                        early_stopping=True,            # Stop when complete
+                        temperature=0.7                 # Moderate temperature
                     )
                     source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
+                    
+                    # If initial transcription shows repetition patterns, try second pass
+                    if any(phrase in source_text for phrase in [" H. H. H", ", the, the", " of the, of the"]):
+                        logger.info("Detected potential repetition, performing second pass with adjusted parameters")
+                        source_outputs = text_model.generate(
+                            input_features=inputs["input_features"],
+                            tgt_lang="eng",
+                            num_beams=4,                    
+                            do_sample=False,               
+                            max_new_tokens=200,            
+                            repetition_penalty=2.0,        # Increased further
+                            no_repeat_ngram_size=4,        # Increased
+                            length_penalty=0.8,            # Adjusted
+                            temperature=0.6                # Reduced
+                        )
+                        source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
+                    
                     logger.info(f"Source text: {source_text}")
+                    
             except Exception as e:
                 logger.error(f"Source text generation error: {str(e)}")
                 source_text = "Text extraction unavailable"
@@ -462,7 +494,12 @@ def translate_audio_endpoint():
                 with torch.no_grad():
                     target_outputs = text_model.generate(
                         input_features=inputs["input_features"],
-                        tgt_lang=model_language
+                        tgt_lang=model_language,
+                        num_beams=4,
+                        max_new_tokens=300,
+                        length_penalty=0.8,
+                        repetition_penalty=1.5,
+                        no_repeat_ngram_size=3
                     )
                     target_text = processor.batch_decode(target_outputs, skip_special_tokens=True)[0]
                     logger.info(f"Target text: {target_text}")
@@ -602,7 +639,7 @@ def translate_audio_endpoint():
         ResourceMonitor.check_memory()
         if DEVICE.type == 'cuda':
             ResourceMonitor.check_gpu()
-
+            
 @app.route('/health/model', methods=['GET'])
 @performance_logger
 def model_health():
