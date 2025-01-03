@@ -26,16 +26,16 @@ class ModelManager:
     _lock = threading.Lock()
     
     def __new__(cls):
-            if cls._instance is None:
-                cls._instance = super().__new__(cls)
-                cls._instance._initialize()
-            return cls._instance
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._initialize()
+        return cls._instance
     
     def _initialize(self):
         """Initialize model manager state"""
         self.processor = None
         self.model = None
-        self.text_model = None  # Added for speech-to-text
+        self.text_model = None
         self.tokenizer = None
         self.last_used = None
         self.is_initializing = False
@@ -43,41 +43,45 @@ class ModelManager:
 
     def _verify_model(self) -> bool:
         """
-        Verify model loaded correctly
+        Verify model loaded correctly with enhanced speech recognition testing
         
         Returns:
             bool: True if model verification successful, False otherwise
         """
         try:
-            # Create proper dummy inputs for verification
+            # Create dummy inputs for verification
             sample_audio = torch.randn(1, 16000)  # 1 second of audio at 16kHz
             
-            # Process through the processor correctly
+            # Process through the processor with explicit speech recognition settings
             inputs = self.processor(
                 audios=sample_audio.numpy(),
                 sampling_rate=16000,
                 return_tensors="pt",
                 src_lang="eng",
-                tgt_lang="fra"
+                tgt_lang="fra",
+                padding=True
             )
             
-            # Move to device if using CUDA
             if DEVICE.type == 'cuda':
                 inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
             
             with torch.no_grad():
-                # Test main model
+                # Test speech recognition specifically
+                text_outputs = self.text_model.generate(
+                    input_features=inputs["input_features"],
+                    tgt_lang="eng",                    # Test English recognition
+                    num_beams=4,                      # Use beam search
+                    max_new_tokens=50,
+                    do_sample=False,                  # Deterministic for testing
+                    return_dict_in_generate=True      # Get full output info
+                )
+                
+                # Test main model for translation
                 outputs = self.model.generate(
                     **inputs,
                     tgt_lang="fra",
                     num_beams=1,
                     max_new_tokens=50
-                )
-                
-                # Test speech-to-text model
-                text_outputs = self.text_model.generate(
-                    input_features=inputs["input_features"],
-                    tgt_lang="fra"
                 )
                 
             logger.info("Model verification successful")
@@ -88,7 +92,7 @@ class ModelManager:
             return False
 
     def _load_model(self):
-        """Load model components with verification"""
+        """Load model components with enhanced speech recognition configuration"""
         try:
             logger.info(f"Loading SeamlessM4T model: {MODEL_NAME}")
             self.is_initializing = True
@@ -97,32 +101,37 @@ class ModelManager:
                 torch.cuda.empty_cache()
                 gc.collect()
             
-            # Get auth token
             auth_token = os.getenv('HUGGINGFACE_TOKEN')
             if not auth_token:
                 raise ValueError("HUGGINGFACE_TOKEN not found in environment variables")
             
-            # Load model components with improved initialization
+            # Load processor with speech recognition focus
             self.processor = SeamlessM4TProcessor.from_pretrained(
                 MODEL_NAME, 
                 token=auth_token,
                 trust_remote_code=True
             )
             
+            # Load main model for translation
             self.model = SeamlessM4Tv2Model.from_pretrained(
                 MODEL_NAME, 
                 token=auth_token,
                 torch_dtype=torch.float32,
-                trust_remote_code=True
             )
             
-            # Load speech-to-text model
+            # Load specialized speech-to-text model with optimized config
             self.text_model = SeamlessM4Tv2ForSpeechToText.from_pretrained(
                 MODEL_NAME,
                 token=auth_token,
                 torch_dtype=torch.float32,
-                trust_remote_code=True
+                use_safetensors=True
             )
+            
+            # Configure text model for better speech recognition
+            if hasattr(self.text_model, 'config'):
+                self.text_model.config.speech_encoder_chunk_size = 10000  # Reduced chunk size
+                self.text_model.config.use_cache = False                  # Disable cache for accuracy
+                self.text_model.config.speech_encoder_layerdrop = 0.0    # Disable layerdrop
             
             self.tokenizer = SeamlessM4TTokenizer.from_pretrained(
                 MODEL_NAME, 
@@ -133,14 +142,24 @@ class ModelManager:
             if DEVICE.type == 'cuda':
                 self.model = self.model.to(DEVICE)
                 self.text_model = self.text_model.to(DEVICE)
-                logger.info(f"Model loaded on GPU: {torch.cuda.get_device_name(0)}")
+                
+                # Set models to eval mode explicitly
+                self.model.eval()
+                self.text_model.eval()
+                
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                    torch.backends.cudnn.benchmark = True  # Enable cudnn autotuner
+                
+                logger.info(f"Models loaded on GPU: {torch.cuda.get_device_name(0)}")
                 memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
                 memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
                 logger.info(f"GPU Memory after loading - Allocated: {memory_allocated:.2f}MB, Reserved: {memory_reserved:.2f}MB")
             else:
-                logger.info("Model loaded on CPU")
+                self.model.eval()
+                self.text_model.eval()
+                logger.info("Models loaded on CPU")
             
-            # Verify model immediately after loading
             if not self._verify_model():
                 raise ValueError("Model verification failed after loading")
             
@@ -165,20 +184,16 @@ class ModelManager:
             tuple: (processor, model, text_model, tokenizer) or (None, None, None, None) if error
         """
         try:
-            # Check if model needs reloading
-            if self.last_used and time.time() - self.last_used > 3600:  # 1 hour
+            if self.last_used and time.time() - self.last_used > 3600:
                 logger.info("Model inactive for too long, reloading...")
                 self._load_model()
             
-            # Verify model state
             if not self._verify_model():
                 logger.error("Model verification failed during component request")
                 return None, None, None, None
             
-            # Update last used timestamp
             self.last_used = time.time()
             
-            # Log memory usage
             if DEVICE.type == 'cuda':
                 memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
                 logger.debug(f"GPU Memory at component request: {memory_allocated:.2f}MB")

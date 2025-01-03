@@ -455,31 +455,28 @@ def translate_audio_endpoint():
                     source_outputs = text_model.generate(
                         input_features=inputs["input_features"],
                         tgt_lang="eng",
-                        num_beams=5,                    # Use beam search
+                        num_beams=8,                    # Increased beam search
                         do_sample=False,                # Disable sampling for accurate transcription
-                        max_new_tokens=300,             # Allow longer transcriptions
-                        min_new_tokens=10,              # Ensure minimum output length
-                        length_penalty=1.0,             # Balanced length penalty
-                        repetition_penalty=1.5,         # Increased repetition penalty
-                        no_repeat_ngram_size=3,         # Prevent 3-gram repetitions
-                        early_stopping=True,            # Stop when complete
-                        temperature=0.7                 # Moderate temperature
+                        max_new_tokens=1000,            # Longer output allowed
+                        temperature=0.2,                # Lower temperature for more precise recognition
+                        length_penalty=1.0,             # Neutral length penalty
+                        repetition_penalty=1.5,         # Keep repetition penalty
+                        no_repeat_ngram_size=3          # Keep n-gram blocking
                     )
                     source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
                     
-                    # If initial transcription shows repetition patterns, try second pass
+                    # Check for potential transcription issues
                     if any(phrase in source_text for phrase in [" H. H. H", ", the, the", " of the, of the"]):
-                        logger.info("Detected potential repetition, performing second pass with adjusted parameters")
+                        logger.info("Detected potential repetition, performing second pass")
                         source_outputs = text_model.generate(
                             input_features=inputs["input_features"],
                             tgt_lang="eng",
-                            num_beams=4,                    
+                            num_beams=8,                    
                             do_sample=False,               
-                            max_new_tokens=200,            
-                            repetition_penalty=2.0,        # Increased further
-                            no_repeat_ngram_size=4,        # Increased
-                            length_penalty=0.8,            # Adjusted
-                            temperature=0.6                # Reduced
+                            max_new_tokens=1000,            
+                            repetition_penalty=2.0,        # Increased repetition penalty for second pass
+                            no_repeat_ngram_size=4,        # Increased n-gram blocking
+                            temperature=0.2                # Keep low temperature
                         )
                         source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
                     
@@ -489,14 +486,14 @@ def translate_audio_endpoint():
                 logger.error(f"Source text generation error: {str(e)}")
                 source_text = "Text extraction unavailable"
 
-            # Then generate target text (translation)
+            # Generate target text using same input features for consistency
             try:
                 with torch.no_grad():
                     target_outputs = text_model.generate(
                         input_features=inputs["input_features"],
                         tgt_lang=model_language,
                         num_beams=4,
-                        max_new_tokens=300,
+                        max_new_tokens=1000,             # Match source text length
                         length_penalty=0.8,
                         repetition_penalty=1.5,
                         no_repeat_ngram_size=3
@@ -507,7 +504,7 @@ def translate_audio_endpoint():
                 logger.error(f"Target text generation error: {str(e)}")
                 target_text = "Text extraction unavailable"
 
-            # Finally generate the audio
+            # Generate the audio
             with torch.no_grad():
                 outputs = model.generate(
                     **inputs,
