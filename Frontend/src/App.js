@@ -5,13 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Label } from "./components/ui/label"
 import { Input } from "./components/ui/input"
 import TranscriptView from "./components/ui/TranscriptView"  // Changed this line
-import { AlertCircle, Globe, Mic, Play, Pause } from 'lucide-react'
+import { AlertCircle, Globe, Mic, Play, Pause, Radio, BarChart2 } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert"
 import { Progress } from "./components/ui/progress"
 
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Radio } from 'lucide-react'
 import PodcastPage from './components/PodcastPage';
+import VoiceAnalyticsDashboard from './components/VoiceAnalyticsDashboard';
+
 
 const Navigation = () => {
   const location = useLocation();
@@ -50,6 +51,18 @@ const Navigation = () => {
               <Radio className="w-4 h-4 mr-2" />
               Podcasts
             </Link>
+
+            <Link 
+            to="/analytics"
+            className={`px-4 py-2 rounded-md ${
+              location.pathname === '/analytics' ? 'bg-purple-600 text-white' : 'text-white hover:bg-purple-600/50'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <BarChart2 className="w-4 h-4" />
+              Analytics
+            </div>
+          </Link>
           </div>
         </div>
       </div>
@@ -525,6 +538,7 @@ return (
           </div>
         } />
         <Route path="/podcasts" element={<PodcastPage />} />
+        <Route path="/analytics" element={<VoiceAnalyticsDashboard />} />
       </Routes>
     </div>
   </Router>

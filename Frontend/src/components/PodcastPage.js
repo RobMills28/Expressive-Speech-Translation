@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import React, { useState, useRef } from 'react';
+import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { Globe, Upload, PlayCircle, Heart } from 'lucide-react';
+import { PlayCircle, Heart, Upload } from 'lucide-react';
+import { Alert, AlertDescription } from "./ui/alert";
 
 const PodcastPage = () => {
-  const [selectedPodcast, setSelectedPodcast] = useState(null);
-
-  const samplePodcasts = [
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
+  
+  // Initialize with some sample podcasts but allow for new ones
+  const [podcasts, setPodcasts] = useState([
     {
       id: 1,
       title: "The Future of AI",
@@ -25,105 +29,157 @@ const PodcastPage = () => {
       languages: ["🇺🇸 EN", "🇪🇸 ES"],
       date: "Dec 28, 2024"
     }
-  ];
+  ]);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const formatDuration = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+  };
+
+  const handleFileSelect = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      setError('');
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', file.name.replace(/\.[^/.]+$/, ''));
+      formData.append('date', new Date().toISOString());
+
+      const response = await fetch('http://localhost:5001/upload_podcast', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const newPodcast = await response.json();
+      
+      // Add the new podcast to the list with proper formatting
+      setPodcasts(prevPodcasts => [{
+        id: newPodcast.id,
+        title: newPodcast.title,
+        episode: `EP ${newPodcast.episode}`,
+        duration: newPodcast.duration,
+        thumbnail: "/api/placeholder/192/192", // Use placeholder for now
+        languages: ["🇺🇸 EN"], // Start with English, more languages can be added after translation
+        date: new Date(newPodcast.date).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        })
+      }, ...prevPodcasts]);
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      setError('Failed to upload podcast. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-fuchsia-500 to-pink-500">
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-6 space-y-6">
         {/* Upload Section */}
-        <Card className="mb-8 bg-white/90 backdrop-blur-md shadow-xl">
+        <Card className="bg-white/90 backdrop-blur-md shadow-xl">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">Upload Your Podcast</h2>
-                <p className="text-sm text-gray-600">Translate your content into multiple languages</p>
-              </div>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Podcast
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Featured Podcast */}
-        <Card className="mb-8 bg-white/90 backdrop-blur-md shadow-xl">
-          <CardContent className="p-6">
-            <div className="flex gap-6">
-              <div className="w-48 h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-                <img 
-                  src="/api/placeholder/192/192" 
-                  alt="Featured podcast"
-                  className="rounded-lg"
-                />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="bg-purple-600 text-white px-2 py-1 rounded text-sm">FEATURED</span>
-                  <span className="flex items-center gap-1 text-sm text-gray-600">
-                    <Globe className="w-4 h-4" />
-                    Available in 5 languages
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">The Future of AI</h2>
-                <p className="text-gray-600 mb-4">Latest episode: The Rise of AI Assistants - EP 145</p>
-                
-                <div className="flex items-center gap-4">
-                  <PlayCircle className="w-12 h-12 text-purple-600 hover:text-purple-700 cursor-pointer" />
-                  <div className="flex-1">
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full w-1/3 bg-purple-600"></div>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-600 mt-1">
-                      <span>14:22</span>
-                      <span>45:00</span>
-                    </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold text-gray-800">Upload Your Podcast</h2>
+              <p className="text-sm text-gray-600">Translate your content into multiple languages</p>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="audio/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              
+              <Button
+                onClick={handleUploadClick}
+                disabled={uploading}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              >
+                {uploading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                    <span>Uploading...</span>
                   </div>
-                </div>
-              </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    <span>Upload Podcast</span>
+                  </div>
+                )}
+              </Button>
+
+              {error && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </CardContent>
         </Card>
 
         {/* Recent Episodes */}
         <Card className="bg-white/90 backdrop-blur-md shadow-xl">
-          <CardHeader>
-            <CardTitle>Recent Episodes</CardTitle>
-            <CardDescription>Browse and translate your podcast episodes</CardDescription>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="space-y-4">
-              {samplePodcasts.map((podcast) => (
-                <div 
-                  key={podcast.id} 
-                  className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <img 
-                    src={podcast.thumbnail}
-                    alt={podcast.title}
-                    className="w-16 h-16 rounded-lg object-cover"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{podcast.title}</h3>
-                    <p className="text-sm text-gray-500">{podcast.episode} • {podcast.date}</p>
-                    <div className="flex gap-2 mt-1">
-                      {podcast.languages.map((lang, index) => (
-                        <span 
-                          key={index} 
-                          className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
-                        >
-                          {lang}
-                        </span>
-                      ))}
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">Recent Episodes</h2>
+                <p className="text-sm text-gray-600">Browse and translate your podcast episodes</p>
+              </div>
+
+              <div className="space-y-4">
+                {podcasts.map((podcast) => (
+                  <div 
+                    key={podcast.id}
+                    className="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <img 
+                      src={podcast.thumbnail}
+                      alt={podcast.title}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800">{podcast.title}</h3>
+                      <p className="text-sm text-gray-500">{podcast.episode} • {podcast.date}</p>
+                      <div className="flex gap-2 mt-1">
+                        {podcast.languages.map((lang, index) => (
+                          <span 
+                            key={index}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"
+                          >
+                            {lang}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-500">{podcast.duration}</span>
+                      <PlayCircle className="w-8 h-8 text-purple-600 hover:text-purple-700 cursor-pointer" />
+                      <Heart className="w-6 h-6 text-gray-400 hover:text-pink-500 cursor-pointer" />
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-500">{podcast.duration}</span>
-                    <PlayCircle className="w-8 h-8 text-purple-600 hover:text-purple-700 cursor-pointer" />
-                    <Heart className="w-6 h-6 text-gray-400 hover:text-pink-500 cursor-pointer" />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>

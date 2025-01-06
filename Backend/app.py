@@ -12,9 +12,12 @@ import base64
 import traceback  # Add this for the improved error handling
 from datetime import datetime
 from pathlib import Path
+import uuid
+from werkzeug.utils import secure_filename
 
 # Third-party imports: Audio processing
 from pydub import AudioSegment  # For MP3 conversion
+
 
 # Third-party imports: Monitoring and Metrics
 from prometheus_client import Counter, Histogram, start_http_server
@@ -65,8 +68,9 @@ load_dotenv()
 warnings.filterwarnings('ignore')
 
 # Constants
-MAX_AUDIO_LENGTH = 300  # seconds (5 minutes)
-MAX_DURATION = 300 # seconds
+MAX_AUDIO_LENGTH = 300  # seconds (5 minutes) - for translations
+MAX_PODCAST_LENGTH = 3600  # seconds (1 hour) - for podcast uploads
+MAX_DURATION = 300  # seconds
 MAX_TOKENS = 1500
 SAMPLE_RATE = 16000
 CHUNK_SIZE = 16384  # Increased for better processing
@@ -75,6 +79,14 @@ TIMEOUT = 600  # seconds (increased for longer audio)
 MEMORY_THRESHOLD = 0.9
 BATCH_SIZE = 1
 START_TIME = time.time()
+
+# Upload configuration
+UPLOAD_FOLDER = Path('uploads/podcasts')
+ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a'}
+
+# Create upload folder if it doesn't exist
+UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
+
 
 # Global model components - Added this section
 global processor, model, text_model, tokenizer
@@ -126,6 +138,9 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"]
 )
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Configure logging
 def setup_logging():
@@ -636,6 +651,92 @@ def translate_audio_endpoint():
         ResourceMonitor.check_memory()
         if DEVICE.type == 'cuda':
             ResourceMonitor.check_gpu()
+
+@app.route('/upload_podcast', methods=['POST', 'OPTIONS'])
+@limiter.limit("5 per minute")
+@performance_logger
+def upload_podcast():
+    if request.method == 'OPTIONS':
+        return '', 204
+        
+    request_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
+    start_time = time.time()
+    temp_files = []
+    
+    try:
+        logger.info(f"Starting podcast upload request {request_id}")
+        
+        # Resource check
+        resources_ok, resource_error = ResourceMonitor.check_resources()
+        if not resources_ok:
+            raise ValueError(f"Resource check failed: {resource_error}")
+        
+        # Validate request
+        if 'file' not in request.files:
+            logger.error(f"Request {request_id}: No file in request")
+            return jsonify({'error': 'No file uploaded'}), 400
+            
+        file = request.files['file']
+        if not file.filename:
+            logger.error(f"Request {request_id}: Empty filename")
+            return jsonify({'error': 'No selected file'}), 400
+            
+        if not allowed_file(file.filename):
+            logger.error(f"Request {request_id}: Invalid file type")
+            return jsonify({'error': 'Invalid file type. Allowed types: mp3, wav, ogg, m4a'}), 400
+
+        # Generate unique filename and save file
+        unique_id = str(uuid.uuid4())
+        filename = secure_filename(file.filename)
+        unique_filename = f"{unique_id}_{filename}"
+        filepath = UPLOAD_FOLDER / unique_filename
+
+        # Save and process file
+        try:
+            file.save(filepath)
+            logger.info(f"Request {request_id}: Saved file to {filepath}")
+            
+            # Get audio duration using torchaudio
+            waveform, sample_rate = torchaudio.load(filepath)
+            duration_seconds = waveform.shape[1] / sample_rate
+            
+            # Check if podcast exceeds maximum length
+            if duration_seconds > MAX_PODCAST_LENGTH:
+                cleanup_file(filepath)
+                return jsonify({'error': f'Podcast exceeds maximum length of {MAX_PODCAST_LENGTH/60} minutes'}), 400
+            
+            minutes = int(duration_seconds // 60)
+            seconds = int(duration_seconds % 60)
+            duration = f"{minutes:02d}:{seconds:02d}"
+            
+        except Exception as e:
+            logger.error(f"File processing error: {str(e)}")
+            cleanup_file(filepath)
+            return jsonify({'error': 'Failed to process audio file'}), 400
+
+        # Create response object
+        podcast_data = {
+            'id': unique_id,
+            'title': request.form.get('title', file.filename.rsplit('.', 1)[0]),
+            'episode': str(len(list(UPLOAD_FOLDER.glob('*')))), 
+            'duration': duration,
+            'date': datetime.now().isoformat(),
+            'filepath': str(filepath)
+        }
+        
+        logger.info(f"Request {request_id}: Successfully processed podcast upload: {podcast_data['title']}")
+        return jsonify(podcast_data), 200
+        
+    except Exception as e:
+        logger.error(f"Request {request_id}: Unhandled error: {str(e)}", exc_info=True)
+        return ErrorHandler.handle_error(e)
+        
+    finally:
+        duration = time.time() - start_time
+        logger.info(f"Request {request_id} completed in {duration:.2f}s")
+        ResourceMonitor.check_memory()
+        if DEVICE.type == 'cuda':
+            ResourceMonitor.check_gpu()
             
 @app.route('/health/model', methods=['GET'])
 @performance_logger
@@ -693,6 +794,17 @@ def cleanup_temp_files():
         logger.error(f"Error during temp file cleanup: {str(e)}", exc_info=True)
 
 
+def cleanup_old_podcasts():
+    """Clean up podcast files older than 24 hours"""
+    try:
+        current_time = time.time()
+        for file_path in UPLOAD_FOLDER.glob('*'):
+            if file_path.stat().st_mtime < (current_time - 86400):  # 24 hours
+                cleanup_file(file_path)
+                logger.info(f"Removed old podcast file: {file_path}")
+    except Exception as e:
+        logger.error(f"Error cleaning up old podcasts: {str(e)}")
+
 def shutdown_handler():
     """Clean up resources during shutdown"""
     logger.info("Application shutting down...")
@@ -707,6 +819,7 @@ def shutdown_handler():
         
         # Remove temporary files
         cleanup_temp_files()
+        cleanup_old_podcasts()  # Added this line
         
         logger.info("Cleanup completed successfully")
     except Exception as e:
