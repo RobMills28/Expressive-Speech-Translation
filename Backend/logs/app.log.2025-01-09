@@ -1,0 +1,45 @@
+2025-01-09 00:04:20,704 - __main__ - INFO - [app.py:216] - Received SIGINT signal
+2025-01-09 00:04:20,748 - __main__ - INFO - [app.py:201] - Initiating graceful shutdown...
+2025-01-09 00:04:25,754 - __main__ - INFO - [app.py:393] - Application shutting down...
+2025-01-09 00:04:25,782 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-09 00:04:25,784 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-09 00:04:25,793 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-09 00:04:25,799 - __main__ - INFO - [app.py:387] - Removed old podcast file: uploads/podcasts/04211b51-8b1b-473c-b658-754d06307b8d_harvard.wav
+2025-01-09 00:04:25,800 - __main__ - INFO - [app.py:387] - Removed old podcast file: uploads/podcasts/51ffcf0e-cb93-401b-8060-4c333412660e_harvard.wav
+2025-01-09 00:04:25,801 - __main__ - INFO - [app.py:387] - Removed old podcast file: uploads/podcasts/b0829834-4a61-4667-87fd-071cbb86395c_harvard.wav
+2025-01-09 00:04:25,801 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
+2025-01-09 00:04:25,801 - __main__ - INFO - [app.py:205] - Graceful shutdown completed
+2025-01-09 00:04:25,833 - __main__ - INFO - [app.py:393] - Application shutting down...
+2025-01-09 00:04:25,835 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-09 00:04:25,835 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-09 00:04:25,838 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-09 00:04:25,838 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
+2025-01-09 00:04:25,869 - __main__ - INFO - [app.py:393] - Application shutting down...
+2025-01-09 00:04:25,870 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-09 00:04:25,870 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-09 00:04:25,871 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-09 00:04:25,872 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
+2025-01-09 00:04:26,251 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-09 00:04:26,252 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-09 00:04:37,966 - __main__ - INFO - [app.py:424] - Metrics server started on port 8000
+2025-01-09 00:04:37,966 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-09 00:04:52,854 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-09 00:05:11,331 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-09 00:05:11,333 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-09 00:05:20,179 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:448] - ==================================================
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:449] - Starting LinguaSync Backend
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:450] - Starting Flask app on port 5001 using cpu
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:451] - Python version: 3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:452] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:453] - Maximum audio length: 300 seconds
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:454] - Sample rate: 16000 Hz
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:458] - System memory: 36.0GB total, 6.9GB available
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:459] - CPU cores: 11
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:467] - Configuration:
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:468] - - Debug mode: False
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:469] - - CORS enabled: True
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:470] - - Rate limiting: 10 requests per minute
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:471] - - Metrics enabled: True (port 8000)
+2025-01-09 00:05:20,182 - __main__ - INFO - [app.py:473] - ==================================================
