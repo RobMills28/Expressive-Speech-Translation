@@ -5,18 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import TranscriptView from "./components/ui/TranscriptView";
-import Dashboard from "./components/temp_dashboard";
+import Dashboard from "./components/Dashboard";
 import { AlertCircle, Globe, Mic, Play, Pause } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { Progress } from "./components/ui/progress";
-import { useAuth } from "react-oidc-context";
 
 const App = () => {
-  const auth = useAuth();
-
   // App view state
   const [currentView, setCurrentView] = useState('landing');
-
   // Translation state
   const [audioStatus, setAudioStatus] = useState('idle');
   const [audioReady, setAudioReady] = useState(false);
@@ -35,12 +31,12 @@ const App = () => {
   const abortControllerRef = useRef(null);
   const progressIntervalRef = useRef(null);
 
-  const signOutRedirect = () => {
-    const clientId = "6pr8qneun0lhjorncf8bgi61t2";
-    const logoutUri = "https://magentaplatform.com";
-    const cognitoDomain = "https://<your-cognito-domain>";
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-  };
+  // const signOutRedirect = () => {
+  //   const clientId = "6pr8qneun0lhjorncf8bgi61t2";
+  //   const logoutUri = "https://magentaplatform.com";
+  //   const cognitoDomain = "https://<your-cognito-domain>";
+  //   window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  // };
 
   const getProgressMessage = (progress) => {
     if (progress < 20) return "Preparing your audio for translation...";
@@ -258,56 +254,28 @@ const App = () => {
 
   // Landing Page View
   const LandingView = () => {
-    if (auth.isLoading) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white flex items-center justify-center">
-          <div className="animate-spin h-8 w-8 border-4 border-purple-600 border-t-transparent rounded-full"/>
-        </div>
-      );
-    }
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
         <nav className="border-b bg-white">
           <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
             <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1>
             <div className="flex items-center gap-4">
-              {auth.isAuthenticated ? (
-                <>
-                  <span className="text-gray-600">{auth.user?.profile.email}</span>
-                  <button 
-                    onClick={() => auth.removeUser()}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-900"
-                  >
-                    Sign out
-                  </button>
-                  <button 
-                    onClick={() => setCurrentView('app')}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                  >
-                    Dashboard
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button 
-                    onClick={() => auth.signinRedirect()}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-900"
-                  >
-                    Sign in
-                  </button>
-                  <button 
-                    onClick={() => auth.signinRedirect()}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-                  >
-                    Start Creating
-                  </button>
-                </>
-              )}
+              <button 
+                onClick={() => setCurrentView('app')}
+                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+              >
+                Translation Tool
+              </button>
+              <button 
+                onClick={() => setCurrentView('dashboard')}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Dashboard
+              </button>
             </div>
           </div>
         </nav>
-
+  
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto pt-32">
             <h1 className="text-5xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-900">
@@ -318,7 +286,7 @@ const App = () => {
               preserving their authentic voice and style.
             </p>
             <button 
-              onClick={() => auth.isAuthenticated ? setCurrentView('app') : auth.signinRedirect()}
+              onClick={() => setCurrentView('dashboard')}
               className="px-8 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
               Get Started Free
@@ -331,18 +299,18 @@ const App = () => {
 
   // Main App View with complete translation interface
   const AppView = () => {
-    if (auth.isLoading) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-700 via-fuchsia-500 to-pink-500 flex items-center justify-center">
-          <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"/>
-        </div>
-      );
-    }
+    // if (auth.isLoading) {
+    //   return (
+    //     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-fuchsia-500 to-pink-500 flex items-center justify-center">
+    //       <div className="animate-spin h-8 w-8 border-4 border-white border-t-transparent rounded-full"/>
+    //     </div>
+    //   );
+    // }
 
-    if (!auth.isAuthenticated) {
-      auth.signinRedirect();
-      return null;
-    }
+    // if (!auth.isAuthenticated) {
+    //   auth.signinRedirect();
+    //   return null;
+    // }
 
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-700 via-fuchsia-500 to-pink-500">
@@ -560,31 +528,31 @@ const App = () => {
     );
   };
 
-  // Handle auth error state
-  if (auth.error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
-        <Card className="w-[400px]">
-          <CardHeader>
-            <CardTitle className="text-red-600">Authentication Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{auth.error.message}</AlertDescription>
-            </Alert>
-            <Button 
-              onClick={() => window.location.reload()}
-              className="mt-4 w-full"
-            >
-              Try Again
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // // Handle auth error state
+  // if (auth.error) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
+  //       <Card className="w-[400px]">
+  //         <CardHeader>
+  //           <CardTitle className="text-red-600">Authentication Error</CardTitle>
+  //         </CardHeader>
+  //         <CardContent>
+  //           <Alert variant="destructive">
+  //             <AlertCircle className="h-4 w-4" />
+  //             <AlertTitle>Error</AlertTitle>
+  //             <AlertDescription>{auth.error.message}</AlertDescription>
+  //           </Alert>
+  //           <Button 
+  //             onClick={() => window.location.reload()}
+  //             className="mt-4 w-full"
+  //           >
+  //             Try Again
+  //           </Button>
+  //         </CardContent>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   // Render the appropriate view
   return (

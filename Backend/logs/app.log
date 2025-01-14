@@ -1,126 +1,215 @@
-2025-01-12 08:51:32,102 - __main__ - INFO - [app.py:216] - Received SIGINT signal
-2025-01-12 08:51:32,109 - __main__ - INFO - [app.py:201] - Initiating graceful shutdown...
-2025-01-12 08:51:37,114 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 08:51:37,117 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 08:51:37,117 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 08:51:37,120 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 08:51:37,121 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 08:51:37,121 - __main__ - INFO - [app.py:205] - Graceful shutdown completed
-2025-01-12 08:51:37,123 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 08:51:37,123 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 08:51:37,123 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 08:51:37,124 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 08:51:37,124 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 08:51:37,126 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 08:51:37,126 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 08:51:37,126 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 08:51:37,127 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 08:51:37,128 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 08:51:37,293 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 08:51:37,294 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 08:51:44,796 - __main__ - INFO - [app.py:424] - Metrics server started on port 8000
-2025-01-12 08:51:44,796 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
-2025-01-12 08:51:58,930 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
-2025-01-12 08:52:13,223 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
-2025-01-12 08:52:13,225 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
-2025-01-12 08:52:17,980 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
-2025-01-12 08:52:17,981 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 08:52:17,981 - __main__ - INFO - [app.py:448] - ==================================================
-2025-01-12 08:52:17,981 - __main__ - INFO - [app.py:449] - Starting LinguaSync Backend
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:450] - Starting Flask app on port 5001 using cpu
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:451] - Python version: 3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:452] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:453] - Maximum audio length: 300 seconds
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:454] - Sample rate: 16000 Hz
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:458] - System memory: 36.0GB total, 20.6GB available
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:459] - CPU cores: 11
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:467] - Configuration:
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:468] - - Debug mode: False
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:469] - - CORS enabled: True
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:470] - - Rate limiting: 10 requests per minute
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:471] - - Metrics enabled: True (port 8000)
-2025-01-12 08:52:17,982 - __main__ - INFO - [app.py:473] - ==================================================
-2025-01-12 09:15:18,646 - __main__ - INFO - [app.py:216] - Received SIGINT signal
-2025-01-12 09:15:18,646 - __main__ - INFO - [app.py:201] - Initiating graceful shutdown...
-2025-01-12 09:15:23,652 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 09:15:23,652 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:15:23,653 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:15:23,654 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:15:23,655 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 09:15:23,655 - __main__ - INFO - [app.py:205] - Graceful shutdown completed
-2025-01-12 09:15:23,656 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 09:15:23,656 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:15:23,656 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:15:23,657 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:15:23,657 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 09:15:23,658 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 09:15:23,658 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:15:23,658 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:15:23,659 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:15:23,659 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 09:15:23,792 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:15:23,792 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:15:30,438 - __main__ - INFO - [app.py:424] - Metrics server started on port 8000
-2025-01-12 09:15:30,438 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
-2025-01-12 09:15:44,616 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
-2025-01-12 09:15:52,775 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
-2025-01-12 09:15:52,777 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
-2025-01-12 09:15:57,824 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:448] - ==================================================
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:449] - Starting LinguaSync Backend
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:450] - Starting Flask app on port 5001 using cpu
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:451] - Python version: 3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:452] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:453] - Maximum audio length: 300 seconds
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:454] - Sample rate: 16000 Hz
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:458] - System memory: 36.0GB total, 16.9GB available
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:459] - CPU cores: 11
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:467] - Configuration:
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:468] - - Debug mode: False
-2025-01-12 09:15:57,826 - __main__ - INFO - [app.py:469] - - CORS enabled: True
-2025-01-12 09:15:57,827 - __main__ - INFO - [app.py:470] - - Rate limiting: 10 requests per minute
-2025-01-12 09:15:57,827 - __main__ - INFO - [app.py:471] - - Metrics enabled: True (port 8000)
-2025-01-12 09:15:57,827 - __main__ - INFO - [app.py:473] - ==================================================
-2025-01-12 09:26:41,398 - __main__ - INFO - [app.py:216] - Received SIGINT signal
-2025-01-12 09:26:41,398 - __main__ - INFO - [app.py:201] - Initiating graceful shutdown...
-2025-01-12 09:26:46,400 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 09:26:46,400 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:26:46,400 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:26:46,401 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:26:46,401 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 09:26:46,401 - __main__ - INFO - [app.py:205] - Graceful shutdown completed
-2025-01-12 09:26:46,402 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 09:26:46,402 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:26:46,402 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:26:46,402 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:26:46,402 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 09:26:46,403 - __main__ - INFO - [app.py:393] - Application shutting down...
-2025-01-12 09:26:46,403 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:26:46,403 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:26:46,403 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:26:46,404 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
-2025-01-12 09:26:46,517 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
-2025-01-12 09:26:46,518 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
-2025-01-12 09:27:03,183 - __main__ - INFO - [app.py:424] - Metrics server started on port 8000
-2025-01-12 09:27:03,183 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
-2025-01-12 09:27:16,701 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
-2025-01-12 09:27:23,239 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
-2025-01-12 09:27:23,241 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
-2025-01-12 09:27:28,329 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:448] - ==================================================
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:449] - Starting LinguaSync Backend
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:450] - Starting Flask app on port 5001 using cpu
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:451] - Python version: 3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:452] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:453] - Maximum audio length: 300 seconds
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:454] - Sample rate: 16000 Hz
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:458] - System memory: 36.0GB total, 15.8GB available
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:459] - CPU cores: 11
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:467] - Configuration:
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:468] - - Debug mode: False
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:469] - - CORS enabled: True
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:470] - - Rate limiting: 10 requests per minute
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:471] - - Metrics enabled: True (port 8000)
-2025-01-12 09:27:28,331 - __main__ - INFO - [app.py:473] - ==================================================
+2025-01-14 07:23:31,624 - services.model_manager - INFO - [model_manager.py:188] - Model inactive for too long, reloading...
+2025-01-14 07:23:31,627 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-14 07:23:46,929 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-14 07:24:00,545 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-14 07:24:00,546 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-14 07:24:08,334 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-14 07:24:08,468 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request d4eb790f
+2025-01-14 07:24:08,470 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-14 07:24:08,470 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-14 07:24:08,473 - services.translation_routes - INFO - [translation_routes.py:86] - Request d4eb790f: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpyqj5vdpm.wav
+2025-01-14 07:24:08,474 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 18.36 seconds
+2025-01-14 07:24:08,474 - services.translation_routes - INFO - [translation_routes.py:99] - Request d4eb790f: Beginning audio processing with diagnostics
+2025-01-14 07:24:08,474 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpyqj5vdpm.wav
+2025-01-14 07:24:08,474 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 44100, Channels: 2
+2025-01-14 07:24:08,482 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([2, 809508]), Frequency: 44100Hz
+2025-01-14 07:24:08,483 - services.audio_processor - INFO - [audio_processor.py:219] - Resampling from 44100Hz to 16000Hz
+2025-01-14 07:24:08,504 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-01-14 07:24:08,506 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-01-14 07:24:08,528 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-01-14 07:24:08,546 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:08,546 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:08,552 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:08,552 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:08,559 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:08,559 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:08,567 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:08,567 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:09,044 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-14 07:24:09,044 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-01-14 07:24:09,127 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:09,128 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:09,142 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:09,142 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:09,152 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:09,152 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:09,163 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:24:09,163 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:24:09,615 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:110] - 
+==================================================
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:111] - Input Audio Quality Report
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:112] - ==================================================
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:113] - Request ID: d4eb790f
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:114] - Target Language: fra
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:115] - --------------------------------------------------
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:116] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.800
+- Avg Amplitude: 0.013
+- Rms Level: 0.039
+- Crest Factor: 20.262
+- Zero Crossings: 127716.000
+- Silence Percentage: 62.168
+- Clipping Points: 0.000
+- Dynamic Range: 3022615.000
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.070
+  - Temporal Flatness: 0.020
+
+- Volume Metrics:
+  - Volume Stability: -0.728
+  - Volume Range: 29148040.000
+  - Volume Variations: 0.034
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.003898838626448
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.6381455659866333, 'stability': 1.6408194303512573, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.23516440391540527, 'consistency': 0.2896541953086853, 'distinction': 0.11255760490894318}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.670
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.340
+  - Rhythm Quality: 0.358
+  - Intonation Quality: 0.322
+
+Vowel Quality:
+  - Quality Score: 0.005
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:117] - ==================================================
+
+2025-01-14 07:24:09,615 - services.translation_routes - INFO - [translation_routes.py:128] - Request d4eb790f: Audio processed successfully
+2025-01-14 07:24:09,680 - services.translation_routes - INFO - [translation_routes.py:147] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-01-14 07:24:24,935 - services.translation_routes - INFO - [translation_routes.py:185] - Source text: the stale smell of old beer lingers it takes heat to bring out the odor a cold dip restores health and zest a salt pickle tastes fine with ham tacos al pastor are my favorite a zestful food is the hot cross bun
+2025-01-14 07:24:44,128 - services.translation_routes - INFO - [translation_routes.py:204] - Target text: l'odeur de la vieille bière lingoure il faut de la chaleur pour faire ressortir l'odore une dip froide restaure la santé et le zest un pickle salé goûte bien avec le jambon tacos al pasteur sont mon favori une nourriture zestueuse est le hot cross bun
+2025-01-14 07:25:07,942 - services.translation_routes - INFO - [translation_routes.py:227] - Processing tuple output from model
+2025-01-14 07:25:07,962 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:25:07,962 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:25:07,973 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:25:07,974 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:25:07,983 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:25:07,984 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:25:07,990 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-01-14 07:25:07,991 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-14 07:25:08,416 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:251] - 
+==================================================
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:252] - Translated Audio Quality Report
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:253] - ==================================================
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:254] - Request ID: d4eb790f
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:255] - Target Language: fra
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:256] - --------------------------------------------------
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:257] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.599
+- Avg Amplitude: 0.063
+- Rms Level: 0.097
+- Crest Factor: 6.178
+- Zero Crossings: 27485.000
+- Silence Percentage: 10.128
+- Clipping Points: 0.000
+- Dynamic Range: 169.437
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.228
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.027
+  - Temporal Flatness: 0.015
+
+- Volume Metrics:
+  - Volume Stability: 0.344
+  - Volume Range: 853.003
+  - Volume Variations: 0.053
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.031380950017571
+- Background Noise: 3.471381910163934
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 1.0574101209640503, 'stability': 3.5980324745178223, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 0.09415197372436523}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.520
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:258] - ==================================================
+
+2025-01-14 07:25:08,417 - services.translation_routes - INFO - [translation_routes.py:264] - Request d4eb790f: Audio output processed successfully
+2025-01-14 07:25:08,423 - services.translation_routes - INFO - [translation_routes.py:317] - Request d4eb790f: Response prepared successfully
+2025-01-14 07:25:08,423 - services.translation_routes - INFO - [translation_routes.py:328] - Request d4eb790f completed in 59.95s
+2025-01-14 07:25:08,425 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 59.96s, Memory Change: 7256.50MB
+2025-01-14 07:25:08,425 - __main__ - INFO - [app.py:277] - Request to /translate took 96.80s

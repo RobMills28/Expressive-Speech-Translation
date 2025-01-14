@@ -15,7 +15,7 @@ const Navigation = () => {
           </Link>
           {/* Add test button here */}
           <button 
-            onClick={() => navigate('/temp_dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="ml-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
           >
             Test Dashboard
@@ -48,9 +48,9 @@ const Navigation = () => {
             Podcasts
           </Link>
           <Link
-            to="/temp_dashboard"
+            to="/dashboard"
             className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-              location.pathname === '/temp_dashboard' 
+              location.pathname === '/dashboard' 
               ? 'bg-purple-600 text-white' 
               : 'text-gray-300 hover:bg-gray-700 hover:text-white'
             }`}
