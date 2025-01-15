@@ -2,33 +2,59 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
-import { Upload, Globe, Play, CheckCircle } from 'lucide-react';
+import { Upload, Globe, Play, Pause, CheckCircle, AlertCircle } from 'lucide-react';
+import { useTranslation } from '../hooks/useTranslation';
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 const TranslationFlow = () => {
+  // States from the translation hook
+  const {
+    audioStatus,
+    audioReady,
+    file,
+    targetLanguage,
+    processing,
+    progress,
+    error,
+    translatedAudioUrl,
+    isPlaying,
+    progressText,
+    sourceText,
+    targetText,
+    showTranscript,
+    audioRef,
+    handleFileChange,
+    handleLanguageSelect,
+    handlePlayPause,
+    processAudio,
+    cleanup,
+    setError,
+    setAudioStatus,
+    setAudioReady,
+    setIsPlaying,
+    setShowTranscript
+  } = useTranslation();
+
+  // Local states for the flow UI
   const [step, setStep] = useState(1);
-  const [file, setFile] = useState(null);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [translations, setTranslations] = useState({});
-  const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null);
-  const audioRef = useRef(null);
 
   const languages = [
-    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'fr', name: 'French', flag: '🇫🇷' },
-    { code: 'de', name: 'German', flag: '🇩🇪' },
-    { code: 'it', name: 'Italian', flag: '🇮🇹' },
-    { code: 'pt', name: 'Portuguese', flag: '🇵🇹' }
+    { code: 'fra', name: 'French', flag: '🇫🇷' },
+    { code: 'spa', name: 'Spanish', flag: '🇪🇸' },
+    { code: 'deu', name: 'German', flag: '🇩🇪' },
+    { code: 'ita', name: 'Italian', flag: '🇮🇹' },
+    { code: 'por', name: 'Portuguese', flag: '🇵🇹' }
   ];
 
   const handleFileUpload = useCallback((event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
+    handleFileChange(event);  // Use the hook's file handler
+    if (event.target.files[0]) {
       setStep(2);
     }
-  }, []);
+  }, [handleFileChange]);
 
   const handleLanguageToggle = useCallback((code) => {
     setSelectedLanguages(prev => {
@@ -37,25 +63,27 @@ const TranslationFlow = () => {
       }
       return [...prev, code];
     });
-  }, []);
+    handleLanguageSelect(code);  // Update the hook's target language
+  }, [handleLanguageSelect]);
 
-  const handleContinue = useCallback(() => {
+  const handleContinue = useCallback(async () => {
     if (selectedLanguages.length > 0) {
       setStep(3);
-      // Start translations here
-      setProcessing(true);
-      // Mock progress for now
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 5;
-        setProgress(progress);
-        if (progress >= 100) {
-          clearInterval(interval);
-          setProcessing(false);
-        }
-      }, 500);
+      try {
+        await processAudio();  // Use the hook's process function
+        setTranslations(prev => ({
+          ...prev,
+          [targetLanguage]: {
+            audioUrl: translatedAudioUrl,
+            sourceText,
+            targetText
+          }
+        }));
+      } catch (e) {
+        setError(e.message);
+      }
     }
-  }, [selectedLanguages]);
+  }, [selectedLanguages, processAudio, targetLanguage, translatedAudioUrl, sourceText, targetText, setError]);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -82,6 +110,15 @@ const TranslationFlow = () => {
 
       <Card className="bg-white shadow-lg">
         <CardContent className="p-6">
+          {/* Error Display */}
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           {/* Step 1: Upload */}
           {step === 1 && (
             <div className="text-center">
@@ -129,10 +166,10 @@ const TranslationFlow = () => {
               </div>
               <Button
                 onClick={handleContinue}
-                disabled={selectedLanguages.length === 0}
+                disabled={selectedLanguages.length === 0 || processing}
                 className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300"
               >
-                Continue
+                {processing ? 'Processing...' : 'Continue'}
               </Button>
             </div>
           )}
@@ -142,38 +179,85 @@ const TranslationFlow = () => {
             <div>
               <h2 className="text-xl font-semibold mb-4">Preview Translations</h2>
               
+              {/* Hidden audio element */}
+              <audio 
+                ref={audioRef} 
+                src={translatedAudioUrl}
+                className="hidden"
+                preload="auto"
+                onLoadStart={() => {
+                  setAudioReady(false);
+                  setAudioStatus('loading');
+                }}
+                onCanPlay={() => {
+                  setAudioStatus('ready');
+                  setAudioReady(true);
+                  setError('');
+                }}
+                onEnded={() => {
+                  setIsPlaying(false);
+                  setAudioStatus('ready');
+                }}
+                onError={(e) => {
+                  console.error('Audio error:', e);
+                  setError('Failed to load audio');
+                  setAudioStatus('error');
+                  setAudioReady(false);
+                  setIsPlaying(false);
+                }}
+              />
+              
               {/* Original Audio */}
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-medium">Original</h3>
-                  <Button size="sm" variant="ghost">
-                    <Play className="w-4 h-4" />
-                  </Button>
+                  {sourceText && (
+                    <p className="text-sm text-gray-600">{sourceText}</p>
+                  )}
                 </div>
-                <div className="bg-gray-100 h-12 rounded-lg"></div>
+                <div className="bg-gray-100 h-12 rounded-lg flex items-center justify-center">
+                  {file && <p className="text-sm text-gray-600">{file.name}</p>}
+                </div>
               </div>
 
               {/* Translated Audio */}
               {selectedLanguages.map(code => {
                 const language = languages.find(l => l.code === code);
+                const translation = translations[code];
+                
                 return (
                   <div key={code} className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-medium">{language?.name}</h3>
-                      <Button size="sm" variant="ghost">
-                        <Play className="w-4 h-4" />
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={handlePlayPause}
+                        disabled={!audioReady || audioStatus === 'error'}
+                      >
+                        {isPlaying ? 
+                          <Pause className="w-4 h-4" /> : 
+                          <Play className="w-4 h-4" />
+                        }
                       </Button>
                     </div>
-                    <div className="bg-gray-100 h-12 rounded-lg"></div>
+                    <div className="bg-gray-100 h-12 rounded-lg flex items-center justify-center">
+                      {translation?.targetText && (
+                        <p className="text-sm text-gray-600">{translation.targetText}</p>
+                      )}
+                    </div>
                   </div>
                 );
               })}
 
               <Button 
                 className="w-full bg-purple-600 hover:bg-purple-700 mt-4"
-                onClick={() => setStep(4)}
+                onClick={() => {
+                  cleanup();
+                  setStep(1);
+                }}
               >
-                Continue to Export
+                Start New Translation
               </Button>
             </div>
           )}
@@ -183,7 +267,7 @@ const TranslationFlow = () => {
             <div className="mt-4">
               <Progress value={progress} className="mb-2" />
               <p className="text-sm text-gray-600 text-center">
-                Processing translations...
+                {progressText || 'Processing translations...'}
               </p>
             </div>
           )}
