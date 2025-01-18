@@ -63,7 +63,7 @@ const LandingPage = () => {
               to="/translate"
               className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
-              Translation Tool
+              Try For Free
             </Link>
             <Link
               to="/dashboard"

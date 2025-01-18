@@ -1,3 +1,4 @@
+// src/components/TranslateTool.js
 import React, { useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -10,6 +11,7 @@ import { AlertCircle, Globe, Mic, Play, Pause, Upload, Link as LinkIcon, Clock }
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import TranscriptView from "./ui/TranscriptView";
 import { useTranslation } from '../hooks/useTranslation';
+import { useAudioRecorder } from '../hooks/useAudioRecorder';
 
 const TranslateTool = () => {
   const {
@@ -39,7 +41,14 @@ const TranslateTool = () => {
     setShowTranscript
   } = useTranslation();
 
-  const [isRecording, setIsRecording] = React.useState(false);
+  const {
+    isRecording,
+    recordedAudio,
+    startRecording,
+    stopRecording,
+    clearRecording
+  } = useAudioRecorder();
+
   const [linkUrl, setLinkUrl] = React.useState('');
   const fileInputRef = useRef(null);
 
@@ -159,21 +168,56 @@ const TranslateTool = () => {
               </TabsContent>
 
               <TabsContent value="record" className="mt-6">
-  <div className="border-2 border-fuchsia-200 rounded-xl p-8 text-center bg-fuchsia-50/50">
-    <Button
-      variant={isRecording ? "destructive" : "outline"}
-      className="gap-2 inline-flex items-center justify-center"
-      onClick={() => setIsRecording(!isRecording)}
-      disabled
-    >
-      <Mic size={16} />
-      {isRecording ? "Stop Recording" : "Start Recording"}
-    </Button>
-    <p className="text-xs text-fuchsia-600 mt-4">
-      Coming soon: Record directly in your browser
-    </p>
-  </div>
-</TabsContent>
+                <div className="border-2 border-dashed border-fuchsia-200 rounded-xl p-8 text-center bg-fuchsia-50/50">
+                  {recordedAudio ? (
+                    <div className="space-y-4">
+                      <div className="w-12 h-12 rounded-full bg-fuchsia-100 flex items-center justify-center mx-auto">
+                        <Play size={24} className="text-fuchsia-500" />
+                      </div>
+                      <p className="text-sm font-medium text-fuchsia-800">
+                        Audio recorded! ({(recordedAudio.size / (1024 * 1024)).toFixed(2)} MB)
+                      </p>
+                      <div className="flex justify-center gap-2">
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => {
+                            handleFileChange({ target: { files: [recordedAudio] } });
+                          }}
+                        >
+                          Use Recording
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={clearRecording}
+                        >
+                          Record Again
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-fuchsia-100 flex items-center justify-center mx-auto">
+                        <Mic size={24} className="text-fuchsia-500" />
+                      </div>
+                      <Button
+                        variant={isRecording ? "destructive" : "outline"}
+                        className="gap-2 mt-4 inline-flex items-center justify-center"
+                        onClick={isRecording ? stopRecording : startRecording}
+                      >
+                        <Mic size={16} className="text-fuchsia-500" />
+                        {isRecording ? "Stop Recording" : "Start Recording"}
+                      </Button>
+                      {isRecording && (
+                        <p className="text-sm text-fuchsia-600 animate-pulse mt-2">
+                          Recording in progress...
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </TabsContent>
 
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -352,7 +396,7 @@ const TranslateTool = () => {
                     Want more translation time?
                   </p>
                   <p className="text-sm text-fuchsia-700 mt-1">
-                  Create a free account to get 5 additional minutes.
+                    Create a free account to get 5 additional minutes.
                   </p>
                   <Button 
                     variant="link" 

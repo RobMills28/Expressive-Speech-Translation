@@ -6571,3 +6571,277 @@ Vowel Quality:
 2025-01-17 22:07:12,341 - __main__ - INFO - [app.py:470] - - Rate limiting: 10 requests per minute
 2025-01-17 22:07:12,341 - __main__ - INFO - [app.py:471] - - Metrics enabled: True (port 8000)
 2025-01-17 22:07:12,341 - __main__ - INFO - [app.py:473] - ==================================================
+2025-01-17 23:28:51,800 - services.model_manager - INFO - [model_manager.py:188] - Model inactive for too long, reloading...
+2025-01-17 23:28:51,801 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-17 23:29:05,550 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-17 23:29:14,394 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-17 23:29:14,396 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-17 23:29:21,868 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-17 23:29:21,871 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request 446ed522
+2025-01-17 23:29:21,871 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-17 23:29:21,871 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-17 23:29:21,872 - services.translation_routes - INFO - [translation_routes.py:86] - Request 446ed522: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp93485eh8.wav
+2025-01-17 23:29:21,872 - services.audio_processor - ERROR - [audio_processor.py:144] - Error validating audio: Error opening '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp93485eh8.wav': Format not recognised.
+2025-01-17 23:29:21,873 - services.translation_routes - ERROR - [translation_routes.py:94] - Request 446ed522: Audio validation failed - Error validating audio: Error opening '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp93485eh8.wav': Format not recognised.
+2025-01-17 23:29:21,873 - services.translation_routes - INFO - [translation_routes.py:328] - Request 446ed522 completed in 0.00s
+2025-01-17 23:29:21,873 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 0.00s, Memory Change: 0.39MB
+2025-01-17 23:29:21,873 - __main__ - INFO - [app.py:277] - Request to /translate took 30.07s
+2025-01-17 23:31:35,509 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-17 23:31:35,511 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request be558f42
+2025-01-17 23:31:35,511 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-17 23:31:35,511 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-17 23:31:35,511 - services.translation_routes - INFO - [translation_routes.py:86] - Request be558f42: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpcxmms_2f.wav
+2025-01-17 23:31:35,511 - services.audio_processor - ERROR - [audio_processor.py:144] - Error validating audio: Error opening '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpcxmms_2f.wav': Format not recognised.
+2025-01-17 23:31:35,511 - services.translation_routes - ERROR - [translation_routes.py:94] - Request be558f42: Audio validation failed - Error validating audio: Error opening '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpcxmms_2f.wav': Format not recognised.
+2025-01-17 23:31:35,512 - services.translation_routes - INFO - [translation_routes.py:328] - Request be558f42 completed in 0.00s
+2025-01-17 23:31:35,512 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 0.00s, Memory Change: 0.03MB
+2025-01-17 23:31:35,512 - __main__ - INFO - [app.py:277] - Request to /translate took 5.89s
+2025-01-17 23:37:14,923 - __main__ - INFO - [app.py:216] - Received SIGINT signal
+2025-01-17 23:37:14,924 - __main__ - INFO - [app.py:201] - Initiating graceful shutdown...
+2025-01-17 23:37:19,925 - __main__ - INFO - [app.py:393] - Application shutting down...
+2025-01-17 23:37:19,926 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-17 23:37:19,926 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-17 23:37:19,927 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-17 23:37:19,928 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
+2025-01-17 23:37:19,928 - __main__ - INFO - [app.py:205] - Graceful shutdown completed
+2025-01-17 23:37:19,929 - __main__ - INFO - [app.py:393] - Application shutting down...
+2025-01-17 23:37:19,929 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-17 23:37:19,929 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-17 23:37:19,930 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-17 23:37:19,930 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
+2025-01-17 23:37:19,931 - __main__ - INFO - [app.py:393] - Application shutting down...
+2025-01-17 23:37:19,931 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-17 23:37:19,931 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-17 23:37:19,932 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-17 23:37:19,932 - __main__ - INFO - [app.py:407] - Cleanup completed successfully
+2025-01-17 23:37:42,718 - __main__ - INFO - [app.py:424] - Metrics server started on port 8000
+2025-01-17 23:37:42,718 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-17 23:37:57,273 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-17 23:38:03,875 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-17 23:38:03,876 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-17 23:38:08,884 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:375] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:448] - ==================================================
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:449] - Starting LinguaSync Backend
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:450] - Starting Flask app on port 5001 using cpu
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:451] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:452] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:453] - Maximum audio length: 300 seconds
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:454] - Sample rate: 16000 Hz
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:458] - System memory: 36.0GB total, 15.3GB available
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:459] - CPU cores: 11
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:467] - Configuration:
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:468] - - Debug mode: False
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:469] - - CORS enabled: True
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:470] - - Rate limiting: 10 requests per minute
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:471] - - Metrics enabled: True (port 8000)
+2025-01-17 23:38:08,887 - __main__ - INFO - [app.py:473] - ==================================================
+2025-01-18 00:01:06,275 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-18 00:01:06,278 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request 29fa4852
+2025-01-18 00:01:06,278 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-18 00:01:06,278 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-18 00:01:06,279 - services.translation_routes - INFO - [translation_routes.py:86] - Request 29fa4852: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp98t47yh_.wav
+2025-01-18 00:01:06,279 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 17.82 seconds
+2025-01-18 00:01:06,279 - services.translation_routes - INFO - [translation_routes.py:99] - Request 29fa4852: Beginning audio processing with diagnostics
+2025-01-18 00:01:06,279 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp98t47yh_.wav
+2025-01-18 00:01:06,279 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 16000, Channels: 1
+2025-01-18 00:01:06,280 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([1, 285120]), Frequency: 16000Hz
+2025-01-18 00:01:06,294 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-01-18 00:01:06,296 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-01-18 00:01:06,317 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-01-18 00:01:06,339 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,340 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,347 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,347 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,355 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,355 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,363 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,363 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,553 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-18 00:01:06,553 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-01-18 00:01:06,592 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,592 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,601 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,602 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,608 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,609 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,617 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:06,617 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:06,786 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-18 00:01:06,786 - services.translation_routes - INFO - [translation_routes.py:110] - 
+==================================================
+2025-01-18 00:01:06,786 - services.translation_routes - INFO - [translation_routes.py:111] - Input Audio Quality Report
+2025-01-18 00:01:06,786 - services.translation_routes - INFO - [translation_routes.py:112] - ==================================================
+2025-01-18 00:01:06,787 - services.translation_routes - INFO - [translation_routes.py:113] - Request ID: 29fa4852
+2025-01-18 00:01:06,787 - services.translation_routes - INFO - [translation_routes.py:114] - Target Language: fra
+2025-01-18 00:01:06,787 - services.translation_routes - INFO - [translation_routes.py:115] - --------------------------------------------------
+2025-01-18 00:01:06,787 - services.translation_routes - INFO - [translation_routes.py:116] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.822
+- Avg Amplitude: 0.008
+- Rms Level: 0.042
+- Crest Factor: 19.634
+- Zero Crossings: 34956.000
+- Silence Percentage: 88.453
+- Clipping Points: 0.000
+- Dynamic Range: 652475.157
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.072
+  - Temporal Flatness: 0.014
+
+- Volume Metrics:
+  - Volume Stability: -2.535
+  - Volume Range: 24283739.924
+  - Volume Variations: 0.040
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.004265547511332
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 1.177080512046814, 'stability': 2.912121534347534, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.4504966735839844, 'consistency': 0.2064235806465149, 'distinction': 1.0}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: True
+  - Confidence: 0.707
+  - Description: Clear liaison patterns detected
+
+Prosody:
+  - Score: 0.179
+  - Rhythm Quality: 0.223
+  - Intonation Quality: 0.135
+
+Vowel Quality:
+  - Quality Score: 0.007
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-18 00:01:06,787 - services.translation_routes - INFO - [translation_routes.py:117] - ==================================================
+
+2025-01-18 00:01:06,787 - services.translation_routes - INFO - [translation_routes.py:128] - Request 29fa4852: Audio processed successfully
+2025-01-18 00:01:06,805 - services.translation_routes - INFO - [translation_routes.py:147] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-01-18 00:01:13,212 - services.translation_routes - INFO - [translation_routes.py:185] - Source text: Okay, let's try this. Let's see if this works.
+2025-01-18 00:01:18,495 - services.translation_routes - INFO - [translation_routes.py:204] - Target text: Ok, essayons ça, voyons si ça fonctionne.
+2025-01-18 00:01:26,807 - services.translation_routes - INFO - [translation_routes.py:227] - Processing tuple output from model
+2025-01-18 00:01:26,812 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:26,812 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:26,815 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:26,815 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:26,817 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:26,817 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:26,820 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-18 00:01:26,820 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-18 00:01:26,878 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:251] - 
+==================================================
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:252] - Translated Audio Quality Report
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:253] - ==================================================
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:254] - Request ID: 29fa4852
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:255] - Target Language: fra
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:256] - --------------------------------------------------
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:257] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.727
+- Avg Amplitude: 0.056
+- Rms Level: 0.098
+- Crest Factor: 7.416
+- Zero Crossings: 6685.000
+- Silence Percentage: 16.726
+- Clipping Points: 0.000
+- Dynamic Range: 417.611
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.073
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.032
+  - Temporal Flatness: 0.018
+
+- Volume Metrics:
+  - Volume Stability: 0.266
+  - Volume Range: 843.838
+  - Volume Variations: 0.059
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.026420785919579
+- Background Noise: 3.966580218654595
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.6438602805137634, 'stability': 2.18398380279541, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.6906270384788513, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.531
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.030
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 1.000
+
+Vowel Quality:
+  - Quality Score: 0.010
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:258] - ==================================================
+
+2025-01-18 00:01:26,878 - services.translation_routes - INFO - [translation_routes.py:264] - Request 29fa4852: Audio output processed successfully
+2025-01-18 00:01:26,880 - services.translation_routes - INFO - [translation_routes.py:317] - Request 29fa4852: Response prepared successfully
+2025-01-18 00:01:26,880 - services.translation_routes - INFO - [translation_routes.py:328] - Request 29fa4852 completed in 20.60s
+2025-01-18 00:01:26,881 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 20.60s, Memory Change: 921.38MB
+2025-01-18 00:01:26,881 - __main__ - INFO - [app.py:277] - Request to /translate took 25.97s
