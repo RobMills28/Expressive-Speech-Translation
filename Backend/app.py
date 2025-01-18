@@ -20,7 +20,7 @@ from pydub import AudioSegment  # For MP3 conversion
 
 
 # Third-party imports: Monitoring and Metrics
-from prometheus_client import Counter, Histogram, start_http_server
+from prometheus_client import Counter, Histogram, start_http_server         
 import psutil
 
 # Third-party imports: ML and Audio
@@ -51,6 +51,7 @@ from logging.handlers import (
 from dotenv import load_dotenv
 
 # Local imports
+from services.audio_link_routes import handle_audio_url_processing
 from services.audio_processor import AudioProcessor
 from services.model_manager import ModelManager
 from services.resource_monitor import ResourceMonitor
@@ -324,6 +325,48 @@ LANGUAGE_MAP = {
 }
 
 from services.translation_routes import handle_translation
+
+# And update your process_audio_url route to handle CORS:
+@app.route('/process-audio-url', methods=['POST', 'OPTIONS'])
+@limiter.limit("10 per minute")
+@performance_logger
+def process_audio_url():
+    # Handle preflight request
+    if request.method == 'OPTIONS':
+        response = make_response()
+        origin = request.headers.get('Origin', 'http://localhost:3000')
+        
+        response.headers.update({
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
+            'Access-Control-Allow-Credentials': 'true'
+        })
+        return response
+    
+    try:
+        url = request.json.get('url')
+        if not url:
+            return jsonify({'error': 'No URL provided'}), 400
+            
+        result = handle_audio_url_processing(url)
+        
+        if isinstance(result, tuple):  # Error case
+            return result
+            
+        # Create response with audio data
+        response = make_response(result['audio_data'])
+        response.headers.update({
+            'Content-Type': result['mime_type'],
+            'Access-Control-Allow-Origin': request.headers.get('Origin', 'http://localhost:3000'),
+            'Access-Control-Allow-Credentials': 'true'
+        })
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error processing audio URL: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
