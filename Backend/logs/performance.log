@@ -7235,3 +7235,7 @@ Vowel Quality:
 2025-01-18 08:46:55,968 - services.translation_routes - INFO - [translation_routes.py:328] - Request 3771072e completed in 75.28s
 2025-01-18 08:46:55,970 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 75.28s, Memory Change: 2917.42MB
 2025-01-18 08:46:55,970 - __main__ - INFO - [app.py:278] - Request to /translate took 80.97s
+2025-01-19 00:26:31,749 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.52MB
+2025-01-19 00:26:31,768 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.03s
+2025-01-19 00:26:31,775 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.97MB
+2025-01-19 00:26:31,775 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s

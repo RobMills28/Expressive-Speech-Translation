@@ -9,6 +9,7 @@ import { Progress } from "./ui/progress";
 import { AlertCircle, Globe, Mic, Play, Pause, Upload, Link as LinkIcon, Clock } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import TranscriptView from "./ui/TranscriptView";
+import { LinkSection } from "./ui/LinkSection";
 import { useTranslation } from '../hooks/useTranslation';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { useAudioLink } from '../hooks/useAudioLink';
@@ -156,96 +157,21 @@ const TranslateTool = () => {
                   </div>
                 </div>
               </TabsContent>
-
-              {/* Replace your Link TabsContent section with this */}
-<TabsContent value="link" className="mt-6">
-  <div className="space-y-4">
-    <div className="relative">
-      <Input
-        type="url"
-        placeholder="Paste YouTube, Spotify, or audio URL"
-        value={linkUrl}
-        onChange={(e) => setLinkUrl(e.target.value)}
-        className="w-full pr-24"
-      />
-<Button 
-  size="sm"
-  className="absolute right-1 top-1 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
-  onClick={async () => {
-    if (!linkUrl.trim()) return;
-    try {
-      console.log('Starting link processing...');
-      const result = await processLink(linkUrl);
-      console.log('Result:', result);
-      
-      if (result?.audioFile) {
-        console.log('Audio file details:', {
-          size: result.audioFile.size,
-          type: result.audioFile.type,
-          name: result.audioFile.name
-        });
-        
-        // Create a DataTransfer object to properly simulate a file input
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(result.audioFile);
-        
-        // Call handleFileChange with a proper event object
-        handleFileChange({
-          target: {
-            files: dataTransfer.files
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error processing link:', error);
-      setError(error.message);
-    }
-  }}
-  disabled={!linkUrl.trim() || isProcessingLink}
->
-  {isProcessingLink ? (
-    <div className="flex items-center">
-      <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-      Processing
-    </div>
-  ) : (
-    'Process Link'
-  )}
-</Button>
-    </div>
-    
-    {linkError && (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{linkError}</AlertDescription>
-      </Alert>
-    )}
-    
-    <div className="space-y-2">
-      <div className="text-xs text-fuchsia-600 flex items-center gap-2">
-        <span>Supported sources:</span>
-        <div className="flex gap-2">
-          <div className="px-2 py-1 bg-white/50 rounded-full flex items-center gap-1">
-            <img src="/youtube-icon.svg" alt="YouTube" className="w-4 h-4" />
-            YouTube
-          </div>
-          <div className="px-2 py-1 bg-white/50 rounded-full flex items-center gap-1">
-            <img src="/spotify-icon.svg" alt="Spotify" className="w-4 h-4" />
-            Spotify
-          </div>
-          <div className="px-2 py-1 bg-white/50 rounded-full flex items-center gap-1">
-            <LinkIcon size={12} />
-            Direct audio
-          </div>
-        </div>
-      </div>
-      <p className="text-xs text-fuchsia-500">
-        Supports direct links to .mp3, .wav, .m4a, and .ogg files
-      </p>
-    </div>
-  </div>
-</TabsContent>
+              <TabsContent value="link" className="mt-6">
+                <LinkSection
+                  linkUrl={linkUrl}
+                  setLinkUrl={setLinkUrl}
+                  isProcessingLink={isProcessingLink}
+                  processLink={processLink}
+                />
+                {linkError && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{linkError}</AlertDescription>
+                  </Alert>
+                )}
+              </TabsContent>
               <TabsContent value="record" className="mt-6">
                 <div className="border-2 border-dashed border-fuchsia-200 rounded-xl p-8 text-center bg-fuchsia-50/50">
                   {recordedAudio ? (
