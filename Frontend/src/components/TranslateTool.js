@@ -162,7 +162,17 @@ const TranslateTool = () => {
                   linkUrl={linkUrl}
                   setLinkUrl={setLinkUrl}
                   isProcessingLink={isProcessingLink}
-                  processLink={processLink}
+                  processLink={async (url) => {
+                    try {
+                      const result = await processLink(url);
+                      if (result?.audioFile) {
+                        // This line is key - it triggers the same handler used by file uploads
+                        handleFileChange({ target: { files: [result.audioFile] } });
+                      }
+                    } catch (error) {
+                      console.error('Failed to process link:', error);
+                    }
+                  }} 
                 />
                 {linkError && (
                   <Alert variant="destructive" className="mt-4">
