@@ -7,7 +7,6 @@ import { Link } from "lucide-react";
 import youtubeIcon from '../../assets/icons/youtube_social_squircle_red.png';
 import spotifyIcon from '../../assets/icons/spotify-icon.png';
 
-
 export const LinkSection = ({ 
   linkUrl, 
   setLinkUrl, 
@@ -71,8 +70,11 @@ export const LinkSection = ({
           </div>
         </div>
         <p className="text-sm text-fuchsia-500/80">
-          Supports direct links to .mp3, .wav, .m4a, and .ogg files
+        Some audio sources may provide preview clips only
         </p>
+        {/* <p className="text-sm text-fuchsia-500/80 italic">
+          Note: Some audio sources may provide preview clips only
+        </p> */}
       </div>
     </div>
   );
