@@ -547,3 +547,44 @@
 2025-01-23 09:14:43,256 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
 2025-01-23 09:14:43,258 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
 2025-01-23 09:14:43,258 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 10:41:48,152 - services.audio_link_routes - ERROR - [audio_link_routes.py:171] - tiktok processing error: Failed to download audio from tiktok
+2025-01-23 10:41:48,152 - services.audio_link_routes - ERROR - [audio_link_routes.py:239] - Processing error: Failed to download audio from tiktok
+2025-01-23 10:45:21,894 - services.audio_link_routes - ERROR - [audio_link_routes.py:171] - tiktok processing error: name 'random' is not defined
+2025-01-23 10:45:21,895 - services.audio_link_routes - ERROR - [audio_link_routes.py:239] - Processing error: name 'random' is not defined
+2025-01-23 10:45:53,179 - services.audio_link_routes - ERROR - [audio_link_routes.py:171] - tiktok processing error: name 'random' is not defined
+2025-01-23 10:45:53,179 - services.audio_link_routes - ERROR - [audio_link_routes.py:239] - Processing error: name 'random' is not defined
+2025-01-23 10:49:27,854 - services.audio_link_routes - ERROR - [audio_link_routes.py:172] - tiktok processing error: Failed to download audio from tiktok
+2025-01-23 10:49:27,854 - services.audio_link_routes - ERROR - [audio_link_routes.py:240] - Processing error: Failed to download audio from tiktok
+2025-01-23 14:13:14,676 - services.audio_link_routes - ERROR - [audio_link_routes.py:172] - tiktok processing error: Failed to download audio from tiktok
+2025-01-23 14:13:14,676 - services.audio_link_routes - ERROR - [audio_link_routes.py:240] - Processing error: Failed to download audio from tiktok
+2025-01-23 14:20:16,031 - services.audio_link_routes - ERROR - [audio_link_routes.py:172] - tiktok processing error: Failed to download audio from tiktok
+2025-01-23 14:20:16,031 - services.audio_link_routes - ERROR - [audio_link_routes.py:240] - Processing error: Failed to download audio from tiktok
+2025-01-23 14:20:44,944 - services.audio_link_routes - ERROR - [audio_link_routes.py:172] - tiktok processing error: Failed to download audio from tiktok
+2025-01-23 14:20:44,944 - services.audio_link_routes - ERROR - [audio_link_routes.py:240] - Processing error: Failed to download audio from tiktok
+2025-01-23 14:52:23,026 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:23,027 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:23,057 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:23,057 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:23,085 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:23,086 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:23,115 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:23,115 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:25,749 - services.diagnostics.language_analysis.german - ERROR - [german.py:113] - German consonant analysis failed: 'GermanAnalyzer' object has no attribute '_analyze_plosives'
+2025-01-23 14:52:26,163 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:26,163 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:26,186 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:26,186 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:26,210 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:26,210 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:26,232 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:52:26,232 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:52:28,594 - services.diagnostics.language_analysis.german - ERROR - [german.py:113] - German consonant analysis failed: 'GermanAnalyzer' object has no attribute '_analyze_plosives'
+2025-01-23 14:54:53,008 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:54:53,008 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:54:53,011 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:54:53,012 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:54:53,017 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:54:53,017 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:54:53,021 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 14:54:53,021 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 14:54:53,166 - services.diagnostics.language_analysis.german - ERROR - [german.py:113] - German consonant analysis failed: 'GermanAnalyzer' object has no attribute '_analyze_plosives'

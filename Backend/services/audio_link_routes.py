@@ -4,6 +4,7 @@ import requests
 import tempfile
 import os
 import re
+import random
 from pathlib import Path
 from flask import jsonify
 import logging
@@ -82,62 +83,103 @@ def handle_video_platform_url(url, platform):
     """Handle video platform (YouTube/TikTok) URL download and conversion"""
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
-            temp_path = os.path.join(temp_dir, 'output')
+            temp_file = os.path.join(temp_dir, 'output')  # No extension
             
-            ydl_opts = {
-                'format': 'bestaudio/best',
+            # Base options used for both YouTube and TikTok
+            base_opts = {
+                'format': 'bestaudio[ext=m4a]/bestaudio/best',  # Prefer m4a
+                'outtmpl': temp_file,
+                'quiet': False,  # Set to True in production
+                'no_warnings': True,
+                'keepvideo': True,  # Keep original files
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'wav',
                     'preferredquality': '192',
                 }],
-                'outtmpl': temp_path,
-                'no_playlist': True,  # Important! Prevents playlist processing
-                'extract_audio': True,
-                'quiet': False,  # Temporarily set to False for debugging
-                'max_filesize': 100000000,  # 100MB limit
+                'concurrent_fragment_downloads': 8  # Speed up downloads
             }
+
+            if platform == 'tiktok':
+                tiktok_opts = {
+                    'extractor_args': {
+                        'tiktok': {
+                            'api_hostname': 'api22-normal-c-alisg.tiktokv.com',
+                            'app_name': 'trill',
+                            'app_version': '34.1.2',
+                            'manifest_app_version': '2023401020',
+                            'app_info': '1234567890123456789/trill///1180',
+                            'device_id': ''.join(random.choices('0123456789', k=19))
+                        }
+                    }
+                }
+                ydl_opts = {**base_opts, **tiktok_opts}
+            else:
+                ydl_opts = base_opts
+
+            logger.info(f"Using options for {platform}: {ydl_opts}")
 
             try:
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    # First check if video exists and get info
-                    try:
-                        video_info = ydl.extract_info(url, download=False)
-                        if not video_info:
-                            raise Exception("Unable to access video information")
-                            
-                        # Check duration before downloading
-                        duration = video_info.get('duration', 0)
-                        if duration and duration > 120:
-                            raise Exception("Please use a video that's 2 minutes or shorter")
+                    # Get video info first
+                    info = ydl.extract_info(url, download=False)
+                    duration = info.get('duration', 0)
+                    
+                    if duration > 120:
+                        raise Exception("Please use a video that's 2 minutes or shorter")
+                        
+                    # Download the video
+                    ydl.download([url])
+                    logger.info(f"Successfully downloaded {platform} content")
 
-                        # If checks pass, download the video
-                        ydl.download([url])
-                    except yt_dlp.utils.DownloadError as e:
-                        logger.error(f"yt-dlp download error: {str(e)}")
-                        raise Exception("Please check that the video is available and try again")
+                # Look for both possible filenames
+                possible_files = [
+                    f"{temp_file}.wav",
+                    f"{temp_file}.wav.wav",
+                    f"{temp_file}.m4a",
+                    f"{temp_file}"
+                ]
 
-                # Check for output file
-                final_path = temp_path + '.wav'
-                if not os.path.exists(final_path):
-                    raise Exception("Failed to download audio")
+                input_file = None
+                for f in possible_files:
+                    if os.path.exists(f):
+                        input_file = f
+                        break
 
+                if not input_file:
+                    raise Exception(f"Could not find downloaded audio file. Checked: {possible_files}")
+
+                logger.info(f"Found audio file: {input_file}")
+                
                 # Convert to proper format
                 converted_wav = os.path.join(temp_dir, 'converted.wav')
-                if not convert_to_wav(final_path, converted_wav):
-                    raise Exception("Failed to convert audio")
-
+                success = convert_to_wav(input_file, converted_wav)
+                
+                if not success:
+                    raise Exception("Failed to convert audio format")
+                
+                if not os.path.exists(converted_wav):
+                    raise Exception("Converted file not found")
+                
+                logger.info(f"Successfully converted audio to WAV")
+                
                 with open(converted_wav, 'rb') as f:
                     audio_data = f.read()
-
+                
+                if not audio_data:
+                    raise Exception("Empty audio data")
+                
                 return audio_data, 'audio/wav'
 
-            except Exception as e:
-                logger.error(f"{platform} processing error: {str(e)}")
-                raise Exception(f"Unable to process this {platform} content. Please try a different video")
-
+            except yt_dlp.utils.DownloadError as e:
+                logger.error(f"Download error for {platform}: {str(e)}")
+                if platform == 'tiktok':
+                    raise Exception(f"Unable to access this TikTok content. Please try another video or check the URL.")
+                else:
+                    raise Exception(f"Unable to access this {platform} content. Please check the URL and try again.")
+            
     except Exception as e:
-        logger.error(f"{platform} processing error: {str(e)}")
+        logger.error(f"{platform} processing error: {str(e)}", exc_info=True)
         raise
 
 def handle_direct_audio(url):
