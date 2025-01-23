@@ -7525,3 +7525,1354 @@ Vowel Quality:
 2025-01-20 01:25:24,475 - services.translation_routes - INFO - [translation_routes.py:328] - Request 82993986 completed in 80.63s
 2025-01-20 01:25:24,476 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 80.63s, Memory Change: 1418.39MB
 2025-01-20 01:25:24,476 - __main__ - INFO - [app.py:278] - Request to /translate took 88.92s
+2025-01-21 00:59:15,535 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-21 00:59:15,538 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-21 00:59:20,544 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 00:59:20,546 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 00:59:20,546 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 00:59:20,548 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 00:59:20,550 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 00:59:20,550 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-21 00:59:20,553 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 00:59:20,553 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 00:59:20,554 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 00:59:20,557 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 00:59:20,558 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 00:59:20,558 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 00:59:20,559 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 00:59:20,560 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 00:59:20,561 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 00:59:20,561 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:00:24,222 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-21 01:00:24,222 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-21 01:00:37,450 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-21 01:00:49,872 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-21 01:00:49,874 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-21 01:00:54,763 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 14.8GB available
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-21 01:00:54,765 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-21 01:02:55,300 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:02:55,302 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:02:55,307 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:02:55,307 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.38MB
+2025-01-21 01:02:55,308 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:08:31,363 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:08:31,365 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:08:31,368 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:08:31,369 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.02MB
+2025-01-21 01:08:31,369 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:11:09,809 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-21 01:11:09,811 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-21 01:11:14,814 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 01:11:14,815 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 01:11:14,815 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 01:11:14,817 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:11:14,817 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:11:14,818 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-21 01:11:14,820 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 01:11:14,821 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 01:11:14,821 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 01:11:14,822 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:11:14,823 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:11:14,823 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 01:11:14,823 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 01:11:14,823 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 01:11:14,824 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:11:14,824 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:11:35,095 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-21 01:11:35,095 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-21 01:11:47,953 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-21 01:11:56,286 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-21 01:11:56,290 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-21 01:12:01,304 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 15.0GB available
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-21 01:12:01,305 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-21 01:12:41,390 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:12:41,392 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:12:41,395 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:12:41,396 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.02MB
+2025-01-21 01:12:41,396 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:21:27,405 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-21 01:21:27,407 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-21 01:21:32,412 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 01:21:32,413 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 01:21:32,413 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 01:21:32,415 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:21:32,415 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:21:32,415 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-21 01:21:32,416 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 01:21:32,416 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 01:21:32,416 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 01:21:32,417 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:21:32,418 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:21:32,418 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 01:21:32,418 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 01:21:32,418 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 01:21:32,419 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:21:32,419 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 01:22:14,604 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-21 01:22:14,604 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-21 01:22:27,554 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-21 01:22:33,749 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-21 01:22:33,750 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-21 01:22:38,428 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-21 01:22:38,429 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 13.7GB available
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-21 01:22:38,430 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-21 01:23:51,753 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:23:51,755 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:23:51,760 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:23:51,761 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.02MB
+2025-01-21 01:23:51,761 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:25,540 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:25,543 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:25,543 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:26,595 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:26,596 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:26,596 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:27,496 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:27,497 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:27,498 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:28,208 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:28,210 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:28,210 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:28,765 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:28,766 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:28,767 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:29,923 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:29,924 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:29,924 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:30,495 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:30,496 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:30,496 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 01:24:31,442 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-21 01:24:31,444 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-21 01:24:31,444 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 22:13:30,822 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.56MB
+2025-01-21 22:13:30,824 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-21 22:13:33,433 - services.audio_link_routes - ERROR - [audio_link_routes.py:61] - YouTube processing error: Failed to download audio
+2025-01-21 22:13:33,434 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 2.61s, Memory Change: 95.19MB
+2025-01-21 22:13:33,434 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 2.61s
+2025-01-21 22:21:52,030 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-21 22:21:52,031 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-21 22:21:57,035 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 22:21:57,036 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 22:21:57,037 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 22:21:57,039 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 22:21:57,040 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 22:21:57,040 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-21 22:21:57,041 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 22:21:57,041 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 22:21:57,041 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 22:21:57,042 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 22:21:57,042 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-21 22:21:57,042 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-21 22:21:57,042 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-21 22:21:57,042 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-21 22:21:57,043 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-21 22:21:57,043 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 16:43:58,139 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-22 16:43:58,140 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-22 16:44:11,152 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-22 16:44:25,741 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 16:44:25,742 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-22 16:44:30,546 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 16.2GB available
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-22 16:44:30,548 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-22 16:44:30,549 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-22 16:44:30,549 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-22 16:44:30,549 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-22 16:44:30,549 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-22 16:44:30,549 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-22 16:46:57,247 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 16:46:57,248 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 16:46:59,870 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 2.62s, Memory Change: 5.09MB
+2025-01-22 16:46:59,870 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 2.62s
+2025-01-22 16:47:24,100 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 16:47:24,101 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request cb93ac87
+2025-01-22 16:47:24,102 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-22 16:47:24,102 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-22 16:47:24,103 - services.translation_routes - INFO - [translation_routes.py:86] - Request cb93ac87: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpdh263_47.wav
+2025-01-22 16:47:24,106 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 14.72 seconds
+2025-01-22 16:47:24,106 - services.translation_routes - INFO - [translation_routes.py:99] - Request cb93ac87: Beginning audio processing with diagnostics
+2025-01-22 16:47:24,106 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpdh263_47.wav
+2025-01-22 16:47:24,106 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 48000, Channels: 2
+2025-01-22 16:47:24,114 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([2, 706630]), Frequency: 48000Hz
+2025-01-22 16:47:24,115 - services.audio_processor - INFO - [audio_processor.py:219] - Resampling from 48000Hz to 16000Hz
+2025-01-22 16:47:24,391 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-01-22 16:47:24,394 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-01-22 16:47:24,428 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-01-22 16:47:24,474 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:24,477 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:24,488 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:24,488 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:24,495 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:24,495 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:24,504 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:24,505 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:25,137 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-22 16:47:25,138 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-01-22 16:47:25,178 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:25,179 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:25,184 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:25,184 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:25,191 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:25,192 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:25,197 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:25,197 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:25,835 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:110] - 
+==================================================
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:111] - Input Audio Quality Report
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:112] - ==================================================
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:113] - Request ID: cb93ac87
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:114] - Target Language: fra
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:115] - --------------------------------------------------
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:116] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.044
+- Rms Level: 0.071
+- Crest Factor: 13.338
+- Zero Crossings: 119371.000
+- Silence Percentage: 18.952
+- Clipping Points: 0.000
+- Dynamic Range: 9441643.984
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 0.000
+  - Temporal Variation: 0.110
+  - Temporal Flatness: 0.064
+
+- Volume Metrics:
+  - Volume Stability: 0.528
+  - Volume Range: 17379805.446
+  - Volume Variations: 0.030
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0106805384694932
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 1.9114741086959839, 'stability': 2.0176730155944824, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.5319951176643372, 'distinction': 0.08972425013780594}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.394
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.591
+  - Rhythm Quality: 0.609
+  - Intonation Quality: 0.573
+
+Vowel Quality:
+  - Quality Score: 0.030
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-22 16:47:25,835 - services.translation_routes - INFO - [translation_routes.py:117] - ==================================================
+
+2025-01-22 16:47:25,836 - services.translation_routes - INFO - [translation_routes.py:128] - Request cb93ac87: Audio processed successfully
+2025-01-22 16:47:25,851 - services.translation_routes - INFO - [translation_routes.py:147] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-01-22 16:47:32,606 - services.translation_routes - INFO - [translation_routes.py:185] - Source text: Booster now hovering as it aligns with the tower or down to three engines
+2025-01-22 16:47:40,442 - services.translation_routes - INFO - [translation_routes.py:204] - Target text: Booster maintenant flottant comme il s'aligne avec la tour&nbsp; pour toucher les trois moteurs
+2025-01-22 16:47:50,835 - services.translation_routes - INFO - [translation_routes.py:227] - Processing tuple output from model
+2025-01-22 16:47:50,843 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:50,844 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:50,847 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:50,848 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:50,852 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:50,852 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:50,856 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 16:47:50,856 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 16:47:50,974 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:251] - 
+==================================================
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:252] - Translated Audio Quality Report
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:253] - ==================================================
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:254] - Request ID: cb93ac87
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:255] - Target Language: fra
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:256] - --------------------------------------------------
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:257] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.596
+- Avg Amplitude: 0.059
+- Rms Level: 0.098
+- Crest Factor: 6.114
+- Zero Crossings: 9701.000
+- Silence Percentage: 19.814
+- Clipping Points: 0.000
+- Dynamic Range: 530.368
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.236
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.029
+  - Temporal Flatness: 0.015
+
+- Volume Metrics:
+  - Volume Stability: 0.241
+  - Volume Range: 1290.852
+  - Volume Variations: 0.059
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.031910880528552
+- Background Noise: 3.445415417248203
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.8043986558914185, 'stability': 3.027261257171631, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.10401983559131622, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.560
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.004
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:258] - ==================================================
+
+2025-01-22 16:47:50,974 - services.translation_routes - INFO - [translation_routes.py:264] - Request cb93ac87: Audio output processed successfully
+2025-01-22 16:47:50,978 - services.translation_routes - INFO - [translation_routes.py:317] - Request cb93ac87: Response prepared successfully
+2025-01-22 16:47:50,978 - services.translation_routes - INFO - [translation_routes.py:328] - Request cb93ac87 completed in 26.88s
+2025-01-22 16:47:50,978 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 26.88s, Memory Change: 754.08MB
+2025-01-22 16:47:50,978 - __main__ - INFO - [app.py:278] - Request to /translate took 34.59s
+2025-01-22 16:53:00,798 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 16:53:00,799 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 16:53:00,808 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-22 16:53:00,810 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: -0.02MB
+2025-01-22 16:53:00,811 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:01:42,845 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:01:42,846 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:01:42,855 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No client_id. Pass it or set a SPOTIPY_CLIENT_ID environment variable.
+2025-01-22 17:01:42,855 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.02MB
+2025-01-22 17:01:42,856 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:02:03,105 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-22 17:02:03,106 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-22 17:02:08,109 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 17:02:08,110 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 17:02:08,111 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 17:02:08,112 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:02:08,113 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 17:02:08,113 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-22 17:02:08,114 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 17:02:08,115 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 17:02:08,115 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 17:02:08,116 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:02:08,116 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 17:02:08,117 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 17:02:08,117 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 17:02:08,117 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 17:02:08,118 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:02:08,119 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 17:04:00,756 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-22 17:04:00,756 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-22 17:04:14,531 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-22 17:04:21,205 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 17:04:21,207 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-22 17:04:26,747 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 15.7GB available
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-22 17:04:26,749 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-22 17:06:50,035 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:06:50,035 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:06:50,275 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:06:50,277 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.24s, Memory Change: 0.09MB
+2025-01-22 17:06:50,278 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.24s
+2025-01-22 17:07:41,403 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:07:41,405 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.11s, Memory Change: -0.03MB
+2025-01-22 17:07:41,406 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.11s
+2025-01-22 17:08:08,896 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: Invalid Spotify URL
+2025-01-22 17:08:08,897 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:08:08,897 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:12:55,834 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:12:55,834 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:12:55,978 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:12:55,979 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.14s, Memory Change: 0.00MB
+2025-01-22 17:12:55,979 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.14s
+2025-01-22 17:13:25,348 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:13:25,350 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.13s, Memory Change: -0.03MB
+2025-01-22 17:13:25,351 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.13s
+2025-01-22 17:13:42,770 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:13:42,772 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.13s, Memory Change: -0.03MB
+2025-01-22 17:13:42,773 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.13s
+2025-01-22 17:13:48,751 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:13:48,753 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.13s, Memory Change: -0.03MB
+2025-01-22 17:13:48,753 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.13s
+2025-01-22 17:14:12,616 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:14:12,618 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.14s, Memory Change: -0.03MB
+2025-01-22 17:14:12,618 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.14s
+2025-01-22 17:14:41,082 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:14:41,084 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.13s, Memory Change: -0.03MB
+2025-01-22 17:14:41,084 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.13s
+2025-01-22 17:15:07,297 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:15:07,297 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:15:07,390 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:15:07,392 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.09s, Memory Change: 0.02MB
+2025-01-22 17:15:07,392 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.09s
+2025-01-22 17:32:40,078 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:32:40,080 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:32:40,206 - services.audio_link_routes - ERROR - [audio_link_routes.py:104] - Spotify processing error: No preview available for this track
+2025-01-22 17:32:40,207 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.12s, Memory Change: -0.02MB
+2025-01-22 17:32:40,208 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.12s
+2025-01-22 17:33:46,211 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-22 17:33:46,212 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-22 17:33:51,218 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 17:33:51,219 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 17:33:51,219 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 17:33:51,221 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:33:51,222 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 17:33:51,222 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-22 17:33:51,223 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 17:33:51,223 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 17:33:51,224 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 17:33:51,224 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:33:51,225 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 17:33:51,225 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 17:33:51,226 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 17:33:51,226 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 17:33:51,227 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:33:51,227 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 17:33:59,762 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-22 17:33:59,762 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-22 17:34:12,673 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-22 17:34:19,063 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 17:34:19,065 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-22 17:34:24,249 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 15.8GB available
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-22 17:34:24,251 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-22 17:34:44,740 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 17:34:44,740 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 17:34:44,862 - services.audio_link_routes - INFO - [audio_link_routes.py:85] - Converting Spotify track to YouTube search: Blackbird - Remastered 2009 The Beatles audio
+2025-01-22 17:34:49,034 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 4.29s, Memory Change: 37.94MB
+2025-01-22 17:34:49,034 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 4.29s
+2025-01-22 17:34:57,539 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 17:34:57,541 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request a5d7ebb0
+2025-01-22 17:34:57,541 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-22 17:34:57,541 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-22 17:34:57,556 - services.translation_routes - INFO - [translation_routes.py:86] - Request a5d7ebb0: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpkqoxtqjo.wav
+2025-01-22 17:34:57,556 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 138.39 seconds
+2025-01-22 17:34:57,556 - services.translation_routes - INFO - [translation_routes.py:99] - Request a5d7ebb0: Beginning audio processing with diagnostics
+2025-01-22 17:34:57,556 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpkqoxtqjo.wav
+2025-01-22 17:34:57,557 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 48000, Channels: 2
+2025-01-22 17:34:57,623 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([2, 6642560]), Frequency: 48000Hz
+2025-01-22 17:34:57,623 - services.audio_processor - INFO - [audio_processor.py:219] - Resampling from 48000Hz to 16000Hz
+2025-01-22 17:35:03,280 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-01-22 17:35:03,292 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-01-22 17:35:03,470 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-01-22 17:35:03,714 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:03,715 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:03,763 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:03,764 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:03,811 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:03,812 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:03,859 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:03,859 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:08,309 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-22 17:35:08,310 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-01-22 17:35:08,731 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:08,732 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:08,781 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:08,781 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:08,831 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:08,831 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:08,879 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:35:08,880 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:35:13,545 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:110] - 
+==================================================
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:111] - Input Audio Quality Report
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:112] - ==================================================
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:113] - Request ID: a5d7ebb0
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:114] - Target Language: fra
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:115] - --------------------------------------------------
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:116] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.038
+- Rms Level: 0.074
+- Crest Factor: 12.841
+- Zero Crossings: 1050598.000
+- Silence Percentage: 31.065
+- Clipping Points: 0.000
+- Dynamic Range: 10176418.245
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.091
+  - Temporal Flatness: 0.048
+
+- Volume Metrics:
+  - Volume Stability: -0.030
+  - Volume Range: 33138662.577
+  - Volume Variations: 0.053
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.01152323681047
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.4135950803756714, 'stability': 0.8007574677467346, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.4870680570602417, 'distinction': 0.2212282121181488}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.385
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.390
+  - Rhythm Quality: 0.414
+  - Intonation Quality: 0.366
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-22 17:35:13,545 - services.translation_routes - INFO - [translation_routes.py:117] - ==================================================
+
+2025-01-22 17:35:13,546 - services.translation_routes - INFO - [translation_routes.py:128] - Request a5d7ebb0: Audio processed successfully
+2025-01-22 17:35:13,890 - services.translation_routes - INFO - [translation_routes.py:147] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-01-22 17:38:13,378 - services.translation_routes - INFO - [translation_routes.py:185] - Source text: Black bird singing in the dead of night Take these broken wings and learn to fly All your life you're just waiting for this moment to arise
+2025-01-22 17:41:06,929 - services.translation_routes - INFO - [translation_routes.py:204] - Target text: ♫ Black bird singing in the dead of night ♫
+2025-01-22 17:46:29,770 - services.translation_routes - INFO - [translation_routes.py:227] - Processing tuple output from model
+2025-01-22 17:46:29,812 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:46:29,816 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:46:29,820 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:46:29,820 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:46:29,823 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:46:29,823 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:46:29,826 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-22 17:46:29,826 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-22 17:46:29,887 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:251] - 
+==================================================
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:252] - Translated Audio Quality Report
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:253] - ==================================================
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:254] - Request ID: a5d7ebb0
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:255] - Target Language: fra
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:256] - --------------------------------------------------
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:257] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.800
+- Avg Amplitude: 0.065
+- Rms Level: 0.102
+- Crest Factor: 7.828
+- Zero Crossings: 4180.000
+- Silence Percentage: 12.188
+- Clipping Points: 0.000
+- Dynamic Range: 222.855
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.021
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.027
+  - Temporal Flatness: 0.014
+
+- Volume Metrics:
+  - Volume Stability: 0.265
+  - Volume Range: 279.475
+  - Volume Variations: 0.061
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0261218309799087
+- Background Noise: 4.1312263218165555
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+No issues detected
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.7969030141830444, 'stability': 2.902991533279419, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.7394996881484985, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.559
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 1.000
+
+Vowel Quality:
+  - Quality Score: 0.005
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:258] - ==================================================
+
+2025-01-22 17:46:29,890 - services.translation_routes - INFO - [translation_routes.py:264] - Request a5d7ebb0: Audio output processed successfully
+2025-01-22 17:46:29,910 - services.translation_routes - INFO - [translation_routes.py:317] - Request a5d7ebb0: Response prepared successfully
+2025-01-22 17:46:29,912 - services.translation_routes - INFO - [translation_routes.py:328] - Request a5d7ebb0 completed in 692.37s
+2025-01-22 17:46:29,916 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 692.37s, Memory Change: -6491.53MB
+2025-01-22 17:46:29,919 - __main__ - INFO - [app.py:278] - Request to /translate took 697.63s
+2025-01-22 23:17:04,289 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-22 23:17:04,293 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-22 23:17:09,299 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 23:17:09,303 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 23:17:09,304 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 23:17:09,318 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 23:17:09,336 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 23:17:09,341 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-22 23:17:09,350 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 23:17:09,350 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 23:17:09,350 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 23:17:09,351 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 23:17:09,351 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 23:17:09,351 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-22 23:17:09,351 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-22 23:17:09,351 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-22 23:17:09,352 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 23:17:09,352 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-22 23:17:32,819 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-22 23:17:32,819 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-22 23:17:46,956 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-22 23:17:59,138 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 23:17:59,141 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-22 23:18:04,932 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-22 23:18:04,933 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-22 23:18:04,933 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-22 23:18:04,933 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-22 23:18:04,933 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-22 23:18:04,933 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-22 23:18:04,933 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 17.6GB available
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-22 23:18:04,934 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-22 23:58:31,735 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-22 23:58:31,737 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-22 23:58:31,903 - services.audio_link_routes - ERROR - [audio_link_routes.py:146] - Direct audio processing error: Failed to download audio file
+2025-01-22 23:58:31,904 - services.audio_link_routes - ERROR - [audio_link_routes.py:211] - Direct audio processing error: Failed to download audio file
+2025-01-22 23:58:31,906 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.16s, Memory Change: 0.61MB
+2025-01-22 23:58:31,906 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.17s
+2025-01-23 08:34:50,533 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-23 08:34:50,538 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-23 08:34:55,539 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-23 08:34:55,541 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-23 08:34:55,541 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-23 08:34:55,544 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 08:34:55,545 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-23 08:34:55,545 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-23 08:34:55,547 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-23 08:34:55,548 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-23 08:34:55,548 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-23 08:34:55,549 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 08:34:55,549 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-23 08:34:55,550 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-23 08:34:55,550 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-23 08:34:55,551 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-23 08:34:55,551 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 08:34:55,552 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-23 08:36:06,237 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-23 08:36:06,238 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-23 08:36:19,507 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-23 08:36:26,158 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-23 08:36:26,159 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-23 08:36:31,950 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 17.7GB available
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-23 08:36:31,952 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-23 08:37:51,973 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-23 08:37:51,974 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-23 08:37:51,978 - services.audio_link_routes - INFO - [audio_link_routes.py:173] - Processing URL: https://www.tiktok.com/@ellendegeneres/video/7462053313240927534
+2025-01-23 08:37:51,979 - services.audio_link_routes - INFO - [audio_link_routes.py:193] - Processing TikTok URL
+2025-01-23 08:37:52,302 - services.audio_link_routes - ERROR - [audio_link_routes.py:123] - Download error for tiktok: [0;31mERROR:[0m [TikTok] 7462053313240927534: Unable to extract webpage video data; please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U
+2025-01-23 08:37:52,302 - services.audio_link_routes - ERROR - [audio_link_routes.py:139] - tiktok processing error: Unable to access this tiktok content. Please check the URL and try again
+2025-01-23 08:37:52,303 - services.audio_link_routes - ERROR - [audio_link_routes.py:207] - Processing error: Unable to access this tiktok content. Please check the URL and try again
+2025-01-23 08:37:52,304 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.33s, Memory Change: 0.44MB
+2025-01-23 08:37:52,305 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.33s
+2025-01-23 08:38:42,805 - services.audio_link_routes - INFO - [audio_link_routes.py:173] - Processing URL: https://www.youtube.com/watch?v=HMF3tpA0TL4&list=RDGMEMHDXYb1_DDSgDsobPsOFxpAVMHMF3tpA0TL4&start_radio=1
+2025-01-23 08:38:42,806 - services.audio_link_routes - INFO - [audio_link_routes.py:190] - Processing YouTube URL
+2025-01-23 08:46:04,416 - services.audio_link_routes - ERROR - [audio_link_routes.py:123] - Download error for youtube: [0;31mERROR:[0m [youtube] HrTWjrYYxBU: Video unavailable. This content isn't available, try again later.
+2025-01-23 08:46:04,423 - services.audio_link_routes - ERROR - [audio_link_routes.py:139] - youtube processing error: Unable to access this youtube content. Please check the URL and try again
+2025-01-23 08:46:04,423 - services.audio_link_routes - ERROR - [audio_link_routes.py:207] - Processing error: Unable to access this youtube content. Please check the URL and try again
+2025-01-23 08:46:04,454 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 441.65s, Memory Change: 162.72MB
+2025-01-23 08:46:04,455 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 441.65s
+2025-01-23 08:56:07,613 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.02MB
+2025-01-23 08:56:07,614 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-23 08:56:07,617 - services.audio_link_routes - INFO - [audio_link_routes.py:173] - Processing URL: https://youtu.be/xDYy5qafTXY?si=RD40B2xq90RYg2Q0
+2025-01-23 08:56:07,618 - services.audio_link_routes - INFO - [audio_link_routes.py:190] - Processing YouTube URL
+2025-01-23 08:56:11,314 - services.audio_link_routes - ERROR - [audio_link_routes.py:139] - youtube processing error: Unable to process this youtube content. Please try a different video
+2025-01-23 08:56:11,315 - services.audio_link_routes - ERROR - [audio_link_routes.py:207] - Processing error: Unable to process this youtube content. Please try a different video
+2025-01-23 08:56:11,316 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 3.70s, Memory Change: 14.77MB
+2025-01-23 08:56:11,316 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 3.70s
+2025-01-23 09:03:21,558 - __main__ - INFO - [app.py:217] - Received SIGINT signal
+2025-01-23 09:03:21,561 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
+2025-01-23 09:03:26,561 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-23 09:03:26,563 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-23 09:03:26,563 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-23 09:03:26,566 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 09:03:26,567 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-23 09:03:26,567 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
+2025-01-23 09:03:26,569 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-23 09:03:26,569 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-23 09:03:26,570 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-23 09:03:26,570 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 09:03:26,571 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-23 09:03:26,571 - __main__ - INFO - [app.py:436] - Application shutting down...
+2025-01-23 09:03:26,572 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-01-23 09:03:26,572 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-01-23 09:03:26,573 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 09:03:26,573 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
+2025-01-23 09:04:18,083 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-23 09:04:18,083 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-23 09:04:31,212 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-23 09:04:38,378 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-23 09:04:38,379 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-23 09:04:43,364 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 15.1GB available
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-23 09:04:43,366 - __main__ - INFO - [app.py:516] - ==================================================
+2025-01-23 09:05:46,250 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-23 09:05:46,251 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-23 09:05:46,254 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Processing URL: https://youtube.com/shorts/dOfQCX8fzZg?si=3ZB0P1f9YrHWs6_t
+2025-01-23 09:05:46,255 - services.audio_link_routes - INFO - [audio_link_routes.py:191] - Processing YouTube URL
+2025-01-23 09:05:49,926 - services.audio_link_routes - INFO - [audio_link_routes.py:200] - Successfully processed audio
+2025-01-23 09:05:49,926 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 3.67s, Memory Change: 7.84MB
+2025-01-23 09:05:49,926 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 3.67s
+2025-01-23 09:06:00,644 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-23 09:06:00,645 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request dc390d56
+2025-01-23 09:06:00,645 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-23 09:06:00,645 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-23 09:06:00,646 - services.translation_routes - INFO - [translation_routes.py:86] - Request dc390d56: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpfpknrpar.wav
+2025-01-23 09:06:00,647 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 49.32 seconds
+2025-01-23 09:06:00,647 - services.translation_routes - INFO - [translation_routes.py:99] - Request dc390d56: Beginning audio processing with diagnostics
+2025-01-23 09:06:00,647 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpfpknrpar.wav
+2025-01-23 09:06:00,647 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 16000, Channels: 1
+2025-01-23 09:06:00,651 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([1, 789107]), Frequency: 16000Hz
+2025-01-23 09:06:00,695 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-01-23 09:06:00,700 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-01-23 09:06:00,762 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-01-23 09:06:00,845 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:00,845 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:00,862 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:00,862 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:00,877 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:00,877 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:00,893 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:00,894 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:02,681 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-23 09:06:02,682 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-01-23 09:06:02,825 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:02,825 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:02,841 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:02,841 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:02,857 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:02,858 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:02,873 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:06:02,873 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:06:04,704 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-23 09:06:04,704 - services.translation_routes - INFO - [translation_routes.py:110] - 
+==================================================
+2025-01-23 09:06:04,704 - services.translation_routes - INFO - [translation_routes.py:111] - Input Audio Quality Report
+2025-01-23 09:06:04,704 - services.translation_routes - INFO - [translation_routes.py:112] - ==================================================
+2025-01-23 09:06:04,704 - services.translation_routes - INFO - [translation_routes.py:113] - Request ID: dc390d56
+2025-01-23 09:06:04,704 - services.translation_routes - INFO - [translation_routes.py:114] - Target Language: fra
+2025-01-23 09:06:04,705 - services.translation_routes - INFO - [translation_routes.py:115] - --------------------------------------------------
+2025-01-23 09:06:04,705 - services.translation_routes - INFO - [translation_routes.py:116] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.805
+- Avg Amplitude: 0.029
+- Rms Level: 0.054
+- Crest Factor: 15.007
+- Zero Crossings: 394279.000
+- Silence Percentage: 35.615
+- Clipping Points: 0.000
+- Dynamic Range: 8355702.910
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.080
+  - Temporal Flatness: 0.043
+
+- Volume Metrics:
+  - Volume Stability: 0.140
+  - Volume Range: 22859556.973
+  - Volume Variations: 0.035
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.007151714733603
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 2.146029233932495, 'stability': 2.325944185256958, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.593830943107605, 'distinction': 0.09012619405984879}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.515
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.633
+  - Rhythm Quality: 0.674
+  - Intonation Quality: 0.592
+
+Vowel Quality:
+  - Quality Score: 0.013
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-23 09:06:04,705 - services.translation_routes - INFO - [translation_routes.py:117] - ==================================================
+
+2025-01-23 09:06:04,705 - services.translation_routes - INFO - [translation_routes.py:128] - Request dc390d56: Audio processed successfully
+2025-01-23 09:06:04,751 - services.translation_routes - INFO - [translation_routes.py:147] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-01-23 09:06:25,963 - services.translation_routes - INFO - [translation_routes.py:185] - Source text: I'd like to thank my wife because she's my best friend, and my daughter because she thinks I'm cool because I did The Lion King.
+2025-01-23 09:06:47,581 - services.translation_routes - INFO - [translation_routes.py:204] - Target text: J'aimerais remercier ma femme parce qu'elle est ma meilleure amie, je voudrais remercier mon fille parce quelle pense que je suis cool parce que j'ai fait le Lion King.
+2025-01-23 09:07:24,890 - services.translation_routes - INFO - [translation_routes.py:227] - Processing tuple output from model
+2025-01-23 09:07:24,904 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:07:24,905 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:07:24,910 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:07:24,910 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:07:24,914 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:07:24,914 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:07:24,921 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:07:24,921 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:07:25,084 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:251] - 
+==================================================
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:252] - Translated Audio Quality Report
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:253] - ==================================================
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:254] - Request ID: dc390d56
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:255] - Target Language: fra
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:256] - --------------------------------------------------
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:257] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.693
+- Avg Amplitude: 0.064
+- Rms Level: 0.096
+- Crest Factor: 7.180
+- Zero Crossings: 9155.000
+- Silence Percentage: 13.512
+- Clipping Points: 0.000
+- Dynamic Range: 250.840
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.103
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.020
+  - Temporal Flatness: 0.012
+
+- Volume Metrics:
+  - Volume Stability: 0.259
+  - Volume Range: 462.288
+  - Volume Variations: 0.058
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0268752743591336
+- Background Noise: 3.871986466373222
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.6399332284927368, 'stability': 3.4097635746002197, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.2834731638431549, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.534
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:258] - ==================================================
+
+2025-01-23 09:07:25,084 - services.translation_routes - INFO - [translation_routes.py:264] - Request dc390d56: Audio output processed successfully
+2025-01-23 09:07:25,087 - services.translation_routes - INFO - [translation_routes.py:317] - Request dc390d56: Response prepared successfully
+2025-01-23 09:07:25,087 - services.translation_routes - INFO - [translation_routes.py:328] - Request dc390d56 completed in 84.44s
+2025-01-23 09:07:25,090 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 84.45s, Memory Change: 2425.56MB
+2025-01-23 09:07:25,090 - __main__ - INFO - [app.py:278] - Request to /translate took 90.18s
+2025-01-23 09:10:03,662 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-01-23 09:10:03,664 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-01-23 09:10:03,668 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Processing URL: https://www.tiktok.com/@ellendegeneres/video/7462053313240927534
+2025-01-23 09:10:03,669 - services.audio_link_routes - INFO - [audio_link_routes.py:194] - Processing TikTok URL
+2025-01-23 09:10:05,273 - services.audio_link_routes - INFO - [audio_link_routes.py:200] - Successfully processed audio
+2025-01-23 09:10:05,273 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.61s, Memory Change: 2.95MB
+2025-01-23 09:10:05,274 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 1.61s
+2025-01-23 09:10:17,054 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-23 09:10:17,058 - services.translation_routes - INFO - [translation_routes.py:29] - Starting translation request f674c248
+2025-01-23 09:10:17,058 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-01-23 09:10:17,058 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-01-23 09:10:17,060 - services.translation_routes - INFO - [translation_routes.py:86] - Request f674c248: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpbpluk4zd.wav
+2025-01-23 09:10:17,060 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 96.85 seconds
+2025-01-23 09:10:17,060 - services.translation_routes - INFO - [translation_routes.py:99] - Request f674c248: Beginning audio processing with diagnostics
+2025-01-23 09:10:17,060 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpbpluk4zd.wav
+2025-01-23 09:10:17,060 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 16000, Channels: 1
+2025-01-23 09:10:17,066 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([1, 1549630]), Frequency: 16000Hz
+2025-01-23 09:10:17,152 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-01-23 09:10:17,160 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-01-23 09:10:17,309 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-01-23 09:10:17,472 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:17,473 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:17,507 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:17,507 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:17,542 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:17,542 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:17,576 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:17,577 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:20,599 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-23 09:10:20,599 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-01-23 09:10:20,887 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:20,887 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:20,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:20,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:20,955 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:20,955 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:20,988 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:10:20,988 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:10:24,108 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-23 09:10:24,108 - services.translation_routes - INFO - [translation_routes.py:110] - 
+==================================================
+2025-01-23 09:10:24,108 - services.translation_routes - INFO - [translation_routes.py:111] - Input Audio Quality Report
+2025-01-23 09:10:24,108 - services.translation_routes - INFO - [translation_routes.py:112] - ==================================================
+2025-01-23 09:10:24,108 - services.translation_routes - INFO - [translation_routes.py:113] - Request ID: f674c248
+2025-01-23 09:10:24,109 - services.translation_routes - INFO - [translation_routes.py:114] - Target Language: fra
+2025-01-23 09:10:24,109 - services.translation_routes - INFO - [translation_routes.py:115] - --------------------------------------------------
+2025-01-23 09:10:24,109 - services.translation_routes - INFO - [translation_routes.py:116] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.021
+- Rms Level: 0.046
+- Crest Factor: 20.598
+- Zero Crossings: 726921.000
+- Silence Percentage: 43.257
+- Clipping Points: 0.000
+- Dynamic Range: 5833420.895
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.072
+  - Temporal Flatness: 0.030
+
+- Volume Metrics:
+  - Volume Stability: -0.134
+  - Volume Range: 23558643.460
+  - Volume Variations: 0.035
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.004478381776771
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.37451744079589844, 'stability': 0.7744566798210144, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.09089379012584686, 'consistency': 0.5062854290008545, 'distinction': 0.401911199092865}
+  - Description: Weak nasal resonance. Unstable nasal resonance. Moderate distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.566
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.572
+  - Rhythm Quality: 0.624
+  - Intonation Quality: 0.519
+
+Vowel Quality:
+  - Quality Score: 0.006
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-23 09:10:24,109 - services.translation_routes - INFO - [translation_routes.py:117] - ==================================================
+
+2025-01-23 09:10:24,109 - services.translation_routes - INFO - [translation_routes.py:128] - Request f674c248: Audio processed successfully
+2025-01-23 09:10:24,193 - services.translation_routes - INFO - [translation_routes.py:147] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-01-23 09:11:29,978 - services.translation_routes - INFO - [translation_routes.py:185] - Source text: It's the highest melting point of all the elements.
+2025-01-23 09:12:31,567 - services.translation_routes - INFO - [translation_routes.py:204] - Target text: C'est le plus haut point de fusion de tous les éléments.
+2025-01-23 09:14:43,218 - services.translation_routes - INFO - [translation_routes.py:227] - Processing tuple output from model
+2025-01-23 09:14:43,247 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:14:43,251 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:14:43,253 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:14:43,253 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:14:43,256 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:14:43,256 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:14:43,258 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-01-23 09:14:43,258 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-01-23 09:14:43,329 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:251] - 
+==================================================
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:252] - Translated Audio Quality Report
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:253] - ==================================================
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:254] - Request ID: f674c248
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:255] - Target Language: fra
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:256] - --------------------------------------------------
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:257] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.563
+- Avg Amplitude: 0.064
+- Rms Level: 0.103
+- Crest Factor: 5.483
+- Zero Crossings: 3675.000
+- Silence Percentage: 18.120
+- Clipping Points: 0.000
+- Dynamic Range: 435.690
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.315
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.021
+  - Temporal Flatness: 0.012
+
+- Volume Metrics:
+  - Volume Stability: 0.265
+  - Volume Range: 691.879
+  - Volume Variations: 0.061
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0374802083957566
+- Background Noise: 3.1933310075472146
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+No issues detected
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.6256275773048401, 'stability': 3.1791577339172363, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.6216173768043518, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.516
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 1.000
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:258] - ==================================================
+
+2025-01-23 09:14:43,331 - services.translation_routes - INFO - [translation_routes.py:264] - Request f674c248: Audio output processed successfully
+2025-01-23 09:14:43,337 - services.translation_routes - INFO - [translation_routes.py:317] - Request f674c248: Response prepared successfully
+2025-01-23 09:14:43,338 - services.translation_routes - INFO - [translation_routes.py:328] - Request f674c248 completed in 266.28s
+2025-01-23 09:14:43,340 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 266.28s, Memory Change: -6257.03MB
+2025-01-23 09:14:43,340 - __main__ - INFO - [app.py:278] - Request to /translate took 272.21s
