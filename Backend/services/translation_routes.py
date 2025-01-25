@@ -1,4 +1,5 @@
 from flask import request, jsonify, Response
+import gc
 import hashlib
 import time
 import torch
@@ -140,8 +141,8 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                 src_lang="eng",
                 tgt_lang=model_language,
                 padding=True,
-                truncation=True,
-                max_length=256000
+                # truncation=True,
+                max_length=512000
             )
             
             logger.info(f"Input keys: {inputs.keys()}")
@@ -158,11 +159,11 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                     source_outputs = text_model.generate(
                         input_features=inputs["input_features"],
                         tgt_lang="eng",
-                        num_beams=8,
+                        num_beams=6,
                         do_sample=False,
-                        max_new_tokens=1000,
+                        max_new_tokens=8000,
                         temperature=0.2,
-                        length_penalty=1.0,
+                        length_penalty=2.0,
                         repetition_penalty=1.5,
                         no_repeat_ngram_size=3
                     )
@@ -175,7 +176,7 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                             tgt_lang="eng",
                             num_beams=8,
                             do_sample=False,
-                            max_new_tokens=1000,
+                            max_new_tokens=8000,
                             repetition_penalty=2.0,
                             no_repeat_ngram_size=4,
                             temperature=0.2
@@ -194,9 +195,9 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                     target_outputs = text_model.generate(
                         input_features=inputs["input_features"],
                         tgt_lang=model_language,
-                        num_beams=4,
-                        max_new_tokens=1000,
-                        length_penalty=0.8,
+                        num_beams=6,
+                        max_new_tokens=8000,
+                        length_penalty=2.0,
                         repetition_penalty=1.5,
                         no_repeat_ngram_size=3
                     )
@@ -211,13 +212,13 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                 outputs = model.generate(
                     **inputs,
                     tgt_lang=model_language,
-                    num_beams=5,
-                    max_new_tokens=200,
+                    num_beams=3,
+                    max_new_tokens=8000,  # Increased from 1600 to 8000
                     do_sample=True,
                     temperature=0.7,
                     top_k=50,
                     top_p=0.95,
-                    length_penalty=1.0,
+                    length_penalty=2.0,   # Slightly increased to encourage longer outputs
                     repetition_penalty=1.2,
                     no_repeat_ngram_size=3
                 )
