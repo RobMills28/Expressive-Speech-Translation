@@ -14602,3 +14602,25 @@ Vowel Quality:
 2025-01-25 19:46:21,417 - services.translation_routes - INFO - [translation_routes.py:329] - Request 8cca0e2e completed in 58.10s
 2025-01-25 19:46:21,421 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 58.11s, Memory Change: 1229.11MB
 2025-01-25 19:46:21,421 - __main__ - INFO - [app.py:278] - Request to /translate took 66.59s
+2025-01-26 18:17:33,141 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-01-26 18:17:33,141 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-01-26 18:17:47,124 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-01-26 18:18:05,136 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-26 18:18:05,138 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-01-26 18:18:10,659 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-01-26 18:18:10,660 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-01-26 18:18:10,660 - __main__ - INFO - [app.py:491] - ==================================================
+2025-01-26 18:18:10,660 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 15.3GB available
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:510] - Configuration:
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-01-26 18:18:10,661 - __main__ - INFO - [app.py:516] - ==================================================
