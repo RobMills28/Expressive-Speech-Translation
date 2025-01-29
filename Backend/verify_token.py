@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 from huggingface_hub import HfApi
 from transformers import (
     AutoConfig,
-    SeamlessM4TProcessor,
-    SeamlessM4Tv2Model
+    SeamlessM4Tv2Processor,  # Changed to v2
+    SeamlessM4Tv2Model,
+    SeamlessM4Tv2Tokenizer,  # Added v2 tokenizer
+    SeamlessM4Tv2ForSpeechToText  # Added speech-to-text model
 )
 import torch
 
@@ -56,16 +58,35 @@ def verify_token_and_model_access():
         print(f"Model type: {config.model_type}")
         print(f"Architecture: {config.architectures[0] if config.architectures else 'Not specified'}")
         
-        # Try loading processor
+        # Try loading v2 processor
         print("\nLoading processor...")
-        processor = SeamlessM4TProcessor.from_pretrained(
+        processor = SeamlessM4Tv2Processor.from_pretrained(
             model_name,
             token=token,
             trust_remote_code=True
         )
         print("Processor loaded successfully.")
 
-        # Try loading v2 model
+        # Try loading v2 tokenizer
+        print("\nLoading tokenizer...")
+        tokenizer = SeamlessM4Tv2Tokenizer.from_pretrained(
+            model_name,
+            token=token,
+            trust_remote_code=True
+        )
+        print("Tokenizer loaded successfully.")
+
+        # Try loading speech-to-text model
+        print("\nLoading speech-to-text model...")
+        text_model = SeamlessM4Tv2ForSpeechToText.from_pretrained(
+            model_name,
+            token=token,
+            torch_dtype=torch.float32,
+            use_safetensors=True
+        )
+        print("Speech-to-text model loaded successfully.")
+
+        # Try loading v2 main model
         print("\nAttempting to load SeamlessM4Tv2Model...")
         try:
             model = SeamlessM4Tv2Model.from_pretrained(
@@ -81,10 +102,11 @@ def verify_token_and_model_access():
             traceback.print_exc()
             raise
 
-        # Verify model can be moved to GPU if available
+        # Verify models can be moved to GPU if available
         if device.type == 'cuda':
             model = model.to(device)
-            print("Model successfully moved to GPU")
+            text_model = text_model.to(device)
+            print("Models successfully moved to GPU")
 
         # Basic model verification
         print("\nVerifying model with dummy input...")
@@ -94,20 +116,44 @@ def verify_token_and_model_access():
             sampling_rate=16000,
             return_tensors="pt",
             src_lang="eng",
-            tgt_lang="fra"
+            tgt_lang="spa"  # Testing with Spanish
         )
         
         if device.type == 'cuda':
             inputs = {k: v.to(device) for k, v in inputs.items()}
         
+        # Test text generation
+        print("\nTesting text generation...")
         with torch.no_grad():
-            outputs = model.generate(
+            text_outputs = text_model.generate(
+                input_features=inputs["input_features"],
+                tgt_lang="spa",
+                num_beams=1,
+                max_new_tokens=50
+            )
+            decoded_text = processor.batch_decode(text_outputs, skip_special_tokens=True)[0]
+            print(f"Generated text: {decoded_text}")
+        
+        # Test audio generation
+        print("\nTesting audio generation...")
+        with torch.no_grad():
+            audio_outputs = model.generate(
                 **inputs,
-                tgt_lang="fra",
+                tgt_lang="spa",
                 num_beams=1,
                 max_new_tokens=50
             )
         print("Model verification successful!")
+
+        # Test language token handling
+        print("\nTesting language token handling...")
+        # Try to get language token IDs for verification
+        try:
+            spa_token = tokenizer.get_lang_token_id("spa")
+            print(f"Spanish language token ID: {spa_token}")
+        except Exception as e:
+            print(f"Warning: Error getting language token ID: {str(e)}")
+            print("This might indicate an issue with language handling")
 
     except Exception as e:
         print(f"\nError accessing model: {str(e)}")
