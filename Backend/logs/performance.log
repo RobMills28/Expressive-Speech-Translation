@@ -9411,6 +9411,7 @@ Schwa Realization:
 2025-01-23 14:54:53,184 - services.translation_routes - INFO - [translation_routes.py:328] - Request d1f51838 completed in 150.47s
 2025-01-23 14:54:53,186 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 150.47s, Memory Change: 129.62MB
 2025-01-23 14:54:53,186 - __main__ - INFO - [app.py:278] - Request to /translate took 156.21s
+<<<<<<< HEAD
 2025-01-24 16:25:27,604 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
 2025-01-24 16:25:27,604 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
 2025-01-24 16:25:40,485 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
@@ -15310,3 +15311,7 @@ Stress Patterns:
 2025-01-29 17:24:54,609 - services.translation_routes - ERROR - [translation_routes.py:449] - Error during cleanup: type object 'ResourceMonitor' has no attribute 'get_process_memory'
 2025-01-29 17:24:54,610 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 19.03s, Memory Change: 431.19MB
 2025-01-29 17:24:54,610 - __main__ - INFO - [app.py:278] - Request to /translate took 27.08s
+=======
+>>>>>>> parent of a02b9e660 (changes to translation_routes.py -- largely good but need to figure out a tiktok solution)
+2025-02-01 20:55:37,071 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-02-01 20:55:37,073 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully

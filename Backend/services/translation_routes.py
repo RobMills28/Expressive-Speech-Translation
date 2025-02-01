@@ -1,5 +1,4 @@
 from flask import request, jsonify, Response
-import gc
 import hashlib
 import time
 import torch
@@ -181,6 +180,7 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                 src_lang="eng",
                 tgt_lang=model_language,
                 padding=True,
+                # truncation=True,
                 max_length=512000
             )
             
@@ -198,11 +198,11 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                     source_outputs = text_model.generate(
                         input_features=inputs["input_features"],
                         tgt_lang="eng",
-                        num_beams=6,          # Higher for source text accuracy
-                        do_sample=False,       # No sampling for maximum accuracy
+                        num_beams=6,
+                        do_sample=False,
                         max_new_tokens=8000,
-                        temperature=0.2,       # Lower temperature for focused output
-                        length_penalty=1.0,
+                        temperature=0.2,
+                        length_penalty=2.0,
                         repetition_penalty=1.5,
                         no_repeat_ngram_size=3
                     )
@@ -223,10 +223,9 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                             num_beams=8,       # Increased for second pass
                             do_sample=False,
                             max_new_tokens=8000,
-                            repetition_penalty=2.0,  # Increased
-                            no_repeat_ngram_size=4,  # Increased
-                            temperature=0.2,
-                            length_penalty=1.5       # Adjusted
+                            repetition_penalty=2.0,
+                            no_repeat_ngram_size=4,
+                            temperature=0.2
                         )
                         source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
                     
@@ -242,50 +241,41 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
                     target_outputs = text_model.generate(
                         input_features=inputs["input_features"],
                         tgt_lang=model_language,
-                        num_beams=4,          # Balanced for translation
-                        do_sample=True,        # Enable sampling for naturalness
+                        num_beams=6,
                         max_new_tokens=8000,
-                        temperature=0.7,       # Balanced temperature
-                        length_penalty=1.0,
-                        repetition_penalty=1.2,
-                        no_repeat_ngram_size=3,
-                        top_k=50              # Additional variety control
+                        length_penalty=2.0,
+                        repetition_penalty=1.5,
+                        no_repeat_ngram_size=3
                     )
                     target_text = processor.batch_decode(target_outputs, skip_special_tokens=True)[0]
                     logger.info(f"Target text: {target_text}")
             except Exception as e:
                 logger.error(f"Target text generation error: {str(e)}")
                 target_text = "Text extraction unavailable"
-            # Generate translated audio - Optimize for CPU
-            try:
-                with torch.no_grad():
-                    outputs = model.generate(
-                        **inputs,
-                        tgt_lang=model_language,
-                        num_beams=2,              # Reduced for CPU efficiency
-                        max_new_tokens=8000,
-                        do_sample=True,
-                        temperature=0.7,
-                        top_k=50,
-                        top_p=0.95,
-                        length_penalty=1.0,
-                        repetition_penalty=1.2,
-                        no_repeat_ngram_size=3
-                    )
 
-                # Handle different output types with comprehensive validation
-                logger.info(f"Processing model output type: {type(outputs)}")
-                if hasattr(outputs, 'waveform'):
-                    logger.info("Processing waveform from SeamlessM4Tv2GenerationOutput")
-                    audio_output = outputs.waveform[0].numpy()
-                elif isinstance(outputs, tuple) and len(outputs) > 0:
-                    logger.info("Processing tuple output from model")
-                    audio_output = outputs[0].numpy()
-                elif isinstance(outputs, torch.Tensor):
-                    logger.info("Processing tensor output from model")
-                    audio_output = outputs.numpy()
-                else:
-                    raise ValueError(f"Unexpected output type: {type(outputs)}")
+            # Generate translated audio
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    tgt_lang=model_language,
+                    num_beams=3,
+                    max_new_tokens=8000,  # Increased from 1600 to 8000
+                    do_sample=True,
+                    temperature=0.7,
+                    top_k=50,
+                    top_p=0.95,
+                    length_penalty=2.0,   # Slightly increased to encourage longer outputs
+                    repetition_penalty=1.2,
+                    no_repeat_ngram_size=3
+                )
+            
+            # Process model output
+            if isinstance(outputs, tuple):
+                logger.info("Processing tuple output from model")
+                audio_output = outputs[0].cpu().numpy()
+            else:
+                logger.info("Processing tensor output from model")
+                audio_output = outputs.cpu().numpy()
 
                 # Validate audio data
                 if audio_output is None or audio_output.size == 0:
