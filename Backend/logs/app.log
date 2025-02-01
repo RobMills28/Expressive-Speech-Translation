@@ -1747,3 +1747,465 @@ Schwa Realization:
 >>>>>>> parent of a02b9e660 (changes to translation_routes.py -- largely good but need to figure out a tiktok solution)
 2025-02-01 20:55:37,071 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
 2025-02-01 20:55:37,073 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-02-01 21:11:13,422 - services.model_manager - INFO - [model_manager.py:210] - Cleaning up model resources
+2025-02-01 21:11:13,422 - services.model_manager - INFO - [model_manager.py:223] - Model cleanup completed successfully
+2025-02-01 21:11:28,719 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
+2025-02-01 21:11:28,719 - services.model_manager - INFO - [model_manager.py:97] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-01 21:11:42,160 - services.model_manager - INFO - [model_manager.py:161] - Models loaded on CPU
+2025-02-01 21:11:48,096 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-02-01 21:11:48,098 - services.model_manager - INFO - [model_manager.py:167] - Model initialization successful
+2025-02-01 21:11:53,423 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-02-01 21:11:53,425 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-01 21:11:53,425 - __main__ - INFO - [app.py:491] - ==================================================
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:494] - Python version: 3.12.6 (v3.12.6:a4a2d2b0d85, Sep  6 2024, 16:08:03) [Clang 13.0.0 (clang-1300.0.29.30)]
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 14.6GB available
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:502] - CPU cores: 11
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:510] - Configuration:
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:511] - - Debug mode: False
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:512] - - CORS enabled: True
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
+2025-02-01 21:11:53,426 - __main__ - INFO - [app.py:516] - ==================================================
+2025-02-01 21:13:00,690 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-02-01 21:13:00,692 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-02-01 21:13:00,694 - services.audio_link_routes - INFO - [audio_link_routes.py:216] - Processing URL: https://youtube.com/shorts/RFUAVaeEd4I?si=yFjRy7KLenvCP8vl
+2025-02-01 21:13:00,695 - services.audio_link_routes - INFO - [audio_link_routes.py:233] - Processing YouTube URL
+2025-02-01 21:13:00,695 - services.audio_link_routes - INFO - [audio_link_routes.py:120] - Using options for youtube: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp9uzbenif/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8}
+2025-02-01 21:13:04,420 - services.audio_link_routes - INFO - [audio_link_routes.py:133] - Successfully downloaded youtube content
+2025-02-01 21:13:04,422 - services.audio_link_routes - INFO - [audio_link_routes.py:152] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp9uzbenif/output.wav
+2025-02-01 21:13:04,453 - services.audio_link_routes - INFO - [audio_link_routes.py:164] - Successfully converted audio to WAV
+2025-02-01 21:13:04,454 - services.audio_link_routes - INFO - [audio_link_routes.py:242] - Successfully processed audio
+2025-02-01 21:13:04,454 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 3.76s, Memory Change: 7.97MB
+2025-02-01 21:13:04,454 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 3.76s
+2025-02-01 21:13:13,437 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-02-01 21:13:13,441 - services.translation_routes - INFO - [translation_routes.py:33] - Starting translation request b4639f2e
+2025-02-01 21:13:13,441 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-01 21:13:13,441 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-01 21:13:13,443 - services.translation_routes - INFO - [translation_routes.py:94] - Request b4639f2e: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp6xpz8zau.wav
+2025-02-01 21:13:13,443 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 52.48 seconds
+2025-02-01 21:13:13,443 - services.translation_routes - INFO - [translation_routes.py:109] - Request b4639f2e: Beginning audio processing with diagnostics
+2025-02-01 21:13:13,444 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp6xpz8zau.wav
+2025-02-01 21:13:13,444 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-01 21:13:13,446 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([1, 839634]), Frequency: 16000Hz
+2025-02-01 21:13:13,487 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-02-01 21:13:13,491 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-02-01 21:13:13,575 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-02-01 21:13:13,628 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:13,628 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:13,650 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:13,650 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:13,670 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:13,670 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:13,691 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:13,691 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:15,724 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-01 21:13:15,725 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-02-01 21:13:15,932 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:15,932 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:15,971 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:15,971 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:15,998 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:15,998 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:16,022 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:16,022 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:18,044 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-01 21:13:18,044 - services.translation_routes - INFO - [translation_routes.py:120] - 
+==================================================
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:121] - Input Audio Quality Report
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:122] - ==================================================
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:123] - Request ID: b4639f2e
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:124] - Target Language: fra
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:125] - --------------------------------------------------
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:126] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.030
+- Rms Level: 0.064
+- Crest Factor: 14.779
+- Zero Crossings: 476218.000
+- Silence Percentage: 35.977
+- Clipping Points: 0.000
+- Dynamic Range: 7561910.000
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 0.000
+  - Temporal Variation: 0.116
+  - Temporal Flatness: 0.051
+
+- Volume Metrics:
+  - Volume Stability: -0.142
+  - Volume Range: 30371514.000
+  - Volume Variations: 0.048
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0086986911026172
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.6489304900169373, 'stability': 1.1569033861160278, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.4794709086418152, 'distinction': 0.1245083436369896}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.514
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.469
+  - Rhythm Quality: 0.446
+  - Intonation Quality: 0.493
+
+Vowel Quality:
+  - Quality Score: 0.008
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:127] - ==================================================
+
+2025-02-01 21:13:18,045 - services.translation_routes - INFO - [translation_routes.py:138] - Request b4639f2e: Audio processed successfully
+2025-02-01 21:13:18,105 - services.translation_routes - INFO - [translation_routes.py:157] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-01 21:13:25,191 - services.audio_link_routes - INFO - [audio_link_routes.py:216] - Processing URL: https://www.tiktok.com/@fightjoe/video/7127311328095522053
+2025-02-01 21:13:25,193 - services.audio_link_routes - INFO - [audio_link_routes.py:236] - Processing TikTok URL
+2025-02-01 21:13:25,194 - services.audio_link_routes - INFO - [audio_link_routes.py:120] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpf87s20g0/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '5547443099003223525'}}}
+2025-02-01 21:13:26,530 - services.audio_link_routes - INFO - [audio_link_routes.py:133] - Successfully downloaded tiktok content
+2025-02-01 21:13:26,533 - services.audio_link_routes - INFO - [audio_link_routes.py:152] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpf87s20g0/output.wav
+2025-02-01 21:13:26,540 - services.audio_link_routes - INFO - [audio_link_routes.py:164] - Successfully converted audio to WAV
+2025-02-01 21:13:26,540 - services.audio_link_routes - INFO - [audio_link_routes.py:242] - Successfully processed audio
+2025-02-01 21:13:26,541 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.35s, Memory Change: 44.34MB
+2025-02-01 21:13:26,541 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 1.35s
+2025-02-01 21:13:40,845 - services.model_manager - INFO - [model_manager.py:87] - Model verification successful
+2025-02-01 21:13:40,848 - services.translation_routes - INFO - [translation_routes.py:33] - Starting translation request 5abe4205
+2025-02-01 21:13:40,849 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-01 21:13:40,849 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-01 21:13:40,850 - services.translation_routes - INFO - [translation_routes.py:94] - Request 5abe4205: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpwzcmer09.wav
+2025-02-01 21:13:40,850 - services.audio_processor - INFO - [audio_processor.py:132] - Audio duration: 6.57 seconds
+2025-02-01 21:13:40,850 - services.translation_routes - INFO - [translation_routes.py:109] - Request 5abe4205: Beginning audio processing with diagnostics
+2025-02-01 21:13:40,850 - services.audio_processor - INFO - [audio_processor.py:204] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpwzcmer09.wav
+2025-02-01 21:13:40,851 - services.audio_processor - INFO - [audio_processor.py:206] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-01 21:13:40,853 - services.audio_processor - INFO - [audio_processor.py:215] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-02-01 21:13:40,863 - services.audio_processor - INFO - [audio_processor.py:373] - Base audio processing successful, proceeding with enhancement
+2025-02-01 21:13:40,864 - services.audio_processor - INFO - [audio_processor.py:379] - Applying speech-optimized spectral enhancement for fra
+2025-02-01 21:13:40,878 - services.audio_processor - INFO - [audio_processor.py:384] - Analyzing audio quality...
+2025-02-01 21:13:40,890 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:40,890 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:40,899 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:40,899 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:40,907 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:40,908 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:40,915 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:40,916 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:41,078 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-01 21:13:41,078 - services.audio_processor - WARNING - [audio_processor.py:394] - Quality issues detected, reprocessing...
+2025-02-01 21:13:41,103 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:41,103 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:41,109 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:41,110 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:41,116 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:41,116 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:41,123 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:13:41,123 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:13:41,279 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:120] - 
+==================================================
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:121] - Input Audio Quality Report
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:122] - ==================================================
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:123] - Request ID: 5abe4205
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:124] - Target Language: fra
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:125] - --------------------------------------------------
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:126] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.021
+- Rms Level: 0.071
+- Crest Factor: 13.339
+- Zero Crossings: 37090.000
+- Silence Percentage: 67.795
+- Clipping Points: 0.000
+- Dynamic Range: 4800807.500
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.098
+  - Temporal Flatness: 0.028
+
+- Volume Metrics:
+  - Volume Stability: -0.884
+  - Volume Range: 30950176.000
+  - Volume Variations: 0.063
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0106790927933305
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.9157419204711914, 'stability': 3.098970890045166, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 0.9852283596992493}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.661
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.011
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:127] - ==================================================
+
+2025-02-01 21:13:41,279 - services.translation_routes - INFO - [translation_routes.py:138] - Request 5abe4205: Audio processed successfully
+2025-02-01 21:13:41,287 - services.translation_routes - INFO - [translation_routes.py:157] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-01 21:13:51,524 - services.translation_routes - INFO - [translation_routes.py:196] - Source text: If you weren't what do you think youd be? I definitely wouldn't be diabetic.
+2025-02-01 21:14:03,714 - services.translation_routes - INFO - [translation_routes.py:216] - Target text: Si tu ne voulais pas faire ça, qu'est-ce que tu penses que tu ferais? Ah d'ailleurs je n'ai pas eu de diabète.
+2025-02-01 21:14:18,275 - services.translation_routes - INFO - [translation_routes.py:240] - Processing tuple output from model
+2025-02-01 21:14:18,284 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:14:18,285 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:14:18,288 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:14:18,288 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:14:18,294 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:14:18,294 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:14:18,299 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:14:18,299 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:14:18,429 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:268] - 
+==================================================
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:269] - Translated Audio Quality Report
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:270] - ==================================================
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:271] - Request ID: 5abe4205
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:272] - Target Language: fra
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:273] - --------------------------------------------------
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:274] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.480
+- Avg Amplitude: 0.046
+- Rms Level: 0.083
+- Crest Factor: 5.765
+- Zero Crossings: 9667.000
+- Silence Percentage: 25.981
+- Clipping Points: 0.000
+- Dynamic Range: 740.144
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.279
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.022
+  - Temporal Flatness: 0.011
+
+- Volume Metrics:
+  - Volume Stability: 0.012
+  - Volume Range: 856.898
+  - Volume Variations: 0.059
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.028907583281988
+- Background Noise: 3.306085185131112
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.7207626700401306, 'stability': 3.212397813796997, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.525
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.002
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:275] - ==================================================
+
+2025-02-01 21:14:18,429 - services.translation_routes - INFO - [translation_routes.py:281] - Request 5abe4205: Audio output processed successfully
+2025-02-01 21:14:18,431 - services.translation_routes - INFO - [translation_routes.py:336] - Request 5abe4205: Response prepared successfully
+2025-02-01 21:14:18,431 - services.translation_routes - INFO - [translation_routes.py:349] - Request 5abe4205 completed in 37.58s
+2025-02-01 21:14:18,432 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 37.58s, Memory Change: 854.42MB
+2025-02-01 21:14:18,432 - __main__ - INFO - [app.py:278] - Request to /translate took 50.43s
+2025-02-01 21:14:20,166 - services.translation_routes - INFO - [translation_routes.py:196] - Source text: The main thing is to make sure you're balanced on both feet. Hands up, elbows in. A lot of people box with elbows like this. No elbow in because it's for the body shot. And it really comes out like this just straight out and as it comes out it turns straight back to the chin. It's coming out. Make sure your shoulder hits your chin so it protects you. Turn it slightly. So you hit it with all four knuckles right here and it comes back and this right hand has to stay there.
+2025-02-01 21:14:57,010 - services.translation_routes - INFO - [translation_routes.py:216] - Target text: c'est à dire qu'il reste là et il revient aussi vite que possible. C'est un peu comme ça qu'on se retrouve en train d'écouter ce qui se passe dans la vie d'un homme, quand il est en train de s'accrocher à lui-même pour l'empêcher d'arriver au bout d'une course. Il vient de se battre avec toutes ses quatre ongles et sa main droite doit rester là. Boum!
+2025-02-01 21:15:26,696 - services.translation_routes - INFO - [translation_routes.py:240] - Processing tuple output from model
+2025-02-01 21:15:26,701 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:15:26,701 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:15:26,706 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:15:26,706 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:15:26,711 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:15:26,711 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:15:26,713 - services.diagnostics.spectral_analysis - WARNING - [spectral_analysis.py:361] - ascii_graph not installed. Install with: pip install ascii_graph
+2025-02-01 21:15:26,714 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-01 21:15:26,762 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:268] - 
+==================================================
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:269] - Translated Audio Quality Report
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:270] - ==================================================
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:271] - Request ID: b4639f2e
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:272] - Target Language: fra
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:273] - --------------------------------------------------
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:274] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.483
+- Avg Amplitude: 0.036
+- Rms Level: 0.073
+- Crest Factor: 6.627
+- Zero Crossings: 3145.000
+- Silence Percentage: 40.242
+- Clipping Points: 0.000
+- Dynamic Range: 1526.718
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.172
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.018
+  - Temporal Flatness: 0.008
+
+- Volume Metrics:
+  - Volume Stability: -0.152
+  - Volume Range: 1790.410
+  - Volume Variations: 0.055
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.021995651594564
+- Background Noise: 3.6508124041065875
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.0016006408259272575, 'stability': 0.008443607948720455, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.9900356531143188, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Weak nasal resonance. Stable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.571
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 1.000
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:275] - ==================================================
+
+2025-02-01 21:15:26,762 - services.translation_routes - INFO - [translation_routes.py:281] - Request b4639f2e: Audio output processed successfully
+2025-02-01 21:15:26,764 - services.translation_routes - INFO - [translation_routes.py:336] - Request b4639f2e: Response prepared successfully
+2025-02-01 21:15:26,764 - services.translation_routes - INFO - [translation_routes.py:349] - Request b4639f2e completed in 133.32s
+2025-02-01 21:15:26,766 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 133.32s, Memory Change: 2572.97MB
+2025-02-01 21:15:26,766 - __main__ - INFO - [app.py:278] - Request to /translate took 141.09s
