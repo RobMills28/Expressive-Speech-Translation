@@ -11,7 +11,9 @@ from pathlib import Path
 import logging
 import torchaudio
 from pydub import AudioSegment
-
+import scipy.signal
+import scipy.stats
+from typing import Dict 
 
 from .audio_processor import AudioProcessor
 from .resource_monitor import ResourceMonitor
@@ -21,6 +23,67 @@ from .utils import cleanup_file
 
 logger = logging.getLogger(__name__)
 
+def detect_background_music(audio_data: np.ndarray) -> Dict[str, float]:
+    """
+    Check for presence of background music with enhanced detection.
+    """
+    try:
+        # Convert to spectrogram with overlapping windows for better frequency resolution
+        f, t, spec = scipy.signal.spectrogram(
+            audio_data, 
+            fs=16000, 
+            nperseg=2048,
+            noverlap=1024,  # 50% overlap for better temporal resolution
+            window='hann'
+        )
+        
+        # 1. Harmonic Content Analysis
+        spec_mean = np.mean(spec, axis=1)
+        spectral_flatness = scipy.stats.gmean(spec_mean + 1e-10) / (np.mean(spec_mean) + 1e-10)
+        
+        # 2. Frequency Band Analysis with music-specific ranges
+        bass_band = np.mean(spec[1:20, :])      # 0-156 Hz (bass)
+        mid_band = np.mean(spec[20:50, :])      # 156-391 Hz (mid frequencies)
+        presence_band = np.mean(spec[50:100, :]) # 391-781 Hz (presence)
+        
+        # Calculate band ratios (important for music detection)
+        bass_mid_ratio = bass_band / (mid_band + 1e-10)
+        
+        # 3. Rhythmic Pattern Analysis
+        energy_envelope = np.mean(spec, axis=0)
+        peaks = scipy.signal.find_peaks(energy_envelope, distance=8)[0]  # Min distance for music beats
+        rhythm_regularity = len(peaks) / len(t)  # Normalized peak count
+        
+        # 4. Temporal Stability (changed to always be positive)
+        temporal_variation = np.std(energy_envelope) / (np.mean(energy_envelope) + 1e-10)
+        temporal_stability = 1.0 / (1.0 + temporal_variation)  # Now always positive, between 0 and 1
+
+        
+        # Combine all features with weighted scoring
+        music_features = {
+            'spectral_flatness': spectral_flatness * 0.2,
+            'rhythm_regularity': rhythm_regularity * 0.3,
+            'bass_presence': bass_mid_ratio * 0.3,
+            'temporal_stability': temporal_stability * 0.2  # This will now always be positive
+        }
+        
+        music_score = sum(music_features.values())
+        
+        # Lower threshold and add confidence levels
+        has_music = music_score > 0.25  # More sensitive threshold
+        
+        result = {
+            'has_background_music': bool(has_music),
+            'music_confidence': float(music_score),
+            'feature_scores': {k: float(v) for k, v in music_features.items()}
+        }
+        
+        logger.debug(f"Music detection features: {result['feature_scores']}")
+        return result
+
+    except Exception as e:
+        logger.error(f"Background music detection failed: {str(e)}")
+        return {'has_background_music': False, 'music_confidence': 0.0}
 
 def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_RATE, LANGUAGE_MAP, LANGUAGE_CODES):
    request_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
@@ -134,7 +197,11 @@ def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_R
           
            if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
                raise ValueError("Invalid audio data detected")
-              
+           
+           # Add background music detection here
+           music_analysis = detect_background_music(audio_numpy)
+           logger.info(f"Request {request_id}: Background music analysis: {music_analysis}")
+
            logger.info(f"Request {request_id}: Audio processed successfully")
           
        except Exception as e:
