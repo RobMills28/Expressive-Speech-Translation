@@ -43,54 +43,77 @@ class ModelManager:
 
     def _verify_model(self) -> bool:
         """
-        Verify model loaded correctly with enhanced speech recognition testing
-        
+        Verify model loaded correctly with enhanced scenario testing.
+    
         Returns:
             bool: True if model verification successful, False otherwise
         """
         try:
-            # Create dummy inputs for verification
-            sample_audio = torch.randn(1, 16000)  # 1 second of audio at 16kHz
+            logger.info("Starting enhanced model verification")
+        
+            # Test scenarios
+            scenarios = {
+                'clean_speech': torch.randn(1, 16000),  # Clean speech
+                'speech_with_music': torch.randn(1, 16000) * 0.7 + torch.sin(torch.linspace(0, 1000, 16000)).unsqueeze(0) * 0.3,  # Speech with music
+            }
+        
+            test_languages = ["fra", "deu"]  # Test a couple languages but don't assume any specific one
+        
+            for scenario_name, audio in scenarios.items():
+                logger.info(f"Testing {scenario_name}")
             
-            # Process through the processor with explicit speech recognition settings
-            inputs = self.processor(
-                audios=sample_audio.numpy(),
-                sampling_rate=16000,
-                return_tensors="pt",
-                src_lang="eng",
-                tgt_lang="fra",
-                padding=True
-            )
-            
-            if DEVICE.type == 'cuda':
-                inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
-            
-            with torch.no_grad():
-                # Test speech recognition specifically
-                text_outputs = self.text_model.generate(
-                    input_features=inputs["input_features"],
-                    tgt_lang="eng",                    # Test English recognition
-                    num_beams=4,                      # Use beam search
-                    max_new_tokens=50,
-                    do_sample=False,                  # Deterministic for testing
-                    return_dict_in_generate=True      # Get full output info
-                )
+                for test_lang in test_languages:
+                    # Process through the processor
+                    inputs = self.processor(
+                        audios=audio.numpy(),
+                        sampling_rate=16000,
+                        return_tensors="pt",
+                        src_lang="eng",
+                        tgt_lang=test_lang,
+                        padding=True
+                    )
                 
-                # Test main model for translation
-                outputs = self.model.generate(
-                    **inputs,
-                    tgt_lang="fra",
-                    num_beams=1,
-                    max_new_tokens=50
-                )
+                    if DEVICE.type == 'cuda':
+                        inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
                 
+                    with torch.no_grad():
+                        # First test speech recognition
+                        text_outputs = self.text_model.generate(
+                            input_features=inputs["input_features"],
+                            tgt_lang="eng",
+                            num_beams=4,
+                            max_new_tokens=50,
+                            do_sample=False,
+                            return_dict_in_generate=True
+                        )
+                    
+                        # Then test translation
+                        translation_outputs = self.text_model.generate(
+                            input_features=inputs["input_features"],
+                            tgt_lang=test_lang,
+                            num_beams=4,
+                            max_new_tokens=50,
+                            do_sample=False,
+                            return_dict_in_generate=True
+                        )
+                    
+                        # Test audio generation
+                        outputs = self.model.generate(
+                            **inputs,
+                            tgt_lang=test_lang,
+                            num_beams=1,
+                            max_new_tokens=50
+                        )
+            
+                logger.info(f"Successfully verified {scenario_name}")
+        
             logger.info("Model verification successful")
             return True
-            
+        
         except Exception as e:
             logger.error(f"Model verification failed: {str(e)}")
             return False
-
+    
     def _load_model(self):
         """Load model components with enhanced speech recognition configuration"""
         try:

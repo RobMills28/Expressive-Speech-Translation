@@ -19,398 +19,357 @@ from .audio_processor import AudioProcessor
 from .resource_monitor import ResourceMonitor
 from .error_handler import ErrorHandler
 from .utils import cleanup_file
+from .translation_strategy import TranslationStrategy 
 
 
 logger = logging.getLogger(__name__)
-
-def detect_background_music(audio_data: np.ndarray) -> Dict[str, float]:
-    """
-    Check for presence of background music with enhanced detection.
-    """
-    try:
-        # Convert to spectrogram with overlapping windows for better frequency resolution
-        f, t, spec = scipy.signal.spectrogram(
-            audio_data, 
-            fs=16000, 
-            nperseg=2048,
-            noverlap=1024,  # 50% overlap for better temporal resolution
-            window='hann'
-        )
-        
-        # 1. Harmonic Content Analysis
-        spec_mean = np.mean(spec, axis=1)
-        spectral_flatness = scipy.stats.gmean(spec_mean + 1e-10) / (np.mean(spec_mean) + 1e-10)
-        
-        # 2. Frequency Band Analysis with music-specific ranges
-        bass_band = np.mean(spec[1:20, :])      # 0-156 Hz (bass)
-        mid_band = np.mean(spec[20:50, :])      # 156-391 Hz (mid frequencies)
-        presence_band = np.mean(spec[50:100, :]) # 391-781 Hz (presence)
-        
-        # Calculate band ratios (important for music detection)
-        bass_mid_ratio = bass_band / (mid_band + 1e-10)
-        
-        # 3. Rhythmic Pattern Analysis
-        energy_envelope = np.mean(spec, axis=0)
-        peaks = scipy.signal.find_peaks(energy_envelope, distance=8)[0]  # Min distance for music beats
-        rhythm_regularity = len(peaks) / len(t)  # Normalized peak count
-        
-        # 4. Temporal Stability (changed to always be positive)
-        temporal_variation = np.std(energy_envelope) / (np.mean(energy_envelope) + 1e-10)
-        temporal_stability = 1.0 / (1.0 + temporal_variation)  # Now always positive, between 0 and 1
-
-        
-        # Combine all features with weighted scoring
-        music_features = {
-            'spectral_flatness': spectral_flatness * 0.2,
-            'rhythm_regularity': rhythm_regularity * 0.3,
-            'bass_presence': bass_mid_ratio * 0.3,
-            'temporal_stability': temporal_stability * 0.2  # This will now always be positive
-        }
-        
-        music_score = sum(music_features.values())
-        
-        # Lower threshold and add confidence levels
-        has_music = music_score > 0.25  # More sensitive threshold
-        
-        result = {
-            'has_background_music': bool(has_music),
-            'music_confidence': float(music_score),
-            'feature_scores': {k: float(v) for k, v in music_features.items()}
-        }
-        
-        logger.debug(f"Music detection features: {result['feature_scores']}")
-        return result
-
-    except Exception as e:
-        logger.error(f"Background music detection failed: {str(e)}")
-        return {'has_background_music': False, 'music_confidence': 0.0}
+strategy_selector = TranslationStrategy()
 
 def handle_translation(processor, model, text_model, tokenizer, DEVICE, SAMPLE_RATE, LANGUAGE_MAP, LANGUAGE_CODES):
-   request_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
-   start_time = time.time()
-   temp_files = []
-   source_text = "Text extraction unavailable"
-   target_text = "Text extraction unavailable"
-  
-   try:
-       logger.info(f"Starting translation request {request_id}")
-      
-       # Resource check
-       resources_ok, resource_error = ResourceMonitor.check_resources()
-       if not resources_ok:
-           raise ValueError(f"Resource check failed: {resource_error}")
-      
-       # Validate request
-       if 'file' not in request.files:
-           logger.error(f"Request {request_id}: No file in request")
-           return jsonify({'error': 'No file uploaded'}), 400
-      
-       file = request.files['file']
-       if not file.filename:
-           logger.error(f"Request {request_id}: Empty filename")
-           return jsonify({'error': 'No selected file'}), 400
-      
-       target_language = request.form.get('target_language')
-       if not target_language:
-           logger.error(f"Request {request_id}: No target language specified")
-           return jsonify({'error': 'No target language specified'}), 400
+    request_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
+    start_time = time.time()
+    temp_files = []
+    source_text = "Text extraction unavailable"
+    target_text = "Text extraction unavailable"
+    
+    try:
+        logger.info(f"Starting translation request {request_id}")
+        
+        # Resource check
+        resources_ok, resource_error = ResourceMonitor.check_resources()
+        if not resources_ok:
+            raise ValueError(f"Resource check failed: {resource_error}")
+        
+        # Validate request
+        if 'file' not in request.files:
+            logger.error(f"Request {request_id}: No file in request")
+            return jsonify({'error': 'No file uploaded'}), 400
+        
+        file = request.files['file']
+        if not file.filename:
+            logger.error(f"Request {request_id}: Empty filename")
+            return jsonify({'error': 'No selected file'}), 400
+        
+        target_language = request.form.get('target_language')
+        if not target_language:
+            logger.error(f"Request {request_id}: No target language specified")
+            return jsonify({'error': 'No target language specified'}), 400
 
 
-       # Validate language
-       model_language = LANGUAGE_MAP.get(target_language, target_language)
-       if model_language not in LANGUAGE_CODES:
-           logger.error(f"Request {request_id}: Unsupported language {target_language}")
-           return jsonify({'error': f'Unsupported language: {target_language}'}), 400
+        # Validate language
+        model_language = LANGUAGE_MAP.get(target_language, target_language)
+        if model_language not in LANGUAGE_CODES:
+            logger.error(f"Request {request_id}: Unsupported language {target_language}")
+            return jsonify({'error': f'Unsupported language: {target_language}'}), 400
 
 
-       # Initialize audio processor
-       try:
-           audio_processor = AudioProcessor()
-           if not audio_processor.diagnostics:
-               logger.warning(f"Request {request_id}: AudioDiagnostics not initialized properly")
-       except Exception as e:
-           logger.error(f"Failed to initialize AudioProcessor: {str(e)}")
-           return jsonify({'error': 'Internal processing error'}), 500
+        # Initialize audio processor
+        try:
+            audio_processor = AudioProcessor()
+            if not audio_processor.diagnostics:
+                logger.warning(f"Request {request_id}: AudioDiagnostics not initialized properly")
+        except Exception as e:
+            logger.error(f"Failed to initialize AudioProcessor: {str(e)}")
+            return jsonify({'error': 'Internal processing error'}), 500
 
 
-       # Process audio file
-       file_extension = Path(file.filename).suffix.lower()
-       try:
-           if file_extension == '.mp3':
-               with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wav_file:
-                   temp_files.append(wav_file.name)
-                   file.save(wav_file.name + '.mp3')
-                   temp_files.append(wav_file.name + '.mp3')
-                   sound = AudioSegment.from_mp3(wav_file.name + '.mp3')
-                   sound.export(wav_file.name, format='wav')
-                   audio_path = wav_file.name
-           else:
-               with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
-                   temp_files.append(temp_input.name)
-                   file.save(temp_input.name)
-                   audio_path = temp_input.name
+        # Process audio file
+        file_extension = Path(file.filename).suffix.lower()
+        try:
+            if file_extension == '.mp3':
+                with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as wav_file:
+                    temp_files.append(wav_file.name)
+                    file.save(wav_file.name + '.mp3')
+                    temp_files.append(wav_file.name + '.mp3')
+                    sound = AudioSegment.from_mp3(wav_file.name + '.mp3')
+                    sound.export(wav_file.name, format='wav')
+                    audio_path = wav_file.name
+            else:
+                with tempfile.NamedTemporaryFile(suffix=file_extension, delete=False) as temp_input:
+                    temp_files.append(temp_input.name)
+                    file.save(temp_input.name)
+                    audio_path = temp_input.name
 
 
-           if not Path(audio_path).exists() or Path(audio_path).stat().st_size == 0:
-               raise ValueError("Failed to save audio file")
-          
-           logger.info(f"Request {request_id}: Saved input file: {audio_path}")
-       except Exception as e:
-           logger.error(f"File handling error: {str(e)}")
-           return jsonify({'error': 'Failed to process uploaded file'}), 400
+            if not Path(audio_path).exists() or Path(audio_path).stat().st_size == 0:
+                raise ValueError("Failed to save audio file")
+            
+            logger.info(f"Request {request_id}: Saved input file: {audio_path}")
+        except Exception as e:
+            logger.error(f"File handling error: {str(e)}")
+            return jsonify({'error': 'Failed to process uploaded file'}), 400
 
 
-       # Validate audio length
-       is_valid, error_message = audio_processor.validate_audio_length(audio_path)
-       if not is_valid:
-           logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
-           return jsonify({'error': error_message}), 400
+        # Validate audio length
+        is_valid, error_message = audio_processor.validate_audio_length(audio_path)
+        if not is_valid:
+            logger.error(f"Request {request_id}: Audio validation failed - {error_message}")
+            return jsonify({'error': error_message}), 400
 
 
-       # Process audio
-       try:
-           logger.info(f"Request {request_id}: Beginning audio processing with diagnostics")
-          
-           audio, input_diagnostics = audio_processor.process_audio_enhanced(
-               audio_path,
-               target_language=model_language,
-               return_diagnostics=True
-           )
-          
-           if input_diagnostics:
-               input_report = audio_processor.diagnostics.generate_report(input_diagnostics, model_language)
-               if input_report:
-                   logger.info("\n" + "="*50)
-                   logger.info("Input Audio Quality Report")
-                   logger.info("="*50)
-                   logger.info(f"Request ID: {request_id}")
-                   logger.info(f"Target Language: {model_language}")
-                   logger.info("-"*50)
-                   logger.info(input_report)
-                   logger.info("="*50 + "\n")
-              
-               if 'metrics' in input_diagnostics:
-                   for metric, value in input_diagnostics['metrics'].items():
-                       logger.debug(f"Input Quality Metric - {metric}: {value}")
-          
-           audio_numpy = audio.squeeze().numpy()
-          
-           if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
-               raise ValueError("Invalid audio data detected")
-           
-           # Add background music detection here
-           music_analysis = detect_background_music(audio_numpy)
-           logger.info(f"Request {request_id}: Background music analysis: {music_analysis}")
-
-           logger.info(f"Request {request_id}: Audio processed successfully")
-          
-       except Exception as e:
-           logger.error(f"Audio processing error: {str(e)}")
-           return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
-      
-       # Model processing
-       try:
-           inputs = processor(
-               audios=audio_numpy,
-               sampling_rate=SAMPLE_RATE,
-               return_tensors="pt",
-               src_lang="eng",
-               tgt_lang=model_language,
-               padding=True,
-               # truncation=True,
-               max_length=512000
-           )
-          
-           logger.info(f"Input keys: {inputs.keys()}")
-          
-           if not inputs or not inputs.keys():
-               raise ValueError("Failed to prepare model inputs")
-          
-           if DEVICE.type == 'cuda':
-               inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
-
-
-           # Generate source text
-           try:
-               with torch.no_grad():
-                   source_outputs = text_model.generate(
-                       input_features=inputs["input_features"],
-                       tgt_lang="eng",
-                       num_beams=6,
-                       do_sample=False,
-                       max_new_tokens=8000,
-                       temperature=0.2,
-                       length_penalty=2.0,
-                       repetition_penalty=1.5,
-                       no_repeat_ngram_size=3
-                   )
-                   source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
-                  
-                   if any(phrase in source_text for phrase in [" H. H. H", ", the, the", " of the, of the"]):
-                       logger.info("Detected potential repetition, performing second pass")
-                       source_outputs = text_model.generate(
-                           input_features=inputs["input_features"],
-                           tgt_lang="eng",
-                           num_beams=8,
-                           do_sample=False,
-                           max_new_tokens=8000,
-                           repetition_penalty=2.0,
-                           no_repeat_ngram_size=4,
-                           temperature=0.2
-                       )
-                       source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
-                  
-                   logger.info(f"Source text: {source_text}")
-                  
-           except Exception as e:
-               logger.error(f"Source text generation error: {str(e)}")
-               source_text = "Text extraction unavailable"
+        # Process audio
+        try:
+            logger.info(f"Request {request_id}: Beginning audio processing with diagnostics")
+            
+            audio, input_diagnostics = audio_processor.process_audio_enhanced(
+                audio_path,
+                target_language=model_language,
+                return_diagnostics=True
+            )
+            
+            if input_diagnostics:
+                input_report = audio_processor.diagnostics.generate_report(input_diagnostics, model_language)
+                if input_report:
+                    logger.info("\n" + "="*50)
+                    logger.info("Input Audio Quality Report")
+                    logger.info("="*50)
+                    logger.info(f"Request ID: {request_id}")
+                    logger.info(f"Target Language: {model_language}")
+                    logger.info("-"*50)
+                    logger.info(input_report)
+                    logger.info("="*50 + "\n")
+            
+                if 'metrics' in input_diagnostics:
+                    for metric, value in input_diagnostics['metrics'].items():
+                        logger.debug(f"Input Quality Metric - {metric}: {value}")
+            
+            audio, analysis = audio_processor.process_audio_enhanced(
+                audio_path,
+                target_language=model_language,
+                return_diagnostics=True
+            )
+            
+            audio_numpy = audio.squeeze().numpy()
+            
+            if np.isnan(audio_numpy).any() or np.isinf(audio_numpy).any():
+                raise ValueError("Invalid audio data detected")
+            
+            # Background music info now comes from the audio processor
+            music_analysis = analysis.get('background_music', {
+                'has_background_music': False,
+                'music_confidence': 0.0,
+                'feature_scores': {}
+            })
+            logger.info(f"Request {request_id}: Background music analysis: {music_analysis}")
+            
+            # Add background music info to the full analysis
+            full_analysis = {
+                **analysis,  # Background music info
+                'metrics': input_diagnostics.get('metrics', {}),  # Audio quality metrics
+                'waveform_analysis': input_diagnostics.get('waveform_analysis', {}),  # Waveform info
+                'language_specific': input_diagnostics.get('language_specific', {})  # Language analysis
+            }
+            
+            # Pass complete analysis to strategy selector
+            selected_strategy = strategy_selector.select_strategy(full_analysis)
+            logger.info(f"Request {request_id}: Audio characteristics heard: {selected_strategy}")
+            
+            logger.info(f"Request {request_id}: Audio processed successfully")
+        except Exception as e:
+            logger.error(f"Audio processing error: {str(e)}")
+            return jsonify({'error': f'Failed to process audio: {str(e)}'}), 400
+        
+        # Model processing
+        try:
+            inputs = processor(
+                audios=audio_numpy,
+                sampling_rate=SAMPLE_RATE,
+                return_tensors="pt",
+                src_lang="eng",
+                tgt_lang=model_language,
+                padding=True,
+                max_length=512000
+            )
+            
+            logger.info(f"Input keys: {inputs.keys()}")
+            
+            if not inputs or not inputs.keys():
+                raise ValueError("Failed to prepare model inputs")
+            
+            if DEVICE.type == 'cuda':
+                inputs = {name: tensor.to(DEVICE) for name, tensor in inputs.items()}
 
 
-           # Generate target text
-           try:
-               with torch.no_grad():
-                   target_outputs = text_model.generate(
-                       input_features=inputs["input_features"],
-                       tgt_lang=model_language,
-                       num_beams=6,
-                       max_new_tokens=8000,
-                       length_penalty=2.0,
-                       repetition_penalty=1.5,
-                       no_repeat_ngram_size=3
-                   )
-                   target_text = processor.batch_decode(target_outputs, skip_special_tokens=True)[0]
-                   logger.info(f"Target text: {target_text}")
-           except Exception as e:
-               logger.error(f"Target text generation error: {str(e)}")
-               target_text = "Text extraction unavailable"
+            # Generate source text
+            try:
+                with torch.no_grad():
+                    source_outputs = text_model.generate(
+                        input_features=inputs["input_features"],
+                        tgt_lang="eng",
+                        num_beams=6,
+                        do_sample=False,
+                        max_new_tokens=8000,
+                        temperature=0.2,
+                        length_penalty=2.0,
+                        repetition_penalty=1.5,
+                        no_repeat_ngram_size=3
+                    )
+                    source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
+                    
+                    if any(phrase in source_text for phrase in [" H. H. H", ", the, the", " of the, of the"]):
+                        logger.info("Detected potential repetition, performing second pass")
+                        source_outputs = text_model.generate(
+                            input_features=inputs["input_features"],
+                            tgt_lang="eng",
+                            num_beams=8,
+                            do_sample=False,
+                            max_new_tokens=8000,
+                            repetition_penalty=2.0,
+                            no_repeat_ngram_size=4,
+                            temperature=0.2
+                        )
+                        source_text = processor.batch_decode(source_outputs, skip_special_tokens=True)[0]
+                    
+                    logger.info(f"Source text: {source_text}")
+                    
+            except Exception as e:
+                logger.error(f"Source text generation error: {str(e)}")
+                source_text = "Text extraction unavailable"
 
 
-           # Generate translated audio
-           with torch.no_grad():
-               outputs = model.generate(
-                   **inputs,
-                   tgt_lang=model_language,
-                   num_beams=3,
-                   max_new_tokens=8000,  # Increased from 1600 to 8000
-                   do_sample=True,
-                   temperature=0.7,
-                   top_k=50,
-                   top_p=0.95,
-                   length_penalty=2.0,   # Slightly increased to encourage longer outputs
-                   repetition_penalty=1.2,
-                   no_repeat_ngram_size=3
-               )
-          
-           # Process model output
-           if isinstance(outputs, tuple):
-               logger.info("Processing tuple output from model")
-               audio_output = outputs[0].cpu().numpy()
-           else:
-               logger.info("Processing tensor output from model")
-               audio_output = outputs.cpu().numpy()
+            # Generate target text
+            try:
+                with torch.no_grad():
+                    target_outputs = text_model.generate(
+                        input_features=inputs["input_features"],
+                        tgt_lang=model_language,
+                        num_beams=6,
+                        max_new_tokens=8000,
+                        length_penalty=2.0,
+                        repetition_penalty=1.5,
+                        no_repeat_ngram_size=3
+                    )
+                    target_text = processor.batch_decode(target_outputs, skip_special_tokens=True)[0]
+                    logger.info(f"Target text: {target_text}")
+            except Exception as e:
+                logger.error(f"Target text generation error: {str(e)}")
+                target_text = "Text extraction unavailable"
 
 
-           if audio_output is None or audio_output.size == 0:
-               raise ValueError("No audio data generated")
+            # Generate translated audio
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    tgt_lang=model_language,
+                    num_beams=3,
+                    max_new_tokens=8000,  # Increased from 1600 to 8000
+                    do_sample=True,
+                    temperature=0.7,
+                    top_k=50,
+                    top_p=0.95,
+                    length_penalty=2.0,   # Slightly increased to encourage longer outputs
+                    repetition_penalty=1.2,
+                    no_repeat_ngram_size=3
+                )
+            
+            # Process model output
+            if isinstance(outputs, tuple):
+                logger.info("Processing tuple output from model")
+                audio_output = outputs[0].cpu().numpy()
+            else:
+                logger.info("Processing tensor output from model")
+                audio_output = outputs.cpu().numpy()
 
 
-           if np.abs(audio_output).max() > 1.0:
-               audio_output = audio_output / np.abs(audio_output).max()
+            if audio_output is None or audio_output.size == 0:
+                raise ValueError("No audio data generated")
 
 
-       except Exception as e:
-           logger.error(f"Translation error: {str(e)}")
-           return jsonify({'error': f'Translation failed: {str(e)}'}), 500
+            if np.abs(audio_output).max() > 1.0:
+                audio_output = audio_output / np.abs(audio_output).max()
+
+        except Exception as e:
+            logger.error(f"Translation error: {str(e)}")
+            return jsonify({'error': f'Translation failed: {str(e)}'}), 500
 
 
-       # Process output audio
-       try:
-           output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
-           output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
-          
-           if output_diagnostics:
-               output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
-               if output_report:
-                   logger.info("\n" + "="*50)
-                   logger.info("Translated Audio Quality Report")
-                   logger.info("="*50)
-                   logger.info(f"Request ID: {request_id}")
-                   logger.info(f"Target Language: {model_language}")
-                   logger.info("-"*50)
-                   logger.info(output_report)
-                   logger.info("="*50 + "\n")
-                  
-                   if 'metrics' in output_diagnostics:
-                       for metric, value in output_diagnostics['metrics'].items():
-                           logger.debug(f"Quality Metric - {metric}: {value}")
-          
-           logger.info(f"Request {request_id}: Audio output processed successfully")
-          
-       except Exception as e:
-           logger.error(f"Diagnostics error for request {request_id}: {str(e)}")
-           logger.warning("Continuing with translation despite diagnostics failure")
+        # Process output audio
+        try:
+            output_tensor = torch.from_numpy(audio_output).unsqueeze(0)
+            output_diagnostics = audio_processor.diagnostics.analyze_translation(output_tensor, model_language)
+            
+            if output_diagnostics:
+                output_report = audio_processor.diagnostics.generate_report(output_diagnostics, model_language)
+                if output_report:
+                    logger.info("\n" + "="*50)
+                    logger.info("Translated Audio Quality Report")
+                    logger.info("="*50)
+                    logger.info(f"Request ID: {request_id}")
+                    logger.info(f"Target Language: {model_language}")
+                    logger.info("-"*50)
+                    logger.info(output_report)
+                    logger.info("="*50 + "\n")
+                    
+                    if 'metrics' in output_diagnostics:
+                        for metric, value in output_diagnostics['metrics'].items():
+                            logger.debug(f"Quality Metric - {metric}: {value}")
+            
+            logger.info(f"Request {request_id}: Audio output processed successfully")
+            
+        except Exception as e:
+            logger.error(f"Diagnostics error for request {request_id}: {str(e)}")
+            logger.warning("Continuing with translation despite diagnostics failure")
 
 
-       # Prepare response
-       try:
-           with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
-               temp_files.append(temp_output.name)
-              
-               waveform_tensor = torch.tensor(audio_output)
-               if len(waveform_tensor.shape) == 1:
-                   waveform_tensor = waveform_tensor.unsqueeze(0)
-              
-               torchaudio.save(
-                   temp_output.name,
-                   waveform_tensor,
-                   sample_rate=16000
-               )
-              
-               if not Path(temp_output.name).exists() or Path(temp_output.name).stat().st_size == 0:
-                   raise ValueError("Failed to save translated audio")
-              
-               with open(temp_output.name, 'rb') as audio_file:
-                   audio_data = audio_file.read()
-              
-               if not audio_data:
-                   raise ValueError("Generated audio data is empty")
-              
-               response_data = {
-                   'audio': base64.b64encode(audio_data).decode('utf-8'),
-                   'transcripts': {
-                       'source': source_text,
-                       'target': target_text
-                   }
-               }
+        # Prepare response
+        try:
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
+                temp_files.append(temp_output.name)
+                
+                waveform_tensor = torch.tensor(audio_output)
+                if len(waveform_tensor.shape) == 1:
+                    waveform_tensor = waveform_tensor.unsqueeze(0)
+                
+                torchaudio.save(
+                    temp_output.name,
+                    waveform_tensor,
+                    sample_rate=16000
+                )
+                
+                if not Path(temp_output.name).exists() or Path(temp_output.name).stat().st_size == 0:
+                    raise ValueError("Failed to save translated audio")
+                
+                with open(temp_output.name, 'rb') as audio_file:
+                    audio_data = audio_file.read()
+                
+                if not audio_data:
+                    raise ValueError("Generated audio data is empty")
+                
+                response_data = {
+                    'audio': base64.b64encode(audio_data).decode('utf-8'),
+                    'transcripts': {
+                        'source': source_text,
+                        'target': target_text
+                    }
+                }
 
 
-               response = Response(
-                   json.dumps(response_data),
-                   mimetype='application/json',
-                   headers={
-                       'Content-Type': 'application/json',
-                       'Cache-Control': 'no-cache, no-store, must-revalidate',
-                       'Pragma': 'no-cache',
-                       'Expires': '0',
-                       'Access-Control-Allow-Origin': request.headers.get('Origin', 'http://localhost:3000'),
-                       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                       'Access-Control-Allow-Headers': 'Content-Type',
-                       'Access-Control-Allow-Credentials': 'true'
-                   }
-               )
-              
-               logger.info(f"Request {request_id}: Response prepared successfully")
-               return response
+                response = Response(
+                    json.dumps(response_data),
+                    mimetype='application/json',
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                        'Access-Control-Allow-Origin': request.headers.get('Origin', 'http://localhost:3000'),
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Credentials': 'true'
+                    }
+                )
+                
+                logger.info(f"Request {request_id}: Response prepared successfully")
+                return response
 
 
-       except Exception as e:
-           logger.error(f"Response preparation error: {str(e)}")
-           return jsonify({'error': f'Failed to prepare response: {str(e)}'}), 500
+        except Exception as e:
+            logger.error(f"Response preparation error: {str(e)}")
+            return jsonify({'error': f'Failed to prepare response: {str(e)}'}), 500
 
 
-   finally:
-       for temp_file in temp_files:
-           cleanup_file(temp_file)
-       duration = time.time() - start_time
-       logger.info(f"Request {request_id} completed in {duration:.2f}s")
+    finally:
+        for temp_file in temp_files:
+            cleanup_file(temp_file)
+        duration = time.time() - start_time
+        logger.info(f"Request {request_id} completed in {duration:.2f}s")

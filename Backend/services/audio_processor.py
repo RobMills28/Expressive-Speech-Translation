@@ -2,6 +2,10 @@ import os
 import torch
 import torchaudio
 import logging
+import numpy as np
+import scipy.signal
+import scipy.stats
+import timex
 from pathlib import Path
 from typing import Dict, Any, Tuple, Union
 
@@ -197,6 +201,67 @@ class AudioProcessor:
         except Exception as e:
             logger.error(f"Audio preprocessing failed: {str(e)}")
             return audio
+        
+    def detect_background_music(self, audio_data: np.ndarray) -> Dict[str, float]:
+        """
+        Check for presence of background music with enhanced detection.
+        """
+        try:
+            # Convert to spectrogram with overlapping windows for better frequency resolution
+            f, t, spec = scipy.signal.spectrogram(
+                audio_data, 
+                fs=16000, 
+                nperseg=2048,
+                noverlap=1024,  # 50% overlap for better temporal resolution
+                window='hann'
+            )
+        
+            # 1. Harmonic Content Analysis
+            spec_mean = np.mean(spec, axis=1)
+            spectral_flatness = scipy.stats.gmean(spec_mean + 1e-10) / (np.mean(spec_mean) + 1e-10)
+        
+            # 2. Frequency Band Analysis with music-specific ranges
+            bass_band = np.mean(spec[1:20, :])      # 0-156 Hz (bass)
+            mid_band = np.mean(spec[20:50, :])      # 156-391 Hz (mid frequencies)
+            presence_band = np.mean(spec[50:100, :]) # 391-781 Hz (presence)
+        
+            # Calculate band ratios (important for music detection)
+            bass_mid_ratio = bass_band / (mid_band + 1e-10)
+        
+            # 3. Rhythmic Pattern Analysis
+            energy_envelope = np.mean(spec, axis=0)
+            peaks = scipy.signal.find_peaks(energy_envelope, distance=8)[0]  # Min distance for music beats
+            rhythm_regularity = len(peaks) / len(t)  # Normalized peak count
+        
+            # 4. Temporal Stability
+            temporal_variation = np.std(energy_envelope) / (np.mean(energy_envelope) + 1e-10)
+            temporal_stability = 1.0 / (1.0 + temporal_variation)  # Now always positive, between 0 and 1
+
+            # Combine all features with weighted scoring
+            music_features = {
+                'spectral_flatness': spectral_flatness * 0.2,
+                'rhythm_regularity': rhythm_regularity * 0.3,
+                'bass_presence': bass_mid_ratio * 0.3,
+                'temporal_stability': temporal_stability * 0.2
+            }
+        
+            music_score = sum(music_features.values())
+        
+            # Lower threshold and add confidence levels
+            has_music = music_score > 0.25  # More sensitive threshold
+        
+            result = {
+                'has_background_music': bool(has_music),
+                'music_confidence': float(music_score),
+                'feature_scores': {k: float(v) for k, v in music_features.items()}
+            }
+        
+            logger.debug(f"Music detection features: {result['feature_scores']}")
+            return result
+
+        except Exception as e:
+            logger.error(f"Background music detection failed: {str(e)}")
+            return {'has_background_music': False, 'music_confidence': 0.0}
 
     def process_audio(self, audio_path: str) -> torch.Tensor:
         """Process audio with speech recognition focus"""
@@ -371,35 +436,36 @@ class AudioProcessor:
             # Initial audio processing
             audio = self.process_audio(audio_path)
             logger.info("Base audio processing successful, proceeding with enhancement")
-            
-            # Apply preprocessing
+        
+            # Apply preprocessing and get numpy for analysis
             audio = self.preprocess_audio(audio)
-            
+            audio_numpy = audio.squeeze().numpy()
+        
+            # Detect background music first
+            music_analysis = self.detect_background_music(audio_numpy)
+            logger.info(f"Background music analysis: {music_analysis}")
+        
             # Apply spectral enhancement
             logger.info(f"Applying speech-optimized spectral enhancement for {target_language}")
             audio = self.apply_spectral_enhancement(audio, target_language)
-            
-            # Run diagnostics if requested
+        
+            # Build full analysis
+            full_analysis = {
+                'background_music': music_analysis
+            }
+        
+            # Run existing diagnostics if requested
             if return_diagnostics and self.diagnostics is not None:
                 logger.info("Analyzing audio quality...")
-                analysis = self.diagnostics.analyze_translation(audio, target_language)
-                
-                # Reprocess if quality issues detected
-                if (
-                    analysis['waveform_analysis']['silence_percentage'] > 20 or
-                    analysis['waveform_analysis']['rms_level'] < 0.1 or
-                    analysis['issues'].get('clipping', False) or
-                    analysis['issues'].get('choppy', False)
-                ):
-                    logger.warning("Quality issues detected, reprocessing...")
-                    audio = self.preprocess_audio(audio)
-                    audio = self.apply_spectral_enhancement(audio, target_language)
-                    analysis = self.diagnostics.analyze_translation(audio, target_language)
-                
-                return audio, analysis
+                diagnostic_analysis = self.diagnostics.analyze_translation(audio, target_language)
             
-            return audio if not return_diagnostics else (audio, {})
+                # Combine analyses
+                full_analysis.update(diagnostic_analysis)
             
+                return audio, full_analysis
+        
+            return audio if not return_diagnostics else (audio, full_analysis)
+        
         except Exception as e:
             error_msg = f"Enhanced audio processing failed: {str(e)}"
             logger.error(error_msg)
