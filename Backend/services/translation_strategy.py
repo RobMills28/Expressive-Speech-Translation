@@ -9,58 +9,74 @@ class TranslationStrategy:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
+    # In translation_strategy.py
     def select_strategy(self, audio_analysis: Dict) -> Dict:
-        """
-        Select translation strategy based on comprehensive audio analysis.
-        Currently just LISTENING to all audio characteristics before making decisions.
-        """
+        """Select translation strategy based on audio characteristics"""
         try:
-            # Log everything we hear
-            self.logger.info("\n=== AUDIO ANALYSIS ===")
+            # Detailed audio analysis logging
+            self.logger.info("\n=== DETAILED AUDIO ANALYSIS ===")
         
-            # 1. Background Music
-            if 'music_confidence' in audio_analysis:
-                self.logger.info(f"\nBackground Music:")
-                self.logger.info(f"- Confidence: {audio_analysis.get('music_confidence', 0.0)}")
-                self.logger.info(f"- Has Background Music: {audio_analysis.get('has_background_music', False)}")
-            
-            # 2. Audio Quality Metrics
-            if 'metrics' in audio_analysis:
-                self.logger.info(f"\nAudio Quality:")
-                self.logger.info(f"- Audio Clarity: {audio_analysis['metrics'].get('Audio Clarity', 'N/A')}")
-                self.logger.info(f"- Background Noise: {audio_analysis['metrics'].get('Background Noise', 'N/A')}")
-                self.logger.info(f"- Voice Consistency: {audio_analysis['metrics'].get('Voice Consistency', 'N/A')}")
-            
-            # 3. Waveform Analysis
-            if 'waveform_analysis' in audio_analysis:
-                self.logger.info(f"\nWaveform Characteristics:")
-                self.logger.info(f"- Peak Amplitude: {audio_analysis['waveform_analysis'].get('peak_amplitude', 'N/A')}")
-                self.logger.info(f"- RMS Level: {audio_analysis['waveform_analysis'].get('rms_level', 'N/A')}")
-                self.logger.info(f"- Silence Percentage: {audio_analysis['waveform_analysis'].get('silence_percentage', 'N/A')}")
+            # Get music characteristics
+            music_confidence = audio_analysis.get('music_confidence', 0.0)
+            has_music = audio_analysis.get('has_background_music', False)
+            feature_scores = audio_analysis.get('feature_scores', {})
+        
+            # Log music detection details
+            self.logger.info(f"""
+    Music Detection:
+    - Has Background Music: {has_music}
+    - Music Confidence: {music_confidence:.3f}
+    - Feature Scores:
+    • Spectral Flatness: {feature_scores.get('spectral_flatness', 0.0):.3f}
+    • Rhythm Regularity: {feature_scores.get('rhythm_regularity', 0.0):.3f}
+    • Bass Presence: {feature_scores.get('bass_presence', 0.0):.3f}
+    • Temporal Stability: {feature_scores.get('temporal_stability', 0.0):.3f}
+            """)
 
-            # Just collect what we heard (no parameters yet - we're just listening)
+            # Get audio quality metrics
+            metrics = audio_analysis.get('metrics', {})
+            self.logger.info(f"""
+    Audio Quality Metrics:
+    - Audio Clarity: {metrics.get('audio_clarity', 0.0):.3f}
+    - Background Noise: {metrics.get('background_noise', 0.0):.3f}
+    - Voice Consistency: {metrics.get('voice_consistency', 0.0):.3f}
+            """)
+
+            # Determine content type based on music presence
+            if has_music and music_confidence > 0.4:
+                content_type = "speech_with_music"
+                self.logger.info("Content Type Decision: speech_with_music (High music confidence)")
+            else:
+                content_type = "speech_only"
+                self.logger.info("Content Type Decision: speech_only (Low music confidence)")
+            
+            # Log the decision rationale
+            self.logger.info(f"""
+    Decision Factors:
+    - Music Confidence Threshold: 0.4
+    - Current Music Confidence: {music_confidence:.3f}
+    - Has Background Music Flag: {has_music}
+    - Selected Type: {content_type}
+            """)
+            
             strategy = {
+                'content_type': content_type,
                 'heard_characteristics': {
                     'music': {
-                        'detected': audio_analysis.get('has_background_music', False),
-                        'confidence': audio_analysis.get('music_confidence', 0.0)
+                        'detected': has_music,
+                        'confidence': music_confidence,
+                        'feature_scores': feature_scores
                     },
-                    'audio_quality': {
-                        'clarity': audio_analysis['metrics'].get('Audio Clarity', 'N/A'),
-                        'background_noise': audio_analysis['metrics'].get('Background Noise', 'N/A'),
-                        'voice_consistency': audio_analysis['metrics'].get('Voice Consistency', 'N/A')
-                    },
-                    'waveform': {
-                        'peak_amplitude': audio_analysis['waveform_analysis'].get('peak_amplitude', 'N/A'),
-                        'rms_level': audio_analysis['waveform_analysis'].get('rms_level', 'N/A'),
-                        'silence_percentage': audio_analysis['waveform_analysis'].get('silence_percentage', 'N/A')
+                    'speech': {
+                        'consistency': metrics.get('voice_consistency', 1.0),
+                        'clarity': metrics.get('audio_clarity', 0.0),
+                        'background_noise': metrics.get('background_noise', 0.0)
                     }
                 }
             }
         
-            self.logger.info("\nJust listening to audio characteristics for now...")
             return strategy
             
         except Exception as e:
             self.logger.error(f"Strategy selection failed: {str(e)}")
-            return {'heard_characteristics': {}}
+            return {'content_type': 'speech_only'}  # Safe default
