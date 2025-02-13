@@ -1,28 +1,42 @@
 from typing import Dict
 import logging
+from .translation_environment import TranslationEnvironment
 
 logger = logging.getLogger(__name__)
 
 class TranslationPipeline:
-    """Manages the complete audio translation pipeline."""
+    """
+    Manages the complete audio translation pipeline.
+    Designed to be model-agnostic for future flexibility.
+    """
+    
+    def __init__(self, model_type: str = "seamless"):
+        self.model_type = model_type
+        logger.info(f"Initialized translation pipeline with {model_type} model")
     
     def process_audio(self, audio_data: Dict, audio_analysis: Dict) -> Dict:
-        """
-        Process audio through the complete pipeline:
-        1. Audio characteristics analysis
-        2. Signal enhancement based on analysis
-        3. Translation parameter selection
-        4. Translation execution
-        """
+        """Process audio through the complete pipeline"""
         try:
             # First analyze all audio characteristics
             audio_characteristics = self._analyze_characteristics(audio_analysis)
-            
-            # Log the analysis results
             logger.info(f"Audio characteristics analyzed: {audio_characteristics}")
             
-            # For now, just return the analysis
-            return audio_characteristics
+            # Create translation environment for current model
+            environment = TranslationEnvironment.from_characteristics(
+                audio_characteristics, 
+                model_type=self.model_type
+            )
+            
+            return {
+                'characteristics': audio_characteristics,
+                'environment': {
+                    'type': environment.environment_type,
+                    'model': environment.model_type,
+                    'speech_prominence': environment.speech_prominence,
+                    'music_confidence': environment.music_confidence,
+                    'has_music': environment.has_music
+                }
+            }
             
         except Exception as e:
             logger.error(f"Pipeline processing failed: {str(e)}")
@@ -31,11 +45,10 @@ class TranslationPipeline:
     def _analyze_characteristics(self, audio_analysis: Dict) -> Dict:
         """Analyze and combine all audio characteristics."""
         try:
-            # Get background music info
             background_music = audio_analysis.get('background_music', {})
             speech_vs_music = background_music.get('speech_vs_music', {})
             
-            characteristics = {
+            return {
                 'audio_profile': {
                     'has_music': background_music.get('has_background_music', False),
                     'music_confidence': background_music.get('music_confidence', 0.0),
@@ -47,9 +60,6 @@ class TranslationPipeline:
                     'audio_clarity': audio_analysis.get('metrics', {}).get('audio_clarity', 0.0)
                 }
             }
-            
-            logger.info(f"Audio characteristics: {characteristics}")
-            return characteristics
             
         except Exception as e:
             logger.error(f"Characteristics analysis failed: {str(e)}")
