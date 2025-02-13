@@ -215,24 +215,24 @@ class AudioProcessor:
                 noverlap=1024,  # 50% overlap for better temporal resolution
                 window='hann'
             )
-        
+    
             # 1. Harmonic Content Analysis
             spec_mean = np.mean(spec, axis=1)
             spectral_flatness = scipy.stats.gmean(spec_mean + 1e-10) / (np.mean(spec_mean) + 1e-10)
-        
+    
             # 2. Frequency Band Analysis with music-specific ranges
             bass_band = np.mean(spec[1:20, :])      # 0-156 Hz (bass)
             mid_band = np.mean(spec[20:50, :])      # 156-391 Hz (mid frequencies)
             presence_band = np.mean(spec[50:100, :]) # 391-781 Hz (presence)
-        
+    
             # Calculate band ratios (important for music detection)
             bass_mid_ratio = bass_band / (mid_band + 1e-10)
-        
+    
             # 3. Rhythmic Pattern Analysis
             energy_envelope = np.mean(spec, axis=0)
             peaks = scipy.signal.find_peaks(energy_envelope, distance=8)[0]  # Min distance for music beats
             rhythm_regularity = len(peaks) / len(t)  # Normalized peak count
-        
+    
             # 4. Temporal Stability
             temporal_variation = np.std(energy_envelope) / (np.mean(energy_envelope) + 1e-10)
             temporal_stability = 1.0 / (1.0 + temporal_variation)  # Now always positive, between 0 and 1
@@ -244,19 +244,30 @@ class AudioProcessor:
                 'bass_presence': bass_mid_ratio * 0.3,
                 'temporal_stability': temporal_stability * 0.2
             }
-        
+    
             music_score = sum(music_features.values())
-        
+    
             # Lower threshold and add confidence levels
             has_music = music_score > 0.25  # More sensitive threshold
+
+            # 5. Speech vs Music Analysis
+            speech_band = np.mean(spec[20:50, :])      # 156-391 Hz (key speech range)
+            music_band = np.mean(spec[1:20, :])        # 0-156 Hz (typical music bass)
+            speech_prominence = speech_band / (music_band + 1e-10)
         
             result = {
                 'has_background_music': bool(has_music),
                 'music_confidence': float(music_score),
-                'feature_scores': {k: float(v) for k, v in music_features.items()}
+                'feature_scores': {k: float(v) for k, v in music_features.items()},
+                'speech_vs_music': {
+                    'speech_prominence': float(speech_prominence),
+                    'speech_band_energy': float(speech_band),
+                    'music_band_energy': float(music_band)
+                }
             }
-        
+    
             logger.debug(f"Music detection features: {result['feature_scores']}")
+            logger.debug(f"Speech vs Music analysis: {result['speech_vs_music']}")
             return result
 
         except Exception as e:

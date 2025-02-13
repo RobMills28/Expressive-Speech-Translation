@@ -16,48 +16,59 @@ class TranslationStrategy:
             # Detailed audio analysis logging
             self.logger.info("\n=== DETAILED AUDIO ANALYSIS ===")
         
-            # Get music characteristics
-            music_confidence = audio_analysis.get('music_confidence', 0.0)
-            has_music = audio_analysis.get('has_background_music', False)
-            feature_scores = audio_analysis.get('feature_scores', {})
-        
+            # Get music characteristics from background_music dict
+            background_music = audio_analysis.get('background_music', {})
+            music_confidence = background_music.get('music_confidence', 0.0)
+            has_music = background_music.get('has_background_music', False)
+            feature_scores = background_music.get('feature_scores', {})
+
             # Log music detection details
             self.logger.info(f"""
-    Music Detection:
-    - Has Background Music: {has_music}
-    - Music Confidence: {music_confidence:.3f}
-    - Feature Scores:
-    • Spectral Flatness: {feature_scores.get('spectral_flatness', 0.0):.3f}
-    • Rhythm Regularity: {feature_scores.get('rhythm_regularity', 0.0):.3f}
-    • Bass Presence: {feature_scores.get('bass_presence', 0.0):.3f}
-    • Temporal Stability: {feature_scores.get('temporal_stability', 0.0):.3f}
-            """)
+                Music Detection:
+                - Has Background Music: {has_music}
+                - Music Confidence: {music_confidence:.3f}
+                - Feature Scores:
+                • Spectral Flatness: {feature_scores.get('spectral_flatness', 0.0):.3f}
+                • Rhythm Regularity: {feature_scores.get('rhythm_regularity', 0.0):.3f}
+                • Bass Presence: {feature_scores.get('bass_presence', 0.0):.3f}
+                • Temporal Stability: {feature_scores.get('temporal_stability', 0.0):.3f}
+                    """)
 
             # Get audio quality metrics
             metrics = audio_analysis.get('metrics', {})
             self.logger.info(f"""
-    Audio Quality Metrics:
-    - Audio Clarity: {metrics.get('audio_clarity', 0.0):.3f}
-    - Background Noise: {metrics.get('background_noise', 0.0):.3f}
-    - Voice Consistency: {metrics.get('voice_consistency', 0.0):.3f}
-            """)
+                Audio Quality Metrics:
+                - Audio Clarity: {metrics.get('audio_clarity', 0.0):.3f}
+                - Background Noise: {metrics.get('background_noise', 0.0):.3f}
+                - Voice Consistency: {metrics.get('voice_consistency', 0.0):.3f}
+                    """)
+            
+            # Get speech vs music analysis if available
+            speech_vs_music = background_music.get('speech_vs_music', {})
+            speech_prominence = speech_vs_music.get('speech_prominence', 0.0)
+            self.logger.info(f"""    Speech vs Music Analysis:
+                - Speech Prominence: {speech_prominence:.3f}""")
 
             # Determine content type based on music presence
             if has_music and music_confidence > 0.4:
-                content_type = "speech_with_music"
-                self.logger.info("Content Type Decision: speech_with_music (High music confidence)")
+                # Add speech prominence check
+                if speech_prominence > 2.0:  # Speech is significantly more prominent than music
+                    content_type = "speech_only"
+                    self.logger.info("Content Type Decision: speech_only (High speech prominence)")
+                else:
+                    content_type = "speech_with_music"
+                    self.logger.info("Content Type Decision: speech_with_music (High music confidence)")
             else:
                 content_type = "speech_only"
                 self.logger.info("Content Type Decision: speech_only (Low music confidence)")
             
             # Log the decision rationale
-            self.logger.info(f"""
-    Decision Factors:
-    - Music Confidence Threshold: 0.4
-    - Current Music Confidence: {music_confidence:.3f}
-    - Has Background Music Flag: {has_music}
-    - Selected Type: {content_type}
-            """)
+            self.logger.info(f""" Decision Factors:
+                    - Music Confidence Threshold: 0.4
+                    - Current Music Confidence: {music_confidence:.3f}
+                    - Has Background Music Flag: {has_music}
+                    - Selected Type: {content_type}
+                        """)
             
             strategy = {
                 'content_type': content_type,
