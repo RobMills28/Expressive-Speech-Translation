@@ -52,7 +52,8 @@ class TranslationStrategy:
             # Determine content type based on music presence
             if has_music and music_confidence > 0.4:
                 # Add speech prominence check
-                if speech_prominence > 2.0:  # Speech is significantly more prominent than music
+                if speech_prominence > 2.0:  # Speech is more prominent
+                    # High speech prominence but still has music
                     content_type = "speech_only"
                     self.logger.info("Content Type Decision: speech_only (High speech prominence)")
                 else:

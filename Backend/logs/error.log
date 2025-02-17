@@ -2840,3 +2840,524 @@ Exception: Unable to access this youtube content. Please check the URL and try a
 2025-02-13 20:45:55,743 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
 2025-02-13 20:45:55,748 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
 2025-02-13 20:45:55,748 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:33,508 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:33,509 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:33,532 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:33,532 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:33,554 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:33,555 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:33,577 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:33,577 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:36,536 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:36,537 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:36,560 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:36,561 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:36,584 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:36,584 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:26:36,606 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:26:36,606 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:29:04,405 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:29:04,405 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:29:04,415 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:29:04,415 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:29:04,423 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:29:04,423 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-13 23:29:04,434 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-13 23:29:04,435 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:19,870 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:19,873 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:19,895 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:19,896 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:19,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:19,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:19,944 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:19,944 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:22,853 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:22,854 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:22,878 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:22,879 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:22,903 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:22,903 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:26:22,927 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:26:22,928 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:28:53,775 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:28:53,775 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:28:53,783 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:28:53,783 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:28:53,792 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:28:53,792 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 00:28:53,802 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 00:28:53,802 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:21,390 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:21,390 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:21,412 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:21,413 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:21,435 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:21,435 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:21,457 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:21,457 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:24,429 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:24,430 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:24,452 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:24,453 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:24,474 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:24,475 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:14:24,497 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:14:24,497 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:15:03,264 - services.translation_routes - ERROR - [translation_routes.py:257] - Target text generation error: 'SeamlessM4TTokenizerFast' object has no attribute 'lang_code_to_id'
+2025-02-14 08:16:07,431 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:16:07,431 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:16:07,438 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:16:07,438 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:16:07,448 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:16:07,449 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:16:07,457 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:16:07,457 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:29,815 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:29,816 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:29,819 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:29,819 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:29,825 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:29,825 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:29,831 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:29,831 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:30,249 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
+2025-02-14 08:29:30,273 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
+2025-02-14 08:29:30,274 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-14 08:29:30,318 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:30,318 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:30,323 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:30,323 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:30,328 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:30,328 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:30,333 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:30,333 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:30,745 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
+2025-02-14 08:29:30,769 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
+2025-02-14 08:29:30,771 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-14 08:29:43,457 - services.translation_routes - ERROR - [translation_routes.py:257] - Target text generation error: 'SeamlessM4TTokenizerFast' object has no attribute 'lang_code_to_id'
+2025-02-14 08:29:51,478 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:51,479 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:51,482 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:51,482 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:51,488 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:51,488 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:51,491 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 08:29:51,491 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 08:29:51,607 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
+2025-02-14 08:29:51,617 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
+2025-02-14 08:29:51,618 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-14 09:13:07,444 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:07,444 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:07,469 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:07,470 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:07,494 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:07,495 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:07,518 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:07,519 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:10,414 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:10,415 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:10,441 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:10,441 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:10,464 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:10,465 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:13:10,492 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:13:10,492 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:15:48,170 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:15:48,171 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:15:48,179 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:15:48,179 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:15:48,189 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:15:48,189 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:15:48,198 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-14 09:15:48,199 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-14 09:41:31,503 - services.audio_link_routes - ERROR - [audio_link_routes.py:175] - Download error for youtube: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+2025-02-14 09:41:31,504 - services.audio_link_routes - ERROR - [audio_link_routes.py:182] - youtube processing error: Unable to access this youtube content. Please check the URL and try again.
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3492, in process_info
+    success, real_download = self.dl(temp_filename, info_dict)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3212, in dl
+    return fd.download(name, new_info, subtitle)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/common.py", line 464, in download
+    ret = self.real_download(filename, info_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 367, in real_download
+    establish_connection()
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 118, in establish_connection
+    ctx.data = self.ydl.urlopen(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 4175, in urlopen
+    return self._request_director.send(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 117, in send
+    response = handler.send(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_helper.py", line 208, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 340, in send
+    return self._send(request)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_requests.py", line 365, in _send
+    raise HTTPError(res, redirect_loop=max_redirects_exceeded)
+yt_dlp.networking.exceptions.HTTPError: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 132, in handle_video_platform_url
+    ydl.download([url])
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3618, in download
+    self.__download_wrapper(self.extract_info)(
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3591, in wrapper
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1626, in extract_info
+    return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1637, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1793, in __extract_info
+    return self.process_ie_result(ie_result, download, extra_info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1852, in process_ie_result
+    ie_result = self.process_video_result(ie_result, download=download)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3024, in process_video_result
+    self.process_info(new_info)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 177, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3501, in process_info
+    self.report_error(f'unable to download video data: {err}')
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1095, in report_error
+    self.trouble(f'{self._format_err("ERROR:", self.Styles.ERROR)} {message}', *args, **kwargs)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1034, in trouble
+    raise DownloadError(message, exc_info)
+yt_dlp.utils.DownloadError: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 179, in handle_video_platform_url
+    raise Exception(f"Unable to access this {platform} content. Please check the URL and try again.")
+Exception: Unable to access this youtube content. Please check the URL and try again.
+2025-02-14 09:41:31,515 - services.audio_link_routes - ERROR - [audio_link_routes.py:250] - Processing error: Unable to access this youtube content. Please check the URL and try again.
+2025-02-14 09:41:57,087 - services.audio_link_routes - ERROR - [audio_link_routes.py:175] - Download error for youtube: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+2025-02-14 09:41:57,088 - services.audio_link_routes - ERROR - [audio_link_routes.py:182] - youtube processing error: Unable to access this youtube content. Please check the URL and try again.
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3492, in process_info
+    success, real_download = self.dl(temp_filename, info_dict)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3212, in dl
+    return fd.download(name, new_info, subtitle)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/common.py", line 464, in download
+    ret = self.real_download(filename, info_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 367, in real_download
+    establish_connection()
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 118, in establish_connection
+    ctx.data = self.ydl.urlopen(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 4175, in urlopen
+    return self._request_director.send(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 117, in send
+    response = handler.send(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_helper.py", line 208, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 340, in send
+    return self._send(request)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_requests.py", line 365, in _send
+    raise HTTPError(res, redirect_loop=max_redirects_exceeded)
+yt_dlp.networking.exceptions.HTTPError: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 132, in handle_video_platform_url
+    ydl.download([url])
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3618, in download
+    self.__download_wrapper(self.extract_info)(
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3591, in wrapper
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1626, in extract_info
+    return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1637, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1793, in __extract_info
+    return self.process_ie_result(ie_result, download, extra_info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1852, in process_ie_result
+    ie_result = self.process_video_result(ie_result, download=download)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3024, in process_video_result
+    self.process_info(new_info)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 177, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3501, in process_info
+    self.report_error(f'unable to download video data: {err}')
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1095, in report_error
+    self.trouble(f'{self._format_err("ERROR:", self.Styles.ERROR)} {message}', *args, **kwargs)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1034, in trouble
+    raise DownloadError(message, exc_info)
+yt_dlp.utils.DownloadError: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 179, in handle_video_platform_url
+    raise Exception(f"Unable to access this {platform} content. Please check the URL and try again.")
+Exception: Unable to access this youtube content. Please check the URL and try again.
+2025-02-14 09:41:57,093 - services.audio_link_routes - ERROR - [audio_link_routes.py:250] - Processing error: Unable to access this youtube content. Please check the URL and try again.
+2025-02-14 09:44:59,503 - services.audio_link_routes - ERROR - [audio_link_routes.py:175] - Download error for youtube: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+2025-02-14 09:44:59,505 - services.audio_link_routes - ERROR - [audio_link_routes.py:182] - youtube processing error: Unable to access this youtube content. Please check the URL and try again.
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3492, in process_info
+    success, real_download = self.dl(temp_filename, info_dict)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3212, in dl
+    return fd.download(name, new_info, subtitle)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/common.py", line 464, in download
+    ret = self.real_download(filename, info_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 367, in real_download
+    establish_connection()
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 118, in establish_connection
+    ctx.data = self.ydl.urlopen(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 4175, in urlopen
+    return self._request_director.send(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 117, in send
+    response = handler.send(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_helper.py", line 208, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 340, in send
+    return self._send(request)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_requests.py", line 365, in _send
+    raise HTTPError(res, redirect_loop=max_redirects_exceeded)
+yt_dlp.networking.exceptions.HTTPError: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 132, in handle_video_platform_url
+    ydl.download([url])
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3618, in download
+    self.__download_wrapper(self.extract_info)(
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3591, in wrapper
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1626, in extract_info
+    return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1637, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1793, in __extract_info
+    return self.process_ie_result(ie_result, download, extra_info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1852, in process_ie_result
+    ie_result = self.process_video_result(ie_result, download=download)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3024, in process_video_result
+    self.process_info(new_info)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 177, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3501, in process_info
+    self.report_error(f'unable to download video data: {err}')
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1095, in report_error
+    self.trouble(f'{self._format_err("ERROR:", self.Styles.ERROR)} {message}', *args, **kwargs)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1034, in trouble
+    raise DownloadError(message, exc_info)
+yt_dlp.utils.DownloadError: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 179, in handle_video_platform_url
+    raise Exception(f"Unable to access this {platform} content. Please check the URL and try again.")
+Exception: Unable to access this youtube content. Please check the URL and try again.
+2025-02-14 09:44:59,516 - services.audio_link_routes - ERROR - [audio_link_routes.py:250] - Processing error: Unable to access this youtube content. Please check the URL and try again.
+2025-02-17 08:49:46,214 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:46,217 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:46,237 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:46,237 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:46,260 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:46,260 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:46,280 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:46,281 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:48,925 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:138] - Italian consonant analysis failed: 'ItalianAnalyzer' object has no attribute '_analyze_plosives'
+2025-02-17 08:49:48,933 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:184] - Italian stress analysis failed: 'ItalianAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-17 08:49:48,933 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:214] - Italian intonation analysis failed: 'ItalianAnalyzer' object has no attribute '_extract_pitch_contour'
+2025-02-17 08:49:49,220 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:49,221 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:49,244 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:49,244 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:49,266 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:49,266 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:49,287 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:49:49,287 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:49:51,931 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:138] - Italian consonant analysis failed: 'ItalianAnalyzer' object has no attribute '_analyze_plosives'
+2025-02-17 08:49:51,940 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:184] - Italian stress analysis failed: 'ItalianAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-17 08:49:51,940 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:214] - Italian intonation analysis failed: 'ItalianAnalyzer' object has no attribute '_extract_pitch_contour'
+2025-02-17 08:52:16,023 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:52:16,024 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:52:16,033 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:52:16,033 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:52:16,041 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:52:16,041 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:52:16,048 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 08:52:16,048 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 08:52:16,433 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:138] - Italian consonant analysis failed: 'ItalianAnalyzer' object has no attribute '_analyze_plosives'
+2025-02-17 08:52:16,435 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:184] - Italian stress analysis failed: 'ItalianAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-17 08:52:16,436 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:214] - Italian intonation analysis failed: 'ItalianAnalyzer' object has no attribute '_extract_pitch_contour'
+2025-02-17 09:08:57,714 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,715 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,719 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,719 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,723 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,723 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,727 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,728 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,882 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:138] - Italian consonant analysis failed: 'ItalianAnalyzer' object has no attribute '_analyze_plosives'
+2025-02-17 09:08:57,883 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:184] - Italian stress analysis failed: 'ItalianAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-17 09:08:57,883 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:214] - Italian intonation analysis failed: 'ItalianAnalyzer' object has no attribute '_extract_pitch_contour'
+2025-02-17 09:08:57,915 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,915 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,925 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,925 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:57,928 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:08:57,928 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:08:58,079 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:138] - Italian consonant analysis failed: 'ItalianAnalyzer' object has no attribute '_analyze_plosives'
+2025-02-17 09:08:58,080 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:184] - Italian stress analysis failed: 'ItalianAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-17 09:08:58,080 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:214] - Italian intonation analysis failed: 'ItalianAnalyzer' object has no attribute '_extract_pitch_contour'
+2025-02-17 09:09:14,242 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:09:14,242 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:09:14,244 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:09:14,244 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:09:14,246 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:09:14,247 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:09:14,250 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:09:14,251 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:09:14,370 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:138] - Italian consonant analysis failed: 'ItalianAnalyzer' object has no attribute '_analyze_plosives'
+2025-02-17 09:09:14,372 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:184] - Italian stress analysis failed: 'ItalianAnalyzer' object has no attribute '_find_stress_peaks'
+2025-02-17 09:09:14,372 - services.diagnostics.language_analysis.italian - ERROR - [italian.py:214] - Italian intonation analysis failed: 'ItalianAnalyzer' object has no attribute '_extract_pitch_contour'
+2025-02-17 09:52:29,661 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:29,663 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:29,680 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:29,680 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:29,696 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:29,696 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:29,726 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:29,726 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:30,655 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:30,656 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:30,666 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:30,666 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:30,679 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:30,679 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:52:30,689 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:52:30,689 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:53:14,223 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:53:14,223 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:53:14,230 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:53:14,230 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:53:14,236 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:53:14,237 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 09:53:14,241 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-17 09:53:14,242 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-17 10:14:06,719 - services.audio_link_routes - ERROR - [audio_link_routes.py:175] - Download error for youtube: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+2025-02-17 10:14:06,721 - services.audio_link_routes - ERROR - [audio_link_routes.py:182] - youtube processing error: Unable to access this youtube content. Please check the URL and try again.
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3492, in process_info
+    success, real_download = self.dl(temp_filename, info_dict)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3212, in dl
+    return fd.download(name, new_info, subtitle)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/common.py", line 464, in download
+    ret = self.real_download(filename, info_dict)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 367, in real_download
+    establish_connection()
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/downloader/http.py", line 118, in establish_connection
+    ctx.data = self.ydl.urlopen(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 4175, in urlopen
+    return self._request_director.send(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 117, in send
+    response = handler.send(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_helper.py", line 208, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/common.py", line 340, in send
+    return self._send(request)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/networking/_requests.py", line 365, in _send
+    raise HTTPError(res, redirect_loop=max_redirects_exceeded)
+yt_dlp.networking.exceptions.HTTPError: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 132, in handle_video_platform_url
+    ydl.download([url])
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3618, in download
+    self.__download_wrapper(self.extract_info)(
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3591, in wrapper
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1626, in extract_info
+    return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1637, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1793, in __extract_info
+    return self.process_ie_result(ie_result, download, extra_info)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1852, in process_ie_result
+    ie_result = self.process_video_result(ie_result, download=download)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3024, in process_video_result
+    self.process_info(new_info)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 177, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3501, in process_info
+    self.report_error(f'unable to download video data: {err}')
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1095, in report_error
+    self.trouble(f'{self._format_err("ERROR:", self.Styles.ERROR)} {message}', *args, **kwargs)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1034, in trouble
+    raise DownloadError(message, exc_info)
+yt_dlp.utils.DownloadError: [0;31mERROR:[0m unable to download video data: HTTP Error 403: Forbidden
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 179, in handle_video_platform_url
+    raise Exception(f"Unable to access this {platform} content. Please check the URL and try again.")
+Exception: Unable to access this youtube content. Please check the URL and try again.
+2025-02-17 10:14:06,730 - services.audio_link_routes - ERROR - [audio_link_routes.py:250] - Processing error: Unable to access this youtube content. Please check the URL and try again.

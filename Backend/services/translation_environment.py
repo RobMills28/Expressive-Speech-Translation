@@ -1,14 +1,15 @@
-from typing import Dict
-import logging
+from typing import Dict, Any
 from dataclasses import dataclass
+import logging
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class TranslationEnvironment:
     """
     Defines the complete environment for translation based on audio characteristics.
-    Model-agnostic by design to support different translation models.
+    Specifically tuned for SeamlessM4T parameters while remaining model-agnostic.
     """
     speech_prominence: float = 0.0
     music_confidence: float = 0.0
@@ -16,42 +17,66 @@ class TranslationEnvironment:
     audio_clarity: float = 0.0
     voice_consistency: float = 0.0
     environment_type: str = "general"
-    model_type: str = "seamless"  # Can be changed for different models
+    model_type: str = "seamless"
 
-    @classmethod
-    def from_characteristics(cls, characteristics: Dict, model_type: str = "seamless") -> 'TranslationEnvironment':
-        """Create environment from audio characteristics"""
+    def get_translation_parameters(self) -> Dict[str, Any]:
+        """Get model-specific parameters based on environment characteristics"""
         try:
-            env = cls(
-                speech_prominence=characteristics['audio_profile']['speech_prominence'],
-                music_confidence=characteristics['audio_profile']['music_confidence'],
-                has_music=characteristics['audio_profile']['has_music'],
-                audio_clarity=characteristics['noise_profile']['audio_clarity'],
-                voice_consistency=characteristics['noise_profile']['voice_consistency'],
-                model_type=model_type
-            )
+            # First determine environment type based on audio characteristics
+            self.environment_type = self._determine_environment_type()
             
-            # Model-agnostic environment determination
-            env.environment_type = env._determine_environment_type()
-            logger.info(f"Configured {env.model_type} model in {env.environment_type} environment")
-            
-            return env
-            
+            if self.model_type == "seamless":
+                if self.environment_type == "speech_focused":
+                    return {
+                        'num_beams': 6,
+                        'do_sample': False,
+                        'max_new_tokens': 8000,
+                        'temperature': 0.2,  # Lower temperature for more focused translation
+                        'length_penalty': 2.0,
+                        'repetition_penalty': 1.5,
+                        'no_repeat_ngram_size': 3
+                    }
+                elif self.environment_type == "mixed_content":
+                    return {
+                        'num_beams': 4,
+                        'do_sample': True,
+                        'max_new_tokens': 8000,
+                        'temperature': 0.5,  # Balanced temperature
+                        'length_penalty': 1.5,
+                        'repetition_penalty': 1.2,
+                        'no_repeat_ngram_size': 3
+                    }
+                else:  # general case
+                    return {
+                        'num_beams': 3,
+                        'do_sample': True,
+                        'max_new_tokens': 8000,
+                        'temperature': 0.7,
+                        'length_penalty': 1.0,
+                        'repetition_penalty': 1.2,
+                        'no_repeat_ngram_size': 3
+                    }
+            else:
+                logger.warning(f"Unknown model type: {self.model_type}, using defaults")
+                return {}
+
         except Exception as e:
-            logger.error(f"Environment creation failed: {str(e)}")
-            return cls()
+            logger.error(f"Error getting translation parameters: {str(e)}")
+            return {}
 
     def _determine_environment_type(self) -> str:
         """
         Determine environment type based on audio characteristics.
-        This logic can be extended for different models.
         """
-        if self.speech_prominence > 2.0:
-            logger.info(f"Speech-focused environment (prominence: {self.speech_prominence})")
+        logger.info(f"Determining environment type with speech prominence: {self.speech_prominence}, "
+                   f"music confidence: {self.music_confidence}")
+        
+        if self.speech_prominence > 2.0 and self.audio_clarity > 0.6:
+            logger.info("Detected speech-focused environment")
             return "speech_focused"
         elif self.has_music and self.music_confidence > 0.4:
-            logger.info(f"Mixed-content environment (music confidence: {self.music_confidence})")
+            logger.info("Detected mixed-content environment")
             return "mixed_content"
         else:
-            logger.info("General environment")
+            logger.info("Using general environment")
             return "general"
