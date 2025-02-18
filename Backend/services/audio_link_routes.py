@@ -87,17 +87,27 @@ def handle_video_platform_url(url, platform):
             
             # Base options used for both YouTube and TikTok
             base_opts = {
-                'format': 'bestaudio[ext=m4a]/bestaudio/best',  # Prefer m4a
+                'format': 'bestaudio[ext=m4a]/bestaudio/best',
                 'outtmpl': temp_file,
-                'quiet': False,  # Set to True in production
+                'quiet': False,
                 'no_warnings': True,
-                'keepvideo': True,  # Keep original files
+                'keepvideo': True,
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'wav',
-                    'preferredquality': '192',
+                    'preferredquality': '192'
                 }],
-                'concurrent_fragment_downloads': 8  # Speed up downloads
+                'concurrent_fragment_downloads': 8,
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Language': 'en-us,en;q=0.5',
+                    'Accept-Encoding': 'gzip,deflate',
+                    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+                },
+                'nocheckcertificate': True,
+                'ignoreerrors': False,  # Keep this False to get proper error messages
+                'geo_bypass': True
             }
 
             if platform == 'tiktok':
