@@ -89,15 +89,16 @@ const Dashboard = () => {
       <div className="flex h-screen bg-white">
         <div className="w-64 border-r bg-white">
           <div className="px-6 py-4">
-            <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1>
+            {/* <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1> */}
           </div>
 
-          <div className="px-4">
+          <div className="px-6">
             <Button 
-              className="w-full mb-8 bg-purple-600 hover:bg-purple-700"
+              className="w-full mb-8 bg-purple-600 hover:bg-purple-700 flex items-center justify-center gap-2"
               onClick={() => setShowTranslationFlow(true)}
             >
-              ↑ New Upload
+              <span>↑</span>
+              <span>New Upload</span>
             </Button>
 
             <div className="space-y-8">
@@ -152,7 +153,7 @@ const Dashboard = () => {
                       src={spotifyIcon} 
                       alt="Spotify" 
                       className="w-5 h-5"
-                      />
+                    />
                     <span className="ml-3 text-sm">Spotify</span>
                   </div>
                   <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
@@ -208,15 +209,16 @@ const Dashboard = () => {
     <div className="flex h-screen bg-white">
       <div className="w-64 border-r bg-white">
         <div className="px-6 py-4">
-          <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1>
+          {/* <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1> */}
         </div>
 
-        <div className="px-4">
+        <div className="px-6">
           <Button 
-            className="w-full mb-8 bg-purple-600 hover:bg-purple-700"
+            className="w-full mb-8 bg-purple-600 hover:bg-purple-700 flex items-center justify-center gap-2"
             onClick={() => setShowTranslationFlow(true)}
           >
-            ↑ New Upload
+            <span>↑</span>
+            <span>New Upload</span>
           </Button>
 
           <div className="space-y-8">
@@ -273,7 +275,7 @@ const Dashboard = () => {
                     className="w-5 h-5"
                   />
                   <span className="ml-3 text-sm">YouTube</span>
-                  </div>
+                </div>
                 <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
                   <img 
                     src={spotifyIcon} 
@@ -313,17 +315,17 @@ const Dashboard = () => {
       <div className="flex-1 overflow-auto bg-gray-50">
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
-            <div>
+            <div className="flex-1">
               <h2 className="text-2xl font-semibold mb-1">Creator Studio</h2>
               <p className="text-gray-500">Manage your content and translations</p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <Input 
                 placeholder="Search content..." 
-                className="w-64"
+                className="w-64 p-2"
               />
               <Button 
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-purple-600 hover:bg-purple-700 whitespace-nowrap"
                 onClick={() => setShowTranslationFlow(true)}
               >
                 New Project

@@ -17,7 +17,7 @@ const Navigation = () => {
   
   return (
     <nav className="bg-white border-b">
-      <div className="max-w-6xl mx-auto px-4">
+      <div className={`mx-auto px-8 ${location.pathname === '/dashboard' ? 'max-w-full' : 'max-w-6xl'}`}>
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-fuchsia-600">
@@ -25,7 +25,7 @@ const Navigation = () => {
             </Link>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-12">
             <Link 
               to="/translate"
               className={`px-4 py-2 text-gray-600 hover:text-gray-900 ${
@@ -77,7 +77,7 @@ const LandingPage = () => {
 
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto pt-32">
-          <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-pink-600">
+          <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-pink-600 leading-tight">
             Share Your Content With the World, In Any Language
           </h1>
           <p className="text-xl text-gray-600 mb-8">
