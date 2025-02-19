@@ -78,7 +78,7 @@ const LandingPage = () => {
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto pt-32">
           <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-pink-600 leading-tight">
-            Share Your Content With the World, In Any Language
+            Share Your Content With The World, In Any Language
           </h1>
           <p className="text-xl text-gray-600 mb-8">
             Magenta helps creators reach global audiences by translating content while 
@@ -97,9 +97,9 @@ const LandingPage = () => {
           <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-pink-100/30 blur-3xl" />
         </div>
 
-        <div className="max-w-6xl mx-auto mt-16 px-4">
+        {/* <div className="max-w-6xl mx-auto mt-16 px-4">
           <div className="aspect-video w-full max-w-3xl mx-auto rounded-xl bg-white/50 shadow-lg backdrop-blur-sm border border-white/20" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

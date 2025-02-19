@@ -1,533 +1,60 @@
-2025-02-18 00:13:58,253 - __main__ - INFO - [app.py:217] - Received SIGINT signal
-2025-02-18 00:13:58,259 - __main__ - INFO - [app.py:202] - Initiating graceful shutdown...
-2025-02-18 00:14:03,265 - __main__ - INFO - [app.py:436] - Application shutting down...
-2025-02-18 00:14:03,266 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
-2025-02-18 00:14:03,267 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
-2025-02-18 00:14:03,269 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-02-18 00:14:03,271 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
-2025-02-18 00:14:03,271 - __main__ - INFO - [app.py:206] - Graceful shutdown completed
-2025-02-18 00:14:03,274 - __main__ - INFO - [app.py:436] - Application shutting down...
-2025-02-18 00:14:03,274 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
-2025-02-18 00:14:03,274 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
-2025-02-18 00:14:03,275 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-02-18 00:14:03,276 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
-2025-02-18 00:14:03,276 - __main__ - INFO - [app.py:436] - Application shutting down...
-2025-02-18 00:14:03,276 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
-2025-02-18 00:14:03,277 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
-2025-02-18 00:14:03,277 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-02-18 00:14:03,278 - __main__ - INFO - [app.py:450] - Cleanup completed successfully
-2025-02-18 00:14:24,839 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
-2025-02-18 00:14:24,839 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
-2025-02-18 00:14:37,797 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
-2025-02-18 00:14:37,797 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 00:14:37,798 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 00:15:02,175 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 00:15:02,176 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 00:15:17,858 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 00:15:17,859 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 00:15:17,861 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
-2025-02-18 00:15:17,861 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 00:15:17,862 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 00:15:35,616 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 00:15:35,617 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 00:15:53,418 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 00:15:53,419 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:491] - ==================================================
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
-2025-02-18 00:15:53,422 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 11.2GB available
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:502] - CPU cores: 11
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:510] - Configuration:
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:511] - - Debug mode: False
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:512] - - CORS enabled: True
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
-2025-02-18 00:15:53,423 - __main__ - INFO - [app.py:516] - ==================================================
-2025-02-18 00:19:35,536 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.03MB
-2025-02-18 00:19:35,539 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
-2025-02-18 00:19:35,543 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://youtu.be/xDYy5qafTXY?si=NJ-Ygzb5IYYbm3Ma
-2025-02-18 00:19:35,544 - services.audio_link_routes - INFO - [audio_link_routes.py:243] - Processing YouTube URL
-2025-02-18 00:19:35,544 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for youtube: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpaeretjae/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True}
-2025-02-18 00:19:38,623 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded youtube content
-2025-02-18 00:19:38,624 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpaeretjae/output.wav
-2025-02-18 00:19:38,660 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
-2025-02-18 00:19:38,661 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
-2025-02-18 00:19:38,662 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 3.12s, Memory Change: 69.44MB
-2025-02-18 00:19:38,662 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 3.12s
-2025-02-18 00:19:39,933 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 00:19:39,935 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 00:19:55,763 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 00:19:55,763 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 00:20:13,640 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 00:20:13,640 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 00:20:13,643 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 73e378be
-2025-02-18 00:20:13,643 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
-2025-02-18 00:20:13,643 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
-2025-02-18 00:20:13,647 - services.translation_routes - INFO - [translation_routes.py:97] - Request 73e378be: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpsovms0mp.wav
-2025-02-18 00:20:13,650 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 69.18 seconds
-2025-02-18 00:20:13,650 - services.translation_routes - INFO - [translation_routes.py:112] - Request 73e378be: Beginning audio processing with diagnostics
-2025-02-18 00:20:13,650 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpsovms0mp.wav
-2025-02-18 00:20:13,650 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
-2025-02-18 00:20:13,655 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 1106919]), Frequency: 16000Hz
-2025-02-18 00:20:13,723 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 00:20:13,749 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.20938998197072828, 'feature_scores': {'spectral_flatness': 0.08400185351212022, 'rhythm_regularity': 0.023911028730305837, 'bass_presence': 0.020109010040956245, 'temporal_stability': 0.08136808968734596}, 'speech_vs_music': {'speech_prominence': 14.912097505433316, 'speech_band_energy': 3.6031412946613273e-06, 'music_band_energy': 2.415253845811094e-07}}
-2025-02-18 00:20:13,749 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
-2025-02-18 00:20:13,853 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 00:20:13,968 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:13,971 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:13,992 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:13,992 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:14,013 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:14,014 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:14,034 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:14,035 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:16,668 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:123] - 
+2025-02-19 10:09:50,768 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.58MB
+2025-02-19 10:09:50,772 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.01s
+2025-02-19 10:09:50,776 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@y_combinator/video/7411229444427287851?is_from_webapp=1&sender_device=pc&web_id=7472529903809676822
+2025-02-19 10:09:50,777 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-02-19 10:09:50,778 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpr2fle0bw/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '2109575995907557055'}}}
+2025-02-19 10:09:53,736 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-02-19 10:09:53,738 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpr2fle0bw/output.wav
+2025-02-19 10:09:53,761 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-02-19 10:09:53,762 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-02-19 10:09:53,762 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 2.99s, Memory Change: 65.23MB
+2025-02-19 10:09:53,762 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 2.99s
+2025-02-19 10:09:56,424 - services.model_manager - INFO - [model_manager.py:211] - Model inactive for too long, reloading...
+2025-02-19 10:09:56,425 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-19 10:10:10,918 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-19 10:10:10,918 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 10:10:10,919 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 10:10:37,945 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 10:10:37,945 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 10:10:53,144 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 10:10:53,144 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 10:10:53,147 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-19 10:10:53,147 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 10:10:53,148 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 10:11:17,128 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 10:11:17,129 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 10:11:38,595 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 10:11:38,596 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 10:11:38,600 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 7e804629
+2025-02-19 10:11:38,601 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-19 10:11:38,601 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-19 10:11:38,603 - services.translation_routes - INFO - [translation_routes.py:97] - Request 7e804629: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpa7wds6qg.wav
+2025-02-19 10:11:38,605 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 38.24 seconds
+2025-02-19 10:11:38,605 - services.translation_routes - INFO - [translation_routes.py:112] - Request 7e804629: Beginning audio processing with diagnostics
+2025-02-19 10:11:38,605 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpa7wds6qg.wav
+2025-02-19 10:11:38,605 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:11:38,610 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:11:38,662 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:11:38,685 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:11:38,685 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:11:38,758 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:11:38,843 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:38,847 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:38,869 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:38,869 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:38,900 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:38,902 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:38,929 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:38,929 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:40,019 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:123] - 
 ==================================================
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 73e378be
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
-==============================
-
-Target Language: fra
-
-Waveform Analysis:
---------------------
-- Peak Amplitude: 0.950
-- Avg Amplitude: 0.069
-- Rms Level: 0.114
-- Crest Factor: 8.317
-- Zero Crossings: 294432.000
-- Silence Percentage: 23.702
-- Clipping Points: 0.000
-- Dynamic Range: 17318057.992
-
-- Processing Metrics:
-  - Compression Detected: 0.000
-  - Over Compressed: 0.000
-  - Compression Severity: 0.000
-  - Dynamic Range Loss: 0.000
-
-- Temporal Metrics:
-  - Smoothing Detected: 1.000
-  - Temporal Variation: 0.095
-  - Temporal Flatness: 0.054
-
-- Volume Metrics:
-  - Volume Stability: 0.207
-  - Volume Range: 39045333.862
-  - Volume Variations: 0.071
-
-Spectral Analysis:
---------------------
-
-Quality Metrics (1-5 scale):
---------------------
-- Robotic Voice: 1.0
-- Pronunciation: 1.0
-- Audio Clarity: 3.027470416722832
-- Background Noise: 4.326625974972339
-- Voice Consistency: 1.0
-- Spectral Balance: 1.0
-
-Detected Issues:
---------------------
-No issues detected
-
-Language-Specific Analysis:
---------------------
-
-Nasalization:
-  - Nasal Resonance: {'strength': 0.8366706967353821, 'stability': 1.8690263032913208, 'peak_frequencies': []}
-  - Quality Assessment: {'authenticity': 0.5019978880882263, 'consistency': 0.290225088596344, 'distinction': 0.2739231586456299}
-  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
-
-Liaison:
-  - Detected: False
-  - Confidence: 0.406
-  - Description: Weak or inconsistent liaison patterns
-
-Prosody:
-  - Score: 0.234
-  - Rhythm Quality: 0.390
-  - Intonation Quality: 0.078
-
-Vowel Quality:
-  - Quality Score: 0.003
-  - Formant Structure: 0.000
-  - Description: Poor vowel articulation. Unclear formant structure
-2025-02-18 00:20:16,669 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
-
-2025-02-18 00:20:16,669 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpsovms0mp.wav
-2025-02-18 00:20:16,669 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
-2025-02-18 00:20:16,672 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 1106919]), Frequency: 16000Hz
-2025-02-18 00:20:16,725 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 00:20:16,739 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.20938998197072828, 'feature_scores': {'spectral_flatness': 0.08400185351212022, 'rhythm_regularity': 0.023911028730305837, 'bass_presence': 0.020109010040956245, 'temporal_stability': 0.08136808968734596}, 'speech_vs_music': {'speech_prominence': 14.912097505433316, 'speech_band_energy': 3.6031412946613273e-06, 'music_band_energy': 2.415253845811094e-07}}
-2025-02-18 00:20:16,739 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
-2025-02-18 00:20:16,821 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 00:20:16,928 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:16,928 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:16,948 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:16,948 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:16,968 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:16,968 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:16,989 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:20:16,990 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:20:19,646 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
-2025-02-18 00:20:19,647 - services.translation_routes - INFO - [translation_routes.py:153] - Request 73e378be: Background music analysis: {'has_background_music': False, 'music_confidence': 0.20938998197072828, 'feature_scores': {'spectral_flatness': 0.08400185351212022, 'rhythm_regularity': 0.023911028730305837, 'bass_presence': 0.020109010040956245, 'temporal_stability': 0.08136808968734596}, 'speech_vs_music': {'speech_prominence': 14.912097505433316, 'speech_band_energy': 3.6031412946613273e-06, 'music_band_energy': 2.415253845811094e-07}}
-2025-02-18 00:20:19,647 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.20938998197072828)
-2025-02-18 00:20:19,647 - services.translation_routes - INFO - [translation_routes.py:165] - Request 73e378be: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': False, 'confidence': 0.20938998197072828}}}
-2025-02-18 00:20:19,647 - services.translation_routes - INFO - [translation_routes.py:167] - Request 73e378be: Audio processed successfully
-2025-02-18 00:20:19,705 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
-2025-02-18 00:21:00,975 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: When the night shadows fall then the door will open out of the window paints light will twinkle yellow fear no all the black heed no hurricane willow fear neither root nor bow tom goes on before you hey now mary do we'll be waiting for you
-2025-02-18 00:21:49,348 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: hop along my little friends up with you windows toms going on ahead candles for the king down the west since the sun soon you will be broken when the night shadows fall then the door will open out of the window paints light will twinkle yellow fear no all the black heed no horry willow fear neither root nor bow tom goes on before you hey now mary do we'll be waiting for you
-2025-02-18 00:23:02,867 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
-2025-02-18 00:23:02,920 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:23:02,924 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:23:02,931 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:23:02,931 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:23:02,938 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:23:02,938 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:23:02,946 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 00:23:02,946 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 00:23:03,392 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:294] - 
-==================================================
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 73e378be
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
-==============================
-
-Target Language: fra
-
-Waveform Analysis:
---------------------
-- Peak Amplitude: 0.674
-- Avg Amplitude: 0.070
-- Rms Level: 0.101
-- Crest Factor: 6.652
-- Zero Crossings: 32588.000
-- Silence Percentage: 5.465
-- Clipping Points: 0.000
-- Dynamic Range: 68.434
-
-- Processing Metrics:
-  - Compression Detected: 0.000
-  - Over Compressed: 0.000
-  - Compression Severity: 0.168
-  - Dynamic Range Loss: 0.000
-
-- Temporal Metrics:
-  - Smoothing Detected: 1.000
-  - Temporal Variation: 0.027
-  - Temporal Flatness: 0.015
-
-- Volume Metrics:
-  - Volume Stability: 0.452
-  - Volume Range: 231.993
-  - Volume Variations: 0.049
-
-Spectral Analysis:
---------------------
-
-Quality Metrics (1-5 scale):
---------------------
-- Robotic Voice: 1.0
-- Pronunciation: 1.0
-- Audio Clarity: 3.0304455711643756
-- Background Noise: 3.660850616750669
-- Voice Consistency: 1.0
-- Spectral Balance: 1.0
-
-Detected Issues:
---------------------
-No issues detected
-
-Language-Specific Analysis:
---------------------
-
-Nasalization:
-  - Nasal Resonance: {'strength': 0.8669018149375916, 'stability': 3.5015618801116943, 'peak_frequencies': []}
-  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 0.09091014415025711}
-  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
-
-Liaison:
-  - Detected: False
-  - Confidence: 0.546
-  - Description: Weak or inconsistent liaison patterns
-
-Prosody:
-  - Score: 0.000
-  - Rhythm Quality: 0.000
-  - Intonation Quality: 0.000
-
-Vowel Quality:
-  - Quality Score: 0.003
-  - Formant Structure: 0.000
-  - Description: Poor vowel articulation. Unclear formant structure
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
-
-2025-02-18 00:23:03,394 - services.translation_routes - INFO - [translation_routes.py:307] - Request 73e378be: Audio output processed successfully
-2025-02-18 00:23:03,405 - services.translation_routes - INFO - [translation_routes.py:362] - Request 73e378be: Response prepared successfully
-2025-02-18 00:23:03,405 - services.translation_routes - INFO - [translation_routes.py:375] - Request 73e378be completed in 169.76s
-2025-02-18 00:23:03,408 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 169.76s, Memory Change: -2103.34MB
-2025-02-18 00:23:03,408 - __main__ - INFO - [app.py:278] - Request to /translate took 203.48s
-2025-02-18 08:20:51,370 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
-2025-02-18 08:20:51,370 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
-2025-02-18 08:21:04,135 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
-2025-02-18 08:21:04,136 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 08:21:04,137 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 08:21:29,555 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 08:21:29,556 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 08:21:48,898 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 08:21:48,899 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 08:21:48,902 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
-2025-02-18 08:21:48,902 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 08:21:48,902 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 08:22:03,979 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 08:22:03,979 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 08:22:22,290 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 08:22:22,291 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 0 files, freed 0.00MB
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:491] - ==================================================
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 9.9GB available
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:502] - CPU cores: 11
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:510] - Configuration:
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:511] - - Debug mode: False
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:512] - - CORS enabled: True
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
-2025-02-18 08:22:22,295 - __main__ - INFO - [app.py:516] - ==================================================
-2025-02-18 08:26:02,241 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 08:26:02,244 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 08:26:23,984 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 08:26:23,984 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 08:26:39,853 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 08:26:39,853 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 08:26:39,856 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request cf565eeb
-2025-02-18 08:26:39,857 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
-2025-02-18 08:26:39,857 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
-2025-02-18 08:26:40,271 - services.translation_routes - INFO - [translation_routes.py:97] - Request cf565eeb: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp4zwuw2tg.wav
-2025-02-18 08:26:40,272 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 228.36 seconds
-2025-02-18 08:26:40,272 - services.translation_routes - INFO - [translation_routes.py:112] - Request cf565eeb: Beginning audio processing with diagnostics
-2025-02-18 08:26:40,272 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp4zwuw2tg.wav
-2025-02-18 08:26:40,272 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 44100, Channels: 2
-2025-02-18 08:26:40,371 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
-2025-02-18 08:26:40,371 - services.audio_processor - INFO - [audio_processor.py:295] - Resampling from 44100Hz to 16000Hz
-2025-02-18 08:26:40,841 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 08:26:40,909 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.20953160129518897, 'feature_scores': {'spectral_flatness': 0.10730618078239494, 'rhythm_regularity': 0.025820016820857866, 'bass_presence': 0.01911159402728443, 'temporal_stability': 0.057293809664651724}, 'speech_vs_music': {'speech_prominence': 15.609988254834075, 'speech_band_energy': 2.9859751293770387e-07, 'music_band_energy': 1.9028618680749787e-08}}
-2025-02-18 08:26:40,909 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for spa
-2025-02-18 08:26:40,909 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for spa, using defaults
-2025-02-18 08:26:41,228 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 08:26:41,828 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:41,834 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:41,927 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:41,928 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:42,021 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:42,021 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:42,107 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:42,107 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:49,135 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
-2025-02-18 08:26:49,693 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
-2025-02-18 08:26:49,717 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
-2025-02-18 08:26:49,717 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for spa
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:123] - 
-==================================================
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: cf565eeb
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: spa
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
-==============================
-
-Target Language: spa
-
-Waveform Analysis:
---------------------
-- Peak Amplitude: 0.800
-- Avg Amplitude: 0.027
-- Rms Level: 0.051
-- Crest Factor: 15.550
-- Zero Crossings: 1268802.000
-- Silence Percentage: 28.907
-- Clipping Points: 0.000
-- Dynamic Range: 6889178.373
-
-- Processing Metrics:
-  - Compression Detected: 0.000
-  - Over Compressed: 0.000
-  - Compression Severity: 0.000
-  - Dynamic Range Loss: 0.000
-
-- Temporal Metrics:
-  - Smoothing Detected: 1.000
-  - Temporal Variation: 0.053
-  - Temporal Flatness: 0.024
-
-- Volume Metrics:
-  - Volume Stability: 0.059
-  - Volume Range: 31614735.723
-  - Volume Variations: 0.035
-
-Spectral Analysis:
---------------------
-
-Quality Metrics (1-5 scale):
---------------------
-- Robotic Voice: 1.0
-- Pronunciation: 1.0
-- Audio Clarity: 3.006619734349286
-- Background Noise: 5.0
-- Voice Consistency: 1.0
-- Spectral Balance: 1.0
-
-Detected Issues:
---------------------
-- Muffled
-
-Language-Specific Analysis:
---------------------
-
-Phoneme Analysis:
-  - Trilled R: {'features': {'modulation_rate': 3334.3094192288922, 'strength': 0.5628064870834351}, 'strength': 0.5628064870834351, 'regularity': 0.0, 'duration': -67.11333142893936, 'overall_quality': 0.28140324354171753}
-  - Interdental Theta: {'energy': 0.7862051725387573, 'consistency': -1.2721858024597168, 'spectral_shape': {'centroid': 0.556209921836853, 'spread': 0.2986941635608673, 'quality': 0.7787578850984573}, 'quality': 0.09759241839249928}
-  - Stop Consonants: {'voiceless_stops': {'strength': 1.0, 'precision': 0.7741096945439416, 'quality': 0.8870548472719708}, 'voiced_stops': {'voicing': 0.24576304852962494, 'precision': 0.10934631835397368, 'quality': 0.1775546834417993}, 'overall_quality': 0.5323047653568851}
-
-Syllable Timing:
-
-Intonation Patterns:
-  - Contour Patterns: {'mean_pitch': 156.6742418209859, 'pitch_variability': 0.42162709772731816, 'rise_fall_ratio': 0.9356078808220298, 'quality': 0.5783729022995929}
-  - Melodic Features: {'range': 1.0, 'movement': 0.8133395085831543, 'quality': 0.9066697542915771}
-  - Overall Quality: 0.743
-
-Vowel Clarity:
-
-Stress Patterns:
-2025-02-18 08:26:49,718 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
-
-2025-02-18 08:26:49,718 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp4zwuw2tg.wav
-2025-02-18 08:26:49,718 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 44100, Channels: 2
-2025-02-18 08:26:49,812 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([2, 10070784]), Frequency: 44100Hz
-2025-02-18 08:26:49,812 - services.audio_processor - INFO - [audio_processor.py:295] - Resampling from 44100Hz to 16000Hz
-2025-02-18 08:26:50,186 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 08:26:50,234 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.20953160129518897, 'feature_scores': {'spectral_flatness': 0.10730618078239494, 'rhythm_regularity': 0.025820016820857866, 'bass_presence': 0.01911159402728443, 'temporal_stability': 0.057293809664651724}, 'speech_vs_music': {'speech_prominence': 15.609988254834075, 'speech_band_energy': 2.9859751293770387e-07, 'music_band_energy': 1.9028618680749787e-08}}
-2025-02-18 08:26:50,234 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for spa
-2025-02-18 08:26:50,234 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for spa, using defaults
-2025-02-18 08:26:50,520 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 08:26:50,931 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:50,932 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:51,017 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:51,018 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:51,099 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:51,100 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:51,176 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 08:26:51,177 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 08:26:58,251 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
-2025-02-18 08:26:58,748 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
-2025-02-18 08:26:58,772 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
-2025-02-18 08:26:58,773 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for spa
-2025-02-18 08:26:58,774 - services.translation_routes - INFO - [translation_routes.py:153] - Request cf565eeb: Background music analysis: {'has_background_music': False, 'music_confidence': 0.20953160129518897, 'feature_scores': {'spectral_flatness': 0.10730618078239494, 'rhythm_regularity': 0.025820016820857866, 'bass_presence': 0.01911159402728443, 'temporal_stability': 0.057293809664651724}, 'speech_vs_music': {'speech_prominence': 15.609988254834075, 'speech_band_energy': 2.9859751293770387e-07, 'music_band_energy': 1.9028618680749787e-08}}
-2025-02-18 08:26:58,774 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.20953160129518897)
-2025-02-18 08:26:58,774 - services.translation_routes - INFO - [translation_routes.py:165] - Request cf565eeb: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': False, 'confidence': 0.20953160129518897}}}
-2025-02-18 08:26:58,774 - services.translation_routes - INFO - [translation_routes.py:167] - Request cf565eeb: Audio processed successfully
-2025-02-18 08:26:58,972 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
-2025-02-18 11:18:16,638 - __main__ - INFO - [app.py:467] - Metrics server started on port 8000
-2025-02-18 11:18:16,638 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
-2025-02-18 11:18:29,456 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
-2025-02-18 11:18:29,456 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 11:18:29,459 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 11:18:57,845 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 11:18:57,845 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 11:19:18,087 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 11:19:18,087 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 11:19:18,090 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
-2025-02-18 11:19:18,091 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 11:19:18,091 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 11:19:34,227 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 11:19:34,228 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 11:19:49,819 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 11:19:49,819 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:418] - Cleanup complete: removed 1 files, freed 38.42MB
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:491] - ==================================================
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:492] - Starting LinguaSync Backend
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:493] - Starting Flask app on port 5001 using cpu
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:494] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:495] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:496] - Maximum audio length: 300 seconds
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:497] - Sample rate: 16000 Hz
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:501] - System memory: 36.0GB total, 19.6GB available
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:502] - CPU cores: 11
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:510] - Configuration:
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:511] - - Debug mode: False
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:512] - - CORS enabled: True
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:513] - - Rate limiting: 10 requests per minute
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:514] - - Metrics enabled: True (port 8000)
-2025-02-18 11:19:49,823 - __main__ - INFO - [app.py:516] - ==================================================
-2025-02-18 11:20:23,468 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
-2025-02-18 11:20:23,468 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
-2025-02-18 11:20:23,472 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@y_combinator/video/7411229444427287851?lang=en
-2025-02-18 11:20:23,473 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
-2025-02-18 11:20:23,473 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp8ms4wpw8/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '4265263619409010412'}}}
-2025-02-18 11:20:26,336 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
-2025-02-18 11:20:26,337 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp8ms4wpw8/output.wav
-2025-02-18 11:20:26,359 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
-2025-02-18 11:20:26,360 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
-2025-02-18 11:20:26,360 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 2.89s, Memory Change: 0.36MB
-2025-02-18 11:20:26,360 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 2.89s
-2025-02-18 11:20:31,060 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 11:20:31,062 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 11:20:47,278 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 11:20:47,279 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 11:21:03,159 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 11:21:03,159 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 11:21:03,164 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request e08b4132
-2025-02-18 11:21:03,164 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
-2025-02-18 11:21:03,164 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
-2025-02-18 11:21:03,165 - services.translation_routes - INFO - [translation_routes.py:97] - Request e08b4132: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpq76x0ii7.wav
-2025-02-18 11:21:03,167 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 38.24 seconds
-2025-02-18 11:21:03,167 - services.translation_routes - INFO - [translation_routes.py:112] - Request e08b4132: Beginning audio processing with diagnostics
-2025-02-18 11:21:03,167 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpq76x0ii7.wav
-2025-02-18 11:21:03,168 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
-2025-02-18 11:21:03,170 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
-2025-02-18 11:21:03,209 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 11:21:03,225 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
-2025-02-18 11:21:03,225 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
-2025-02-18 11:21:03,271 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 11:21:03,342 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:03,344 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:03,356 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:03,356 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:03,369 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:03,369 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:03,382 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:03,382 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:04,415 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:123] - 
-==================================================
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: e08b4132
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 7e804629
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
 ==============================
 
 Target Language: fra
@@ -597,94 +124,63 @@ Vowel Quality:
   - Quality Score: 0.007
   - Formant Structure: 0.000
   - Description: Poor vowel articulation. Unclear formant structure
-2025-02-18 11:21:04,415 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
+2025-02-19 10:11:40,019 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
 
-2025-02-18 11:21:04,415 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpq76x0ii7.wav
-2025-02-18 11:21:04,416 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
-2025-02-18 11:21:04,417 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
-2025-02-18 11:21:04,446 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 11:21:04,456 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
-2025-02-18 11:21:04,456 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
-2025-02-18 11:21:04,500 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 11:21:04,560 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:04,560 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:04,573 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:04,573 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:04,587 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:04,587 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:04,600 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:21:04,601 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:21:05,645 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
-2025-02-18 11:21:05,646 - services.translation_routes - INFO - [translation_routes.py:153] - Request e08b4132: Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
-2025-02-18 11:21:05,646 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.3477175465611055)
-2025-02-18 11:21:05,646 - services.translation_routes - INFO - [translation_routes.py:165] - Request e08b4132: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': True, 'confidence': 0.3477175465611055}}}
-2025-02-18 11:21:05,646 - services.translation_routes - INFO - [translation_routes.py:167] - Request e08b4132: Audio processed successfully
-2025-02-18 11:21:05,707 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
-2025-02-18 11:21:31,847 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: When you choose pricing, it's important to keep it simple. Overcomplicated pricing will kill the sales process. In general, monthly recurring revenue is preferable to annual recurrent revenue, and that's because during an economic downturn, your revenue is protected at least until the contract is renewed, and then you can have a dispute with the customer about whether it is worth renewing.
-2025-02-18 11:21:42,772 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://youtu.be/jNQXAC9IVRw?si=47413q9OtpTyD0ae
-2025-02-18 11:21:42,773 - services.audio_link_routes - INFO - [audio_link_routes.py:243] - Processing YouTube URL
-2025-02-18 11:21:42,773 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for youtube: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpm4fc8trx/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True}
-2025-02-18 11:21:45,720 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded youtube content
-2025-02-18 11:21:45,721 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpm4fc8trx/output.wav
-2025-02-18 11:21:45,733 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
-2025-02-18 11:21:45,733 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
-2025-02-18 11:21:45,734 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 2.96s, Memory Change: 0.55MB
-2025-02-18 11:21:45,734 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 2.96s
-2025-02-18 11:21:50,081 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
-2025-02-18 11:21:50,082 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
-2025-02-18 11:22:13,639 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Quand vous choisissez le prix, c'est important de le garder simple, trop compliqué. C'est préférable à un prix basé sur l'usage, parce que votre revenu est protégé au moins jusqu'à ce que le contrat soit renouvelé, alors que vous pouvez avoir un débat avec le client sur le fait qu'il vaut la peine d'être renouvelé. Il y a un risque réel que vos revenus tombent dans un mauvais mois et les investisseurs s'inquiètent pour ça.
-2025-02-18 11:22:16,372 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
-2025-02-18 11:22:16,372 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
-2025-02-18 11:22:46,150 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
-2025-02-18 11:22:46,150 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
-2025-02-18 11:22:46,151 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 62a16d2b
-2025-02-18 11:22:46,151 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
-2025-02-18 11:22:46,151 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
-2025-02-18 11:22:46,152 - services.translation_routes - INFO - [translation_routes.py:97] - Request 62a16d2b: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_1k93ihm.wav
-2025-02-18 11:22:46,152 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 19.06 seconds
-2025-02-18 11:22:46,153 - services.translation_routes - INFO - [translation_routes.py:112] - Request 62a16d2b: Beginning audio processing with diagnostics
-2025-02-18 11:22:46,153 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_1k93ihm.wav
-2025-02-18 11:22:46,153 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
-2025-02-18 11:22:46,156 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 305017]), Frequency: 16000Hz
-2025-02-18 11:22:46,178 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 11:22:46,184 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.18531650170202688, 'feature_scores': {'spectral_flatness': 0.022168862032643656, 'rhythm_regularity': 0.024324324324324326, 'bass_presence': 0.06177149113372016, 'temporal_stability': 0.07705182421133874}, 'speech_vs_music': {'speech_prominence': 4.852565529767358, 'speech_band_energy': 7.027943524917646e-07, 'music_band_energy': 1.4472944087629003e-07}}
-2025-02-18 11:22:46,184 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for spa
-2025-02-18 11:22:46,184 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for spa, using defaults
-2025-02-18 11:22:46,213 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 11:22:46,247 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:46,247 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:46,266 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:46,267 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:46,279 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:46,279 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:46,291 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:46,291 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:47,285 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
-2025-02-18 11:22:47,331 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
-2025-02-18 11:22:47,334 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
-2025-02-18 11:22:47,334 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for spa
-2025-02-18 11:22:47,334 - services.translation_routes - INFO - [translation_routes.py:123] - 
+2025-02-19 10:11:40,019 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpa7wds6qg.wav
+2025-02-19 10:11:40,019 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:11:40,022 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:11:40,055 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:11:40,065 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:11:40,065 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:11:40,116 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:11:40,188 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:40,188 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:40,204 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:40,204 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:40,228 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:40,229 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:40,255 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:11:40,255 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:11:41,361 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:11:41,362 - services.translation_routes - INFO - [translation_routes.py:153] - Request 7e804629: Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:11:41,362 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.3477175465611055)
+2025-02-19 10:11:41,362 - services.translation_routes - INFO - [translation_routes.py:165] - Request 7e804629: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': True, 'confidence': 0.3477175465611055}}}
+2025-02-19 10:11:41,362 - services.translation_routes - INFO - [translation_routes.py:167] - Request 7e804629: Audio processed successfully
+2025-02-19 10:11:41,395 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-19 10:12:11,527 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: When you choose pricing, it's important to keep it simple. Overcomplicated pricing will kill the sales process. In general, monthly recurring revenue is preferable to annual recurrent revenue, and that's because during an economic downturn, your revenue is protected at least until the contract is renewed, and then you can have a dispute with the customer about whether it is worth renewing.
+2025-02-19 10:12:45,025 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Quand vous choisissez le prix, c'est important de le garder simple, trop compliqué. C'est préférable à un prix basé sur l'usage, parce que votre revenu est protégé au moins jusqu'à ce que le contrat soit renouvelé, alors que vous pouvez avoir un débat avec le client sur le fait qu'il vaut la peine d'être renouvelé. Il y a un risque réel que vos revenus tombent dans un mauvais mois et les investisseurs s'inquiètent pour ça.
+2025-02-19 10:13:16,370 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
+2025-02-19 10:13:16,400 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:13:16,401 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:13:16,407 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:13:16,408 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:13:16,416 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:13:16,416 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:13:16,426 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:13:16,426 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:13:16,758 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:294] - 
 ==================================================
-2025-02-18 11:22:47,334 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
-2025-02-18 11:22:47,335 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
-2025-02-18 11:22:47,335 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 62a16d2b
-2025-02-18 11:22:47,335 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: spa
-2025-02-18 11:22:47,335 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
-2025-02-18 11:22:47,335 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 7e804629
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
 ==============================
 
-Target Language: spa
+Target Language: fra
 
 Waveform Analysis:
 --------------------
-- Peak Amplitude: 0.950
-- Avg Amplitude: 0.049
-- Rms Level: 0.078
-- Crest Factor: 12.207
-- Zero Crossings: 79770.000
-- Silence Percentage: 15.786
+- Peak Amplitude: 0.826
+- Avg Amplitude: 0.066
+- Rms Level: 0.103
+- Crest Factor: 8.038
+- Zero Crossings: 26857.000
+- Silence Percentage: 9.331
 - Clipping Points: 0.000
-- Dynamic Range: 9896291.553
+- Dynamic Range: 159.681
 
 - Processing Metrics:
   - Compression Detected: 0.000
@@ -694,124 +190,13 @@ Waveform Analysis:
 
 - Temporal Metrics:
   - Smoothing Detected: 1.000
-  - Temporal Variation: 0.056
-  - Temporal Flatness: 0.036
+  - Temporal Variation: 0.028
+  - Temporal Flatness: 0.016
 
 - Volume Metrics:
-  - Volume Stability: 0.358
-  - Volume Range: 22579938.705
-  - Volume Variations: 0.042
-
-Spectral Analysis:
---------------------
-
-Quality Metrics (1-5 scale):
---------------------
-- Robotic Voice: 3.325748500439674
-- Pronunciation: 1.0
-- Audio Clarity: 3.0127456548014364
-- Background Noise: 5.0
-- Voice Consistency: 1.6605988003517393
-- Spectral Balance: 1.0
-
-Detected Issues:
---------------------
-- Muffled
-
-Language-Specific Analysis:
---------------------
-
-Phoneme Analysis:
-  - Trilled R: {'features': {'modulation_rate': 3841.8740849194733, 'strength': 1.274167537689209}, 'strength': 1.0, 'regularity': 0.0, 'duration': -175.45861921166988, 'overall_quality': 0.5}
-  - Interdental Theta: {'energy': 1.3976463079452515, 'consistency': -1.0443711280822754, 'spectral_shape': {'centroid': 0.5340873599052429, 'spread': 0.28046301007270813, 'quality': 0.7768121808767319}, 'quality': 0.37669578691323596}
-  - Stop Consonants: {'voiceless_stops': {'strength': 1.0, 'precision': 0.731239968656793, 'quality': 0.8656199843283965}, 'voiced_stops': {'voicing': 0.14231252670288086, 'precision': -0.08343457897185824, 'quality': 0.02943897386551131}, 'overall_quality': 0.4475294790969539}
-
-Syllable Timing:
-
-Intonation Patterns:
-  - Contour Patterns: {'mean_pitch': 183.89352201826088, 'pitch_variability': 0.36202786331871983, 'rise_fall_ratio': 0.7635658914432726, 'quality': 0.637972136700967}
-  - Melodic Features: {'range': 1.0, 'movement': 0.8324464474887944, 'quality': 0.9162232237443972}
-  - Overall Quality: 0.777
-
-Vowel Clarity:
-
-Stress Patterns:
-2025-02-18 11:22:47,335 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
-
-2025-02-18 11:22:47,335 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp_1k93ihm.wav
-2025-02-18 11:22:47,335 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
-2025-02-18 11:22:47,336 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 305017]), Frequency: 16000Hz
-2025-02-18 11:22:47,357 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
-2025-02-18 11:22:47,362 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.18531650170202688, 'feature_scores': {'spectral_flatness': 0.022168862032643656, 'rhythm_regularity': 0.024324324324324326, 'bass_presence': 0.06177149113372016, 'temporal_stability': 0.07705182421133874}, 'speech_vs_music': {'speech_prominence': 4.852565529767358, 'speech_band_energy': 7.027943524917646e-07, 'music_band_energy': 1.4472944087629003e-07}}
-2025-02-18 11:22:47,362 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for spa
-2025-02-18 11:22:47,362 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for spa, using defaults
-2025-02-18 11:22:47,397 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
-2025-02-18 11:22:47,432 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:47,433 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:47,443 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:47,443 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:47,456 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:47,456 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:47,468 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:22:47,469 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:22:48,464 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
-2025-02-18 11:22:48,513 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
-2025-02-18 11:22:48,516 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
-2025-02-18 11:22:48,516 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for spa
-2025-02-18 11:22:48,516 - services.translation_routes - INFO - [translation_routes.py:153] - Request 62a16d2b: Background music analysis: {'has_background_music': False, 'music_confidence': 0.18531650170202688, 'feature_scores': {'spectral_flatness': 0.022168862032643656, 'rhythm_regularity': 0.024324324324324326, 'bass_presence': 0.06177149113372016, 'temporal_stability': 0.07705182421133874}, 'speech_vs_music': {'speech_prominence': 4.852565529767358, 'speech_band_energy': 7.027943524917646e-07, 'music_band_energy': 1.4472944087629003e-07}}
-2025-02-18 11:22:48,516 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.18531650170202688)
-2025-02-18 11:22:48,516 - services.translation_routes - INFO - [translation_routes.py:165] - Request 62a16d2b: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': False, 'confidence': 0.18531650170202688}}}
-2025-02-18 11:22:48,517 - services.translation_routes - INFO - [translation_routes.py:167] - Request 62a16d2b: Audio processed successfully
-2025-02-18 11:22:48,541 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
-2025-02-18 11:23:07,826 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: Okay, so here we are in front of the elephants, and the cool thing about these guys is that they have really, really long trunks, and that's pretty much all there is to it.
-2025-02-18 11:23:11,849 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
-2025-02-18 11:23:11,890 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:11,890 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:11,904 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:11,904 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:11,922 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:11,922 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:11,935 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:11,935 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:12,546 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:294] - 
-==================================================
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: e08b4132
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
-==============================
-
-Target Language: fra
-
-Waveform Analysis:
---------------------
-- Peak Amplitude: 0.597
-- Avg Amplitude: 0.057
-- Rms Level: 0.089
-- Crest Factor: 6.682
-- Zero Crossings: 37027.000
-- Silence Percentage: 11.208
-- Clipping Points: 0.000
-- Dynamic Range: 179.267
-
-- Processing Metrics:
-  - Compression Detected: 0.000
-  - Over Compressed: 0.000
-  - Compression Severity: 0.165
-  - Dynamic Range Loss: 0.000
-
-- Temporal Metrics:
-  - Smoothing Detected: 1.000
-  - Temporal Variation: 0.024
-  - Temporal Flatness: 0.014
-
-- Volume Metrics:
-  - Volume Stability: 0.290
-  - Volume Range: 2539.958
-  - Volume Variations: 0.052
+  - Volume Stability: 0.303
+  - Volume Range: 286.638
+  - Volume Variations: 0.059
 
 Spectral Analysis:
 --------------------
@@ -820,26 +205,26 @@ Quality Metrics (1-5 scale):
 --------------------
 - Robotic Voice: 1.0
 - Pronunciation: 1.0
-- Audio Clarity: 3.0267206655212235
-- Background Noise: 3.672788844526262
+- Audio Clarity: 3.0255850913263616
+- Background Noise: 4.215146044270107
 - Voice Consistency: 1.0
 - Spectral Balance: 1.0
 
 Detected Issues:
 --------------------
-- Muffled
+No issues detected
 
 Language-Specific Analysis:
 --------------------
 
 Nasalization:
-  - Nasal Resonance: {'strength': 0.7639453411102295, 'stability': 3.2583508491516113, 'peak_frequencies': []}
-  - Quality Assessment: {'authenticity': 0.014612252824008465, 'consistency': 0.0, 'distinction': 0.0951521024107933}
+  - Nasal Resonance: {'strength': 0.9451561570167542, 'stability': 4.071811676025391, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 0.011780699715018272}
   - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
 
 Liaison:
   - Detected: False
-  - Confidence: 0.544
+  - Confidence: 0.527
   - Description: Weak or inconsistent liaison patterns
 
 Prosody:
@@ -851,65 +236,90 @@ Vowel Quality:
   - Quality Score: 0.003
   - Formant Structure: 0.000
   - Description: Poor vowel articulation. Unclear formant structure
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
 
-2025-02-18 11:23:12,546 - services.translation_routes - INFO - [translation_routes.py:307] - Request e08b4132: Audio output processed successfully
-2025-02-18 11:23:12,553 - services.translation_routes - INFO - [translation_routes.py:362] - Request e08b4132: Response prepared successfully
-2025-02-18 11:23:12,554 - services.translation_routes - INFO - [translation_routes.py:375] - Request e08b4132 completed in 129.39s
-2025-02-18 11:23:12,555 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 129.39s, Memory Change: 3069.02MB
-2025-02-18 11:23:12,555 - __main__ - INFO - [app.py:278] - Request to /translate took 161.50s
-2025-02-18 11:23:21,156 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Así que aquí estamos, delante de los elefantes. Lo genial de estos tipos es que tienen troncos muy, muy largos y eso es genial. Y eso es todo lo que tengo que decir.
-2025-02-18 11:23:34,438 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
-2025-02-18 11:23:34,452 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:34,452 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:34,456 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:34,456 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:34,461 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:34,462 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:34,465 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
-2025-02-18 11:23:34,465 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
-2025-02-18 11:23:34,694 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:161] - Spanish timing analysis failed: 'SpanishAnalyzer' object has no attribute '_find_syllable_boundaries'
-2025-02-18 11:23:34,714 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:218] - Spanish vowel analysis failed: 'SpanishAnalyzer' object has no attribute '_analyze_vowel_formants'
-2025-02-18 11:23:34,715 - services.diagnostics.language_analysis.spanish - ERROR - [spanish.py:249] - Spanish stress analysis failed: 'SpanishAnalyzer' object has no attribute '_find_stress_peaks'
-2025-02-18 11:23:34,715 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for spa
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:294] - 
+2025-02-19 10:13:16,758 - services.translation_routes - INFO - [translation_routes.py:307] - Request 7e804629: Audio output processed successfully
+2025-02-19 10:13:16,763 - services.translation_routes - INFO - [translation_routes.py:362] - Request 7e804629: Response prepared successfully
+2025-02-19 10:13:16,764 - services.translation_routes - INFO - [translation_routes.py:375] - Request 7e804629 completed in 98.16s
+2025-02-19 10:13:16,764 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 98.16s, Memory Change: 10289.56MB
+2025-02-19 10:13:16,764 - __main__ - INFO - [app.py:278] - Request to /translate took 200.34s
+2025-02-19 10:17:15,111 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.03MB
+2025-02-19 10:17:15,111 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-02-19 10:17:15,117 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@y_combinator/video/7411229444427287851?is_from_webapp=1&sender_device=pc&web_id=7472529903809676822
+2025-02-19 10:17:15,118 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-02-19 10:17:15,118 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpu4qhben8/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '1859656137062522109'}}}
+2025-02-19 10:17:16,516 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-02-19 10:17:16,517 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpu4qhben8/output.wav
+2025-02-19 10:17:16,540 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-02-19 10:17:16,541 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-02-19 10:17:16,541 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.43s, Memory Change: -122.30MB
+2025-02-19 10:17:16,541 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 1.43s
+2025-02-19 10:17:26,497 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 10:17:26,498 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 10:17:49,547 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 10:17:49,547 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 10:18:08,028 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 10:18:08,028 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 10:18:08,032 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 9f92efff
+2025-02-19 10:18:08,032 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-19 10:18:08,033 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-19 10:18:08,035 - services.translation_routes - INFO - [translation_routes.py:97] - Request 9f92efff: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgi_lt0n9.wav
+2025-02-19 10:18:08,036 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 38.24 seconds
+2025-02-19 10:18:08,036 - services.translation_routes - INFO - [translation_routes.py:112] - Request 9f92efff: Beginning audio processing with diagnostics
+2025-02-19 10:18:08,036 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgi_lt0n9.wav
+2025-02-19 10:18:08,036 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:18:08,038 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:18:08,072 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:18:08,083 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:18:08,083 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:18:08,134 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:18:08,201 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:08,202 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:08,215 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:08,216 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:08,235 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:08,235 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:08,252 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:08,252 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:09,330 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:123] - 
 ==================================================
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 62a16d2b
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: spa
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
-2025-02-18 11:23:34,715 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 9f92efff
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
 ==============================
 
-Target Language: spa
+Target Language: fra
 
 Waveform Analysis:
 --------------------
-- Peak Amplitude: 0.772
-- Avg Amplitude: 0.063
-- Rms Level: 0.105
-- Crest Factor: 7.377
-- Zero Crossings: 19144.000
-- Silence Percentage: 12.693
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.015
+- Rms Level: 0.040
+- Crest Factor: 23.831
+- Zero Crossings: 254556.000
+- Silence Percentage: 47.747
 - Clipping Points: 0.000
-- Dynamic Range: 256.054
+- Dynamic Range: 3685257.968
 
 - Processing Metrics:
   - Compression Detected: 0.000
   - Over Compressed: 0.000
-  - Compression Severity: 0.078
+  - Compression Severity: 0.000
   - Dynamic Range Loss: 0.000
 
 - Temporal Metrics:
   - Smoothing Detected: 1.000
-  - Temporal Variation: 0.031
-  - Temporal Flatness: 0.016
+  - Temporal Variation: 0.066
+  - Temporal Flatness: 0.021
 
 - Volume Metrics:
-  - Volume Stability: 0.240
-  - Volume Range: 2576.841
-  - Volume Variations: 0.063
+  - Volume Stability: -0.405
+  - Volume Range: 24536417.425
+  - Volume Variations: 0.032
 
 Spectral Analysis:
 --------------------
@@ -918,37 +328,921 @@ Quality Metrics (1-5 scale):
 --------------------
 - Robotic Voice: 1.0
 - Pronunciation: 1.0
-- Audio Clarity: 3.0283864763975736
-- Background Noise: 3.9509773775809935
+- Audio Clarity: 3.003345643146739
+- Background Noise: 5.0
 - Voice Consistency: 1.0
 - Spectral Balance: 1.0
 
 Detected Issues:
 --------------------
-No issues detected
+- Muffled
 
 Language-Specific Analysis:
 --------------------
 
-Phoneme Analysis:
-  - Trilled R: {'features': {'modulation_rate': 3396.778916544656, 'strength': 1.080413579940796}, 'strength': 1.0, 'regularity': 0.0, 'duration': -131.29102991253404, 'overall_quality': 0.5}
-  - Interdental Theta: {'energy': 0.8835486173629761, 'consistency': -3.164443016052246, 'spectral_shape': {'centroid': 0.5311025381088257, 'spread': 0.25958704948425293, 'quality': 0.7857577502727509}, 'quality': -0.4983788828055064}
-  - Stop Consonants: {'voiceless_stops': {'strength': 1.0, 'precision': 0.3073482489257692, 'quality': 0.6536741244628845}, 'voiced_stops': {'voicing': 0.3824138641357422, 'precision': 0.6098630211249226, 'quality': 0.4961384426303324}, 'overall_quality': 0.5749062835466084}
+Nasalization:
+  - Nasal Resonance: {'strength': 0.7177200317382812, 'stability': 1.5061113834381104, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.42766523361206055, 'distinction': 0.15607275068759918}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
 
-Syllable Timing:
+Liaison:
+  - Detected: False
+  - Confidence: 0.635
+  - Description: Weak or inconsistent liaison patterns
 
-Intonation Patterns:
-  - Contour Patterns: {'mean_pitch': 223.33994907640303, 'pitch_variability': 0.22260810316665167, 'rise_fall_ratio': 0.5263157894341116, 'quality': 0.7773918968433156}
-  - Melodic Features: {'range': 1.0, 'movement': 0.5193530532090551, 'quality': 0.7596765266045276}
-  - Overall Quality: 0.769
+Prosody:
+  - Score: 0.672
+  - Rhythm Quality: 0.703
+  - Intonation Quality: 0.641
 
-Vowel Clarity:
+Vowel Quality:
+  - Quality Score: 0.007
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 10:18:09,331 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
 
-Stress Patterns:
-2025-02-18 11:23:34,716 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
+2025-02-19 10:18:09,331 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgi_lt0n9.wav
+2025-02-19 10:18:09,331 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:18:09,333 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:18:09,364 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:18:09,377 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:18:09,377 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:18:09,429 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:18:09,496 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:09,496 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:09,511 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:09,512 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:09,527 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:09,527 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:09,544 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:18:09,545 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:18:10,645 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:18:10,647 - services.translation_routes - INFO - [translation_routes.py:153] - Request 9f92efff: Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:18:10,647 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.3477175465611055)
+2025-02-19 10:18:10,647 - services.translation_routes - INFO - [translation_routes.py:165] - Request 9f92efff: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': True, 'confidence': 0.3477175465611055}}}
+2025-02-19 10:18:10,647 - services.translation_routes - INFO - [translation_routes.py:167] - Request 9f92efff: Audio processed successfully
+2025-02-19 10:18:10,694 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-19 10:18:43,234 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: When you choose pricing, it's important to keep it simple. Overcomplicated pricing will kill the sales process. In general, monthly recurring revenue is preferable to annual recurrent revenue, and that's because during an economic downturn, your revenue is protected at least until the contract is renewed, and then you can have a dispute with the customer about whether it is worth renewing.
+2025-02-19 10:19:20,988 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Quand vous choisissez le prix, c'est important de le garder simple, trop compliqué. C'est préférable à un prix basé sur l'usage, parce que votre revenu est protégé au moins jusqu'à ce que le contrat soit renouvelé, alors que vous pouvez avoir un débat avec le client sur le fait qu'il vaut la peine d'être renouvelé. Il y a un risque réel que vos revenus tombent dans un mauvais mois et les investisseurs s'inquiètent pour ça.
+2025-02-19 10:19:55,334 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
+2025-02-19 10:19:55,362 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:19:55,364 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:19:55,373 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:19:55,374 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:19:55,385 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:19:55,385 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:19:55,394 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:19:55,394 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:19:55,704 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:294] - 
+==================================================
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 9f92efff
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
+==============================
 
-2025-02-18 11:23:34,716 - services.translation_routes - INFO - [translation_routes.py:307] - Request 62a16d2b: Audio output processed successfully
-2025-02-18 11:23:34,719 - services.translation_routes - INFO - [translation_routes.py:362] - Request 62a16d2b: Response prepared successfully
-2025-02-18 11:23:34,719 - services.translation_routes - INFO - [translation_routes.py:375] - Request 62a16d2b completed in 48.57s
-2025-02-18 11:23:34,721 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 48.57s, Memory Change: 742.44MB
-2025-02-18 11:23:34,721 - __main__ - INFO - [app.py:278] - Request to /translate took 104.64s
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.631
+- Avg Amplitude: 0.064
+- Rms Level: 0.099
+- Crest Factor: 6.404
+- Zero Crossings: 23262.000
+- Silence Percentage: 9.710
+- Clipping Points: 0.000
+- Dynamic Range: 162.407
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.200
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.026
+  - Temporal Flatness: 0.014
+
+- Volume Metrics:
+  - Volume Stability: 0.326
+  - Volume Range: 563.882
+  - Volume Variations: 0.055
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0307724555495783
+- Background Noise: 3.561415011054307
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.8791534304618835, 'stability': 3.727125883102417, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 0.006362263113260269}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.526
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.004
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
+
+2025-02-19 10:19:55,705 - services.translation_routes - INFO - [translation_routes.py:307] - Request 9f92efff: Audio output processed successfully
+2025-02-19 10:19:55,709 - services.translation_routes - INFO - [translation_routes.py:362] - Request 9f92efff: Response prepared successfully
+2025-02-19 10:19:55,710 - services.translation_routes - INFO - [translation_routes.py:375] - Request 9f92efff completed in 107.68s
+2025-02-19 10:19:55,713 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 107.68s, Memory Change: 1039.58MB
+2025-02-19 10:19:55,713 - __main__ - INFO - [app.py:278] - Request to /translate took 149.22s
+2025-02-19 10:20:50,786 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 10:20:50,788 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 10:21:17,042 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 10:21:17,043 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 10:21:38,888 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 10:21:38,888 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 10:21:38,894 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 18c5c3c8
+2025-02-19 10:21:38,894 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-19 10:21:38,895 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-19 10:21:38,897 - services.translation_routes - INFO - [translation_routes.py:97] - Request 18c5c3c8: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpeiv9ad7h.wav
+2025-02-19 10:21:38,898 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 38.24 seconds
+2025-02-19 10:21:38,898 - services.translation_routes - INFO - [translation_routes.py:112] - Request 18c5c3c8: Beginning audio processing with diagnostics
+2025-02-19 10:21:38,898 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpeiv9ad7h.wav
+2025-02-19 10:21:38,898 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:21:38,901 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:21:38,932 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:21:38,945 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:21:38,945 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:21:39,000 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:21:39,065 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:39,066 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:39,083 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:39,083 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:39,097 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:39,098 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:39,117 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:39,117 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:40,218 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:123] - 
+==================================================
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 18c5c3c8
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.015
+- Rms Level: 0.040
+- Crest Factor: 23.831
+- Zero Crossings: 254556.000
+- Silence Percentage: 47.747
+- Clipping Points: 0.000
+- Dynamic Range: 3685257.968
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.066
+  - Temporal Flatness: 0.021
+
+- Volume Metrics:
+  - Volume Stability: -0.405
+  - Volume Range: 24536417.425
+  - Volume Variations: 0.032
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.003345643146739
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.7177200317382812, 'stability': 1.5061113834381104, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.42766523361206055, 'distinction': 0.15607275068759918}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.635
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.672
+  - Rhythm Quality: 0.703
+  - Intonation Quality: 0.641
+
+Vowel Quality:
+  - Quality Score: 0.007
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 10:21:40,218 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
+
+2025-02-19 10:21:40,218 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpeiv9ad7h.wav
+2025-02-19 10:21:40,218 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:21:40,222 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:21:40,261 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:21:40,274 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:21:40,274 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:21:40,333 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:21:40,404 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:40,404 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:40,419 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:40,419 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:40,437 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:40,437 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:40,451 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:21:40,452 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:21:41,503 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:21:41,504 - services.translation_routes - INFO - [translation_routes.py:153] - Request 18c5c3c8: Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:21:41,504 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.3477175465611055)
+2025-02-19 10:21:41,504 - services.translation_routes - INFO - [translation_routes.py:165] - Request 18c5c3c8: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': True, 'confidence': 0.3477175465611055}}}
+2025-02-19 10:21:41,504 - services.translation_routes - INFO - [translation_routes.py:167] - Request 18c5c3c8: Audio processed successfully
+2025-02-19 10:21:41,539 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-19 10:22:10,619 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: When you choose pricing, it's important to keep it simple. Overcomplicated pricing will kill the sales process. In general, monthly recurring revenue is preferable to annual recurrent revenue, and that's because during an economic downturn, your revenue is protected at least until the contract is renewed, and then you can have a dispute with the customer about whether it is worth renewing.
+2025-02-19 10:22:43,197 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Quand vous choisissez le prix, c'est important de le garder simple, trop compliqué. C'est préférable à un prix basé sur l'usage, parce que votre revenu est protégé au moins jusqu'à ce que le contrat soit renouvelé, alors que vous pouvez avoir un débat avec le client sur le fait qu'il vaut la peine d'être renouvelé. Il y a un risque réel que vos revenus tombent dans un mauvais mois et les investisseurs s'inquiètent pour ça.
+2025-02-19 10:23:20,669 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
+2025-02-19 10:23:20,705 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:23:20,705 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:23:20,716 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:23:20,717 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:23:20,728 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:23:20,729 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:23:20,737 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:23:20,737 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:23:21,226 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:23:21,226 - services.translation_routes - INFO - [translation_routes.py:294] - 
+==================================================
+2025-02-19 10:23:21,226 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 18c5c3c8
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.781
+- Avg Amplitude: 0.059
+- Rms Level: 0.094
+- Crest Factor: 8.325
+- Zero Crossings: 40630.000
+- Silence Percentage: 9.390
+- Clipping Points: 0.000
+- Dynamic Range: 147.747
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.025
+  - Temporal Flatness: 0.014
+
+- Volume Metrics:
+  - Volume Stability: 0.283
+  - Volume Range: 298.559
+  - Volume Variations: 0.055
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.022525682560665
+- Background Noise: 4.330186377993878
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.7554920315742493, 'stability': 3.1432740688323975, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.023600738495588303, 'consistency': 0.0, 'distinction': 0.08663400262594223}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.504
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
+
+2025-02-19 10:23:21,227 - services.translation_routes - INFO - [translation_routes.py:307] - Request 18c5c3c8: Audio output processed successfully
+2025-02-19 10:23:21,233 - services.translation_routes - INFO - [translation_routes.py:362] - Request 18c5c3c8: Response prepared successfully
+2025-02-19 10:23:21,233 - services.translation_routes - INFO - [translation_routes.py:375] - Request 18c5c3c8 completed in 102.34s
+2025-02-19 10:23:21,236 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 102.34s, Memory Change: 854.64MB
+2025-02-19 10:23:21,236 - __main__ - INFO - [app.py:278] - Request to /translate took 150.45s
+2025-02-19 10:29:37,989 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.05MB
+2025-02-19 10:29:37,990 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-02-19 10:29:37,996 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@y_combinator/video/7411229444427287851?is_from_webapp=1&sender_device=pc&web_id=7472529903809676822
+2025-02-19 10:29:37,997 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-02-19 10:29:37,999 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpf_7ww_hs/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '1655740942480329061'}}}
+2025-02-19 10:29:38,572 - services.audio_link_routes - ERROR - [audio_link_routes.py:185] - Download error for tiktok: [0;31mERROR:[0m [TikTok] 7411229444427287851: Unable to extract webpage video data; please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U
+2025-02-19 10:29:38,573 - services.audio_link_routes - ERROR - [audio_link_routes.py:192] - tiktok processing error: Unable to access this TikTok content. Please try another video or check the URL.
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1637, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1772, in __extract_info
+    ie_result = ie.extract(url)
+                ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/extractor/common.py", line 742, in extract
+    ie_result = self._real_extract(url)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/extractor/tiktok.py", line 894, in _real_extract
+    video_data, status = self._extract_web_data_and_status(url, video_id)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/extractor/tiktok.py", line 250, in _extract_web_data_and_status
+    raise ExtractorError('Unable to extract webpage video data')
+yt_dlp.utils.ExtractorError: [TikTok] 7411229444427287851: Unable to extract webpage video data; please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 142, in handle_video_platform_url
+    ydl.download([url])
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3618, in download
+    self.__download_wrapper(self.extract_info)(
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 3591, in wrapper
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1626, in extract_info
+    return self.__extract_info(url, self.get_info_extractor(key), download, extra_info, process)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1655, in wrapper
+    self.report_error(str(e), e.format_traceback())
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1095, in report_error
+    self.trouble(f'{self._format_err("ERROR:", self.Styles.ERROR)} {message}', *args, **kwargs)
+  File "/opt/anaconda3/lib/python3.12/site-packages/yt_dlp/YoutubeDL.py", line 1034, in trouble
+    raise DownloadError(message, exc_info)
+yt_dlp.utils.DownloadError: [0;31mERROR:[0m [TikTok] 7411229444427287851: Unable to extract webpage video data; please report this issue on  https://github.com/yt-dlp/yt-dlp/issues?q= , filling out the appropriate issue template. Confirm you are on the latest version using  yt-dlp -U
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/audio_link_routes.py", line 187, in handle_video_platform_url
+    raise Exception(f"Unable to access this TikTok content. Please try another video or check the URL.")
+Exception: Unable to access this TikTok content. Please try another video or check the URL.
+2025-02-19 10:29:38,576 - services.audio_link_routes - ERROR - [audio_link_routes.py:260] - Processing error: Unable to access this TikTok content. Please try another video or check the URL.
+2025-02-19 10:29:38,577 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.58s, Memory Change: 25.64MB
+2025-02-19 10:29:38,577 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.58s
+2025-02-19 10:30:20,373 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@y_combinator/video/7411229444427287851?is_from_webapp=1&sender_device=pc&web_id=7472529903809676822
+2025-02-19 10:30:20,375 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-02-19 10:30:20,375 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpxlq98kpu/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '6952859391373438493'}}}
+2025-02-19 10:30:21,870 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-02-19 10:30:21,871 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpxlq98kpu/output.wav
+2025-02-19 10:30:21,895 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-02-19 10:30:21,895 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-02-19 10:30:21,896 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.52s, Memory Change: 20.73MB
+2025-02-19 10:30:21,896 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 1.52s
+2025-02-19 10:37:27,572 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.00MB
+2025-02-19 10:37:27,572 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-02-19 10:37:27,575 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@y_combinator/video/7411229444427287851?is_from_webapp=1&sender_device=pc&web_id=7472529903809676822
+2025-02-19 10:37:27,576 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-02-19 10:37:27,576 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp9t93losr/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '9575450934005025812'}}}
+2025-02-19 10:37:28,957 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-02-19 10:37:28,957 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp9t93losr/output.wav
+2025-02-19 10:37:28,983 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-02-19 10:37:28,984 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-02-19 10:37:28,984 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.41s, Memory Change: 13.22MB
+2025-02-19 10:37:28,984 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 1.41s
+2025-02-19 10:37:33,853 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 10:37:33,855 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 10:37:56,586 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 10:37:56,586 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 10:38:17,780 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 10:38:17,780 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 10:38:17,784 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 631f6d95
+2025-02-19 10:38:17,785 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-19 10:38:17,785 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-19 10:38:17,787 - services.translation_routes - INFO - [translation_routes.py:97] - Request 631f6d95: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpdr91x4ap.wav
+2025-02-19 10:38:17,788 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 38.24 seconds
+2025-02-19 10:38:17,788 - services.translation_routes - INFO - [translation_routes.py:112] - Request 631f6d95: Beginning audio processing with diagnostics
+2025-02-19 10:38:17,788 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpdr91x4ap.wav
+2025-02-19 10:38:17,788 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:38:17,791 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:38:17,826 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:38:17,838 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:38:17,839 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:38:17,904 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:38:17,969 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:17,970 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:17,984 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:17,985 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:18,001 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:18,001 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:18,018 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:18,019 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:19,158 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:123] - 
+==================================================
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 631f6d95
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.015
+- Rms Level: 0.040
+- Crest Factor: 23.831
+- Zero Crossings: 254556.000
+- Silence Percentage: 47.747
+- Clipping Points: 0.000
+- Dynamic Range: 3685257.968
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.066
+  - Temporal Flatness: 0.021
+
+- Volume Metrics:
+  - Volume Stability: -0.405
+  - Volume Range: 24536417.425
+  - Volume Variations: 0.032
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.003345643146739
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.7177200317382812, 'stability': 1.5061113834381104, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.42766523361206055, 'distinction': 0.15607275068759918}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.635
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.672
+  - Rhythm Quality: 0.703
+  - Intonation Quality: 0.641
+
+Vowel Quality:
+  - Quality Score: 0.007
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 10:38:19,159 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
+
+2025-02-19 10:38:19,159 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpdr91x4ap.wav
+2025-02-19 10:38:19,159 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 10:38:19,162 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 611915]), Frequency: 16000Hz
+2025-02-19 10:38:19,201 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 10:38:19,214 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:38:19,214 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 10:38:19,276 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 10:38:19,352 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:19,353 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:19,372 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:19,373 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:19,393 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:19,393 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:19,412 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:38:19,413 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:38:20,517 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:38:20,519 - services.translation_routes - INFO - [translation_routes.py:153] - Request 631f6d95: Background music analysis: {'has_background_music': True, 'music_confidence': 0.3477175465611055, 'feature_scores': {'spectral_flatness': 0.1390788085613864, 'rhythm_regularity': 0.023657718120805367, 'bass_presence': 0.137733629472295, 'temporal_stability': 0.047247390406618676}, 'speech_vs_music': {'speech_prominence': 2.1681845428842896, 'speech_band_energy': 6.937399632533925e-08, 'music_band_energy': 3.189635222611287e-08}}
+2025-02-19 10:38:20,519 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.3477175465611055)
+2025-02-19 10:38:20,519 - services.translation_routes - INFO - [translation_routes.py:165] - Request 631f6d95: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': True, 'confidence': 0.3477175465611055}}}
+2025-02-19 10:38:20,519 - services.translation_routes - INFO - [translation_routes.py:167] - Request 631f6d95: Audio processed successfully
+2025-02-19 10:38:20,556 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-19 10:38:49,763 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: When you choose pricing, it's important to keep it simple. Overcomplicated pricing will kill the sales process. In general, monthly recurring revenue is preferable to annual recurrent revenue, and that's because during an economic downturn, your revenue is protected at least until the contract is renewed, and then you can have a dispute with the customer about whether it is worth renewing.
+2025-02-19 10:39:24,091 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Quand vous choisissez le prix, c'est important de le garder simple, trop compliqué. C'est préférable à un prix basé sur l'usage, parce que votre revenu est protégé au moins jusqu'à ce que le contrat soit renouvelé, alors que vous pouvez avoir un débat avec le client sur le fait qu'il vaut la peine d'être renouvelé. Il y a un risque réel que vos revenus tombent dans un mauvais mois et les investisseurs s'inquiètent pour ça.
+2025-02-19 10:40:05,533 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
+2025-02-19 10:40:05,570 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:40:05,571 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:40:05,581 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:40:05,582 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:40:05,593 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:40:05,594 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:40:05,606 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 10:40:05,607 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 10:40:06,091 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 10:40:06,091 - services.translation_routes - INFO - [translation_routes.py:294] - 
+==================================================
+2025-02-19 10:40:06,091 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
+2025-02-19 10:40:06,091 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
+2025-02-19 10:40:06,091 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 631f6d95
+2025-02-19 10:40:06,091 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
+2025-02-19 10:40:06,092 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
+2025-02-19 10:40:06,092 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.828
+- Avg Amplitude: 0.059
+- Rms Level: 0.092
+- Crest Factor: 8.982
+- Zero Crossings: 36391.000
+- Silence Percentage: 8.468
+- Clipping Points: 0.000
+- Dynamic Range: 126.465
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.026
+  - Temporal Flatness: 0.015
+
+- Volume Metrics:
+  - Volume Stability: 0.302
+  - Volume Range: 307.321
+  - Volume Variations: 0.053
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.020525924192636
+- Background Noise: 4.59279718932241
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.9615254402160645, 'stability': 3.5726771354675293, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 0.01849990151822567}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Limited distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.513
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.003
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 10:40:06,092 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
+
+2025-02-19 10:40:06,092 - services.translation_routes - INFO - [translation_routes.py:307] - Request 631f6d95: Audio output processed successfully
+2025-02-19 10:40:06,098 - services.translation_routes - INFO - [translation_routes.py:362] - Request 631f6d95: Response prepared successfully
+2025-02-19 10:40:06,098 - services.translation_routes - INFO - [translation_routes.py:375] - Request 631f6d95 completed in 108.31s
+2025-02-19 10:40:06,101 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 108.32s, Memory Change: 750.92MB
+2025-02-19 10:40:06,101 - __main__ - INFO - [app.py:278] - Request to /translate took 152.25s
+2025-02-19 14:00:58,415 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.52MB
+2025-02-19 14:00:58,417 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 0.00s
+2025-02-19 14:00:58,422 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@fightjoe/video/7127311328095522053
+2025-02-19 14:00:58,424 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-02-19 14:00:58,424 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpzmc0vqzq/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '1425764577893515204'}}}
+2025-02-19 14:01:02,239 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-02-19 14:01:02,239 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpzmc0vqzq/output.wav
+2025-02-19 14:01:02,244 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-02-19 14:01:02,245 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-02-19 14:01:02,245 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 3.82s, Memory Change: 53.03MB
+2025-02-19 14:01:02,245 - __main__ - INFO - [app.py:278] - Request to /process-audio-url took 3.82s
+2025-02-19 14:01:03,644 - __main__ - INFO - [app.py:278] - Request to /translate took 0.00s
+2025-02-19 14:01:03,652 - services.model_manager - INFO - [model_manager.py:211] - Model inactive for too long, reloading...
+2025-02-19 14:01:03,652 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-19 14:01:18,302 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-19 14:01:18,302 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 14:01:18,303 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 14:01:42,423 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 14:01:42,424 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 14:01:59,698 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 14:01:59,698 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 14:01:59,701 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-19 14:01:59,701 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-19 14:01:59,702 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-19 14:02:16,480 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-19 14:02:16,481 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-19 14:02:32,110 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-19 14:02:32,111 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-19 14:02:32,223 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 702dac6a
+2025-02-19 14:02:32,223 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-19 14:02:32,224 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-19 14:02:32,225 - services.translation_routes - INFO - [translation_routes.py:97] - Request 702dac6a: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpwja33_93.wav
+2025-02-19 14:02:32,225 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 6.57 seconds
+2025-02-19 14:02:32,225 - services.translation_routes - INFO - [translation_routes.py:112] - Request 702dac6a: Beginning audio processing with diagnostics
+2025-02-19 14:02:32,226 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpwja33_93.wav
+2025-02-19 14:02:32,226 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 14:02:32,226 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-02-19 14:02:32,231 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 14:02:32,234 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-02-19 14:02:32,234 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 14:02:32,245 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 14:02:32,255 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,255 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,259 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,259 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,263 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,263 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,267 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,267 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,413 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:123] - 
+==================================================
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 702dac6a
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: fra
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.026
+- Rms Level: 0.076
+- Crest Factor: 12.530
+- Zero Crossings: 29106.000
+- Silence Percentage: 62.741
+- Clipping Points: 0.000
+- Dynamic Range: 6753166.765
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.082
+  - Temporal Flatness: 0.024
+
+- Volume Metrics:
+  - Volume Stability: -0.671
+  - Volume Range: 28777495.027
+  - Volume Variations: 0.065
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.012101101788277
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 1.0195544958114624, 'stability': 3.234647035598755, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.004738867282867432, 'distinction': 0.9893258810043335}
+  - Description: Strong nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.653
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.045
+  - Rhythm Quality: 0.090
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.007
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 14:02:32,414 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
+
+2025-02-19 14:02:32,414 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpwja33_93.wav
+2025-02-19 14:02:32,415 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-19 14:02:32,415 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-02-19 14:02:32,419 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-02-19 14:02:32,424 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-02-19 14:02:32,424 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for fra
+2025-02-19 14:02:32,435 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-02-19 14:02:32,446 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,446 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,451 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,451 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,455 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,456 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,461 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:32,461 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:32,607 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 14:02:32,608 - services.translation_routes - INFO - [translation_routes.py:153] - Request 702dac6a: Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-02-19 14:02:32,608 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.15608341036219223)
+2025-02-19 14:02:32,608 - services.translation_routes - INFO - [translation_routes.py:165] - Request 702dac6a: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': False, 'confidence': 0.15608341036219223}}}
+2025-02-19 14:02:32,608 - services.translation_routes - INFO - [translation_routes.py:167] - Request 702dac6a: Audio processed successfully
+2025-02-19 14:02:32,616 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-02-19 14:02:39,054 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: if you wouldn't fight what do you think it would be I would definitely be a diabetic
+2025-02-19 14:02:46,217 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: Si tu ne faisais pas ça, ce que tu penses que tu pourrais faire, je serais définitivement diabétique.
+2025-02-19 14:02:53,922 - services.translation_routes - INFO - [translation_routes.py:267] - Processing tuple output from model
+2025-02-19 14:02:53,932 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:53,932 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:53,935 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:53,935 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:53,939 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:53,939 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:53,942 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-19 14:02:53,942 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-19 14:02:54,045 - services.diagnostics.base - INFO - [base.py:112] - Completed language analysis for fra
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:294] - 
+==================================================
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:295] - Translated Audio Quality Report
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:296] - ==================================================
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:297] - Request ID: 702dac6a
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:298] - Target Language: fra
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:299] - --------------------------------------------------
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:300] - Audio Quality Analysis Report
+==============================
+
+Target Language: fra
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.405
+- Avg Amplitude: 0.052
+- Rms Level: 0.083
+- Crest Factor: 4.885
+- Zero Crossings: 9615.000
+- Silence Percentage: 10.448
+- Clipping Points: 0.000
+- Dynamic Range: 156.754
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.389
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.024
+  - Temporal Flatness: 0.011
+
+- Volume Metrics:
+  - Volume Stability: 0.230
+  - Volume Range: 163.870
+  - Volume Variations: 0.051
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.0339318321721236
+- Background Noise: 2.9541653731947073
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+
+Language-Specific Analysis:
+--------------------
+
+Nasalization:
+  - Nasal Resonance: {'strength': 0.594379723072052, 'stability': 3.1576290130615234, 'peak_frequencies': []}
+  - Quality Assessment: {'authenticity': 0.0, 'consistency': 0.0, 'distinction': 1.0}
+  - Description: Moderate nasal resonance. Unstable nasal resonance. Clear distinction between nasal and oral vowels
+
+Liaison:
+  - Detected: False
+  - Confidence: 0.541
+  - Description: Weak or inconsistent liaison patterns
+
+Prosody:
+  - Score: 0.000
+  - Rhythm Quality: 0.000
+  - Intonation Quality: 0.000
+
+Vowel Quality:
+  - Quality Score: 0.002
+  - Formant Structure: 0.000
+  - Description: Poor vowel articulation. Unclear formant structure
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:301] - ==================================================
+
+2025-02-19 14:02:54,045 - services.translation_routes - INFO - [translation_routes.py:307] - Request 702dac6a: Audio output processed successfully
+2025-02-19 14:02:54,048 - services.translation_routes - INFO - [translation_routes.py:362] - Request 702dac6a: Response prepared successfully
+2025-02-19 14:02:54,048 - services.translation_routes - INFO - [translation_routes.py:375] - Request 702dac6a completed in 21.82s
+2025-02-19 14:02:54,048 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 21.82s, Memory Change: 10091.89MB
+2025-02-19 14:02:54,048 - __main__ - INFO - [app.py:278] - Request to /translate took 110.40s
