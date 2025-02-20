@@ -106,37 +106,59 @@ class VideoProcessor:
                 audios=audio.squeeze().numpy(),
                 return_tensors="pt",
                 sampling_rate=16000,
-                tgt_lang=target_language,
-                return_attention_mask=True
+                src_lang="eng",  # Explicitly set source language
+                tgt_lang=target_language
             )
-            
+        
             if self.device.type == 'cuda':
                 inputs = {k: v.to(self.device) for k, v in inputs.items()}
-            
-            # Generate translation
+        
+            # First generate translated text to verify translation is working
+            logger.info(f"Generating text translation in {target_language}")
+            with torch.no_grad():
+                text_output = self.text_model.generate(
+                    input_features=inputs["input_features"],
+                    tgt_lang=target_language,
+                    num_beams=5,
+                    max_new_tokens=200
+                )
+                text = self.processor.batch_decode(text_output, skip_special_tokens=True)[0]
+                logger.info(f"Generated text: {text}")
+
+            # Now generate translated speech
+            logger.info("Generating translated speech")
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
                     tgt_lang=target_language,
-                    num_beams=5,
-                    max_new_tokens=200,
-                    do_sample=True,
-                    temperature=0.7,
-                    top_k=50,
-                    top_p=0.9
+                    num_beams=1,
+                    speaker_id=7,
+                    return_intermediate_token_ids=False
                 )
+        
+                # Get the waveform from the outputs - handle tuple output
+                if isinstance(outputs, tuple):
+                    translated_audio = outputs[0]  # First element is the waveform
+                else:
+                    translated_audio = outputs
+                
+                # Ensure we're dealing with a tensor
+                if not isinstance(translated_audio, torch.Tensor):
+                    raise ValueError(f"Expected tensor output, got {type(translated_audio)}")
             
-            # The output is already the waveform tensor
-            translated_audio = outputs[0].cpu()
+                # Move to CPU if needed
+                translated_audio = translated_audio.cpu()
             
-            # Normalize audio
-            if torch.abs(translated_audio).max() > 0:
-                translated_audio = translated_audio / torch.abs(translated_audio).max()
-            
-            return translated_audio
+                # Normalize audio
+                max_val = torch.abs(translated_audio).max()
+                if max_val > 0:
+                    translated_audio = translated_audio / max_val
+        
+                logger.info(f"Translation successful, audio shape: {translated_audio.shape}")
+                return translated_audio
             
         except Exception as e:
-            logger.error(f"Audio translation failed: {str(e)}")
+            logger.error(f"Audio translation failed: {str(e)}", exc_info=True)
             raise ValueError(f"Failed to translate audio: {str(e)}")
 
     def combine_audio_video(self, audio_path: str, video_path: str, output_path: str) -> None:
@@ -144,10 +166,13 @@ class VideoProcessor:
         try:
             command = [
                 'ffmpeg', '-y',
-                '-i', video_path,
-                '-i', audio_path,
-                '-c:v', 'copy',
-                '-c:a', 'aac',
+                '-i', video_path,      # Input video
+                '-i', audio_path,      # Input audio
+                '-map', '0:v',         # Use video from first input
+                '-map', '1:a',         # Use audio from second input
+                '-c:v', 'copy',        # Copy video codec
+                '-c:a', 'aac',         # Convert audio to AAC
+                '-shortest',           # Cut to shortest stream
                 output_path
             ]
             subprocess.run(command, check=True)
