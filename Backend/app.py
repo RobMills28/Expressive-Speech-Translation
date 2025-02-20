@@ -61,6 +61,7 @@ from services.utils import (
     require_model,
     performance_logger
 )
+from services.video_routes import handle_video_processing
 from services.podcast_routes import handle_podcast_upload
 from services.health_routes import handle_model_health 
 
@@ -367,6 +368,19 @@ def process_audio_url():
     except Exception as e:
         logger.error(f"Error processing audio URL: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+# Add the new video processing route here
+@app.route('/process-video', methods=['POST', 'OPTIONS'])
+@limiter.limit("2 per minute")
+@performance_logger
+def process_video():
+    try:
+        target_language = request.form.get('target_language', 'fra')
+        return handle_video_processing(target_language)
+    except Exception as e:
+        return ErrorHandler.handle_error(e)
+
+
 
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
