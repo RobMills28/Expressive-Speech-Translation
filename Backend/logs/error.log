@@ -4540,3 +4540,4 @@ Exception: Unable to access this TikTok content. Please try another video or che
 2025-02-19 14:02:53,942 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
 2025-02-20 20:54:33,074 - services.video_routes - ERROR - [video_routes.py:172] - Audio translation failed: 'tuple' object has no attribute 'waveform'
 2025-02-20 20:54:33,074 - services.video_routes - ERROR - [video_routes.py:128] - Video processing failed: Failed to translate audio
+2025-02-20 21:52:40,745 - services.video_routes - ERROR - [video_routes.py:128] - Video processing failed: expected str, bytes or os.PathLike object, not Tensor

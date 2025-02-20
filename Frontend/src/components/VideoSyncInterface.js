@@ -55,6 +55,7 @@ const VideoSyncInterface = () => {
       setIsProcessing(true);
       setProgress(0);
       setProcessPhase('Preparing video for processing...');
+      setError('');
 
       const formData = new FormData();
       formData.append('video', video);
@@ -69,29 +70,59 @@ const VideoSyncInterface = () => {
         throw new Error('Failed to process video');
       }
 
-      // Handle Server-Sent Events for progress
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+
+      let buffer = ''; // Buffer for incomplete messages
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
-        const data = JSON.parse(chunk);
+        // Append new data to buffer and split into messages
+        buffer += decoder.decode(value, { stream: true });
+        const messages = buffer.split('\n\n');
+        
+        // Keep the last item in buffer if it's incomplete
+        buffer = messages.pop() || '';
 
-        if (data.progress) {
-          setProgress(data.progress);
-          setProcessPhase(data.phase || '');
-        }
-
-        if (data.result) {
-          setResult(data.result);
-          break;
+        // Process complete messages
+        for (const message of messages) {
+          if (message.trim().startsWith('data: ')) {
+            try {
+              const jsonStr = message.trim().slice(6); // Remove 'data: ' prefix
+              const data = JSON.parse(jsonStr);
+              
+              if (data.error) {
+                throw new Error(data.error);
+              }
+              
+              if (data.progress !== undefined) {
+                setProgress(data.progress);
+                setProcessPhase(data.phase || '');
+              }
+              
+              if (data.result) {
+                // Convert base64 to blob and create URL
+                const videoBlob = new Blob(
+                  [Uint8Array.from(atob(data.result), c => c.charCodeAt(0))],
+                  { type: 'video/mp4' }
+                );
+                const videoUrl = URL.createObjectURL(videoBlob);
+                setResult(videoUrl);
+              }
+            } catch (e) {
+              console.error('Error parsing SSE message:', e);
+              if (e.message !== 'Unexpected end of JSON input') {
+                throw e;
+              }
+            }
+          }
         }
       }
 
     } catch (err) {
+      console.error('Process error:', err);
       setError(err.message);
     } finally {
       setIsProcessing(false);

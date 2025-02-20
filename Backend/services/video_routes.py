@@ -12,6 +12,8 @@ from flask import request, Response, stream_with_context
 import json
 import cv2
 import subprocess
+import base64
+import torchaudio
 from typing import Generator, Dict, Any
 
 from services.audio_processor import AudioProcessor
@@ -77,6 +79,82 @@ class VideoProcessor:
             logger.error(f"Failed to save frames: {str(e)}")
             raise ValueError("Failed to process video frames")
 
+    def save_audio_tensor(self, audio_tensor: torch.Tensor, path: str):
+        """Save audio tensor to file."""
+        try:
+            # Ensure audio is mono and properly shaped
+            if len(audio_tensor.shape) > 1:
+                audio_tensor = audio_tensor.squeeze(0)
+            
+            # Convert to numpy and save using torchaudio
+            torchaudio.save(
+                path,
+                audio_tensor.unsqueeze(0),  # Add channel dimension
+                sample_rate=16000,
+                encoding='PCM_S',
+                bits_per_sample=16
+            )
+        except Exception as e:
+            logger.error(f"Failed to save audio tensor: {str(e)}")
+            raise ValueError("Failed to save translated audio")
+
+    def translate_audio(self, audio: torch.Tensor, target_language: str) -> torch.Tensor:
+        """Translate audio using SeamlessM4T."""
+        try:
+            # Prepare inputs for model
+            inputs = self.processor(
+                audios=audio.squeeze().numpy(),
+                return_tensors="pt",
+                sampling_rate=16000,
+                tgt_lang=target_language,
+                return_attention_mask=True
+            )
+            
+            if self.device.type == 'cuda':
+                inputs = {k: v.to(self.device) for k, v in inputs.items()}
+            
+            # Generate translation
+            with torch.no_grad():
+                outputs = self.model.generate(
+                    **inputs,
+                    tgt_lang=target_language,
+                    num_beams=5,
+                    max_new_tokens=200,
+                    do_sample=True,
+                    temperature=0.7,
+                    top_k=50,
+                    top_p=0.9
+                )
+            
+            # The output is already the waveform tensor
+            translated_audio = outputs[0].cpu()
+            
+            # Normalize audio
+            if torch.abs(translated_audio).max() > 0:
+                translated_audio = translated_audio / torch.abs(translated_audio).max()
+            
+            return translated_audio
+            
+        except Exception as e:
+            logger.error(f"Audio translation failed: {str(e)}")
+            raise ValueError(f"Failed to translate audio: {str(e)}")
+
+    def combine_audio_video(self, audio_path: str, video_path: str, output_path: str) -> None:
+        """Combine audio and video files."""
+        try:
+            command = [
+                'ffmpeg', '-y',
+                '-i', video_path,
+                '-i', audio_path,
+                '-c:v', 'copy',
+                '-c:a', 'aac',
+                output_path
+            ]
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to combine audio and video: {str(e)}")
+            raise ValueError("Failed to create final video")
+
     def process_video(self, video_file, target_language: str) -> Generator[str, None, None]:
         """Process video file and yield progress events."""
         temp_files = []
@@ -94,35 +172,39 @@ class VideoProcessor:
             
             yield self._progress_event(20, "Processing audio for translation...")
             
-            # Process and translate audio
+            # Process audio
             audio_tensor = self.audio_processor.process_audio(audio_path)
             
             yield self._progress_event(40, "Translating speech...")
             
+            # Translate audio
             translated_audio = self.translate_audio(audio_tensor, target_language)
+            
+            # Save translated audio
+            translated_audio_path = str(self.temp_dir / 'translated_audio.wav')
+            self.save_audio_tensor(translated_audio, translated_audio_path)
+            temp_files.append(translated_audio_path)
             
             yield self._progress_event(60, "Processing video frames...")
             
             # Extract and process frames
             frames_dir = self.save_frames(temp_video.name)
+            temp_files.append(str(frames_dir))
             
             yield self._progress_event(70, "Synchronizing lip movements...")
             
-            # Run Wav2Lip synchronization
-            synced_video = self.synchronize_video(frames_dir, translated_audio)
-            temp_files.append(synced_video)
+            # Run Wav2Lip synchronization (placeholder for now)
+            synced_video = self.temp_dir / 'synced_video.mp4'
+            self.combine_audio_video(translated_audio_path, temp_video.name, str(synced_video))
+            temp_files.append(str(synced_video))
             
             yield self._progress_event(90, "Finalizing video...")
             
-            # Prepare final video
-            output_path = self.temp_dir / 'final_output.mp4'
-            self.combine_audio_video(translated_audio, synced_video, str(output_path))
+            # Return the final video data
+            with open(synced_video, 'rb') as f:
+                video_data = base64.b64encode(f.read()).decode('utf-8')
             
-            # Return result
-            with open(output_path, 'rb') as f:
-                video_data = f.read()
-            
-            yield f"data: {json.dumps({'result': video_data.decode('latin1')})}\n\n"
+            yield f"data: {json.dumps({'result': video_data})}\n\n"
             
         except Exception as e:
             logger.error(f"Video processing failed: {str(e)}")
@@ -140,64 +222,6 @@ class VideoProcessor:
                             os.unlink(file_path)
                 except Exception as e:
                     logger.error(f"Failed to cleanup {file_path}: {str(e)}")
-
-    def translate_audio(self, audio: torch.Tensor, target_language: str) -> torch.Tensor:
-        """Translate audio using SeamlessM4T."""
-        try:
-            # Prepare inputs for model
-            inputs = self.processor(
-                audios=audio.squeeze().numpy(),
-                return_tensors="pt",
-                sampling_rate=16000,
-                src_lang="eng",  # Assuming English source for now
-                tgt_lang=target_language
-            )
-            
-            if self.device.type == 'cuda':
-                inputs = {k: v.to(self.device) for k, v in inputs.items()}
-            
-            # Generate translation
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    **inputs,
-                    tgt_lang=target_language,
-                    num_beams=5,
-                    max_new_tokens=200,
-                    temperature=0.7
-                )
-            
-            return outputs.waveform[0].cpu()
-            
-        except Exception as e:
-            logger.error(f"Audio translation failed: {str(e)}")
-            raise ValueError("Failed to translate audio")
-
-    def synchronize_video(self, frames_dir: str, audio: torch.Tensor) -> str:
-        """Synchronize video frames with translated audio using Wav2Lip."""
-        try:
-            # TODO: Implement Wav2Lip synchronization
-            # For now, just return the original video
-            return frames_dir
-            
-        except Exception as e:
-            logger.error(f"Video synchronization failed: {str(e)}")
-            raise ValueError("Failed to synchronize video")
-
-    def combine_audio_video(self, audio_path: str, video_path: str, output_path: str) -> None:
-        """Combine audio and video files."""
-        try:
-            command = [
-                'ffmpeg', '-y',
-                '-i', video_path,
-                '-i', audio_path,
-                '-c:v', 'copy',
-                '-c:a', 'aac',
-                output_path
-            ]
-            subprocess.run(command, check=True)
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Failed to combine audio and video: {str(e)}")
-            raise ValueError("Failed to create final video")
 
 def handle_video_processing(target_language: str):
     """Route handler for video processing requests."""
