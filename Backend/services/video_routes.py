@@ -161,15 +161,16 @@ class VideoProcessor:
             logger.error(f"Audio translation failed: {str(e)}", exc_info=True)
             raise ValueError(f"Failed to translate audio: {str(e)}")
 
-    def combine_audio_video(self, audio_path: str, video_path: str, output_path: str) -> None:
-        """Combine audio and video files."""
+    def combine_audio_video(self, audio_path: str, video_path: str, output_path: str, delay_ms: int = 540) -> None:
+        """Combine audio and video files with precise audio delay."""
         try:
             command = [
                 'ffmpeg', '-y',
                 '-i', video_path,      # Input video
                 '-i', audio_path,      # Input audio
+                '-filter_complex', f'[1:a]adelay={delay_ms}|{delay_ms}[adelayed];[adelayed]aresample=44100[a]',  # Delay and resample audio
                 '-map', '0:v',         # Use video from first input
-                '-map', '1:a',         # Use audio from second input
+                '-map', '[a]',         # Use delayed audio
                 '-c:v', 'copy',        # Copy video codec
                 '-c:a', 'aac',         # Convert audio to AAC
                 '-shortest',           # Cut to shortest stream
@@ -180,6 +181,39 @@ class VideoProcessor:
             logger.error(f"Failed to combine audio and video: {str(e)}")
             raise ValueError("Failed to create final video")
 
+    def add_silence_padding(self, audio_tensor: torch.Tensor, silence_duration_samples: int) -> torch.Tensor:
+        """Add silence padding to the start of the audio."""
+        padding = torch.zeros(1, silence_duration_samples)
+        return torch.cat([padding, audio_tensor], dim=1)
+
+    def detect_speech_start(self, audio_path: str) -> float:
+        """Detect when speech starts in the audio file."""
+        try:
+            waveform, sr = torchaudio.load(audio_path)
+        
+            # Convert to mono if stereo
+            if waveform.shape[0] > 1:
+                waveform = torch.mean(waveform, dim=0, keepdim=True)
+        
+            # Calculate RMS energy
+            frame_length = int(0.02 * sr)  # 20ms frames
+            hop_length = frame_length // 2  # 50% overlap
+        
+            frames = waveform.unfold(1, frame_length, hop_length)
+            rms = torch.sqrt(torch.mean(frames ** 2, dim=2))
+        
+            # Find first frame above threshold
+            threshold = torch.mean(rms) * 0.1  # 10% of mean energy
+            speech_start_frame = torch.where(rms > threshold)[1][0]
+        
+            # Convert frame index to seconds
+            speech_start_time = (speech_start_frame * hop_length) / sr
+        
+            return speech_start_time
+        except Exception as e:
+            logger.error(f"Failed to detect speech start: {str(e)}")
+            return 0.0  # Default to start if detection fails
+
     def process_video(self, video_file, target_language: str) -> Generator[str, None, None]:
         """Process video file and yield progress events."""
         temp_files = []
@@ -188,53 +222,58 @@ class VideoProcessor:
             with tempfile.NamedTemporaryFile(suffix='.mp4', delete=False) as temp_video:
                 video_file.save(temp_video.name)
                 temp_files.append(temp_video.name)
-                
-            yield self._progress_event(10, "Extracting audio...")
             
+            yield self._progress_event(10, "Extracting audio...")
+        
             # Extract audio
             audio_path = self.extract_audio(temp_video.name)
             temp_files.append(audio_path)
-            
+        
+            # Detect speech start time
+            speech_start_time = self.detect_speech_start(audio_path)
+            logger.info(f"Detected speech starts at: {speech_start_time:.2f} seconds")
+        
             yield self._progress_event(20, "Processing audio for translation...")
-            
+        
             # Process audio
             audio_tensor = self.audio_processor.process_audio(audio_path)
-            
+        
             yield self._progress_event(40, "Translating speech...")
-            
+        
             # Translate audio
             translated_audio = self.translate_audio(audio_tensor, target_language)
-            
-            # Save translated audio
+        
+            # Save translated audio without padding (we'll use adelay instead)
             translated_audio_path = str(self.temp_dir / 'translated_audio.wav')
             self.save_audio_tensor(translated_audio, translated_audio_path)
             temp_files.append(translated_audio_path)
-            
+        
             yield self._progress_event(60, "Processing video frames...")
-            
+        
             # Extract and process frames
             frames_dir = self.save_frames(temp_video.name)
             temp_files.append(str(frames_dir))
-            
+        
             yield self._progress_event(70, "Synchronizing lip movements...")
-            
+        
             # Run Wav2Lip synchronization (placeholder for now)
             synced_video = self.temp_dir / 'synced_video.mp4'
-            self.combine_audio_video(translated_audio_path, temp_video.name, str(synced_video))
+            delay_ms = int(speech_start_time * 1000)  # Convert to milliseconds
+            self.combine_audio_video(translated_audio_path, temp_video.name, str(synced_video), delay_ms)
             temp_files.append(str(synced_video))
-            
+        
             yield self._progress_event(90, "Finalizing video...")
-            
+        
             # Return the final video data
             with open(synced_video, 'rb') as f:
                 video_data = base64.b64encode(f.read()).decode('utf-8')
-            
+        
             yield f"data: {json.dumps({'result': video_data})}\n\n"
-            
+        
         except Exception as e:
             logger.error(f"Video processing failed: {str(e)}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
-            
+        
         finally:
             # Cleanup temp files
             for file_path in temp_files:
