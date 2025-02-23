@@ -3652,3 +3652,189 @@ TypeError: abs(): argument 'input' (position 1) must be Tensor, not tuple
 2025-02-21 21:16:18,907 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
 2025-02-21 21:16:18,907 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
 2025-02-21 21:16:24,613 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-22 23:49:47,750 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-22 23:49:47,750 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-22 23:50:00,498 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-22 23:50:00,498 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-22 23:50:00,501 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-22 23:50:30,093 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-22 23:50:30,094 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-22 23:50:46,581 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-22 23:50:46,582 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-22 23:50:46,585 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-22 23:50:46,586 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-22 23:50:46,586 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-22 23:51:04,955 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-22 23:51:04,955 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-22 23:51:20,600 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-22 23:51:20,601 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 7.2GB available
+2025-02-22 23:51:20,603 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-22 23:51:20,604 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-22 23:51:20,604 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-22 23:51:20,604 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-22 23:51:20,604 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-22 23:51:20,604 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-22 23:51:20,604 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-22 23:55:18,180 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-22 23:55:18,181 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-22 23:55:18,181 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-22 23:55:18,182 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-22 23:55:42,757 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-22 23:55:42,757 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-22 23:55:58,322 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-22 23:55:58,322 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-22 23:55:58,325 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 40.15s, Memory Change: 5945.38MB
+2025-02-22 23:55:58,325 - __main__ - INFO - [app.py:279] - Request to /process-video took 40.15s
+2025-02-22 23:56:02,731 - services.video_routes - INFO - [video_routes.py:234] - Detected speech starts at: 0.54 seconds
+2025-02-22 23:56:02,732 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-22 23:56:02,732 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-22 23:56:02,734 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-22 23:56:02,786 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-22 23:56:10,725 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-22 23:56:10,725 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-22 23:56:16,184 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-23 01:02:29,735 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-23 01:02:29,747 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-23 01:02:34,753 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-23 01:02:34,754 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-23 01:02:34,755 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-23 01:02:34,759 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 01:02:34,760 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-23 01:02:34,763 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-23 01:02:34,766 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-23 01:02:34,767 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-23 01:02:34,767 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-23 01:02:34,769 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 01:02:34,770 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-23 01:02:34,770 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-23 01:02:34,770 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-23 01:02:34,770 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-23 01:02:34,771 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 01:02:34,772 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-23 10:13:29,753 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-23 10:13:29,754 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-23 10:13:42,667 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-23 10:13:42,668 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-23 10:13:42,672 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-23 10:14:10,948 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-23 10:14:10,949 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-23 10:14:26,407 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-23 10:14:26,407 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-23 10:14:26,409 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-23 10:14:26,409 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-23 10:14:26,409 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-23 10:14:44,139 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-23 10:14:44,141 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-23 10:15:00,361 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-23 10:15:00,362 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 6.7GB available
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-23 10:15:00,365 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-23 10:15:00,366 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-23 10:15:00,366 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-23 10:15:00,366 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-23 10:15:00,366 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-23 10:15:00,366 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-23 10:22:02,290 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-23 10:22:02,292 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-23 10:22:02,292 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-23 10:22:02,293 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-23 10:22:28,858 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-23 10:22:28,859 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-23 10:22:46,932 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-23 10:22:46,932 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-23 10:22:46,936 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 44.65s, Memory Change: 7305.81MB
+2025-02-23 10:22:46,936 - __main__ - INFO - [app.py:279] - Request to /process-video took 44.65s
+2025-02-23 10:22:47,409 - services.video_routes - INFO - [video_routes.py:234] - Detected speech starts at: 0.54 seconds
+2025-02-23 10:22:47,410 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-23 10:22:47,410 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-23 10:22:47,412 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-23 10:22:47,451 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-23 10:22:55,069 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-23 10:22:55,070 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-23 10:23:00,610 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-23 10:32:25,573 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-23 10:32:25,577 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-23 10:32:30,582 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-23 10:32:30,584 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-23 10:32:30,584 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-23 10:32:30,587 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 10:32:30,588 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-23 10:32:30,588 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-23 10:32:30,590 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-23 10:32:30,591 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-23 10:32:30,591 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-23 10:32:30,592 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 10:32:30,592 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-23 10:32:30,592 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-23 10:32:30,593 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-23 10:32:30,593 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-23 10:32:30,593 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 10:32:30,594 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-23 10:34:20,009 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-23 10:34:20,009 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-23 10:34:32,779 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-23 10:34:32,779 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-23 10:34:32,780 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-23 10:35:03,611 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-23 10:35:03,611 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-23 10:35:22,606 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-23 10:35:22,606 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-23 10:35:22,611 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-23 10:35:22,611 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-23 10:35:22,611 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-23 10:35:36,653 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-23 10:35:36,656 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-23 10:35:54,418 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-23 10:35:54,418 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-23 10:35:54,421 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 7.3GB available
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-23 10:35:54,422 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-23 10:37:48,998 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-23 10:37:48,999 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-23 10:37:48,999 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-23 10:37:49,000 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-23 10:38:07,695 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-23 10:38:07,695 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-23 10:38:26,225 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-23 10:38:26,226 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-23 10:38:26,229 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 37.23s, Memory Change: 2215.98MB
+2025-02-23 10:38:26,229 - __main__ - INFO - [app.py:279] - Request to /process-video took 37.23s
+2025-02-23 10:38:26,505 - services.video_routes - INFO - [video_routes.py:234] - Detected speech starts at: 0.54 seconds
+2025-02-23 10:38:26,505 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-23 10:38:26,506 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-23 10:38:26,508 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-23 10:38:26,548 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-23 10:38:34,127 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-23 10:38:34,128 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-23 10:38:39,709 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
