@@ -214,6 +214,72 @@ class VideoProcessor:
             logger.error(f"Failed to detect speech start: {str(e)}")
             return 0.0  # Default to start if detection fails
 
+    def detect_face(self, video_path):
+        """Detect main face in video frames."""
+        try:
+            # Import face detection from Diff2Lip
+            import sys
+            sys.path.append('diff2lip')
+            from face_detection import api as face_detection
+            
+            # Initialize face detector - EXPLICITLY use CPU
+            detector = face_detection.FaceAlignment(
+                face_detection.LandmarksType._2D,
+                device='cpu',  # Force CPU usage
+                flip_input=False
+            )
+
+            # Extract face from first frame
+            cap = cv2.VideoCapture(video_path)
+            ret, frame = cap.read()
+            if not ret:
+                logger.error("Failed to read video frame")
+                return None
+            
+            # Get face detection
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            preds = detector.get_detections_for_batch(np.array([frame_rgb]))
+            cap.release()
+            
+            if preds is None or len(preds) == 0:
+                logger.warning("No face detected in video")
+                return None
+            
+            # Return bounding box
+            logger.info(f"Face detected with bounding box: {preds[0]}")
+            return preds[0]
+        except Exception as e:
+            logger.error(f"Face detection failed: {str(e)}", exc_info=True)
+            return None
+
+    def apply_lip_sync(self, video_path, audio_path, output_path):
+        """Apply lip sync using Diff2Lip."""
+        try:
+            model_path = "diff2lip/checkpoints/archive"
+            
+            # Updated command with correct argument names
+            command = [
+                "python", "diff2lip/generate.py",
+                "--model_path", model_path,
+                "--video_path", video_path,  # Changed from --face
+                "--audio_path", audio_path,  # Changed from --audio
+                "--out_path", output_path,   # Changed from --outfile
+                "--sampling_ref_type", "gt"  # Use ground truth frames as reference
+            ]
+            
+            logger.info(f"Running Diff2Lip with command: {' '.join(command)}")
+            process = subprocess.run(command, capture_output=True, text=True)
+            
+            if process.returncode != 0:
+                logger.error(f"Diff2Lip failed: {process.stderr}")
+                return False
+                
+            logger.info(f"Lip sync successful, output saved to {output_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Lip sync failed: {str(e)}", exc_info=True)
+            return False
+
     def process_video(self, video_file, target_language: str) -> Generator[str, None, None]:
         """Process video file and yield progress events."""
         temp_files = []
@@ -248,18 +314,45 @@ class VideoProcessor:
             self.save_audio_tensor(translated_audio, translated_audio_path)
             temp_files.append(translated_audio_path)
         
-            yield self._progress_event(60, "Processing video frames...")
+            yield self._progress_event(60, "Detecting faces for lip synchronization...")
         
-            # Extract and process frames
-            frames_dir = self.save_frames(temp_video.name)
-            temp_files.append(str(frames_dir))
+            # Check if faces can be detected
+            has_face = self.detect_face(temp_video.name) is not None
         
             yield self._progress_event(70, "Synchronizing lip movements...")
         
-            # Run Wav2Lip synchronization (placeholder for now)
+            # Path for the synchronized video
             synced_video = self.temp_dir / 'synced_video.mp4'
-            delay_ms = int(speech_start_time * 1000)  # Convert to milliseconds
-            self.combine_audio_video(translated_audio_path, temp_video.name, str(synced_video), delay_ms)
+        
+            if has_face:
+                # Apply lip sync using Diff2Lip
+                success = self.apply_lip_sync(
+                    temp_video.name,  # Original video
+                    translated_audio_path,  # Translated audio
+                    str(synced_video)  # Output path
+                )
+                
+                if not success:
+                    # Fall back to simpler method if lip sync fails
+                    logger.warning("Diff2Lip sync failed, falling back to basic audio sync")
+                    delay_ms = int(speech_start_time * 1000)  # Convert to milliseconds
+                    self.combine_audio_video(
+                        translated_audio_path, 
+                        temp_video.name, 
+                        str(synced_video),
+                        delay_ms
+                    )
+            else:
+                # No face detected, use simple audio delay method
+                logger.warning("No face detected, using basic audio sync")
+                delay_ms = int(speech_start_time * 1000)  # Convert to milliseconds
+                self.combine_audio_video(
+                    translated_audio_path, 
+                    temp_video.name, 
+                    str(synced_video),
+                    delay_ms
+                )
+        
             temp_files.append(str(synced_video))
         
             yield self._progress_event(90, "Finalizing video...")

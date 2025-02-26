@@ -4548,3 +4548,116 @@ Traceback (most recent call last):
        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: abs(): argument 'input' (position 1) must be Tensor, not tuple
 2025-02-20 23:16:29,543 - services.video_routes - ERROR - [video_routes.py:221] - Video processing failed: Failed to translate audio: abs(): argument 'input' (position 1) must be Tensor, not tuple
+2025-02-26 00:00:36,300 - services.video_routes - ERROR - [video_routes.py:248] - Face detection failed: Torch not compiled with CUDA enabled
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/services/video_routes.py", line 226, in detect_face
+    detector = face_detection.FaceAlignment(face_detection.LandmarksType._2D)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/diff2lip/face_detection/api.py", line 62, in __init__
+    self.face_detector = face_detector_module.FaceDetector(device=device, verbose=verbose)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/diff2lip/face_detection/detection/sfd/sfd_detector.py", line 28, in __init__
+    self.face_detector.to(device)
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1174, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 805, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1160, in convert
+    return t.to(
+           ^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/cuda/__init__.py", line 305, in _lazy_init
+    raise AssertionError("Torch not compiled with CUDA enabled")
+AssertionError: Torch not compiled with CUDA enabled
+2025-02-26 00:20:23,826 - services.video_routes - ERROR - [video_routes.py:275] - Diff2Lip failed: Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 15, in <module>
+    from guided_diffusion import dist_util, logger
+  File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 9, in <module>
+    import blobfile as bf
+ModuleNotFoundError: No module named 'blobfile'
+
+2025-02-26 00:41:41,700 - services.video_routes - ERROR - [video_routes.py:275] - Diff2Lip failed: Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 20, in <module>
+    from guided_diffusion.guided_diffusion import dist_util, logger
+ModuleNotFoundError: No module named 'guided_diffusion.guided_diffusion'
+
+2025-02-26 01:02:17,292 - services.video_routes - ERROR - [video_routes.py:275] - Diff2Lip failed: Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 20, in <module>
+    from guided_diffusion import dist_util, logger
+  File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 10, in <module>
+    from mpi4py import MPI
+ModuleNotFoundError: No module named 'mpi4py'
+
+2025-02-26 08:29:44,884 - services.video_routes - ERROR - [video_routes.py:275] - Diff2Lip failed: Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 20, in <module>
+    from guided_diffusion import dist_util, logger
+  File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/logger.py", line 17, in <module>
+    from torch.utils.tensorboard import SummaryWriter
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/utils/tensorboard/__init__.py", line 1, in <module>
+    import tensorboard
+ModuleNotFoundError: No module named 'tensorboard'
+
+2025-02-26 08:43:56,910 - services.video_routes - ERROR - [video_routes.py:275] - Diff2Lip failed: usage: generate.py [-h] [--generate_from_filelist GENERATE_FROM_FILELIST]
+                   [--video_path VIDEO_PATH] [--audio_path AUDIO_PATH]
+                   [--out_path OUT_PATH] [--save_orig SAVE_ORIG]
+                   [--test_video_dir TEST_VIDEO_DIR] [--filelist FILELIST]
+                   [--use_fp16 USE_FP16]
+                   [--face_hide_percentage FACE_HIDE_PERCENTAGE]
+                   [--use_ref USE_REF] [--use_audio USE_AUDIO]
+                   [--audio_as_style AUDIO_AS_STYLE]
+                   [--audio_as_style_encoder_mlp AUDIO_AS_STYLE_ENCODER_MLP]
+                   [--nframes NFRAMES] [--nrefer NREFER]
+                   [--image_size IMAGE_SIZE] [--syncnet_T SYNCNET_T]
+                   [--syncnet_mel_step_size SYNCNET_MEL_STEP_SIZE]
+                   [--audio_frames_per_video AUDIO_FRAMES_PER_VIDEO]
+                   [--audio_dim AUDIO_DIM] [--is_voxceleb2 IS_VOXCELEB2]
+                   [--video_fps VIDEO_FPS] [--sample_rate SAMPLE_RATE]
+                   [--mel_steps_per_sec MEL_STEPS_PER_SEC]
+                   [--clip_denoised CLIP_DENOISED]
+                   [--sampling_batch_size SAMPLING_BATCH_SIZE]
+                   [--use_ddim USE_DDIM] [--model_path MODEL_PATH]
+                   [--sample_path SAMPLE_PATH]
+                   [--sample_partition SAMPLE_PARTITION]
+                   [--sampling_seed SAMPLING_SEED]
+                   [--sampling_use_gt_for_ref SAMPLING_USE_GT_FOR_REF]
+                   [--sampling_ref_type SAMPLING_REF_TYPE]
+                   [--sampling_input_type SAMPLING_INPUT_TYPE]
+                   [--face_det_batch_size FACE_DET_BATCH_SIZE] [--pads PADS]
+                   [--num_channels NUM_CHANNELS]
+                   [--num_res_blocks NUM_RES_BLOCKS] [--num_heads NUM_HEADS]
+                   [--num_heads_upsample NUM_HEADS_UPSAMPLE]
+                   [--num_head_channels NUM_HEAD_CHANNELS]
+                   [--attention_resolutions ATTENTION_RESOLUTIONS]
+                   [--dropout DROPOUT] [--class_cond CLASS_COND]
+                   [--use_checkpoint USE_CHECKPOINT]
+                   [--use_scale_shift_norm USE_SCALE_SHIFT_NORM]
+                   [--resblock_updown RESBLOCK_UPDOWN]
+                   [--learn_sigma LEARN_SIGMA]
+                   [--diffusion_steps DIFFUSION_STEPS]
+                   [--noise_schedule NOISE_SCHEDULE]
+                   [--timestep_respacing TIMESTEP_RESPACING] [--use_kl USE_KL]
+                   [--predict_xstart PREDICT_XSTART]
+                   [--rescale_timesteps RESCALE_TIMESTEPS]
+                   [--rescale_learned_sigmas RESCALE_LEARNED_SIGMAS]
+                   [--loss_variation LOSS_VARIATION]
+                   [--audio_encoder_kwargs AUDIO_ENCODER_KWARGS]
+generate.py: error: ambiguous option: --face could match --face_hide_percentage, --face_det_batch_size
+
+2025-02-26 08:59:16,539 - services.video_routes - ERROR - [video_routes.py:274] - Diff2Lip failed: [rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 403, in <module>
+[rank0]:     main()
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 329, in main
+[rank0]:     dist_util.load_state_dict(args.model_path, map_location='cpu')
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 61, in load_state_dict
+[rank0]:     with bf.BlobFile(path, "rb") as f:
+[rank0]:          ^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/blobfile/_ops.py", line 393, in BlobFile
+[rank0]:     return default_context.BlobFile(
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/blobfile/_context.py", line 866, in BlobFile
+[rank0]:     raise IsADirectoryError(f"Is a directory: '{path}'")
+[rank0]: IsADirectoryError: Is a directory: 'diff2lip/checkpoints/archive'
+

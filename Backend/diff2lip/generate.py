@@ -12,6 +12,11 @@ from audio import audio
 import face_detection
 from tqdm import tqdm
 
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
 from guided_diffusion import dist_util, logger
 from guided_diffusion.resample import create_named_schedule_sampler
 from guided_diffusion.script_util import (
@@ -328,7 +333,7 @@ def main():
         model.convert_to_fp16()
     model.eval()
 
-    detector = face_detection.FaceAlignment(face_detection.LandmarksType._2D, flip_input=False, device='cuda' if torch.cuda.is_available() else 'cpu')
+    detector = face_detection.FaceAlignment(face_detection.LandmarksType._2D, flip_input=False, device='cpu')
 
     if args.generate_from_filelist:
         generate_from_filelist(args.test_video_dir, args.filelist, model, diffusion, detector,  args)
