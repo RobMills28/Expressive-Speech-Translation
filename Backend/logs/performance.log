@@ -4546,3 +4546,767 @@ generate.py: error: ambiguous option: --face could match --face_hide_percentage,
 [rank0]: IsADirectoryError: Is a directory: 'diff2lip/checkpoints/archive'
 
 2025-02-26 08:59:16,540 - services.video_routes - WARNING - [video_routes.py:337] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-26 20:02:25,365 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-26 20:02:25,368 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-26 20:02:30,371 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 20:02:30,373 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 20:02:30,374 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 20:02:30,377 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 20:02:30,378 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 20:02:30,378 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-26 20:02:30,380 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 20:02:30,381 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 20:02:30,381 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 20:02:30,382 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 20:02:30,382 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 20:02:30,383 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 20:02:30,384 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 20:02:30,384 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 20:02:30,385 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 20:02:30,385 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 20:03:32,357 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-26 20:03:32,357 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-26 20:03:45,413 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-26 20:03:45,413 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 20:03:45,414 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 20:04:05,104 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 20:04:05,104 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 20:04:24,521 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 20:04:24,521 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 20:04:24,523 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-26 20:04:24,523 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 20:04:24,523 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 20:04:41,580 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 20:04:41,581 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 20:04:58,229 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 20:04:58,229 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 14.0GB available
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-26 20:04:58,233 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-26 20:05:59,837 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-26 20:05:59,837 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-26 20:05:59,837 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 20:05:59,838 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 20:06:19,485 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 20:06:19,485 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 20:06:35,073 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 20:06:35,074 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 20:06:35,077 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 35.24s, Memory Change: 87.08MB
+2025-02-26 20:06:35,077 - __main__ - INFO - [app.py:279] - Request to /process-video took 35.24s
+2025-02-26 20:06:36,958 - services.video_routes - INFO - [video_routes.py:300] - Detected speech starts at: 0.54 seconds
+2025-02-26 20:06:36,958 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-26 20:06:36,959 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-26 20:06:36,959 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-26 20:06:37,014 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-26 20:06:44,582 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-26 20:06:44,582 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-26 20:06:50,015 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-26 20:06:53,103 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-26 20:06:53,105 - services.video_routes - INFO - [video_routes.py:270] - Running Diff2Lip with command: python diff2lip/generate.py --model_path diff2lip/checkpoints/archive/data.pkl --video_path /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpnsw4qu9y.mp4 --audio_path temp/translated_audio.wav --out_path temp/synced_video.mp4 --sampling_ref_type gt
+2025-02-26 20:06:57,120 - services.video_routes - ERROR - [video_routes.py:274] - Diff2Lip failed: /Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return th.load(io.BytesIO(data), **kwargs)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 403, in <module>
+[rank0]:     main()
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 329, in main
+[rank0]:     dist_util.load_state_dict(args.model_path, map_location='cpu')
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 75, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1114, in load
+[rank0]:     return _legacy_load(
+[rank0]:            ^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: _pickle.UnpicklingError: A load persistent id instruction was encountered, but no persistent_load function was specified.
+
+2025-02-26 20:06:57,120 - services.video_routes - WARNING - [video_routes.py:337] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-26 22:02:37,436 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-26 22:02:37,439 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-26 22:02:42,442 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 22:02:42,444 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 22:02:42,445 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 22:02:42,447 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 22:02:42,449 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 22:02:42,449 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-26 22:02:42,451 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 22:02:42,451 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 22:02:42,452 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 22:02:42,453 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 22:02:42,453 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 22:02:42,453 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 22:02:42,453 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 22:02:42,454 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 22:02:42,454 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 22:02:42,455 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 22:02:57,394 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-26 22:02:57,395 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-26 22:03:10,129 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-26 22:03:10,129 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 22:03:10,130 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 22:03:30,315 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 22:03:30,316 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 22:03:46,142 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 22:03:46,142 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 22:03:46,144 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-26 22:03:46,144 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 22:03:46,144 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 22:04:04,216 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 22:04:04,217 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 22:04:20,041 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 22:04:20,042 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 12.7GB available
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-26 22:04:20,045 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-26 22:04:55,493 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-26 22:04:55,493 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-26 22:04:55,493 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 22:04:55,494 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 22:05:15,516 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 22:05:15,516 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 22:05:31,987 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 22:05:31,987 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 22:05:31,991 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 36.50s, Memory Change: 426.09MB
+2025-02-26 22:05:31,991 - __main__ - INFO - [app.py:279] - Request to /process-video took 36.50s
+2025-02-26 22:05:33,998 - services.video_routes - INFO - [video_routes.py:300] - Detected speech starts at: 0.54 seconds
+2025-02-26 22:05:33,999 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-26 22:05:33,999 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-26 22:05:34,000 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-26 22:05:34,027 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-26 22:05:41,657 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-26 22:05:41,658 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-26 22:05:47,067 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-26 22:05:50,107 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-26 22:05:50,109 - services.video_routes - INFO - [video_routes.py:270] - Running Diff2Lip with command: python diff2lip/generate.py --model_path diff2lip/checkpoints/archive/data.pkl --video_path /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpkz4mbnm_.mp4 --audio_path temp/translated_audio.wav --out_path temp/synced_video.mp4 --sampling_ref_type gt
+2025-02-26 22:05:54,295 - services.video_routes - ERROR - [video_routes.py:274] - Diff2Lip failed: [rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 403, in <module>
+[rank0]:     main()
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 329, in main
+[rank0]:     dist_util.load_state_dict(args.model_path, map_location='cpu')
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 77, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), map_location=kwargs["map_location"], weights_only=True)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1111, in load
+[rank0]:     return _legacy_load(opened_file, map_location, _weights_only_unpickler, **pickle_load_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 383, in load
+[rank0]:     return Unpickler(file, encoding=encoding).load()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 342, in load
+[rank0]:     self.append(self.persistent_load(pid))
+[rank0]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 379, in persistent_load
+[rank0]:     raise UnpicklingError("unsupported persistent id encountered")
+[rank0]: _pickle.UnpicklingError: unsupported persistent id encountered
+
+2025-02-26 22:05:54,295 - services.video_routes - WARNING - [video_routes.py:337] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-26 23:11:40,538 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-26 23:11:40,539 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-26 23:11:40,540 - services.model_manager - INFO - [model_manager.py:211] - Model inactive for too long, reloading...
+2025-02-26 23:11:40,540 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-26 23:11:53,830 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-26 23:11:53,830 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 23:11:53,831 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 23:12:15,223 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 23:12:15,223 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 23:12:31,408 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 23:12:31,408 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 23:12:31,410 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-26 23:12:31,410 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 23:12:31,411 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 23:12:51,825 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 23:12:51,825 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 23:13:12,351 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 23:13:12,351 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 23:13:12,356 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 91.82s, Memory Change: 13695.09MB
+2025-02-26 23:13:12,357 - __main__ - INFO - [app.py:279] - Request to /process-video took 91.82s
+2025-02-26 23:13:13,737 - services.video_routes - INFO - [video_routes.py:300] - Detected speech starts at: 0.54 seconds
+2025-02-26 23:13:13,737 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-26 23:13:13,737 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-26 23:13:13,738 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-26 23:13:13,775 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-26 23:13:21,472 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-26 23:13:21,472 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-26 23:13:26,936 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-26 23:13:29,536 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-26 23:13:29,538 - services.video_routes - INFO - [video_routes.py:270] - Running Diff2Lip with command: python diff2lip/generate.py --model_path diff2lip/checkpoints/archive/data.pkl --video_path /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpd1ratwn2.mp4 --audio_path temp/translated_audio.wav --out_path temp/synced_video.mp4 --sampling_ref_type gt
+2025-02-26 23:13:33,229 - services.video_routes - ERROR - [video_routes.py:274] - Diff2Lip failed: [rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 403, in <module>
+[rank0]:     main()
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 329, in main
+[rank0]:     dist_util.load_state_dict(args.model_path, map_location='cpu')
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 77, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), map_location=kwargs["map_location"], weights_only=True)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1111, in load
+[rank0]:     return _legacy_load(opened_file, map_location, _weights_only_unpickler, **pickle_load_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 383, in load
+[rank0]:     return Unpickler(file, encoding=encoding).load()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 342, in load
+[rank0]:     self.append(self.persistent_load(pid))
+[rank0]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 379, in persistent_load
+[rank0]:     raise UnpicklingError("unsupported persistent id encountered")
+[rank0]: _pickle.UnpicklingError: unsupported persistent id encountered
+
+2025-02-26 23:13:33,229 - services.video_routes - WARNING - [video_routes.py:337] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-26 23:39:08,846 - __main__ - ERROR - [app.py:550] - Failed to start application: [Errno 48] Address already in use
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 480, in <module>
+    start_http_server(8000)
+  File "/opt/anaconda3/lib/python3.12/site-packages/prometheus_client/exposition.py", line 170, in start_wsgi_server
+    httpd = make_server(addr, port, app, TmpServer, handler_class=_SilentHandler)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/wsgiref/simple_server.py", line 154, in make_server
+    server = server_class((host, port), handler_class)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/socketserver.py", line 457, in __init__
+    self.server_bind()
+  File "/opt/anaconda3/lib/python3.12/wsgiref/simple_server.py", line 50, in server_bind
+    HTTPServer.server_bind(self)
+  File "/opt/anaconda3/lib/python3.12/http/server.py", line 136, in server_bind
+    socketserver.TCPServer.server_bind(self)
+  File "/opt/anaconda3/lib/python3.12/socketserver.py", line 473, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 48] Address already in use
+2025-02-26 23:39:08,848 - __main__ - ERROR - [app.py:552] - Stack trace:
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 480, in <module>
+    start_http_server(8000)
+  File "/opt/anaconda3/lib/python3.12/site-packages/prometheus_client/exposition.py", line 170, in start_wsgi_server
+    httpd = make_server(addr, port, app, TmpServer, handler_class=_SilentHandler)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/wsgiref/simple_server.py", line 154, in make_server
+    server = server_class((host, port), handler_class)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/socketserver.py", line 457, in __init__
+    self.server_bind()
+  File "/opt/anaconda3/lib/python3.12/wsgiref/simple_server.py", line 50, in server_bind
+    HTTPServer.server_bind(self)
+  File "/opt/anaconda3/lib/python3.12/http/server.py", line 136, in server_bind
+    socketserver.TCPServer.server_bind(self)
+  File "/opt/anaconda3/lib/python3.12/socketserver.py", line 473, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 48] Address already in use
+2025-02-26 23:39:08,849 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 23:39:08,855 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 23:39:08,855 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-26 23:39:21,944 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-26 23:39:21,944 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 23:39:21,945 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 23:39:41,835 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 23:39:41,835 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 23:40:00,417 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 23:40:00,417 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 23:40:00,419 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-26 23:40:00,419 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 23:40:00,525 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 23:40:00,525 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 23:40:00,525 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 23:42:34,981 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-26 23:42:34,982 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-26 23:42:39,987 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 23:42:39,988 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 23:42:40,146 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 23:42:40,147 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 23:42:40,148 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 23:42:40,148 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-26 23:42:40,148 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 23:42:40,148 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 23:42:40,149 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 23:42:40,149 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 23:42:40,149 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 23:42:40,149 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-26 23:42:40,149 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-26 23:42:40,149 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-26 23:42:40,149 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 23:42:40,149 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-26 23:43:11,697 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-26 23:43:11,699 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-26 23:43:25,375 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-26 23:43:25,375 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 23:43:25,376 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 23:43:45,788 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 23:43:45,789 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 23:44:05,282 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 23:44:05,283 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 23:44:05,285 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-26 23:44:05,285 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 23:44:05,286 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 23:44:21,458 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 23:44:21,458 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 23:44:41,100 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 23:44:41,100 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 16.0GB available
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-26 23:44:41,105 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-26 23:44:41,106 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-26 23:44:41,106 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-26 23:44:41,106 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-26 23:44:41,106 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-26 23:44:41,106 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-26 23:45:34,726 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-26 23:45:34,726 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-26 23:45:34,726 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-26 23:45:34,727 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-26 23:45:51,883 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-26 23:45:51,883 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-26 23:46:08,593 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-26 23:46:08,593 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-26 23:46:08,597 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 33.87s, Memory Change: 12.55MB
+2025-02-26 23:46:08,597 - __main__ - INFO - [app.py:279] - Request to /process-video took 33.87s
+2025-02-26 23:46:08,797 - services.video_routes - INFO - [video_routes.py:335] - Detected speech starts at: 0.54 seconds
+2025-02-26 23:46:08,798 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-26 23:46:08,798 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-26 23:46:08,798 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-26 23:46:08,832 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-26 23:46:16,841 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-26 23:46:16,842 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-26 23:46:22,315 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-26 23:46:25,283 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-26 23:46:25,286 - services.video_routes - INFO - [video_routes.py:274] - Running Diff2Lip with command: python diff2lip/generate.py --model_path diff2lip/checkpoints/archive/data.pkl --video_path /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp1q18prdz.mp4 --audio_path temp/translated_audio.wav --out_path temp/synced_video.mp4 --sampling_ref_type gt --cpu
+2025-02-26 23:46:27,900 - services.video_routes - ERROR - [video_routes.py:287] - Diff2Lip failed with return code 2: usage: generate.py [-h] [--generate_from_filelist GENERATE_FROM_FILELIST]
+                   [--video_path VIDEO_PATH] [--audio_path AUDIO_PATH]
+                   [--out_path OUT_PATH] [--save_orig SAVE_ORIG]
+                   [--test_video_dir TEST_VIDEO_DIR] [--filelist FILELIST]
+                   [--use_fp16 USE_FP16]
+                   [--face_hide_percentage FACE_HIDE_PERCENTAGE]
+                   [--use_ref USE_REF] [--use_audio USE_AUDIO]
+                   [--audio_as_style AUDIO_AS_STYLE]
+                   [--audio_as_style_encoder_mlp AUDIO_AS_STYLE_ENCODER_MLP]
+                   [--nframes NFRAMES] [--nrefer NREFER]
+                   [--image_size IMAGE_SIZE] [--syncnet_T SYNCNET_T]
+                   [--syncnet_mel_step_size SYNCNET_MEL_STEP_SIZE]
+                   [--audio_frames_per_video AUDIO_FRAMES_PER_VIDEO]
+                   [--audio_dim AUDIO_DIM] [--is_voxceleb2 IS_VOXCELEB2]
+                   [--video_fps VIDEO_FPS] [--sample_rate SAMPLE_RATE]
+                   [--mel_steps_per_sec MEL_STEPS_PER_SEC]
+                   [--clip_denoised CLIP_DENOISED]
+                   [--sampling_batch_size SAMPLING_BATCH_SIZE]
+                   [--use_ddim USE_DDIM] [--model_path MODEL_PATH]
+                   [--sample_path SAMPLE_PATH]
+                   [--sample_partition SAMPLE_PARTITION]
+                   [--sampling_seed SAMPLING_SEED]
+                   [--sampling_use_gt_for_ref SAMPLING_USE_GT_FOR_REF]
+                   [--sampling_ref_type SAMPLING_REF_TYPE]
+                   [--sampling_input_type SAMPLING_INPUT_TYPE]
+                   [--face_det_batch_size FACE_DET_BATCH_SIZE] [--pads PADS]
+                   [--num_channels NUM_CHANNELS]
+                   [--num_res_blocks NUM_RES_BLOCKS] [--num_heads NUM_HEADS]
+                   [--num_heads_upsample NUM_HEADS_UPSAMPLE]
+                   [--num_head_channels NUM_HEAD_CHANNELS]
+                   [--attention_resolutions ATTENTION_RESOLUTIONS]
+                   [--dropout DROPOUT] [--class_cond CLASS_COND]
+                   [--use_checkpoint USE_CHECKPOINT]
+                   [--use_scale_shift_norm USE_SCALE_SHIFT_NORM]
+                   [--resblock_updown RESBLOCK_UPDOWN]
+                   [--learn_sigma LEARN_SIGMA]
+                   [--diffusion_steps DIFFUSION_STEPS]
+                   [--noise_schedule NOISE_SCHEDULE]
+                   [--timestep_respacing TIMESTEP_RESPACING] [--use_kl USE_KL]
+                   [--predict_xstart PREDICT_XSTART]
+                   [--rescale_timesteps RESCALE_TIMESTEPS]
+                   [--rescale_learned_sigmas RESCALE_LEARNED_SIGMAS]
+                   [--loss_variation LOSS_VARIATION]
+                   [--audio_encoder_kwargs AUDIO_ENCODER_KWARGS]
+generate.py: error: unrecognized arguments: --cpu
+
+2025-02-26 23:46:27,900 - services.video_routes - WARNING - [video_routes.py:372] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-27 00:01:58,677 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-27 00:01:58,681 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-27 00:02:03,684 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 00:02:03,685 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 00:02:03,685 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 00:02:03,688 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 00:02:03,689 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 00:02:03,690 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-27 00:02:03,692 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 00:02:03,693 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 00:02:03,693 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 00:02:03,694 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 00:02:03,694 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 00:02:03,694 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 00:02:03,694 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 00:02:03,695 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 00:02:03,696 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 00:02:03,696 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 00:02:45,073 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-27 00:02:45,073 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-27 00:02:57,853 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-27 00:02:57,853 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 00:02:57,854 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 00:03:16,464 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 00:03:16,464 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 00:03:31,247 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 00:03:31,247 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 00:03:31,250 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-27 00:03:31,250 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 00:03:31,251 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 00:03:50,374 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 00:03:50,374 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 00:04:05,380 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 00:04:05,380 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 00:04:05,383 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 00:04:05,383 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-27 00:04:05,383 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-27 00:04:05,383 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 16.1GB available
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-27 00:04:05,384 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-27 00:04:46,874 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-27 00:04:46,874 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-27 00:04:46,874 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 00:04:46,875 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 00:05:04,359 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 00:05:04,359 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 00:05:24,899 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 00:05:24,899 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 00:05:24,902 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 38.03s, Memory Change: 10.98MB
+2025-02-27 00:05:24,902 - __main__ - INFO - [app.py:279] - Request to /process-video took 38.03s
+2025-02-27 00:05:25,006 - services.video_routes - INFO - [video_routes.py:336] - Detected speech starts at: 0.54 seconds
+2025-02-27 00:05:25,006 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-27 00:05:25,006 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-27 00:05:25,007 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-27 00:05:25,047 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-27 00:05:33,541 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-27 00:05:33,541 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-27 00:05:39,200 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-27 00:05:42,225 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-27 00:05:42,229 - services.video_routes - INFO - [video_routes.py:273] - Running Diff2Lip with command: python diff2lip/generate.py --model_path diff2lip/checkpoints/archive/data.pkl --video_path /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpfje9mbqs.mp4 --audio_path temp/translated_audio.wav --out_path temp/synced_video.mp4 --sampling_ref_type gt
+2025-02-27 00:05:45,059 - services.video_routes - ERROR - [video_routes.py:286] - Diff2Lip failed with return code 1: /Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py:105: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return th.load(io.BytesIO(data),
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 81, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), 
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1114, in load
+[rank0]:     return _legacy_load(
+[rank0]:            ^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: TypeError: 'persistent_load' is an invalid keyword argument for load()
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 94, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), 
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1111, in load
+[rank0]:     return _legacy_load(opened_file, map_location, _weights_only_unpickler, **pickle_load_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 383, in load
+[rank0]:     return Unpickler(file, encoding=encoding).load()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 342, in load
+[rank0]:     self.append(self.persistent_load(pid))
+[rank0]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 379, in persistent_load
+[rank0]:     raise UnpicklingError("unsupported persistent id encountered")
+[rank0]: _pickle.UnpicklingError: unsupported persistent id encountered
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 403, in <module>
+[rank0]:     main()
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 329, in main
+[rank0]:     dist_util.load_state_dict(args.model_path, map_location='cpu')
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 105, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), 
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1114, in load
+[rank0]:     return _legacy_load(
+[rank0]:            ^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: _pickle.UnpicklingError: A load persistent id instruction was encountered, but no persistent_load function was specified.
+
+2025-02-27 00:05:45,060 - services.video_routes - ERROR - [video_routes.py:290] - Model loading failed. Trying alternative approach...
+2025-02-27 00:05:45,060 - services.video_routes - INFO - [video_routes.py:297] - Running Diff2Lip with forced CPU environment
+2025-02-27 00:05:47,298 - services.video_routes - ERROR - [video_routes.py:305] - Alternative approach also failed: /Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py:105: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return th.load(io.BytesIO(data),
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 81, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), 
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1114, in load
+[rank0]:     return _legacy_load(
+[rank0]:            ^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: TypeError: 'persistent_load' is an invalid keyword argument for load()
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 94, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), 
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1111, in load
+[rank0]:     return _legacy_load(opened_file, map_location, _weights_only_unpickler, **pickle_load_args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 383, in load
+[rank0]:     return Unpickler(file, encoding=encoding).load()
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 342, in load
+[rank0]:     self.append(self.persistent_load(pid))
+[rank0]:                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/_weights_only_unpickler.py", line 379, in persistent_load
+[rank0]:     raise UnpicklingError("unsupported persistent id encountered")
+[rank0]: _pickle.UnpicklingError: unsupported persistent id encountered
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 403, in <module>
+[rank0]:     main()
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/generate.py", line 329, in main
+[rank0]:     dist_util.load_state_dict(args.model_path, map_location='cpu')
+[rank0]:   File "/Users/robmills/audio-translation/Backend/diff2lip/guided_diffusion/dist_util.py", line 105, in load_state_dict
+[rank0]:     return th.load(io.BytesIO(data), 
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1114, in load
+[rank0]:     return _legacy_load(
+[rank0]:            ^^^^^^^^^^^^^
+[rank0]:   File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+[rank0]:     magic_number = pickle_module.load(f, **pickle_load_args)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: _pickle.UnpicklingError: A load persistent id instruction was encountered, but no persistent_load function was specified.
+
+2025-02-27 00:05:47,299 - services.video_routes - WARNING - [video_routes.py:373] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-27 08:46:34,319 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-27 08:46:34,320 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-27 08:46:39,326 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 08:46:39,327 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 08:46:39,328 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 08:46:39,330 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 08:46:39,331 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 08:46:39,331 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-27 08:46:39,333 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 08:46:39,333 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 08:46:39,334 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 08:46:39,334 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 08:46:39,335 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 08:46:39,335 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 08:46:39,336 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 08:46:39,336 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 08:46:39,337 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 08:46:39,338 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 08:47:57,596 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-27 08:47:57,597 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-27 08:48:10,866 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-27 08:48:10,867 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 08:48:10,867 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 08:48:29,375 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 08:48:29,376 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 08:48:49,921 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 08:48:49,921 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 08:48:49,924 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-27 08:48:49,924 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 08:48:49,924 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 08:49:11,597 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 08:49:11,598 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 08:49:27,927 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 08:49:27,927 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 14.9GB available
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-27 08:49:27,931 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-27 08:50:17,338 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-27 08:50:17,338 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-27 08:50:17,338 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 08:50:17,339 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 08:50:39,554 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 08:50:39,555 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 08:50:56,751 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 08:50:56,752 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 08:50:56,756 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 39.42s, Memory Change: 14.39MB
+2025-02-27 08:50:56,756 - __main__ - INFO - [app.py:279] - Request to /process-video took 39.42s
+2025-02-27 08:50:57,622 - services.video_routes - INFO - [video_routes.py:339] - Detected speech starts at: 0.54 seconds
+2025-02-27 08:50:57,622 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-27 08:50:57,622 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-27 08:50:57,624 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-27 08:50:57,650 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-27 08:51:05,502 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-27 08:51:05,502 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-27 08:51:11,044 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-27 08:51:14,021 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-27 08:51:14,055 - services.video_routes - ERROR - [video_routes.py:283] - Model pre-check failed:   File "<string>", line 2
+    import sys
+IndentationError: unexpected indent
+
+2025-02-27 08:51:14,056 - services.video_routes - WARNING - [video_routes.py:376] - Diff2Lip sync failed, falling back to basic audio sync
+2025-02-27 09:14:46,744 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-02-27 09:14:46,745 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-02-27 09:14:51,748 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 09:14:51,749 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 09:14:51,750 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 09:14:51,752 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 09:14:51,753 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 09:14:51,754 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-02-27 09:14:51,755 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 09:14:51,755 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 09:14:51,755 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 09:14:51,757 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 09:14:51,757 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 09:14:51,758 - __main__ - INFO - [app.py:450] - Application shutting down...
+2025-02-27 09:14:51,758 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-02-27 09:14:51,758 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-02-27 09:14:51,759 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 09:14:51,759 - __main__ - INFO - [app.py:464] - Cleanup completed successfully
+2025-02-27 09:15:09,351 - __main__ - INFO - [app.py:481] - Metrics server started on port 8000
+2025-02-27 09:15:09,351 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-02-27 09:15:22,945 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-02-27 09:15:22,945 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 09:15:22,945 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 09:15:43,779 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 09:15:43,779 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 09:16:02,682 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 09:16:02,683 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 09:16:02,685 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-02-27 09:16:02,685 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 09:16:02,685 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 09:16:23,868 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 09:16:23,868 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 09:16:45,073 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 09:16:45,073 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:432] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:505] - ==================================================
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:506] - Starting LinguaSync Backend
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:507] - Starting Flask app on port 5001 using cpu
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:508] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:509] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por']
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:510] - Maximum audio length: 300 seconds
+2025-02-27 09:16:45,077 - __main__ - INFO - [app.py:511] - Sample rate: 16000 Hz
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:515] - System memory: 36.0GB total, 16.5GB available
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:516] - CPU cores: 11
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:524] - Configuration:
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:525] - - Debug mode: False
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:526] - - CORS enabled: True
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:527] - - Rate limiting: 10 requests per minute
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:528] - - Metrics enabled: True (port 8000)
+2025-02-27 09:16:45,078 - __main__ - INFO - [app.py:530] - ==================================================
+2025-02-27 09:18:11,258 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-02-27 09:18:11,258 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-02-27 09:18:11,258 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-02-27 09:18:11,258 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-02-27 09:18:31,607 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-02-27 09:18:31,607 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-02-27 09:18:47,422 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-02-27 09:18:47,422 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-02-27 09:18:47,424 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 36.17s, Memory Change: 25.59MB
+2025-02-27 09:18:47,424 - __main__ - INFO - [app.py:279] - Request to /process-video took 36.17s
+2025-02-27 09:18:47,580 - services.video_routes - INFO - [video_routes.py:339] - Detected speech starts at: 0.54 seconds
+2025-02-27 09:18:47,580 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-02-27 09:18:47,580 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-02-27 09:18:47,581 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 223260]), Frequency: 16000Hz
+2025-02-27 09:18:47,617 - services.video_routes - INFO - [video_routes.py:117] - Generating text translation in fra
+2025-02-27 09:18:55,465 - services.video_routes - INFO - [video_routes.py:126] - Generated text: Ok, c'est un test, voyons si nous pouvons traduire cette vidéo et aussi faire une synchronisation des lèvres.
+2025-02-27 09:18:55,465 - services.video_routes - INFO - [video_routes.py:129] - Generating translated speech
+2025-02-27 09:19:01,469 - services.video_routes - INFO - [video_routes.py:157] - Translation successful, audio shape: torch.Size([1, 81280])
+2025-02-27 09:19:04,514 - services.video_routes - INFO - [video_routes.py:249] - Face detected with bounding box: (641, 245, 1057, 834)
+2025-02-27 09:19:05,304 - services.video_routes - ERROR - [video_routes.py:283] - Model pre-check failed: Custom model loading failed: 'tuple' object has no attribute 'dtype'
+/Users/robmills/audio-translation/Backend/diff2lip_loader.py:40: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  return torch.load(model_path, map_location=map_location)
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/diff2lip_loader.py", line 32, in custom_load_model
+    model_dict = unpickler.load()
+                 ^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/_utils.py", line 200, in _rebuild_tensor_v2
+    tensor = _rebuild_tensor(storage, storage_offset, size, stride)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/_utils.py", line 178, in _rebuild_tensor
+    t = torch.empty((0,), dtype=storage.dtype, device=storage._untyped_storage.device)
+                                ^^^^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'dtype'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 6, in <module>
+  File "/Users/robmills/audio-translation/Backend/diff2lip_loader.py", line 40, in custom_load_model
+    return torch.load(model_path, map_location=map_location)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1114, in load
+    return _legacy_load(
+           ^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.12/site-packages/torch/serialization.py", line 1338, in _legacy_load
+    magic_number = pickle_module.load(f, **pickle_load_args)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_pickle.UnpicklingError: A load persistent id instruction was encountered, but no persistent_load function was specified.
+
+2025-02-27 09:19:05,305 - services.video_routes - WARNING - [video_routes.py:376] - Diff2Lip sync failed, falling back to basic audio sync

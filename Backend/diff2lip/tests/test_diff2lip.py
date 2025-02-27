@@ -6,7 +6,7 @@ def test_diff2lip(video_path, audio_path, output_path):
     """Test Diff2Lip functionality with a sample video and audio."""
     try:
         # Path to the Diff2Lip checkpoint
-        model_path = "diff2lip/checkpoints/archive"
+        model_path = "diff2lip/checkpoints/archive/data.pkl"
         
         # Make sure paths exist
         if not os.path.exists(video_path):

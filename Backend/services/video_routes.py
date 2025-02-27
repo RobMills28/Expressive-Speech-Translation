@@ -253,27 +253,66 @@ class VideoProcessor:
             return None
 
     def apply_lip_sync(self, video_path, audio_path, output_path):
-        """Apply lip sync using Diff2Lip."""
+        """Apply lip sync using Diff2Lip with enhanced error handling."""
         try:
-            model_path = "diff2lip/checkpoints/archive"
+            model_path = "diff2lip/checkpoints/archive/data.pkl"
+        
+            # Force CPU usage for Diff2Lip by setting environment variable
+            os.environ["CUDA_VISIBLE_DEVICES"] = ""
+        
+            # Bypass the model loading by using a proxy script
+            custom_command = [
+                "python", "-c", 
+                f"""
+import sys
+sys.path.append('{os.getcwd()}')
+from diff2lip_loader import custom_load_model
+# Pre-load the model to verify it works
+model_dict = custom_load_model('{model_path}')
+print('Model loaded successfully with custom loader')
+"""
+            ]
+        
+            # First verify the model can be loaded with our custom loader
+            pre_check = subprocess.run(custom_command, 
+                                    capture_output=True, 
+                                    text=True,
+                                    env={**os.environ, "PYTHONPATH": f"{os.getcwd()}:{os.environ.get('PYTHONPATH', '')}"})
+        
+            if pre_check.returncode != 0:
+                logger.error(f"Model pre-check failed: {pre_check.stderr}")
+                return False
             
-            # Updated command with correct argument names
+            # If pre-check succeeds, run the actual Diff2Lip command
+            # Add environment variable to use our custom loader
+            env_vars = {
+                **os.environ, 
+                "CUDA_VISIBLE_DEVICES": "", 
+                "PYTHONPATH": f"{os.getcwd()}:{os.environ.get('PYTHONPATH', '')}",
+                "USE_CUSTOM_LOADER": "1"  # Signal to use custom loader
+            }
+        
+            # Updated command with correct argument names but without CPU flag
             command = [
                 "python", "diff2lip/generate.py",
                 "--model_path", model_path,
-                "--video_path", video_path,  # Changed from --face
-                "--audio_path", audio_path,  # Changed from --audio
-                "--out_path", output_path,   # Changed from --outfile
-                "--sampling_ref_type", "gt"  # Use ground truth frames as reference
+                "--video_path", video_path,
+                "--audio_path", audio_path,
+                "--out_path", output_path,
+                "--sampling_ref_type", "gt"
             ]
-            
+        
             logger.info(f"Running Diff2Lip with command: {' '.join(command)}")
-            process = subprocess.run(command, capture_output=True, text=True)
-            
+            process = subprocess.run(command, 
+                                capture_output=True, 
+                                text=True, 
+                                timeout=300,
+                                env=env_vars)
+        
             if process.returncode != 0:
                 logger.error(f"Diff2Lip failed: {process.stderr}")
                 return False
-                
+            
             logger.info(f"Lip sync successful, output saved to {output_path}")
             return True
         except Exception as e:

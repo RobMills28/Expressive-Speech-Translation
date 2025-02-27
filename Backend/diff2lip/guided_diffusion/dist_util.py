@@ -1,10 +1,10 @@
 """
 Helpers for distributed training.
 """
-
 import io
 import os
 import socket
+import pickle  # Add this import
 
 import blobfile as bf
 from mpi4py import MPI
@@ -16,7 +16,6 @@ import torch.distributed as dist
 GPUS_PER_NODE = 8
 
 SETUP_RETRY_COUNT = 3
-
 
 def setup_dist():
     """
@@ -42,7 +41,6 @@ def setup_dist():
     os.environ["MASTER_PORT"] = str(port)
     dist.init_process_group(backend=backend, init_method="env://")
 
-
 def dev():
     """
     Get the device to use for torch.distributed.
@@ -51,10 +49,10 @@ def dev():
         return th.device(f"cuda")
     return th.device("cpu")
 
-
 def load_state_dict(path, **kwargs):
     """
     Load a PyTorch file without redundant fetches across MPI ranks.
+    With multiple fallback mechanisms for handling pickled models.
     """
     chunk_size = 2 ** 30  # MPI has a relatively small size limit
     if MPI.COMM_WORLD.Get_rank() == 0:
@@ -72,8 +70,45 @@ def load_state_dict(path, **kwargs):
         for _ in range(num_chunks):
             data += MPI.COMM_WORLD.bcast(None)
 
-    return th.load(io.BytesIO(data), **kwargs)
+    # Define a custom persistent_load function that just returns the ID
+    def persistent_load(pid):
+        return pid
 
+    # Try multiple loading methods in sequence with proper error handling
+    try:
+        # Method 1: Try with persistent_load
+        if "map_location" in kwargs:
+            return th.load(io.BytesIO(data), 
+                          map_location=kwargs["map_location"],
+                          pickle_module=pickle, 
+                          persistent_load=persistent_load)
+        else:
+            return th.load(io.BytesIO(data),
+                          pickle_module=pickle,
+                          persistent_load=persistent_load)
+    except Exception as e1:
+        print(f"First loading attempt failed: {str(e1)}")
+        try:
+            # Method 2: Try with weights_only=True
+            if "map_location" in kwargs:
+                return th.load(io.BytesIO(data), 
+                              map_location=kwargs["map_location"],
+                              weights_only=True)
+            else:
+                return th.load(io.BytesIO(data), 
+                              weights_only=True)
+        except Exception as e2:
+            print(f"Second loading attempt failed: {str(e2)}")
+            try:
+                # Method 3: Last resort, try with default parameters
+                if "map_location" in kwargs:
+                    return th.load(io.BytesIO(data), 
+                                  map_location=kwargs["map_location"])
+                else:
+                    return th.load(io.BytesIO(data))
+            except Exception as e3:
+                print(f"All loading attempts failed.\nErrors:\n1: {str(e1)}\n2: {str(e2)}\n3: {str(e3)}")
+                raise
 
 def sync_params(params):
     """
@@ -82,7 +117,6 @@ def sync_params(params):
     for p in params:
         with th.no_grad():
             dist.broadcast(p, 0)
-
 
 def _find_free_port():
     try:

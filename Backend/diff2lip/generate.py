@@ -317,6 +317,18 @@ def generate_from_filelist(test_video_dir, filelist, model, diffusion, detector,
         
 
 def main():
+    use_custom_loader = os.environ.get("USE_CUSTOM_LOADER", "0") == "1"
+    if use_custom_loader:
+        try:
+            # Import our custom loader
+            sys.path.append(os.getcwd())
+            from diff2lip_loader import custom_load_model
+            # Override the load_state_dict function
+            dist_util.load_state_dict = lambda path, map_location='cpu': custom_load_model(path, map_location)
+            print("Using custom model loader")
+        except ImportError:
+            print("Warning: Custom loader requested but not available")
+            
     args = create_argparser().parse_args()
     dist_util.setup_dist()
     logger.configure(dir=args.sample_path, format_strs=["stdout", "log"])
