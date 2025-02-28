@@ -4954,3 +4954,150 @@ Traceback (most recent call last):
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _pickle.UnpicklingError: A load persistent id instruction was encountered, but no persistent_load function was specified.
 
+2025-02-28 09:38:09,095 - services.video_routes - ERROR - [video_routes.py:309] - Wav2Lip process failed with return code 1: Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/Wav2Lip/inference.py", line 280, in <module>
+    main()
+  File "/Users/robmills/audio-translation/Backend/Wav2Lip/inference.py", line 225, in main
+    mel = audio.melspectrogram(wav)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/Wav2Lip/audio.py", line 47, in melspectrogram
+    S = _amp_to_db(_linear_to_mel(np.abs(D))) - hp.ref_level_db
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/Wav2Lip/audio.py", line 95, in _linear_to_mel
+    _mel_basis = _build_mel_basis()
+                 ^^^^^^^^^^^^^^^^^^
+  File "/Users/robmills/audio-translation/Backend/Wav2Lip/audio.py", line 100, in _build_mel_basis
+    return librosa.filters.mel(hp.sample_rate, hp.n_fft, n_mels=hp.num_mels,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: mel() takes 0 positional arguments but 2 positional arguments (and 3 keyword-only arguments) were given
+
+2025-02-28 10:10:15,474 - services.video_routes - ERROR - [video_routes.py:345] - Wav2Lip process timed out after 5 minutes
+2025-02-28 10:27:36,577 - services.video_routes - ERROR - [video_routes.py:582] - Process stderr: usage: inference.py [-h] --checkpoint_path CHECKPOINT_PATH --face FACE --audio
+                    AUDIO [--outfile OUTFILE] [--static STATIC] [--fps FPS]
+                    [--pads PADS [PADS ...]]
+                    [--face_det_batch_size FACE_DET_BATCH_SIZE]
+                    [--wav2lip_batch_size WAV2LIP_BATCH_SIZE]
+                    [--resize_factor RESIZE_FACTOR] [--crop CROP [CROP ...]]
+                    [--box BOX [BOX ...]] [--rotate] [--nosmooth]
+inference.py: error: argument --resize_factor: invalid int value: '1.5'
+
+2025-02-28 10:27:36,577 - services.video_routes - ERROR - [video_routes.py:588] - Wav2Lip process failed with return code 2
+2025-02-28 10:29:29,099 - services.video_routes - ERROR - [video_routes.py:651] - Alt parameters stderr: 
+  0%|          | 0/2 [00:00<?, ?it/s]/Users/robmills/audio-translation/Backend/Wav2Lip/face_detection/detection/sfd/sfd_detector.py:24: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model_weights = torch.load(path_to_detector)
+
+
+  0%|          | 0/10 [00:00<?, ?it/s][A
+
+ 10%|█         | 1/10 [00:11<01:43, 11.55s/it][A
+
+ 20%|██        | 2/10 [00:22<01:31, 11.48s/it][A
+
+ 30%|███       | 3/10 [00:34<01:19, 11.40s/it][A
+
+ 40%|████      | 4/10 [00:45<01:08, 11.34s/it][A
+
+ 50%|█████     | 5/10 [00:56<00:56, 11.30s/it][A
+
+ 60%|██████    | 6/10 [01:08<00:45, 11.32s/it][A
+
+ 70%|███████   | 7/10 [01:19<00:33, 11.30s/it][A
+
+ 80%|████████  | 8/10 [01:30<00:22, 11.30s/it][A
+
+ 90%|█████████ | 9/10 [01:41<00:11, 11.30s/it][A
+
+100%|██████████| 10/10 [01:45<00:00,  8.89s/it][A
+100%|██████████| 10/10 [01:45<00:00, 10.55s/it]
+/Users/robmills/audio-translation/Backend/Wav2Lip/inference.py:164: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path,
+
+ 50%|█████     | 1/2 [01:48<01:48, 108.93s/it]
+100%|██████████| 2/2 [01:49<00:00, 45.27s/it] 
+100%|██████████| 2/2 [01:49<00:00, 54.82s/it]
+ffmpeg version 7.1 Copyright (c) 2000-2024 the FFmpeg developers
+  built with Apple clang version 16.0.0 (clang-1600.0.26.4)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/7.1_4 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags='-Wl,-ld_classic' --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+[aist#0:0/pcm_s16le @ 0x14b104cb0] Guessed Channel Layout: mono
+Input #0, wav, from 'temp/translated_audio.wav':
+  Duration: 00:00:05.08, bitrate: 256 kb/s
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Input #1, avi, from 'temp/result.avi':
+  Metadata:
+    software        : Lavf61.7.100
+  Duration: 00:00:04.97, start: 0.000000, bitrate: 1577 kb/s
+  Stream #1:0: Video: mpeg4 (Simple Profile) (DIVX / 0x58564944), yuv420p, 810x540 [SAR 1:1 DAR 3:2], 1573 kb/s, 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #1:0 -> #0:0 (mpeg4 (native) -> h264 (libx264))
+  Stream #0:0 -> #0:1 (pcm_s16le (native) -> aac (native))
+Press [q] to stop, [?] for help
+[libx264 @ 0x14b109120] -qscale is ignored, -crf is recommended.
+[libx264 @ 0x14b109120] using SAR=1/1
+[libx264 @ 0x14b109120] using cpu capabilities: ARMv8 NEON
+[libx264 @ 0x14b109120] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 0x14b109120] 264 - core 164 r3108 31e19f9 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=16 lookahead_threads=2 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'temp/synced_video.mp4':
+  Metadata:
+    encoder         : Lavf61.7.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 810x540 [SAR 1:1 DAR 3:2], q=2-31, 30 fps, 15360 tbn
+      Metadata:
+        encoder         : Lavc61.19.100 libx264
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 16000 Hz, mono, fltp, 69 kb/s
+      Metadata:
+        encoder         : Lavc61.19.100 aac
+[out#0/mp4 @ 0x14b105db0] video:381KiB audio:48KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.951279%
+frame=  149 fps=0.0 q=-1.0 Lsize=     433KiB time=00:00:04.90 bitrate= 723.9kbits/s speed=19.5x    
+[libx264 @ 0x14b109120] frame I:1     Avg QP:21.51  size: 21612
+[libx264 @ 0x14b109120] frame P:67    Avg QP:22.42  size:  4539
+[libx264 @ 0x14b109120] frame B:81    Avg QP:24.98  size:   788
+[libx264 @ 0x14b109120] consecutive B-frames: 18.8% 25.5%  2.0% 53.7%
+[libx264 @ 0x14b109120] mb I  I16..4: 17.0% 81.4%  1.6%
+[libx264 @ 0x14b109120] mb P  I16..4:  1.5%  4.5%  0.1%  P16..4: 42.0%  8.2%  4.6%  0.0%  0.0%    skip:39.2%
+[libx264 @ 0x14b109120] mb B  I16..4:  0.3%  1.1%  0.0%  B16..8: 26.3%  0.8%  0.1%  direct: 0.2%  skip:71.2%  L0:43.3% L1:55.4% BI: 1.3%
+[libx264 @ 0x14b109120] 8x8 transform intra:76.1% inter:83.4%
+[libx264 @ 0x14b109120] coded y,uvDC,uvAC intra: 43.4% 57.4% 5.4% inter: 7.3% 12.7% 0.1%
+[libx264 @ 0x14b109120] i16 v,h,dc,p: 30% 26% 22% 22%
+[libx264 @ 0x14b109120] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 29% 17% 43%  2%  2%  3%  2%  2%  1%
+[libx264 @ 0x14b109120] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 39% 24% 17%  3%  4%  6%  3%  3%  1%
+[libx264 @ 0x14b109120] i8c dc,h,v,p: 51% 21% 24%  3%
+[libx264 @ 0x14b109120] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x14b109120] ref P L0: 71.7%  8.6% 14.5%  5.3%
+[libx264 @ 0x14b109120] ref B L0: 84.9% 12.4%  2.7%
+[libx264 @ 0x14b109120] ref B L1: 96.7%  3.3%
+[libx264 @ 0x14b109120] kb/s:627.46
+[aac @ 0x14b111050] Qavg: 3496.252
+
+2025-02-28 11:07:33,571 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,574 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,579 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,579 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,583 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,583 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,590 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,590 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,767 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,767 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,771 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,771 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,775 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,776 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:33,780 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:33,780 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:54,006 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:54,006 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:54,011 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:54,011 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:54,015 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:54,016 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-02-28 11:07:54,019 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-02-28 11:07:54,019 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
