@@ -558,7 +558,7 @@ class VideoProcessor:
                 "--outfile", output_path,
                 "--nosmooth",              
                 "--pads", "0", "20", "0", "0",
-                "--resize_factor", "1.5"  # Try a different resize factor
+                "--resize_factor", "2"  # Using known working value
             ]
             
             logger.info(f"Running Wav2Lip with command: {' '.join(command)}")
