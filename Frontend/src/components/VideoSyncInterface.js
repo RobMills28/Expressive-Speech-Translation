@@ -8,11 +8,82 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
 
 const SUPPORTED_LANGUAGES = {
-  'fra': 'French',
+  // Most common languages first
   'spa': 'Spanish',
+  'fra': 'French',
   'deu': 'German',
   'ita': 'Italian',
-  'por': 'Portuguese'
+  'por': 'Portuguese',
+  'rus': 'Russian',
+  'jpn': 'Japanese',
+  'cmn': 'Chinese (Simplified)',
+  'cmn_Hant': 'Chinese (Traditional)',
+  'ukr': 'Ukrainian',
+  
+  // Rest in alphabetical order
+  'ara': 'Arabic',
+  'bel': 'Belarusian',
+  'bul': 'Bulgarian',
+  'ces': 'Czech',
+  'dan': 'Danish',
+  'ell': 'Greek',
+  'est': 'Estonian',
+  'fin': 'Finnish',
+  'heb': 'Hebrew',
+  'hrv': 'Croatian',
+  'hun': 'Hungarian',
+  'lit': 'Lithuanian',
+  'lav': 'Latvian',
+  'mkd': 'Macedonian',
+  'nld': 'Dutch',
+  'pol': 'Polish',
+  'ron': 'Romanian',
+  'slk': 'Slovak',
+  'slv': 'Slovene',
+  'srp': 'Serbian',
+  'tha': 'Thai',
+  'tur': 'Turkish',
+  'vie': 'Vietnamese'
+};
+
+// Language flags mapping
+const LANGUAGE_FLAGS = {
+  // Most common languages first
+  'spa': '🇪🇸',
+  'fra': '🇫🇷',
+  'deu': '🇩🇪',
+  'ita': '🇮🇹',
+  'por': '🇵🇹',
+  'rus': '🇷🇺',
+  'jpn': '🇯🇵',
+  'cmn': '🇨🇳',
+  'cmn_Hant': '🇹🇼',
+  'ukr': '🇺🇦',
+  
+  // Rest in alphabetical order
+  'ara': '🇸🇦',
+  'bel': '🇧🇾',
+  'bul': '🇧🇬',
+  'ces': '🇨🇿',
+  'dan': '🇩🇰',
+  'ell': '🇬🇷',
+  'est': '🇪🇪',
+  'fin': '🇫🇮',
+  'heb': '🇮🇱',
+  'hrv': '🇭🇷',
+  'hun': '🇭🇺',
+  'lit': '🇱🇹',
+  'lav': '🇱🇻',
+  'mkd': '🇲🇰',
+  'nld': '🇳🇱',
+  'pol': '🇵🇱',
+  'ron': '🇷🇴',
+  'slk': '🇸🇰',
+  'slv': '🇸🇮',
+  'srp': '🇷🇸',
+  'tha': '🇹🇭',
+  'tur': '🇹🇷',
+  'vie': '🇻🇳'
 };
 
 const VideoSyncInterface = () => {
@@ -215,13 +286,13 @@ const VideoSyncInterface = () => {
                 onValueChange={setTargetLanguage}
                 disabled={isProcessing}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-60">
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-80 overflow-y-auto">
                   {Object.entries(SUPPORTED_LANGUAGES).map(([code, name]) => (
                     <SelectItem key={code} value={code}>
-                      {name}
+                      <span>{LANGUAGE_FLAGS[code]}</span> <span className="ml-2">{name}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>

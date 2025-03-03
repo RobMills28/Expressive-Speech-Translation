@@ -310,19 +310,78 @@ if not auth_token:
 
 # Language configurations
 LANGUAGE_CODES = {
-    'fra': ('fra', 'French'),
+    # Most common languages first
     'spa': ('spa', 'Spanish'),
+    'fra': ('fra', 'French'),
     'deu': ('deu', 'German'),
     'ita': ('ita', 'Italian'),
-    'por': ('por', 'Portuguese')
+    'por': ('por', 'Portuguese'),
+    'rus': ('rus', 'Russian'),
+    'jpn': ('jpn', 'Japanese'),
+    'cmn': ('cmn', 'Chinese (Simplified)'),
+    'cmn_Hant': ('cmn_Hant', 'Chinese (Traditional)'),
+    
+    # Rest in alphabetical order
+    'ara': ('ara', 'Arabic'),
+    'bel': ('bel', 'Belarusian'),
+    'bul': ('bul', 'Bulgarian'),
+    'ces': ('ces', 'Czech'),
+    'dan': ('dan', 'Danish'),
+    'ell': ('ell', 'Greek'),
+    'epo': ('epo', 'Esperanto'),
+    'est': ('est', 'Estonian'),
+    'fin': ('fin', 'Finnish'),
+    'heb': ('heb', 'Hebrew'),
+    'hrv': ('hrv', 'Croatian'),
+    'hun': ('hun', 'Hungarian'),
+    'lit': ('lit', 'Lithuanian'),
+    'lav': ('lav', 'Latvian'),
+    'mkd': ('mkd', 'Macedonian'),
+    'nld': ('nld', 'Dutch'),
+    'pol': ('pol', 'Polish'),
+    'ron': ('ron', 'Romanian'),
+    'slk': ('slk', 'Slovak'),
+    'slv': ('slv', 'Slovene'),
+    'srp': ('srp', 'Serbian'),
+    'tha': ('tha', 'Thai'),
+    'tur': ('tur', 'Turkish'),
+    'vie': ('vie', 'Vietnamese')
 }
 
 LANGUAGE_MAP = {
-    'de': 'deu',
-    'fr': 'fra',
     'es': 'spa',
+    'fr': 'fra',
+    'de': 'deu',
     'it': 'ita',
-    'pt': 'por'
+    'pt': 'por',
+    'ru': 'rus',
+    'ja': 'jpn',
+    'zh': 'cmn',
+    'zh-hant': 'cmn_Hant',
+    'ar': 'ara',
+    'be': 'bel',
+    'bg': 'bul',
+    'cs': 'ces',
+    'da': 'dan',
+    'el': 'ell',
+    'eo': 'epo',
+    'et': 'est',
+    'fi': 'fin',
+    'he': 'heb',
+    'hr': 'hrv',
+    'hu': 'hun',
+    'lt': 'lit',
+    'lv': 'lav',
+    'mk': 'mkd',
+    'nl': 'nld',
+    'pl': 'pol',
+    'ro': 'ron',
+    'sk': 'slk',
+    'sl': 'slv',
+    'sr': 'srp',
+    'th': 'tha',
+    'tr': 'tur',
+    'vi': 'vie'
 }
 
 from services.translation_routes import handle_translation

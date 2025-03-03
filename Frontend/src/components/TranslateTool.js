@@ -244,12 +244,43 @@ const TranslateTool = () => {
                     <SelectTrigger className="w-full border-fuchsia-200">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[400px]">
+                      {/* Most common languages first */}
                       <SelectItem value="fra">🇫🇷 French</SelectItem>
                       <SelectItem value="spa">🇪🇸 Spanish</SelectItem>
                       <SelectItem value="deu">🇩🇪 German</SelectItem>
                       <SelectItem value="ita">🇮🇹 Italian</SelectItem>
                       <SelectItem value="por">🇵🇹 Portuguese</SelectItem>
+                      <SelectItem value="rus">🇷🇺 Russian</SelectItem>
+                      <SelectItem value="jpn">🇯🇵 Japanese</SelectItem>
+                      <SelectItem value="cmn">🇨🇳 Chinese (Simplified)</SelectItem>
+                      <SelectItem value="cmn_Hant">🇹🇼 Chinese (Traditional)</SelectItem>
+                      <SelectItem value="ukr">🇺🇦 Ukrainian</SelectItem>
+
+                      {/* Rest in alphabetical order */}
+                      <SelectItem value="ara">🇸🇦 Arabic</SelectItem>
+                      <SelectItem value="bel">🇧🇾 Belarusian</SelectItem>
+                      <SelectItem value="bul">🇧🇬 Bulgarian</SelectItem>
+                      <SelectItem value="ces">🇨🇿 Czech</SelectItem>
+                      <SelectItem value="dan">🇩🇰 Danish</SelectItem>
+                      <SelectItem value="ell">🇬🇷 Greek</SelectItem>
+                      <SelectItem value="est">🇪🇪 Estonian</SelectItem>
+                      <SelectItem value="fin">🇫🇮 Finnish</SelectItem>
+                      <SelectItem value="heb">🇮🇱 Hebrew</SelectItem>
+                      <SelectItem value="hrv">🇭🇷 Croatian</SelectItem>
+                      <SelectItem value="hun">🇭🇺 Hungarian</SelectItem>
+                      <SelectItem value="lit">🇱🇹 Lithuanian</SelectItem>
+                      <SelectItem value="lav">🇱🇻 Latvian</SelectItem>
+                      <SelectItem value="mkd">🇲🇰 Macedonian</SelectItem>
+                      <SelectItem value="nld">🇳🇱 Dutch</SelectItem>
+                      <SelectItem value="pol">🇵🇱 Polish</SelectItem>
+                      <SelectItem value="ron">🇷🇴 Romanian</SelectItem>
+                      <SelectItem value="slk">🇸🇰 Slovak</SelectItem>
+                      <SelectItem value="slv">🇸🇮 Slovene</SelectItem>
+                      <SelectItem value="srp">🇷🇸 Serbian</SelectItem>
+                      <SelectItem value="tha">🇹🇭 Thai</SelectItem>
+                      <SelectItem value="tur">🇹🇷 Turkish</SelectItem>
+                      <SelectItem value="vie">🇻🇳 Vietnamese</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
