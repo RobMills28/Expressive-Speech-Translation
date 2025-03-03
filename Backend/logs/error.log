@@ -5961,3 +5961,42 @@ frame=  204 fps=0.0 q=-1.0 Lsize=     574KiB time=00:00:06.73 bitrate= 698.8kbit
 2025-03-03 00:00:28,698 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
 2025-03-03 00:00:28,707 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
 2025-03-03 00:00:28,708 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,290 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,293 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,299 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,299 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,303 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,303 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,307 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,308 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,479 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,479 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,484 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,484 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,489 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,489 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,494 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,494 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:13,510 - services.translation_routes - ERROR - [translation_routes.py:282] - Translation error: `tgt_lang=heb` is not supported by this model.
+                    Please specify a `tgt_lang` in arb,ben,cat,ces,cmn,cym,dan,deu,eng,est,fin,fra,hin,ind,ita,jpn,kan,kor,mlt,nld,pes,pol,por,ron,rus,slk,spa,swe,swh,tam,tel,tgl,tha,tur,ukr,urd,uzn,vie. Note that SeamlessM4Tv2 supports
+                    more languages for text translation than for speech synthesis.
+2025-03-03 22:47:10,622 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,623 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,627 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,627 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,632 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,632 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,637 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,637 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,805 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,805 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,809 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,809 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,813 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,814 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,818 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,818 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:21,728 - services.translation_routes - ERROR - [translation_routes.py:282] - Translation error: `tgt_lang=heb` is not supported by this model.
+                    Please specify a `tgt_lang` in arb,ben,cat,ces,cmn,cym,dan,deu,eng,est,fin,fra,hin,ind,ita,jpn,kan,kor,mlt,nld,pes,pol,por,ron,rus,slk,spa,swe,swh,tam,tel,tgl,tha,tur,ukr,urd,uzn,vie. Note that SeamlessM4Tv2 supports
+                    more languages for text translation than for speech synthesis.
+2025-03-03 23:20:35,736 - services.translation_routes - ERROR - [translation_routes.py:62] - Request 32b9eece: Unsupported language hin

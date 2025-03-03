@@ -6,40 +6,41 @@ import { FileText } from 'lucide-react';
 // Language flags mapping
 const LANGUAGE_FLAGS = {
   // Most common languages first
-  'spa': '🇪🇸',
   'fra': '🇫🇷',
+  'spa': '🇪🇸',
   'deu': '🇩🇪',
   'ita': '🇮🇹',
   'por': '🇵🇹',
   'rus': '🇷🇺',
   'jpn': '🇯🇵',
   'cmn': '🇨🇳',
-  'cmn_Hant': '🇹🇼',
   'ukr': '🇺🇦',
   
   // Rest in alphabetical order
-  'ara': '🇸🇦',
-  'bel': '🇧🇾',
-  'bul': '🇧🇬',
-  'ces': '🇨🇿',
+  'ben': '🇧🇩',
+  'cat': '🏴󠁥󠁳󠁣󠁴󠁿',
+  'cmn_Hant': '🇹🇼',
+  'cym': '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
   'dan': '🇩🇰',
-  'ell': '🇬🇷',
   'est': '🇪🇪',
   'fin': '🇫🇮',
-  'heb': '🇮🇱',
-  'hrv': '🇭🇷',
-  'hun': '🇭🇺',
-  'lit': '🇱🇹',
-  'lav': '🇱🇻',
-  'mkd': '🇲🇰',
+  'hin': '🇮🇳',
+  'ind': '🇮🇩',
+  'kor': '🇰🇷',
+  'mlt': '🇲🇹',
   'nld': '🇳🇱',
+  'pes': '🇮🇷',
   'pol': '🇵🇱',
   'ron': '🇷🇴',
   'slk': '🇸🇰',
-  'slv': '🇸🇮',
-  'srp': '🇷🇸',
+  'swe': '🇸🇪',
+  'swh': '🇹🇿',
+  'tel': '🇮🇳',
+  'tgl': '🇵🇭',
   'tha': '🇹🇭',
   'tur': '🇹🇷',
+  'urd': '🇵🇰',
+  'uzn': '🇺🇿',
   'vie': '🇻🇳'
 };
 
@@ -55,44 +56,45 @@ const TranscriptView = ({ sourceText, targetText, targetLang }) => {
   const getLanguageName = (code) => {     
     const languageMap = {       
       // Most common languages first
-      'spa': 'Spanish',
       'fra': 'French',
+      'spa': 'Spanish',
       'deu': 'German',
       'ita': 'Italian',
       'por': 'Portuguese',
       'rus': 'Russian',
       'jpn': 'Japanese',
       'cmn': 'Chinese (Simplified)',
-      'cmn_Hant': 'Chinese (Traditional)',
       'ukr': 'Ukrainian',
       
       // Rest in alphabetical order
-      'ara': 'Arabic',
-      'bel': 'Belarusian',
-      'bul': 'Bulgarian',
-      'ces': 'Czech',
+      'ben': 'Bengali',
+      'cat': 'Catalan',
+      'cmn_Hant': 'Chinese (Traditional)',
+      'cym': 'Welsh',
       'dan': 'Danish',
-      'ell': 'Greek',
       'est': 'Estonian',
       'fin': 'Finnish',
-      'heb': 'Hebrew',
-      'hrv': 'Croatian',
-      'hun': 'Hungarian',
-      'lit': 'Lithuanian',
-      'lav': 'Latvian',
-      'mkd': 'Macedonian',
+      'hin': 'Hindi',
+      'ind': 'Indonesian',
+      'kor': 'Korean',
+      'mlt': 'Maltese',
       'nld': 'Dutch',
+      'pes': 'Persian',
       'pol': 'Polish',
       'ron': 'Romanian',
       'slk': 'Slovak',
-      'slv': 'Slovene',
-      'srp': 'Serbian',
+      'swe': 'Swedish',
+      'swh': 'Swahili',
+      'tel': 'Telugu',
+      'tgl': 'Tagalog',
       'tha': 'Thai',
       'tur': 'Turkish',
+      'urd': 'Urdu',
+      'uzn': 'Uzbek',
       'vie': 'Vietnamese'
     };     
     return languageMap[code] || code;   
-  };    
+  }; 
   
   if (!hasTranscript) return null;    
   

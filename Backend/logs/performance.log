@@ -8736,3 +8736,366 @@ Detected Issues:
 2025-03-03 00:00:29,016 - services.translation_routes - INFO - [translation_routes.py:375] - Request 62006f22 completed in 108.41s
 2025-03-03 00:00:29,017 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 108.41s, Memory Change: 6747.86MB
 2025-03-03 00:00:29,017 - __main__ - INFO - [app.py:279] - Request to /translate took 145.59s
+2025-03-03 20:23:08,399 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-03-03 20:23:08,402 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-03-03 20:23:13,407 - __main__ - INFO - [app.py:509] - Application shutting down...
+2025-03-03 20:23:13,412 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-03-03 20:23:13,413 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-03-03 20:23:13,416 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 20:23:13,417 - __main__ - INFO - [app.py:523] - Cleanup completed successfully
+2025-03-03 20:23:13,417 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-03-03 20:23:13,421 - __main__ - INFO - [app.py:509] - Application shutting down...
+2025-03-03 20:23:13,421 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-03-03 20:23:13,421 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-03-03 20:23:13,423 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 20:23:13,423 - __main__ - INFO - [app.py:523] - Cleanup completed successfully
+2025-03-03 20:23:13,426 - __main__ - INFO - [app.py:509] - Application shutting down...
+2025-03-03 20:23:13,426 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-03-03 20:23:13,426 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-03-03 20:23:13,428 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 20:23:13,428 - __main__ - INFO - [app.py:523] - Cleanup completed successfully
+2025-03-03 22:41:13,820 - __main__ - INFO - [app.py:540] - Metrics server started on port 8000
+2025-03-03 22:41:13,822 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-03-03 22:41:26,648 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-03-03 22:41:26,648 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 22:41:26,651 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 22:41:54,138 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 22:41:54,139 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 22:42:09,306 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 22:42:09,306 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 22:42:09,308 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-03-03 22:42:09,308 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 22:42:09,308 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 22:42:25,052 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 22:42:25,053 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 22:42:44,493 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 22:42:44,494 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:564] - ==================================================
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:565] - Starting LinguaSync Backend
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:566] - Starting Flask app on port 5001 using cpu
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:567] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:568] - Supported languages: ['spa', 'fra', 'deu', 'ita', 'por', 'rus', 'jpn', 'cmn', 'cmn_Hant', 'ara', 'bel', 'bul', 'ces', 'dan', 'ell', 'epo', 'est', 'fin', 'heb', 'hrv', 'hun', 'lit', 'lav', 'mkd', 'nld', 'pol', 'ron', 'slk', 'slv', 'srp', 'tha', 'tur', 'vie']
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:569] - Maximum audio length: 300 seconds
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:570] - Sample rate: 16000 Hz
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:574] - System memory: 36.0GB total, 10.8GB available
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:575] - CPU cores: 11
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:583] - Configuration:
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:584] - - Debug mode: False
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:585] - - CORS enabled: True
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:586] - - Rate limiting: 10 requests per minute
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:587] - - Metrics enabled: True (port 8000)
+2025-03-03 22:42:44,500 - __main__ - INFO - [app.py:589] - ==================================================
+2025-03-03 22:45:26,524 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.27MB
+2025-03-03 22:45:26,525 - __main__ - INFO - [app.py:279] - Request to /process-audio-url took 0.00s
+2025-03-03 22:45:26,528 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@fightjoe/video/7127311328095522053?lang=en&q=comedy&t=1737721075998
+2025-03-03 22:45:26,528 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-03-03 22:45:26,529 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpt4ons3_c/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '8816754702046351486'}}}
+2025-03-03 22:45:28,360 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-03-03 22:45:28,361 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpt4ons3_c/output.wav
+2025-03-03 22:45:28,366 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-03-03 22:45:28,366 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-03-03 22:45:28,366 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.84s, Memory Change: 38.05MB
+2025-03-03 22:45:28,367 - __main__ - INFO - [app.py:279] - Request to /process-audio-url took 1.84s
+2025-03-03 22:45:30,349 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 22:45:30,351 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 22:45:46,240 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 22:45:46,241 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 22:46:02,221 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 22:46:02,221 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 22:46:02,225 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 96600868
+2025-03-03 22:46:02,225 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-03-03 22:46:02,225 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-03-03 22:46:02,226 - services.translation_routes - INFO - [translation_routes.py:97] - Request 96600868: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpax0dsncw.wav
+2025-03-03 22:46:02,228 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 6.57 seconds
+2025-03-03 22:46:02,228 - services.translation_routes - INFO - [translation_routes.py:112] - Request 96600868: Beginning audio processing with diagnostics
+2025-03-03 22:46:02,228 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpax0dsncw.wav
+2025-03-03 22:46:02,228 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-03-03 22:46:02,230 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-03-03 22:46:02,250 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-03-03 22:46:02,261 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-03-03 22:46:02,261 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for heb
+2025-03-03 22:46:02,261 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for heb, using defaults
+2025-03-03 22:46:02,272 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-03-03 22:46:02,290 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,293 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,299 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,299 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,303 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,303 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,307 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,308 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,448 - services.diagnostics.base - WARNING - [base.py:117] - No analyzer available for language: heb
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:123] - 
+==================================================
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 96600868
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: heb
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+==============================
+
+Target Language: heb
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.026
+- Rms Level: 0.076
+- Crest Factor: 12.530
+- Zero Crossings: 29106.000
+- Silence Percentage: 62.741
+- Clipping Points: 0.000
+- Dynamic Range: 6753166.765
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.082
+  - Temporal Flatness: 0.024
+
+- Volume Metrics:
+  - Volume Stability: -0.671
+  - Volume Range: 28777495.027
+  - Volume Variations: 0.065
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.012101101788277
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+2025-03-03 22:46:02,449 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
+
+2025-03-03 22:46:02,449 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpax0dsncw.wav
+2025-03-03 22:46:02,449 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-03-03 22:46:02,450 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-03-03 22:46:02,455 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-03-03 22:46:02,458 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-03-03 22:46:02,458 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for heb
+2025-03-03 22:46:02,458 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for heb, using defaults
+2025-03-03 22:46:02,466 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-03-03 22:46:02,479 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,479 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,484 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,484 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,489 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,489 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,494 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:46:02,494 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:46:02,635 - services.diagnostics.base - WARNING - [base.py:117] - No analyzer available for language: heb
+2025-03-03 22:46:02,636 - services.translation_routes - INFO - [translation_routes.py:153] - Request 96600868: Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-03-03 22:46:02,636 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.15608341036219223)
+2025-03-03 22:46:02,636 - services.translation_routes - INFO - [translation_routes.py:165] - Request 96600868: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': False, 'confidence': 0.15608341036219223}}}
+2025-03-03 22:46:02,636 - services.translation_routes - INFO - [translation_routes.py:167] - Request 96600868: Audio processed successfully
+2025-03-03 22:46:02,644 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-03-03 22:46:07,907 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: if you wouldn't fight what do you think it would be I would definitely be a diabetic
+2025-03-03 22:46:13,510 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: אם היית עושה את זה, מה אתה חושב שהיית עושה? -אני בהחלט הייתי סובל מסוכרת.
+2025-03-03 22:46:13,510 - services.translation_routes - ERROR - [translation_routes.py:282] - Translation error: `tgt_lang=heb` is not supported by this model.
+                    Please specify a `tgt_lang` in arb,ben,cat,ces,cmn,cym,dan,deu,eng,est,fin,fra,hin,ind,ita,jpn,kan,kor,mlt,nld,pes,pol,por,ron,rus,slk,spa,swe,swh,tam,tel,tgl,tha,tur,ukr,urd,uzn,vie. Note that SeamlessM4Tv2 supports
+                    more languages for text translation than for speech synthesis.
+2025-03-03 22:46:13,510 - services.translation_routes - INFO - [translation_routes.py:375] - Request 96600868 completed in 11.29s
+2025-03-03 22:46:13,511 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 11.29s, Memory Change: 203.22MB
+2025-03-03 22:46:13,511 - __main__ - INFO - [app.py:279] - Request to /translate took 43.16s
+2025-03-03 22:46:30,752 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 22:46:30,754 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 22:46:50,159 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 22:46:50,159 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 22:47:10,583 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 22:47:10,583 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 22:47:10,587 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 94debd5e
+2025-03-03 22:47:10,587 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-03-03 22:47:10,587 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-03-03 22:47:10,588 - services.translation_routes - INFO - [translation_routes.py:97] - Request 94debd5e: Saved input file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp8guf_qch.wav
+2025-03-03 22:47:10,588 - services.audio_processor - INFO - [audio_processor.py:136] - Audio duration: 6.57 seconds
+2025-03-03 22:47:10,588 - services.translation_routes - INFO - [translation_routes.py:112] - Request 94debd5e: Beginning audio processing with diagnostics
+2025-03-03 22:47:10,588 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp8guf_qch.wav
+2025-03-03 22:47:10,588 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-03-03 22:47:10,591 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-03-03 22:47:10,597 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-03-03 22:47:10,600 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-03-03 22:47:10,600 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for heb
+2025-03-03 22:47:10,600 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for heb, using defaults
+2025-03-03 22:47:10,612 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-03-03 22:47:10,622 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,623 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,627 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,627 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,632 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,632 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,637 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,637 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,776 - services.diagnostics.base - WARNING - [base.py:117] - No analyzer available for language: heb
+2025-03-03 22:47:10,776 - services.translation_routes - INFO - [translation_routes.py:123] - 
+==================================================
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:124] - Input Audio Quality Report
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:125] - ==================================================
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:126] - Request ID: 94debd5e
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:127] - Target Language: heb
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:128] - --------------------------------------------------
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:129] - Audio Quality Analysis Report
+==============================
+
+Target Language: heb
+
+Waveform Analysis:
+--------------------
+- Peak Amplitude: 0.950
+- Avg Amplitude: 0.026
+- Rms Level: 0.076
+- Crest Factor: 12.530
+- Zero Crossings: 29106.000
+- Silence Percentage: 62.741
+- Clipping Points: 0.000
+- Dynamic Range: 6753166.765
+
+- Processing Metrics:
+  - Compression Detected: 0.000
+  - Over Compressed: 0.000
+  - Compression Severity: 0.000
+  - Dynamic Range Loss: 0.000
+
+- Temporal Metrics:
+  - Smoothing Detected: 1.000
+  - Temporal Variation: 0.082
+  - Temporal Flatness: 0.024
+
+- Volume Metrics:
+  - Volume Stability: -0.671
+  - Volume Range: 28777495.027
+  - Volume Variations: 0.065
+
+Spectral Analysis:
+--------------------
+
+Quality Metrics (1-5 scale):
+--------------------
+- Robotic Voice: 1.0
+- Pronunciation: 1.0
+- Audio Clarity: 3.012101101788277
+- Background Noise: 5.0
+- Voice Consistency: 1.0
+- Spectral Balance: 1.0
+
+Detected Issues:
+--------------------
+- Muffled
+2025-03-03 22:47:10,777 - services.translation_routes - INFO - [translation_routes.py:130] - ==================================================
+
+2025-03-03 22:47:10,777 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp8guf_qch.wav
+2025-03-03 22:47:10,777 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-03-03 22:47:10,777 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 105163]), Frequency: 16000Hz
+2025-03-03 22:47:10,783 - services.audio_processor - INFO - [audio_processor.py:449] - Base audio processing successful, proceeding with enhancement
+2025-03-03 22:47:10,785 - services.audio_processor - INFO - [audio_processor.py:457] - Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-03-03 22:47:10,785 - services.audio_processor - INFO - [audio_processor.py:460] - Applying speech-optimized spectral enhancement for heb
+2025-03-03 22:47:10,785 - services.audio_processor - WARNING - [audio_processor.py:365] - No specific parameters for heb, using defaults
+2025-03-03 22:47:10,795 - services.audio_processor - INFO - [audio_processor.py:470] - Analyzing audio quality...
+2025-03-03 22:47:10,805 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,805 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,809 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,809 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,813 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,814 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,818 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:363] - Visualization failed: module 'collections' has no attribute 'Iterable'
+2025-03-03 22:47:10,818 - services.diagnostics.spectral_analysis - ERROR - [spectral_analysis.py:764] - Harmonic analysis failed: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
+2025-03-03 22:47:10,960 - services.diagnostics.base - WARNING - [base.py:117] - No analyzer available for language: heb
+2025-03-03 22:47:10,960 - services.translation_routes - INFO - [translation_routes.py:153] - Request 94debd5e: Background music analysis: {'has_background_music': False, 'music_confidence': 0.15608341036219223, 'feature_scores': {'spectral_flatness': 0.03820588165673722, 'rhythm_regularity': 0.023762376237623763, 'bass_presence': 0.039862824445829455, 'temporal_stability': 0.054252328022001785}, 'speech_vs_music': {'speech_prominence': 7.497730333222908, 'speech_band_energy': 2.2766175789001863e-07, 'music_band_energy': 3.0264089900811086e-08}}
+2025-03-03 22:47:10,960 - services.translation_strategy - INFO - [translation_strategy.py:23] - Content Type: speech_with_music (Music confidence: 0.15608341036219223)
+2025-03-03 22:47:10,960 - services.translation_routes - INFO - [translation_routes.py:165] - Request 94debd5e: Audio characteristics heard: {'content_type': 'speech_with_music', 'heard_characteristics': {'music': {'detected': False, 'confidence': 0.15608341036219223}}}
+2025-03-03 22:47:10,960 - services.translation_routes - INFO - [translation_routes.py:167] - Request 94debd5e: Audio processed successfully
+2025-03-03 22:47:10,966 - services.translation_routes - INFO - [translation_routes.py:184] - Input keys: dict_keys(['input_features', 'attention_mask'])
+2025-03-03 22:47:16,231 - services.translation_routes - INFO - [translation_routes.py:223] - Source text: if you wouldn't fight what do you think it would be I would definitely be a diabetic
+2025-03-03 22:47:21,727 - services.translation_routes - INFO - [translation_routes.py:243] - Target text: אם היית עושה את זה, מה אתה חושב שהיית עושה? -אני בהחלט הייתי סובל מסוכרת.
+2025-03-03 22:47:21,728 - services.translation_routes - ERROR - [translation_routes.py:282] - Translation error: `tgt_lang=heb` is not supported by this model.
+                    Please specify a `tgt_lang` in arb,ben,cat,ces,cmn,cym,dan,deu,eng,est,fin,fra,hin,ind,ita,jpn,kan,kor,mlt,nld,pes,pol,por,ron,rus,slk,spa,swe,swh,tam,tel,tgl,tha,tur,ukr,urd,uzn,vie. Note that SeamlessM4Tv2 supports
+                    more languages for text translation than for speech synthesis.
+2025-03-03 22:47:21,728 - services.translation_routes - INFO - [translation_routes.py:375] - Request 94debd5e completed in 11.14s
+2025-03-03 22:47:21,730 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 11.14s, Memory Change: 107.98MB
+2025-03-03 22:47:21,730 - __main__ - INFO - [app.py:279] - Request to /translate took 50.98s
+2025-03-03 23:17:10,304 - __main__ - INFO - [app.py:218] - Received SIGINT signal
+2025-03-03 23:17:10,306 - __main__ - INFO - [app.py:203] - Initiating graceful shutdown...
+2025-03-03 23:17:15,312 - __main__ - INFO - [app.py:509] - Application shutting down...
+2025-03-03 23:17:15,313 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-03-03 23:17:15,314 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-03-03 23:17:15,317 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 23:17:15,318 - __main__ - INFO - [app.py:523] - Cleanup completed successfully
+2025-03-03 23:17:15,319 - __main__ - INFO - [app.py:207] - Graceful shutdown completed
+2025-03-03 23:17:15,321 - __main__ - INFO - [app.py:509] - Application shutting down...
+2025-03-03 23:17:15,321 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-03-03 23:17:15,321 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-03-03 23:17:15,322 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 23:17:15,322 - __main__ - INFO - [app.py:523] - Cleanup completed successfully
+2025-03-03 23:17:15,323 - __main__ - INFO - [app.py:509] - Application shutting down...
+2025-03-03 23:17:15,323 - services.model_manager - INFO - [model_manager.py:233] - Cleaning up model resources
+2025-03-03 23:17:15,324 - services.model_manager - INFO - [model_manager.py:246] - Model cleanup completed successfully
+2025-03-03 23:17:15,325 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 23:17:15,325 - __main__ - INFO - [app.py:523] - Cleanup completed successfully
+2025-03-03 23:17:28,649 - __main__ - INFO - [app.py:540] - Metrics server started on port 8000
+2025-03-03 23:17:28,649 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-03-03 23:17:41,668 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-03-03 23:17:41,669 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 23:17:41,670 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 23:18:07,248 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 23:18:07,248 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 23:18:23,002 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 23:18:23,003 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 23:18:23,006 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-03-03 23:18:23,006 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 23:18:23,006 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 23:18:40,837 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 23:18:40,838 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 23:18:56,646 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 23:18:56,646 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 23:18:56,648 - __main__ - INFO - [app.py:491] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-03 23:18:56,648 - __main__ - INFO - [app.py:564] - ==================================================
+2025-03-03 23:18:56,648 - __main__ - INFO - [app.py:565] - Starting LinguaSync Backend
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:566] - Starting Flask app on port 5001 using cpu
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:567] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:568] - Supported languages: ['spa', 'fra', 'deu', 'ita', 'por', 'rus', 'jpn', 'cmn', 'cmn_Hant', 'ara', 'bel', 'bul', 'ces', 'dan', 'ell', 'epo', 'est', 'fin', 'heb', 'hrv', 'hun', 'lit', 'lav', 'mkd', 'nld', 'pol', 'ron', 'slk', 'slv', 'srp', 'tha', 'tur', 'vie']
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:569] - Maximum audio length: 300 seconds
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:570] - Sample rate: 16000 Hz
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:574] - System memory: 36.0GB total, 10.5GB available
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:575] - CPU cores: 11
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:583] - Configuration:
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:584] - - Debug mode: False
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:585] - - CORS enabled: True
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:586] - - Rate limiting: 10 requests per minute
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:587] - - Metrics enabled: True (port 8000)
+2025-03-03 23:18:56,649 - __main__ - INFO - [app.py:589] - ==================================================
+2025-03-03 23:19:56,268 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 0.00s, Memory Change: 0.12MB
+2025-03-03 23:19:56,268 - __main__ - INFO - [app.py:279] - Request to /process-audio-url took 0.00s
+2025-03-03 23:19:56,271 - services.audio_link_routes - INFO - [audio_link_routes.py:226] - Processing URL: https://www.tiktok.com/@fightjoe/video/7127311328095522053
+2025-03-03 23:19:56,272 - services.audio_link_routes - INFO - [audio_link_routes.py:246] - Processing TikTok URL
+2025-03-03 23:19:56,272 - services.audio_link_routes - INFO - [audio_link_routes.py:130] - Using options for tiktok: {'format': 'bestaudio[ext=m4a]/bestaudio/best', 'outtmpl': '/var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp69kxbl7c/output', 'quiet': False, 'no_warnings': True, 'keepvideo': True, 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '192'}], 'concurrent_fragment_downloads': 8, 'http_headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-us,en;q=0.5', 'Accept-Encoding': 'gzip,deflate', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}, 'nocheckcertificate': True, 'ignoreerrors': False, 'geo_bypass': True, 'extractor_args': {'tiktok': {'api_hostname': 'api22-normal-c-alisg.tiktokv.com', 'app_name': 'trill', 'app_version': '34.1.2', 'manifest_app_version': '2023401020', 'app_info': '1234567890123456789/trill///1180', 'device_id': '9442294788502106832'}}}
+2025-03-03 23:19:57,671 - services.audio_link_routes - INFO - [audio_link_routes.py:143] - Successfully downloaded tiktok content
+2025-03-03 23:19:57,672 - services.audio_link_routes - INFO - [audio_link_routes.py:162] - Found audio file: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmp69kxbl7c/output.wav
+2025-03-03 23:19:57,677 - services.audio_link_routes - INFO - [audio_link_routes.py:174] - Successfully converted audio to WAV
+2025-03-03 23:19:57,677 - services.audio_link_routes - INFO - [audio_link_routes.py:252] - Successfully processed audio
+2025-03-03 23:19:57,678 - services.utils - INFO - [utils.py:57] - Performance - Function: process_audio_url, Duration: 1.41s, Memory Change: 11.44MB
+2025-03-03 23:19:57,678 - __main__ - INFO - [app.py:279] - Request to /process-audio-url took 1.41s
+2025-03-03 23:19:59,382 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-03 23:19:59,383 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-03 23:20:17,141 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-03 23:20:17,141 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-03 23:20:35,729 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-03 23:20:35,733 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-03 23:20:35,736 - services.translation_routes - INFO - [translation_routes.py:36] - Starting translation request 32b9eece
+2025-03-03 23:20:35,736 - services.translation_routes - ERROR - [translation_routes.py:62] - Request 32b9eece: Unsupported language hin
+2025-03-03 23:20:35,736 - services.translation_routes - INFO - [translation_routes.py:375] - Request 32b9eece completed in 0.00s
+2025-03-03 23:20:35,737 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 0.00s, Memory Change: 0.23MB
+2025-03-03 23:20:35,737 - __main__ - INFO - [app.py:279] - Request to /translate took 36.36s

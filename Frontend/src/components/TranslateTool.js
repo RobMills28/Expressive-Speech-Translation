@@ -258,28 +258,31 @@ const TranslateTool = () => {
                       <SelectItem value="ukr">🇺🇦 Ukrainian</SelectItem>
 
                       {/* Rest in alphabetical order */}
-                      <SelectItem value="ara">🇸🇦 Arabic</SelectItem>
-                      <SelectItem value="bel">🇧🇾 Belarusian</SelectItem>
-                      <SelectItem value="bul">🇧🇬 Bulgarian</SelectItem>
-                      <SelectItem value="ces">🇨🇿 Czech</SelectItem>
+                      <SelectItem value="ben">🇧🇩 Bengali</SelectItem>
+                      <SelectItem value="cat">🏴󠁥󠁳󠁣󠁴󠁿 Catalan</SelectItem>
+                      <SelectItem value="cmn_Hant">🇹🇼 Chinese (Traditional)</SelectItem>
+                      <SelectItem value="cym">🏴󠁧󠁢󠁷󠁬󠁳󠁿 Welsh</SelectItem>
                       <SelectItem value="dan">🇩🇰 Danish</SelectItem>
-                      <SelectItem value="ell">🇬🇷 Greek</SelectItem>
+                      <SelectItem value="eng">🇬🇧 English</SelectItem>
                       <SelectItem value="est">🇪🇪 Estonian</SelectItem>
                       <SelectItem value="fin">🇫🇮 Finnish</SelectItem>
-                      <SelectItem value="heb">🇮🇱 Hebrew</SelectItem>
-                      <SelectItem value="hrv">🇭🇷 Croatian</SelectItem>
-                      <SelectItem value="hun">🇭🇺 Hungarian</SelectItem>
-                      <SelectItem value="lit">🇱🇹 Lithuanian</SelectItem>
-                      <SelectItem value="lav">🇱🇻 Latvian</SelectItem>
-                      <SelectItem value="mkd">🇲🇰 Macedonian</SelectItem>
+                      <SelectItem value="hin">🇮🇳 Hindi</SelectItem>
+                      <SelectItem value="ind">🇮🇩 Indonesian</SelectItem>
+                      <SelectItem value="kor">🇰🇷 Korean</SelectItem>
+                      <SelectItem value="mlt">🇲🇹 Maltese</SelectItem>
                       <SelectItem value="nld">🇳🇱 Dutch</SelectItem>
+                      <SelectItem value="pes">🇮🇷 Persian</SelectItem>
                       <SelectItem value="pol">🇵🇱 Polish</SelectItem>
                       <SelectItem value="ron">🇷🇴 Romanian</SelectItem>
                       <SelectItem value="slk">🇸🇰 Slovak</SelectItem>
-                      <SelectItem value="slv">🇸🇮 Slovene</SelectItem>
-                      <SelectItem value="srp">🇷🇸 Serbian</SelectItem>
+                      <SelectItem value="swe">🇸🇪 Swedish</SelectItem>
+                      <SelectItem value="swh">🇹🇿 Swahili</SelectItem>
+                      <SelectItem value="tel">🇮🇳 Telugu</SelectItem>
+                      <SelectItem value="tgl">🇵🇭 Tagalog</SelectItem>
                       <SelectItem value="tha">🇹🇭 Thai</SelectItem>
                       <SelectItem value="tur">🇹🇷 Turkish</SelectItem>
+                      <SelectItem value="urd">🇵🇰 Urdu</SelectItem>
+                      <SelectItem value="uzn">🇺🇿 Uzbek</SelectItem>
                       <SelectItem value="vie">🇻🇳 Vietnamese</SelectItem>
                     </SelectContent>
                   </Select>
