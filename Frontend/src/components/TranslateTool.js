@@ -263,7 +263,6 @@ const TranslateTool = () => {
                       <SelectItem value="cmn_Hant">🇹🇼 Chinese (Traditional)</SelectItem>
                       <SelectItem value="cym">🏴󠁧󠁢󠁷󠁬󠁳󠁿 Welsh</SelectItem>
                       <SelectItem value="dan">🇩🇰 Danish</SelectItem>
-                      <SelectItem value="eng">🇬🇧 English</SelectItem>
                       <SelectItem value="est">🇪🇪 Estonian</SelectItem>
                       <SelectItem value="fin">🇫🇮 Finnish</SelectItem>
                       <SelectItem value="hin">🇮🇳 Hindi</SelectItem>

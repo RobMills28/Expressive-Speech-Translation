@@ -136,7 +136,7 @@ const TranscriptView = ({ sourceText, targetText, targetLang }) => {
             
             <div>               
               <h3 className="font-semibold text-fuchsia-800 mb-2">
-                Target Text ({LANGUAGE_FLAGS[targetLang] || ''} {getLanguageName(targetLang)})               
+                Target Text ({getLanguageName(targetLang)})               
               </h3>               
               <div className="p-4 rounded-md bg-fuchsia-50 text-gray-700 min-h-[50px] whitespace-pre-wrap">                 
                 {targetText || 'No target text available'}               
