@@ -11,7 +11,7 @@ import spotifyIcon from '../assets/icons/spotify-icon.png';
 import tiktokIcon from '../assets/icons/TikTok_Icon_Black_Circle.png';
 
 const Dashboard = () => {
-  const [showTranslationFlow, setShowTranslationFlow] = useState(false);
+  const [showTranslationFlow, setShowTranslationFlow] = useState(true); // Changed from false to true
   const [activeView, setActiveView] = useState('overview');
 
   const renderMainContent = () => {
