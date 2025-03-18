@@ -5,7 +5,7 @@ import { Button } from "./components/ui/button";
 import { Globe } from 'lucide-react';
 import TranslateTool from './components/TranslateTool';
 import Dashboard from "./components/Dashboard";
-import PricingPage from './components/PricingPage'; // Add this line
+import PricingPage from './components/PricingPage';
 
 // Navigation Component
 const Navigation = () => {
@@ -86,14 +86,26 @@ const LandingPage = () => {
             </Link>
           </div>
 
+          {/* Video Demo Section - Autoplay without controls */}
+          <div className="max-w-6xl mx-auto mt-16 px-4 mb-16">
+            <div className="aspect-video w-full max-w-3xl mx-auto rounded-xl bg-white/50 shadow-lg backdrop-blur-sm border border-white/20 overflow-hidden">
+              <video 
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                src={`${process.env.PUBLIC_URL}/videos/man-speaking-into-the-microphone.mp4`}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+
           <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
             <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[800px] rounded-full bg-fuchsia-100/50 blur-3xl" />
             <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-pink-100/30 blur-3xl" />
           </div>
-
-          {/* <div className="max-w-6xl mx-auto mt-16 px-4">
-            <div className="aspect-video w-full max-w-3xl mx-auto rounded-xl bg-white/50 shadow-lg backdrop-blur-sm border border-white/20" />
-          </div> */}
         </div>
       </div>
       
