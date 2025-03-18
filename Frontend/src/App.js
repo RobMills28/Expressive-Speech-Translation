@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Card } from "./components/ui/card";
 import { Button } from "./components/ui/button";
-import { Globe } from 'lucide-react';
+import { Globe, Youtube, Music, Video } from 'lucide-react';
 import TranslateTool from './components/TranslateTool';
 import Dashboard from "./components/Dashboard";
 import PricingPage from './components/PricingPage';
@@ -86,19 +86,116 @@ const LandingPage = () => {
             </Link>
           </div>
 
-          {/* Video Demo Section - Autoplay without controls */}
-          <div className="max-w-6xl mx-auto mt-16 px-4 mb-16">
-            <div className="aspect-video w-full max-w-3xl mx-auto rounded-xl bg-white/50 shadow-lg backdrop-blur-sm border border-white/20 overflow-hidden">
-              <video 
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-                src={`${process.env.PUBLIC_URL}/videos/man-speaking-into-the-microphone.mp4`}
-              >
-                Your browser does not support the video tag.
-              </video>
+          {/* Content Creator Section - Side by Side */}
+          <div className="max-w-6xl mx-auto mt-32 px-4">
+            <div className="flex flex-col lg:flex-row gap-8 items-center">
+              
+              {/* Left side - Video */}
+              <div className="lg:w-1/2">
+                <div className="aspect-video w-full rounded-xl bg-white/50 shadow-lg backdrop-blur-sm border border-white/20 overflow-hidden">
+                  <video 
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    src={`${process.env.PUBLIC_URL}/videos/man-speaking-into-the-microphone.mp4`}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+              
+              {/* Right side - Content */}
+              <div className="lg:w-1/2">
+                <h2 className="text-3xl font-bold mb-6 text-fuchsia-800">Translate Your Content While Preserving Your Unique Style</h2>
+                <p className="text-lg text-gray-700 mb-6">
+                  Maintain your authentic voice, emotions, and delivery when translating your videos and podcasts to new languages. Our AI preserves the nuances that make your content special.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="mt-1 bg-fuchsia-100 p-2 rounded-full">
+                      <Globe className="w-5 h-5 text-fuchsia-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold">Reach Global Audiences</h3>
+                      <p className="text-gray-600">Break language barriers and connect with viewers from around the world.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="mt-1 bg-fuchsia-100 p-2 rounded-full">
+                      <Music className="w-5 h-5 text-fuchsia-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold">Emotional Preservation</h3>
+                      <p className="text-gray-600">Keep your vocal characteristics, tone, and emotional delivery intact.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="mt-1 bg-fuchsia-100 p-2 rounded-full">
+                      <Video className="w-5 h-5 text-fuchsia-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold">Multi-Platform Ready</h3>
+                      <p className="text-gray-600">Expand your reach on YouTube, TikTok, Spotify, and beyond with optimized translations.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Second Content Section - Reversed Layout with Image */}
+          <div className="max-w-6xl mx-auto mt-36 px-4 mb-32">
+            <div className="flex flex-col lg:flex-row-reverse gap-8 items-center">
+              
+              {/* Right side - Image */}
+              <div className="lg:w-1/2">
+                <div className="aspect-video w-full rounded-xl bg-white/50 shadow-lg backdrop-blur-sm border border-white/20 overflow-hidden">
+                  <img 
+                    className="w-full h-full object-cover"
+                    src={`${process.env.PUBLIC_URL}/images/Woman-Recording-Herself-While-Cooking.jpg`}
+                    alt="Content creator recording cooking video"
+                  />
+                </div>
+              </div>
+              
+              {/* Left side - Content */}
+              <div className="lg:w-1/2">
+                <h2 className="text-3xl font-bold mb-6 text-fuchsia-800">Grow Your Global Presence</h2>
+                <p className="text-lg text-gray-700 mb-6">
+                  Unlock new audiences and opportunities by making your content accessible to viewers all over the world. Magenta AI's translation technology helps you scale your reach without scaling your effort.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="mt-1 bg-fuchsia-100 p-2 rounded-full">
+                      <Youtube className="w-5 h-5 text-fuchsia-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold">Dominate Social Platforms</h3>
+                      <p className="text-gray-600">Optimize for YouTube, TikTok, Instagram and more with platform-specific translations.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="mt-1 bg-fuchsia-100 p-2 rounded-full">
+                      <Globe className="w-5 h-5 text-fuchsia-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold">Multiple Languages</h3>
+                      <p className="text-gray-600">Translate into dozens of languages with a single click and minimal effort.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="mt-1 bg-fuchsia-100 p-2 rounded-full">
+                      <Music className="w-5 h-5 text-fuchsia-600" />
+                    </div>
+                    <div className="ml-4">
+                      <h3 className="text-lg font-semibold">Authentic Audience Connection</h3>
+                      <p className="text-gray-600">Connect with international audiences in their native language, building loyalty worldwide.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -109,7 +206,7 @@ const LandingPage = () => {
         </div>
       </div>
       
-      <footer className="absolute bottom-0 w-full bg-white border-t py-6">
+      <footer className="w-full bg-white border-t py-6 mt-20">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">© {new Date().getFullYear()} Magenta AI. All rights reserved.</p>
