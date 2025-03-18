@@ -79,7 +79,7 @@ const LandingPage = () => {
               preserving their authentic voice and style.
             </p>
             <Link
-              to="/translate"
+              to="/dashboard"
               className="inline-block px-8 py-4 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
               Get Started Free
