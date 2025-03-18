@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Home, Globe, PlayCircle, BarChart2, Users, Film, Settings } from 'lucide-react';
+import { Home, Globe, PlayCircle, BarChart2, Users, Film, Settings, Upload } from 'lucide-react';
 import TranslationFlow from './TranslationFlow';
 import VideoSyncInterface from './VideoSyncInterface';
 
@@ -53,7 +53,7 @@ const Dashboard = () => {
                       <span className="text-gray-500">65%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full">
-                      <div className="h-2 bg-purple-600 rounded-full" style={{ width: '65%' }}></div>
+                      <div className="h-2 bg-fuchsia-600 rounded-full" style={{ width: '65%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -62,7 +62,7 @@ const Dashboard = () => {
                       <span className="text-gray-500">100%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full">
-                      <div className="h-2 bg-purple-600 rounded-full" style={{ width: '100%' }}></div>
+                      <div className="h-2 bg-fuchsia-600 rounded-full" style={{ width: '100%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -71,7 +71,7 @@ const Dashboard = () => {
                       <span className="text-gray-500">35%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full">
-                      <div className="h-2 bg-purple-600 rounded-full" style={{ width: '35%' }}></div>
+                      <div className="h-2 bg-fuchsia-600 rounded-full" style={{ width: '35%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -87,17 +87,14 @@ const Dashboard = () => {
   if (showTranslationFlow) {
     return (
       <div className="flex h-screen bg-white">
+        {/* Sidebar */}
         <div className="w-64 border-r bg-white">
           <div className="px-6 py-4">
-            {/* <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1> */}
-          </div>
-
-          <div className="px-6">
             <Button 
-              className="w-full mb-8 bg-purple-600 hover:bg-purple-700 flex items-center justify-center gap-2"
+              className="w-full mb-8 bg-fuchsia-600 hover:bg-fuchsia-700 flex items-center justify-center gap-2"
               onClick={() => setShowTranslationFlow(true)}
             >
-              <span>↑</span>
+              <Upload className="h-4 w-4" />
               <span>New Upload</span>
             </Button>
 
@@ -106,29 +103,29 @@ const Dashboard = () => {
                 <p className="text-xs font-medium text-gray-500 mb-3">WORKSPACE</p>
                 <div className="space-y-1">
                   <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer"
+                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
                     onClick={() => setActiveView('overview')}
                   >
                     <Home className="h-4 w-4" />
                     <span className="ml-3 text-sm">Overview</span>
                   </div>
                   <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer"
+                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
                     onClick={() => setActiveView('translations')}
                   >
                     <Globe className="h-4 w-4" />
                     <span className="ml-3 text-sm">Translations</span>
-                    <span className="ml-auto bg-purple-100 text-purple-600 px-2 rounded-full text-xs">3</span>
+                    <span className="ml-auto bg-fuchsia-100 text-fuchsia-600 px-2 rounded-full text-xs">3</span>
                   </div>
                   <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer"
+                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
                     onClick={() => setActiveView('videoSync')}
                   >
                     <Film className="h-4 w-4" />
                     <span className="ml-3 text-sm">Video Sync</span>
                   </div>
                   <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer"
+                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
                     onClick={() => setActiveView('content')}
                   >
                     <PlayCircle className="h-4 w-4" />
@@ -140,7 +137,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-3">DISTRIBUTION</p>
                 <div className="space-y-1">
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                     <img 
                       src={youtubeIcon} 
                       alt="YouTube" 
@@ -148,7 +145,7 @@ const Dashboard = () => {
                     />
                     <span className="ml-3 text-sm">YouTube</span>
                   </div>
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                     <img 
                       src={spotifyIcon} 
                       alt="Spotify" 
@@ -156,7 +153,7 @@ const Dashboard = () => {
                     />
                     <span className="ml-3 text-sm">Spotify</span>
                   </div>
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                     <img 
                       src={tiktokIcon} 
                       alt="TikTok" 
@@ -170,11 +167,11 @@ const Dashboard = () => {
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-3">INSIGHTS</p>
                 <div className="space-y-1">
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                     <BarChart2 className="h-4 w-4" />
                     <span className="ml-3 text-sm">Analytics</span>
                   </div>
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                     <Users className="h-4 w-4" />
                     <span className="ml-3 text-sm">Audience</span>
                   </div>
@@ -184,6 +181,7 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Main Content */}
         <div className="flex-1 overflow-auto">
           <div className="p-8">
             <div className="flex justify-between items-center mb-8">
@@ -194,11 +192,16 @@ const Dashboard = () => {
               <Button 
                 onClick={() => setShowTranslationFlow(false)}
                 variant="outline"
+                className="border-fuchsia-200 text-fuchsia-700 hover:bg-fuchsia-50"
               >
-                Back to Dashboard
+                Creator Studio
               </Button>
             </div>
-            <TranslationFlow />
+            
+            {/* Translation Flow Component */}
+            <div className="max-w-4xl mx-auto">
+              <TranslationFlow />
+            </div>
           </div>
         </div>
       </div>
@@ -207,17 +210,18 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-white">
+      {/* Sidebar */}
       <div className="w-64 border-r bg-white">
         <div className="px-6 py-4">
-          {/* <h1 className="text-xl font-bold text-purple-600">Magenta AI</h1> */}
+          <h1 className="text-xl font-bold text-fuchsia-600">Magenta AI</h1>
         </div>
 
         <div className="px-6">
           <Button 
-            className="w-full mb-8 bg-purple-600 hover:bg-purple-700 flex items-center justify-center gap-2"
+            className="w-full mb-8 bg-fuchsia-600 hover:bg-fuchsia-700 flex items-center justify-center gap-2"
             onClick={() => setShowTranslationFlow(true)}
           >
-            <span>↑</span>
+            <Upload className="h-4 w-4" />
             <span>New Upload</span>
           </Button>
 
@@ -226,40 +230,40 @@ const Dashboard = () => {
               <p className="text-xs font-medium text-gray-500 mb-3">WORKSPACE</p>
               <div className="space-y-1">
                 <div 
-                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer ${
-                    activeView === 'overview' ? 'bg-gray-100' : ''
+                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
+                    activeView === 'overview' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
                   }`}
                   onClick={() => setActiveView('overview')}
                 >
-                  <Home className="h-4 w-4" />
+                  <Home className={`h-4 w-4 ${activeView === 'overview' ? 'text-fuchsia-600' : ''}`} />
                   <span className="ml-3 text-sm">Overview</span>
                 </div>
                 <div 
-                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer ${
-                    activeView === 'translations' ? 'bg-gray-100' : ''
+                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
+                    activeView === 'translations' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
                   }`}
                   onClick={() => setActiveView('translations')}
                 >
-                  <Globe className="h-4 w-4" />
+                  <Globe className={`h-4 w-4 ${activeView === 'translations' ? 'text-fuchsia-600' : ''}`} />
                   <span className="ml-3 text-sm">Translations</span>
-                  <span className="ml-auto bg-purple-100 text-purple-600 px-2 rounded-full text-xs">3</span>
+                  <span className="ml-auto bg-fuchsia-100 text-fuchsia-600 px-2 rounded-full text-xs">3</span>
                 </div>
                 <div 
-                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer ${
-                    activeView === 'videoSync' ? 'bg-gray-100' : ''
+                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
+                    activeView === 'videoSync' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
                   }`}
                   onClick={() => setActiveView('videoSync')}
                 >
-                  <Film className="h-4 w-4" />
+                  <Film className={`h-4 w-4 ${activeView === 'videoSync' ? 'text-fuchsia-600' : ''}`} />
                   <span className="ml-3 text-sm">Video Sync</span>
                 </div>
                 <div 
-                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2 cursor-pointer ${
-                    activeView === 'content' ? 'bg-gray-100' : ''
+                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
+                    activeView === 'content' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
                   }`}
                   onClick={() => setActiveView('content')}
                 >
-                  <PlayCircle className="h-4 w-4" />
+                  <PlayCircle className={`h-4 w-4 ${activeView === 'content' ? 'text-fuchsia-600' : ''}`} />
                   <span className="ml-3 text-sm">Content</span>
                 </div>
               </div>
@@ -268,7 +272,7 @@ const Dashboard = () => {
             <div>
               <p className="text-xs font-medium text-gray-500 mb-3">DISTRIBUTION</p>
               <div className="space-y-1">
-                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                   <img 
                     src={youtubeIcon} 
                     alt="YouTube" 
@@ -276,7 +280,7 @@ const Dashboard = () => {
                   />
                   <span className="ml-3 text-sm">YouTube</span>
                 </div>
-                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                   <img 
                     src={spotifyIcon} 
                     alt="Spotify" 
@@ -284,7 +288,7 @@ const Dashboard = () => {
                   />
                   <span className="ml-3 text-sm">Spotify</span>
                 </div>
-                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                   <img 
                     src={tiktokIcon} 
                     alt="TikTok" 
@@ -298,11 +302,11 @@ const Dashboard = () => {
             <div>
               <p className="text-xs font-medium text-gray-500 mb-3">INSIGHTS</p>
               <div className="space-y-1">
-                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                   <BarChart2 className="h-4 w-4" />
                   <span className="ml-3 text-sm">Analytics</span>
                 </div>
-                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-2 py-2">
+                <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
                   <Users className="h-4 w-4" />
                   <span className="ml-3 text-sm">Audience</span>
                 </div>
@@ -312,6 +316,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="flex-1 overflow-auto bg-gray-50">
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
@@ -322,10 +327,10 @@ const Dashboard = () => {
             <div className="flex gap-4 items-center">
               <Input 
                 placeholder="Search content..." 
-                className="w-64 p-2"
+                className="w-64 p-2 border-gray-200 focus:border-fuchsia-300 focus:ring-fuchsia-200"
               />
               <Button 
-                className="bg-purple-600 hover:bg-purple-700 whitespace-nowrap"
+                className="bg-fuchsia-600 hover:bg-fuchsia-700 whitespace-nowrap"
                 onClick={() => setShowTranslationFlow(true)}
               >
                 New Project

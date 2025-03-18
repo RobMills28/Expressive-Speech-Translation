@@ -87,25 +87,27 @@ const TranslationFlow = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
-      {/* Progress Steps */}
-      <div className="flex items-center justify-between mb-8">
-        {[1, 2, 3].map((number) => (
-          <div key={number} className="flex items-center flex-1">
-            <div className={`
-              w-8 h-8 rounded-full flex items-center justify-center
-              ${step > number ? 'bg-green-500 text-white' : 
-                step === number ? 'bg-purple-600 text-white' : 
-                'bg-gray-200 text-gray-600'}
-            `}>
-              {step > number ? <CheckCircle className="w-5 h-5" /> : number}
+      {/* Progress Steps - Perfectly Centered */}
+      <div className="flex justify-center mb-12">
+        <div className="flex items-center justify-between" style={{ width: '280px' }}>
+          {[1, 2, 3].map((number) => (
+            <div key={number} className="flex items-center">
+              <div className={`
+                w-10 h-10 rounded-full flex items-center justify-center
+                ${step > number ? 'bg-green-500 text-white' : 
+                  step === number ? 'bg-fuchsia-600 text-white' : 
+                  'bg-gray-200 text-gray-600'}
+              `}>
+                {step > number ? <CheckCircle className="w-5 h-5" /> : number}
+              </div>
+              {number < 3 && (
+                <div className={`w-16 h-1 mx-1 ${
+                  step > number ? 'bg-green-500' : 'bg-gray-200'
+                }`} />
+              )}
             </div>
-            {number < 3 && (
-              <div className={`flex-1 h-1 mx-2 ${
-                step > number ? 'bg-green-500' : 'bg-gray-200'
-              }`} />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <Card className="bg-white shadow-lg">
@@ -123,13 +125,13 @@ const TranslationFlow = () => {
           {step === 1 && (
             <div className="text-center">
               <div 
-                className="border-2 border-dashed border-gray-300 rounded-lg p-12 cursor-pointer hover:border-purple-500 transition-colors"
+                className="border-2 border-dashed border-gray-300 rounded-lg p-12 cursor-pointer hover:border-fuchsia-500 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-purple-600" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-fuchsia-600" />
                 <h2 className="text-xl font-semibold mb-2">Upload Your Content</h2>
                 <p className="text-gray-600 mb-4">Drag and drop your audio or video file here</p>
-                <Button className="bg-purple-600 hover:bg-purple-700">
+                <Button className="bg-fuchsia-600 hover:bg-fuchsia-700">
                   Select File
                 </Button>
                 <input
@@ -151,15 +153,19 @@ const TranslationFlow = () => {
                 {languages.map((language) => (
                   <label
                     key={language.code}
-                    className="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                    className={`flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer ${
+                      selectedLanguages.includes(language.code) ? 'border-fuchsia-300 bg-fuchsia-50' : 'border-gray-200'
+                    }`}
                   >
                     <input
                       type="checkbox"
-                      className="w-5 h-5 text-purple-600"
+                      className="w-5 h-5 text-fuchsia-600 border-fuchsia-300 focus:ring-fuchsia-500"
                       checked={selectedLanguages.includes(language.code)}
                       onChange={() => handleLanguageToggle(language.code)}
                     />
-                    <Globe className="w-5 h-5 ml-3 mr-2" />
+                    <Globe className={`w-5 h-5 ml-3 mr-2 ${
+                      selectedLanguages.includes(language.code) ? 'text-fuchsia-500' : 'text-gray-400'
+                    }`} />
                     <span>{language.flag} {language.name}</span>
                   </label>
                 ))}
@@ -167,7 +173,7 @@ const TranslationFlow = () => {
               <Button
                 onClick={handleContinue}
                 disabled={selectedLanguages.length === 0 || processing}
-                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300"
+                className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 disabled:bg-gray-300"
               >
                 {processing ? 'Processing...' : 'Continue'}
               </Button>
@@ -231,7 +237,8 @@ const TranslationFlow = () => {
                       <h3 className="font-medium">{language?.name}</h3>
                       <Button 
                         size="sm" 
-                        variant="ghost"
+                        variant="outline"
+                        className="border-fuchsia-200 text-fuchsia-700 hover:bg-fuchsia-50"
                         onClick={handlePlayPause}
                         disabled={!audioReady || audioStatus === 'error'}
                       >
@@ -251,7 +258,7 @@ const TranslationFlow = () => {
               })}
 
               <Button 
-                className="w-full bg-purple-600 hover:bg-purple-700 mt-4"
+                className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 mt-4"
                 onClick={() => {
                   cleanup();
                   setStep(1);
@@ -265,7 +272,7 @@ const TranslationFlow = () => {
           {/* Processing Indicator */}
           {processing && (
             <div className="mt-4">
-              <Progress value={progress} className="mb-2" />
+              <Progress value={progress} className="mb-2 bg-gray-200 [&>div]:bg-fuchsia-600" />
               <p className="text-sm text-gray-600 text-center">
                 {progressText || 'Processing translations...'}
               </p>
