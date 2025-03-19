@@ -206,13 +206,6 @@ const VideoSyncInterface = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-semibold">Video Translation & Sync</h2>
-          <p className="text-gray-500">Translate and synchronize speech in your videos</p>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Video Upload/Preview */}
         <Card>
@@ -303,7 +296,7 @@ const VideoSyncInterface = () => {
               </Select>
 
               <Button
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-fuchsia-600 hover:bg-fuchsia-700"
                 disabled={!video || isProcessing}
                 onClick={handleProcess}
               >
@@ -320,7 +313,7 @@ const VideoSyncInterface = () => {
 
             {isProcessing && (
               <div className="space-y-2">
-                <Progress value={progress} />
+                <Progress value={progress} className="[&>div]:bg-fuchsia-600" />
                 <p className="text-sm text-gray-500">{processPhase}</p>
               </div>
             )}

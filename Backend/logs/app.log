@@ -432,3 +432,200 @@ Detected Issues:
 2025-03-03 23:20:35,736 - services.translation_routes - INFO - [translation_routes.py:375] - Request 32b9eece completed in 0.00s
 2025-03-03 23:20:35,737 - services.utils - INFO - [utils.py:57] - Performance - Function: translate_audio_endpoint, Duration: 0.00s, Memory Change: 0.23MB
 2025-03-03 23:20:35,737 - __main__ - INFO - [app.py:279] - Request to /translate took 36.36s
+2025-03-18 22:40:37,236 - __main__ - INFO - [app.py:544] - Metrics server started on port 8000
+2025-03-18 22:40:37,237 - services.model_manager - INFO - [model_manager.py:120] - Loading SeamlessM4T model: facebook/seamless-m4t-v2-large
+2025-03-18 22:40:52,059 - services.model_manager - INFO - [model_manager.py:184] - Models loaded on CPU
+2025-03-18 22:40:52,059 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-18 22:40:52,062 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-18 22:41:23,027 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-18 22:41:23,027 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-18 22:41:40,246 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-18 22:41:40,247 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-18 22:41:40,249 - services.model_manager - INFO - [model_manager.py:190] - Model initialization successful
+2025-03-18 22:41:40,249 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-18 22:41:40,249 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-18 22:42:00,384 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-18 22:42:00,385 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-18 22:42:16,568 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-18 22:42:16,568 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:495] - Cleanup complete: removed 0 files, freed 0.00MB
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:568] - ==================================================
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:569] - Starting LinguaSync Backend
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:570] - Starting Flask app on port 5001 using cpu
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:571] - Python version: 3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 10:07:17) [Clang 14.0.6 ]
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:572] - Supported languages: ['fra', 'spa', 'deu', 'ita', 'por', 'rus', 'jpn', 'cmn', 'ukr', 'ben', 'cat', 'cmn_Hant', 'cym', 'dan', 'eng', 'est', 'fin', 'hin', 'ind', 'kor', 'mlt', 'nld', 'pes', 'pol', 'ron', 'slk', 'swe', 'swh', 'tel', 'tgl', 'tha', 'tur', 'urd', 'uzn', 'vie']
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:573] - Maximum audio length: 300 seconds
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:574] - Sample rate: 16000 Hz
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:578] - System memory: 36.0GB total, 13.9GB available
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:579] - CPU cores: 11
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:587] - Configuration:
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:588] - - Debug mode: False
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:589] - - CORS enabled: True
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:590] - - Rate limiting: 10 requests per minute
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:591] - - Metrics enabled: True (port 8000)
+2025-03-18 22:42:16,573 - __main__ - INFO - [app.py:593] - ==================================================
+2025-03-18 22:43:42,448 - services.video_routes - INFO - [video_routes.py:890] - Received video processing request for language: fra
+2025-03-18 22:43:42,448 - services.video_routes - INFO - [video_routes.py:901] - Processing video: lipsync(English).mov for language: fra
+2025-03-18 22:43:42,448 - services.video_routes - INFO - [video_routes.py:32] - Initializing VideoProcessor
+2025-03-18 22:43:42,448 - services.diagnostics.spectral_analysis - INFO - [spectral_analysis.py:59] - Initialized SpectralAnalyzer with sample rate: 16000Hz
+2025-03-18 22:43:42,449 - services.diagnostics.base - INFO - [base.py:75] - AudioDiagnostics initialized successfully
+2025-03-18 22:43:42,449 - services.model_manager - INFO - [model_manager.py:52] - Starting enhanced model verification
+2025-03-18 22:43:42,449 - services.model_manager - INFO - [model_manager.py:63] - Testing clean_speech
+2025-03-18 22:44:08,591 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified clean_speech
+2025-03-18 22:44:08,591 - services.model_manager - INFO - [model_manager.py:63] - Testing speech_with_music
+2025-03-18 22:44:28,140 - services.model_manager - INFO - [model_manager.py:108] - Successfully verified speech_with_music
+2025-03-18 22:44:28,140 - services.model_manager - INFO - [model_manager.py:110] - Model verification successful
+2025-03-18 22:44:28,146 - services.video_routes - INFO - [video_routes.py:37] - Using device: cpu
+2025-03-18 22:44:28,146 - services.video_routes - INFO - [video_routes.py:42] - Temp directory: temp
+2025-03-18 22:44:28,146 - services.video_routes - INFO - [video_routes.py:49] - Checking Wav2Lip setup...
+2025-03-18 22:44:28,146 - services.video_routes - INFO - [video_routes.py:56] - Wav2Lip directory found: /Users/robmills/audio-translation/Backend/Wav2Lip
+2025-03-18 22:44:28,147 - services.video_routes - INFO - [video_routes.py:71] - ✓ Inference script found: Wav2Lip/inference.py (9750 bytes)
+2025-03-18 22:44:28,147 - services.video_routes - INFO - [video_routes.py:71] - ✓ Audio processing module found: Wav2Lip/audio.py (4508 bytes)
+2025-03-18 22:44:28,147 - services.video_routes - INFO - [video_routes.py:71] - ✓ Face detection API found: Wav2Lip/face_detection/api.py (2266 bytes)
+2025-03-18 22:44:28,149 - services.video_routes - INFO - [video_routes.py:71] - ✓ Face detection model found: Wav2Lip/face_detection/detection/sfd/s3fd.pth (89843225 bytes)
+2025-03-18 22:44:28,149 - services.video_routes - INFO - [video_routes.py:71] - ✓ Primary model checkpoint found: Wav2Lip/checkpoints/wav2lip.pth (435807851 bytes)
+2025-03-18 22:44:28,149 - services.video_routes - WARNING - [video_routes.py:73] - ✗ GAN model checkpoint (optional) not found: Wav2Lip/checkpoints/wav2lip_gan.pth
+2025-03-18 22:44:28,149 - services.utils - INFO - [utils.py:57] - Performance - Function: process_video, Duration: 45.70s, Memory Change: 154.41MB
+2025-03-18 22:44:28,149 - __main__ - INFO - [app.py:279] - Request to /process-video took 45.70s
+2025-03-18 22:44:28,149 - services.video_routes - INFO - [video_routes.py:720] - Starting video processing for language: fra
+2025-03-18 22:44:28,149 - services.video_routes - INFO - [video_routes.py:725] - Input video filename: lipsync(English).mov, content type: video/quicktime
+2025-03-18 22:44:28,167 - services.video_routes - INFO - [video_routes.py:734] - Saved uploaded video (size: 35740094 bytes)
+2025-03-18 22:44:28,168 - services.video_routes - INFO - [video_routes.py:82] - Extracting audio from /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgdgpchha.mp4
+2025-03-18 22:44:28,168 - services.video_routes - INFO - [video_routes.py:94] - Running FFmpeg command: ffmpeg -y -i /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgdgpchha.mp4 -vn -acodec pcm_s16le -ar 16000 -ac 1 temp/temp_audio.wav
+2025-03-18 22:44:28,708 - services.video_routes - INFO - [video_routes.py:105] - Audio successfully extracted to temp/temp_audio.wav (size: 853040 bytes)
+2025-03-18 22:44:28,709 - services.video_routes - INFO - [video_routes.py:341] - Detecting speech start in temp/temp_audio.wav
+2025-03-18 22:44:28,715 - services.video_routes - INFO - [video_routes.py:383] - Detected speech start at 0.390 seconds
+2025-03-18 22:44:28,716 - services.video_routes - INFO - [video_routes.py:749] - Detected speech starts at: 0.39 seconds
+2025-03-18 22:44:28,716 - services.audio_processor - INFO - [audio_processor.py:280] - Loading audio from: temp/temp_audio.wav
+2025-03-18 22:44:28,716 - services.audio_processor - INFO - [audio_processor.py:282] - Audio info - Sample rate: 16000, Channels: 1
+2025-03-18 22:44:28,719 - services.audio_processor - INFO - [audio_processor.py:291] - Original audio shape: torch.Size([1, 426481]), Frequency: 16000Hz
+2025-03-18 22:44:28,755 - services.video_routes - INFO - [video_routes.py:184] - Translating audio of shape torch.Size([1, 426240]) to language fra
+2025-03-18 22:44:28,782 - services.video_routes - INFO - [video_routes.py:209] - Generating text translation in fra
+2025-03-18 22:44:40,667 - services.video_routes - INFO - [video_routes.py:218] - Generated text: Donc je vais parler en anglais et cette vidéo va être convertie en une autre langue et mes lèvres seront synchronisées avec le discours de cette autre langue.
+2025-03-18 22:44:40,667 - services.video_routes - INFO - [video_routes.py:221] - Generating translated speech for language fra
+2025-03-18 22:44:52,634 - services.video_routes - INFO - [video_routes.py:233] - Speech generation completed in 11.97 seconds
+2025-03-18 22:44:52,635 - services.video_routes - INFO - [video_routes.py:262] - Translation successful, audio shape: torch.Size([1, 111680])
+2025-03-18 22:44:52,636 - services.video_routes - INFO - [video_routes.py:765] - Translation completed in 23.88 seconds
+2025-03-18 22:44:52,636 - services.video_routes - INFO - [video_routes.py:155] - Saving audio tensor of shape torch.Size([1, 111680]) to temp/translated_audio.wav
+2025-03-18 22:44:52,637 - services.video_routes - INFO - [video_routes.py:175] - Audio saved successfully to temp/translated_audio.wav (size: 223404 bytes)
+2025-03-18 22:44:52,637 - services.video_routes - INFO - [video_routes.py:392] - Detecting face in /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgdgpchha.mp4
+2025-03-18 22:44:55,455 - services.video_routes - INFO - [video_routes.py:458] - Selected face detected with bounding box: (693, 344, 1040, 841)
+2025-03-18 22:44:55,456 - services.video_routes - INFO - [video_routes.py:785] - Face detection completed in 2.82 seconds, result: True
+2025-03-18 22:44:55,457 - services.video_routes - INFO - [video_routes.py:800] - Attempting lip sync with Wav2Lip
+2025-03-18 22:44:55,457 - services.video_routes - INFO - [video_routes.py:467] - Starting lip sync with Wav2Lip: /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgdgpchha.mp4 + temp/translated_audio.wav
+2025-03-18 22:44:55,804 - services.video_routes - INFO - [video_routes.py:564] - Running Wav2Lip with command: python Wav2Lip/inference.py --checkpoint_path Wav2Lip/checkpoints/wav2lip.pth --face /var/folders/x2/xbbstcms7ng3g13w2py4kwsc0000gn/T/tmpgdgpchha.mp4 --audio temp/translated_audio.wav --outfile temp/synced_video.mp4 --nosmooth --pads 0 20 0 0 --resize_factor 2
+2025-03-18 22:47:39,490 - services.video_routes - INFO - [video_routes.py:577] - Process stdout: Using cpu for inference.
+Reading video frames...
+Number of frames available for inference: 801
+(80, 559)
+Length of mel chunks: 206
+Load checkpoint from: Wav2Lip/checkpoints/wav2lip.pth
+Model loaded
+
+2025-03-18 22:47:39,490 - services.video_routes - ERROR - [video_routes.py:582] - Process stderr: 
+  0%|          | 0/2 [00:00<?, ?it/s]/Users/robmills/audio-translation/Backend/Wav2Lip/face_detection/detection/sfd/sfd_detector.py:24: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model_weights = torch.load(path_to_detector)
+
+
+  0%|          | 0/13 [00:00<?, ?it/s][A
+
+  8%|▊         | 1/13 [00:13<02:36, 13.05s/it][A
+
+ 15%|█▌        | 2/13 [00:25<02:17, 12.47s/it][A
+
+ 23%|██▎       | 3/13 [00:37<02:04, 12.49s/it][A
+
+ 31%|███       | 4/13 [00:49<01:51, 12.42s/it][A
+
+ 38%|███▊      | 5/13 [01:02<01:40, 12.55s/it][A
+
+ 46%|████▌     | 6/13 [01:15<01:27, 12.48s/it][A
+
+ 54%|█████▍    | 7/13 [01:26<01:13, 12.19s/it][A
+
+ 62%|██████▏   | 8/13 [01:38<01:00, 12.01s/it][A
+
+ 69%|██████▉   | 9/13 [01:49<00:47, 11.80s/it][A
+
+ 77%|███████▋  | 10/13 [02:00<00:34, 11.62s/it][A
+
+ 85%|████████▍ | 11/13 [02:12<00:22, 11.49s/it][A
+
+ 92%|█████████▏| 12/13 [02:23<00:11, 11.38s/it][A
+
+100%|██████████| 13/13 [02:34<00:00, 11.37s/it][A
+100%|██████████| 13/13 [02:34<00:00, 11.89s/it]
+/Users/robmills/audio-translation/Backend/Wav2Lip/inference.py:164: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(checkpoint_path,
+
+ 50%|█████     | 1/2 [02:37<02:37, 157.79s/it]
+100%|██████████| 2/2 [02:39<00:00, 66.08s/it] 
+100%|██████████| 2/2 [02:39<00:00, 79.83s/it]
+ffmpeg version 7.1 Copyright (c) 2000-2024 the FFmpeg developers
+  built with Apple clang version 16.0.0 (clang-1600.0.26.4)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/7.1_4 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags='-Wl,-ld_classic' --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+[aist#0:0/pcm_s16le @ 0x142605fc0] Guessed Channel Layout: mono
+Input #0, wav, from 'temp/translated_audio.wav':
+  Duration: 00:00:06.98, bitrate: 256 kb/s
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Input #1, avi, from 'temp/result.avi':
+  Metadata:
+    software        : Lavf61.7.100
+  Duration: 00:00:06.87, start: 0.000000, bitrate: 809 kb/s
+  Stream #1:0: Video: mpeg4 (Simple Profile) (DIVX / 0x58564944), yuv420p, 810x540 [SAR 1:1 DAR 3:2], 801 kb/s, 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #1:0 -> #0:0 (mpeg4 (native) -> h264 (libx264))
+  Stream #0:0 -> #0:1 (pcm_s16le (native) -> aac (native))
+Press [q] to stop, [?] for help
+[libx264 @ 0x14260bc80] -qscale is ignored, -crf is recommended.
+[libx264 @ 0x14260bc80] using SAR=1/1
+[libx264 @ 0x14260bc80] using cpu capabilities: ARMv8 NEON
+[libx264 @ 0x14260bc80] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 0x14260bc80] 264 - core 164 r3108 31e19f9 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=16 lookahead_threads=2 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'temp/synced_video.mp4':
+  Metadata:
+    encoder         : Lavf61.7.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 810x540 [SAR 1:1 DAR 3:2], q=2-31, 30 fps, 15360 tbn
+      Metadata:
+        encoder         : Lavc61.19.100 libx264
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 16000 Hz, mono, fltp, 69 kb/s
+      Metadata:
+        encoder         : Lavc61.19.100 aac
+[out#0/mp4 @ 0x1426091d0] video:342KiB audio:67KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.299943%
+frame=  206 fps=0.0 q=-1.0 Lsize=     415KiB time=00:00:06.80 bitrate= 499.6kbits/s speed=24.1x    
+[libx264 @ 0x14260bc80] frame I:1     Avg QP:19.06  size: 13470
+[libx264 @ 0x14260bc80] frame P:56    Avg QP:19.88  size:  4033
+[libx264 @ 0x14260bc80] frame B:149   Avg QP:22.38  size:   739
+[libx264 @ 0x14260bc80] consecutive B-frames:  0.5%  8.7%  1.5% 89.3%
+[libx264 @ 0x14260bc80] mb I  I16..4: 32.1% 67.1%  0.7%
+[libx264 @ 0x14260bc80] mb P  I16..4:  3.2%  8.8%  0.1%  P16..4: 40.3%  7.2%  3.9%  0.0%  0.0%    skip:36.6%
+[libx264 @ 0x14260bc80] mb B  I16..4:  0.3%  1.5%  0.0%  B16..8: 25.8%  0.6%  0.0%  direct: 0.4%  skip:71.3%  L0:50.2% L1:49.2% BI: 0.6%
+[libx264 @ 0x14260bc80] 8x8 transform intra:74.9% inter:88.8%
+[libx264 @ 0x14260bc80] coded y,uvDC,uvAC intra: 33.2% 48.5% 3.7% inter: 3.5% 7.2% 0.0%
+[libx264 @ 0x14260bc80] i16 v,h,dc,p: 23% 24% 31% 22%
+[libx264 @ 0x14260bc80] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 15% 15% 64%  1%  1%  1%  1%  1%  1%
+[libx264 @ 0x14260bc80] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 21% 20% 45%  4%  2%  2%  2%  2%  2%
+[libx264 @ 0x14260bc80] i8c dc,h,v,p: 50% 20% 27%  3%
+[libx264 @ 0x14260bc80] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x14260bc80] ref P L0: 64.7%  5.7% 20.2%  9.4%
+[libx264 @ 0x14260bc80] ref B L0: 81.1% 15.1%  3.8%
+[libx264 @ 0x14260bc80] ref B L1: 96.0%  4.0%
+[libx264 @ 0x14260bc80] kb/s:407.16
+[aac @ 0x143226f70] Qavg: 3823.135
+
+2025-03-18 22:47:39,491 - services.video_routes - INFO - [video_routes.py:674] - Wav2Lip process completed successfully. Output saved to temp/synced_video.mp4
+2025-03-18 22:47:39,491 - services.video_routes - INFO - [video_routes.py:686] - Output file verified: temp/synced_video.mp4 (size: 424699 bytes)
+2025-03-18 22:47:39,571 - services.video_routes - INFO - [video_routes.py:808] - Lip sync attempt completed in 164.11 seconds, success: True
+2025-03-18 22:47:39,571 - services.video_routes - INFO - [video_routes.py:846] - Final video created: temp/synced_video.mp4 (size: 424699 bytes)
+2025-03-18 22:47:39,572 - services.video_routes - INFO - [video_routes.py:860] - Encoded video data in 0.00 seconds (length: 566268 characters)
+2025-03-18 22:47:39,573 - services.video_routes - INFO - [video_routes.py:866] - Total video processing completed in 191.42 seconds

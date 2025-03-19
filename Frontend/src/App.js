@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import { Card } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Globe, Youtube, Music, Video } from 'lucide-react';
-import TranslateTool from './components/TranslateTool';
 import Dashboard from "./components/Dashboard";
 import PricingPage from './components/PricingPage';
 
@@ -18,7 +17,7 @@ const Navigation = () => {
   
   return (
     <nav className="bg-white border-b">
-      <div className={`mx-auto px-8 ${location.pathname === '/dashboard' ? 'max-w-full' : 'max-w-6xl'}`}>
+      <div className={`mx-auto px-8 ${location.pathname === '/creator-studio' ? 'max-w-full' : 'max-w-6xl'}`}>
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-fuchsia-600">
@@ -28,14 +27,14 @@ const Navigation = () => {
           
           <div className="flex items-center gap-12">
             <Link 
-              to="/dashboard"
+              to="/creator-studio"
               className={`px-4 py-2 rounded-lg hover:bg-fuchsia-700 ${
-                location.pathname === '/dashboard' 
+                location.pathname === '/creator-studio' 
                   ? 'bg-fuchsia-700 text-white'
                   : 'bg-fuchsia-600 text-white'
               }`}
             >
-              Dashboard
+              Creator Studio
             </Link>
           </div>
         </div>
@@ -60,10 +59,10 @@ const LandingPage = () => {
                 Pricing
               </Link>
               <Link
-                to="/dashboard"
+                to="/creator-studio"
                 className="px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition-colors"
               >
-                Dashboard
+                Creator Studio
               </Link>
             </div>
           </div>
@@ -79,7 +78,7 @@ const LandingPage = () => {
               preserving their authentic voice and style.
             </p>
             <Link
-              to="/dashboard"
+              to="/creator-studio"
               className="inline-block px-8 py-4 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
               Get Started Free
@@ -237,7 +236,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/creator-studio" element={<Dashboard />} />
         </Routes>
       </div>
     </Router>

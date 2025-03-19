@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Home, Globe, PlayCircle, BarChart2, Users, Film, Settings, Upload } from 'lucide-react';
+import { Upload, Home, Globe, PlayCircle, BarChart2, Users, Film, Folder } from 'lucide-react';
 import TranslationFlow from './TranslationFlow';
 import VideoSyncInterface from './VideoSyncInterface';
 
@@ -11,14 +11,14 @@ import spotifyIcon from '../assets/icons/spotify-icon.png';
 import tiktokIcon from '../assets/icons/TikTok_Icon_Black_Circle.png';
 
 const Dashboard = () => {
-  const [showTranslationFlow, setShowTranslationFlow] = useState(true); // Changed from false to true
-  const [activeView, setActiveView] = useState('overview');
+  const [showTranslationFlow, setShowTranslationFlow] = useState(false);
+  const [activeView, setActiveView] = useState('newTranslation');
 
   const renderMainContent = () => {
     switch(activeView) {
       case 'videoSync':
         return <VideoSyncInterface />;
-      case 'overview':
+      case 'dashboard':
         return (
           <>
             <Card className="mb-8">
@@ -79,151 +79,38 @@ const Dashboard = () => {
             </Card>
           </>
         );
+      case 'library':
+        return (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Folder className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Your translations will appear here</h3>
+              <p className="text-gray-500 mb-6">Once you create translations, they'll be saved to your library</p>
+              <Button 
+                className="bg-fuchsia-600 hover:bg-fuchsia-700"
+                onClick={() => setActiveView('newTranslation')}
+              >
+                Create Your First Translation
+              </Button>
+            </CardContent>
+          </Card>
+        );
+      case 'newTranslation':
       default:
-        return null;
+        return (
+          <div className="max-w-4xl mx-auto">
+            <TranslationFlow />
+          </div>
+        );
     }
   };
-
-  if (showTranslationFlow) {
-    return (
-      <div className="flex h-screen bg-white">
-        {/* Sidebar */}
-        <div className="w-64 border-r bg-white">
-          <div className="px-6 py-4">
-            <Button 
-              className="w-full mb-8 bg-fuchsia-600 hover:bg-fuchsia-700 flex items-center justify-center gap-2"
-              onClick={() => setShowTranslationFlow(true)}
-            >
-              <Upload className="h-4 w-4" />
-              <span>New Upload</span>
-            </Button>
-
-            <div className="space-y-8">
-              <div>
-                <p className="text-xs font-medium text-gray-500 mb-3">WORKSPACE</p>
-                <div className="space-y-1">
-                  <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
-                    onClick={() => setActiveView('overview')}
-                  >
-                    <Home className="h-4 w-4" />
-                    <span className="ml-3 text-sm">Overview</span>
-                  </div>
-                  <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
-                    onClick={() => setActiveView('translations')}
-                  >
-                    <Globe className="h-4 w-4" />
-                    <span className="ml-3 text-sm">Translations</span>
-                    <span className="ml-auto bg-fuchsia-100 text-fuchsia-600 px-2 rounded-full text-xs">3</span>
-                  </div>
-                  <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
-                    onClick={() => setActiveView('videoSync')}
-                  >
-                    <Film className="h-4 w-4" />
-                    <span className="ml-3 text-sm">Video Sync</span>
-                  </div>
-                  <div 
-                    className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer"
-                    onClick={() => setActiveView('content')}
-                  >
-                    <PlayCircle className="h-4 w-4" />
-                    <span className="ml-3 text-sm">Content</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs font-medium text-gray-500 mb-3">DISTRIBUTION</p>
-                <div className="space-y-1">
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
-                    <img 
-                      src={youtubeIcon} 
-                      alt="YouTube" 
-                      className="w-5 h-5"
-                    />
-                    <span className="ml-3 text-sm">YouTube</span>
-                  </div>
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
-                    <img 
-                      src={spotifyIcon} 
-                      alt="Spotify" 
-                      className="w-5 h-5"
-                    />
-                    <span className="ml-3 text-sm">Spotify</span>
-                  </div>
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
-                    <img 
-                      src={tiktokIcon} 
-                      alt="TikTok" 
-                      className="w-5 h-5"
-                    />
-                    <span className="ml-3 text-sm">TikTok</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs font-medium text-gray-500 mb-3">INSIGHTS</p>
-                <div className="space-y-1">
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
-                    <BarChart2 className="h-4 w-4" />
-                    <span className="ml-3 text-sm">Analytics</span>
-                  </div>
-                  <div className="flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5">
-                    <Users className="h-4 w-4" />
-                    <span className="ml-3 text-sm">Audience</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-8">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h2 className="text-2xl font-semibold mb-1">New Translation</h2>
-                <p className="text-gray-500">Upload and translate your content</p>
-              </div>
-              <Button 
-                onClick={() => setShowTranslationFlow(false)}
-                variant="outline"
-                className="border-fuchsia-200 text-fuchsia-700 hover:bg-fuchsia-50"
-              >
-                Creator Studio
-              </Button>
-            </div>
-            
-            {/* Translation Flow Component */}
-            <div className="max-w-4xl mx-auto">
-              <TranslationFlow />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-screen bg-white">
       {/* Sidebar */}
       <div className="w-64 border-r bg-white">
         <div className="px-6 py-4">
-          <h1 className="text-xl font-bold text-fuchsia-600">Magenta AI</h1>
-        </div>
-
-        <div className="px-6">
-          <Button 
-            className="w-full mb-8 bg-fuchsia-600 hover:bg-fuchsia-700 flex items-center justify-center gap-2"
-            onClick={() => setShowTranslationFlow(true)}
-          >
-            <Upload className="h-4 w-4" />
-            <span>New Upload</span>
-          </Button>
+          <h1 className="text-xl font-bold text-fuchsia-600 mb-8">Magenta AI</h1>
 
           <div className="space-y-8">
             <div>
@@ -231,22 +118,30 @@ const Dashboard = () => {
               <div className="space-y-1">
                 <div 
                   className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
-                    activeView === 'overview' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
+                    activeView === 'newTranslation' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
                   }`}
-                  onClick={() => setActiveView('overview')}
+                  onClick={() => setActiveView('newTranslation')}
                 >
-                  <Home className={`h-4 w-4 ${activeView === 'overview' ? 'text-fuchsia-600' : ''}`} />
-                  <span className="ml-3 text-sm">Overview</span>
+                  <Upload className={`h-4 w-4 ${activeView === 'newTranslation' ? 'text-fuchsia-600' : ''}`} />
+                  <span className="ml-3 text-sm">New Translation</span>
                 </div>
                 <div 
                   className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
-                    activeView === 'translations' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
+                    activeView === 'dashboard' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
                   }`}
-                  onClick={() => setActiveView('translations')}
+                  onClick={() => setActiveView('dashboard')}
                 >
-                  <Globe className={`h-4 w-4 ${activeView === 'translations' ? 'text-fuchsia-600' : ''}`} />
-                  <span className="ml-3 text-sm">Translations</span>
-                  <span className="ml-auto bg-fuchsia-100 text-fuchsia-600 px-2 rounded-full text-xs">3</span>
+                  <Home className={`h-4 w-4 ${activeView === 'dashboard' ? 'text-fuchsia-600' : ''}`} />
+                  <span className="ml-3 text-sm">Dashboard</span>
+                </div>
+                <div 
+                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
+                    activeView === 'library' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
+                  }`}
+                  onClick={() => setActiveView('library')}
+                >
+                  <Folder className={`h-4 w-4 ${activeView === 'library' ? 'text-fuchsia-600' : ''}`} />
+                  <span className="ml-3 text-sm">Library</span>
                 </div>
                 <div 
                   className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
@@ -256,15 +151,6 @@ const Dashboard = () => {
                 >
                   <Film className={`h-4 w-4 ${activeView === 'videoSync' ? 'text-fuchsia-600' : ''}`} />
                   <span className="ml-3 text-sm">Video Sync</span>
-                </div>
-                <div 
-                  className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
-                    activeView === 'content' ? 'bg-fuchsia-50 text-fuchsia-700' : ''
-                  }`}
-                  onClick={() => setActiveView('content')}
-                >
-                  <PlayCircle className={`h-4 w-4 ${activeView === 'content' ? 'text-fuchsia-600' : ''}`} />
-                  <span className="ml-3 text-sm">Content</span>
                 </div>
               </div>
             </div>
@@ -321,20 +207,40 @@ const Dashboard = () => {
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
             <div className="flex-1">
-              <h2 className="text-2xl font-semibold mb-1">Creator Studio</h2>
-              <p className="text-gray-500">Manage your content and translations</p>
+              {activeView === 'newTranslation' && (
+                <>
+                  <h2 className="text-2xl font-semibold mb-1">New Translation</h2>
+                  <p className="text-gray-500">Upload and translate your content</p>
+                </>
+              )}
+              {activeView === 'dashboard' && (
+                <>
+                  <h2 className="text-2xl font-semibold mb-1">Dashboard</h2>
+                  <p className="text-gray-500">Overview of your activities and progress</p>
+                </>
+              )}
+              {activeView === 'library' && (
+                <>
+                  <h2 className="text-2xl font-semibold mb-1">Library</h2>
+                  <p className="text-gray-500">Browse all your translation projects</p>
+                </>
+              )}
+              {activeView === 'videoSync' && (
+                <>
+                  <h2 className="text-2xl font-semibold mb-1">Video Sync</h2>
+                  <p className="text-gray-500">Sync your video content with translations</p>
+                </>
+              )}
             </div>
             <div className="flex gap-4 items-center">
-              <Input 
-                placeholder="Search content..." 
-                className="w-64 p-2 border-gray-200 focus:border-fuchsia-300 focus:ring-fuchsia-200"
-              />
-              <Button 
-                className="bg-fuchsia-600 hover:bg-fuchsia-700 whitespace-nowrap"
-                onClick={() => setShowTranslationFlow(true)}
-              >
-                New Project
-              </Button>
+              {activeView !== 'newTranslation' && (
+                <Button 
+                  className="bg-fuchsia-600 hover:bg-fuchsia-700 whitespace-nowrap"
+                  onClick={() => setActiveView('newTranslation')}
+                >
+                  New Project
+                </Button>
+              )}
             </div>
           </div>
 

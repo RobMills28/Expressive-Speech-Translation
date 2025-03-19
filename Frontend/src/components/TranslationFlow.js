@@ -39,6 +39,7 @@ const TranslationFlow = () => {
   const [step, setStep] = useState(1);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [translations, setTranslations] = useState({});
+  const [mediaType, setMediaType] = useState(null); // 'audio', 'video', or 'both'
   const fileInputRef = useRef(null);
 
   const languages = [
@@ -49,10 +50,15 @@ const TranslationFlow = () => {
     { code: 'por', name: 'Portuguese', flag: '🇵🇹' }
   ];
 
+  const handleMediaTypeSelect = (type) => {
+    setMediaType(type);
+    setStep(2);
+  };
+
   const handleFileUpload = useCallback((event) => {
     handleFileChange(event);  // Use the hook's file handler
     if (event.target.files[0]) {
-      setStep(2);
+      setStep(3);
     }
   }, [handleFileChange]);
 
@@ -68,7 +74,7 @@ const TranslationFlow = () => {
 
   const handleContinue = useCallback(async () => {
     if (selectedLanguages.length > 0) {
-      setStep(3);
+      setStep(4);
       try {
         await processAudio();  // Use the hook's process function
         setTranslations(prev => ({
@@ -84,6 +90,12 @@ const TranslationFlow = () => {
       }
     }
   }, [selectedLanguages, processAudio, targetLanguage, translatedAudioUrl, sourceText, targetText, setError]);
+
+  const handleBackStep = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -121,8 +133,47 @@ const TranslationFlow = () => {
             </Alert>
           )}
 
-          {/* Step 1: Upload */}
+          {/* Step 1: Choose Content Type */}
           {step === 1 && (
+            <div className="text-center">
+              <h2 className="text-xl font-semibold mb-6">Choose Content Type</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div 
+                  className="border rounded-lg p-6 cursor-pointer hover:border-fuchsia-500 hover:bg-fuchsia-50 transition-colors"
+                  onClick={() => handleMediaTypeSelect('audio')}
+                >
+                  <div className="bg-fuchsia-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Upload className="w-6 h-6 text-fuchsia-600" />
+                  </div>
+                  <h3 className="font-medium mb-2">Audio Translation</h3>
+                  <p className="text-sm text-gray-500">Translate podcasts and audio content</p>
+                </div>
+                <div 
+                  className="border rounded-lg p-6 cursor-pointer hover:border-fuchsia-500 hover:bg-fuchsia-50 transition-colors"
+                  onClick={() => handleMediaTypeSelect('video')}
+                >
+                  <div className="bg-fuchsia-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Upload className="w-6 h-6 text-fuchsia-600" />
+                  </div>
+                  <h3 className="font-medium mb-2">Video Translation</h3>
+                  <p className="text-sm text-gray-500">Translate videos with synchronized subtitles</p>
+                </div>
+                <div 
+                  className="border rounded-lg p-6 cursor-pointer hover:border-fuchsia-500 hover:bg-fuchsia-50 transition-colors"
+                  onClick={() => handleMediaTypeSelect('both')}
+                >
+                  <div className="bg-fuchsia-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Upload className="w-6 h-6 text-fuchsia-600" />
+                  </div>
+                  <h3 className="font-medium mb-2">Audio + Video</h3>
+                  <p className="text-sm text-gray-500">Translate both audio and visual elements</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Upload */}
+          {step === 2 && (
             <div className="text-center">
               <div 
                 className="border-2 border-dashed border-gray-300 rounded-lg p-12 cursor-pointer hover:border-fuchsia-500 transition-colors"
@@ -130,7 +181,11 @@ const TranslationFlow = () => {
               >
                 <Upload className="w-12 h-12 mx-auto mb-4 text-fuchsia-600" />
                 <h2 className="text-xl font-semibold mb-2">Upload Your Content</h2>
-                <p className="text-gray-600 mb-4">Drag and drop your audio or video file here</p>
+                <p className="text-gray-600 mb-4">
+                  {mediaType === 'audio' ? 'Drag and drop your audio file here' :
+                   mediaType === 'video' ? 'Drag and drop your video file here' :
+                   'Drag and drop your audio or video file here'}
+                </p>
                 <Button className="bg-fuchsia-600 hover:bg-fuchsia-700">
                   Select File
                 </Button>
@@ -139,14 +194,25 @@ const TranslationFlow = () => {
                   type="file"
                   className="hidden"
                   onChange={handleFileUpload}
-                  accept="audio/*,video/*"
+                  accept={mediaType === 'audio' ? 'audio/*' : 
+                          mediaType === 'video' ? 'video/*' : 
+                          'audio/*,video/*'}
                 />
+              </div>
+              <div className="mt-4 flex justify-start">
+                <Button 
+                  variant="outline" 
+                  onClick={handleBackStep}
+                  className="text-fuchsia-600 border-fuchsia-200 hover:bg-fuchsia-50"
+                >
+                  Back
+                </Button>
               </div>
             </div>
           )}
 
-          {/* Step 2: Language Selection */}
-          {step === 2 && (
+          {/* Step 3: Language Selection */}
+          {step === 3 && (
             <div>
               <h2 className="text-xl font-semibold mb-4">Choose Languages</h2>
               <div className="space-y-3 mb-6">
@@ -170,18 +236,27 @@ const TranslationFlow = () => {
                   </label>
                 ))}
               </div>
-              <Button
-                onClick={handleContinue}
-                disabled={selectedLanguages.length === 0 || processing}
-                className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 disabled:bg-gray-300"
-              >
-                {processing ? 'Processing...' : 'Continue'}
-              </Button>
+              <div className="flex justify-between">
+                <Button 
+                  variant="outline" 
+                  onClick={handleBackStep}
+                  className="text-fuchsia-600 border-fuchsia-200 hover:bg-fuchsia-50"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleContinue}
+                  disabled={selectedLanguages.length === 0 || processing}
+                  className="bg-fuchsia-600 hover:bg-fuchsia-700 disabled:bg-gray-300"
+                >
+                  {processing ? 'Processing...' : 'Continue'}
+                </Button>
+              </div>
             </div>
           )}
 
-          {/* Step 3: Preview Translations */}
-          {step === 3 && (
+          {/* Step 4: Preview Translations */}
+          {step === 4 && (
             <div>
               <h2 className="text-xl font-semibold mb-4">Preview Translations</h2>
               
@@ -257,15 +332,24 @@ const TranslationFlow = () => {
                 );
               })}
 
-              <Button 
-                className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 mt-4"
-                onClick={() => {
-                  cleanup();
-                  setStep(1);
-                }}
-              >
-                Start New Translation
-              </Button>
+              <div className="flex justify-between">
+                <Button 
+                  variant="outline"
+                  className="text-fuchsia-600 border-fuchsia-200 hover:bg-fuchsia-50"
+                  onClick={handleBackStep}
+                >
+                  Back
+                </Button>
+                <Button 
+                  className="bg-fuchsia-600 hover:bg-fuchsia-700"
+                  onClick={() => {
+                    cleanup();
+                    setStep(1);
+                  }}
+                >
+                  Start New Translation
+                </Button>
+              </div>
             </div>
           )}
 
