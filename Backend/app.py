@@ -9,7 +9,8 @@ import warnings
 import tempfile
 import json
 import base64
-import traceback  # Add this for the improved error handling
+import io
+import traceback
 from datetime import datetime
 from pathlib import Path
 import uuid
@@ -17,7 +18,6 @@ from werkzeug.utils import secure_filename
 
 # Third-party imports: Audio processing
 from pydub import AudioSegment  # For MP3 conversion
-
 
 # Third-party imports: Monitoring and Metrics
 from prometheus_client import Counter, Histogram, start_http_server         
@@ -65,6 +65,10 @@ from services.video_routes import handle_video_processing
 from services.podcast_routes import handle_podcast_upload
 from services.health_routes import handle_model_health 
 
+# Import the translation backends and manager
+from services.translation_strategy import TranslationManager
+from services.seamless_backend import SeamlessBackend
+from services.espnet_backend import ESPnetBackend
 
 # Initialize environment
 load_dotenv()
@@ -91,7 +95,6 @@ ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a'}
 
 # Create upload folder if it doesn't exist
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
-
 
 # Global model components - Added this section
 global processor, model, text_model, tokenizer
@@ -388,7 +391,128 @@ LANGUAGE_MAP = {
     'vi': 'vie'
 }
 
-from services.translation_routes import handle_translation
+# Initialize translation manager
+translation_manager = TranslationManager()
+
+# Register backends
+seamless_backend = SeamlessBackend(device=DEVICE, auth_token=auth_token)
+translation_manager.register_backend("seamless", seamless_backend, is_default=True)
+
+espnet_backend = ESPnetBackend(device=DEVICE)
+translation_manager.register_backend("espnet", espnet_backend)
+
+@app.route('/translate', methods=['POST', 'OPTIONS'])
+@limiter.limit("10 per minute")
+@require_model
+@performance_logger
+def translate_audio_endpoint():
+    TRANSLATION_REQUESTS.inc()
+    
+    try:
+        # Get requested backend
+        backend_name = request.form.get('backend', 'seamless')  # Default to seamless
+        logger.info(f"Using {backend_name} backend for translation")
+        
+        # Get backend from manager
+        backend = translation_manager.get_backend(backend_name)
+        
+        # Process request
+        if 'file' not in request.files:
+            logger.error("No file in request")
+            return jsonify({'error': 'No file uploaded'}), 400
+        
+        file = request.files['file']
+        if not file.filename:
+            logger.error("Empty filename")
+            return jsonify({'error': 'No selected file'}), 400
+        
+        target_language = request.form.get('target_language')
+        if not target_language:
+            logger.error("No target language specified")
+            return jsonify({'error': 'No target language specified'}), 400
+
+        # Validate language
+        model_language = LANGUAGE_MAP.get(target_language, target_language)
+        if model_language not in LANGUAGE_CODES:
+            logger.error(f"Unsupported language {target_language}")
+            return jsonify({'error': f'Unsupported language: {target_language}'}), 400
+        
+        temp_files = []
+        request_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
+        
+        try:
+            # Save uploaded file to temp location
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_input:
+                temp_files.append(temp_input.name)
+                file.save(temp_input.name)
+                
+                # Process audio with processor
+                audio_processor = AudioProcessor()
+                audio = audio_processor.process_audio(temp_input.name)
+                
+                # Use the selected backend for translation
+                result = backend.translate_speech(
+                    audio_tensor=audio, 
+                    source_lang="eng",  # Assuming English source for now
+                    target_lang=model_language
+                )
+                
+                # Save translated audio to temp file
+                with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_output:
+                    temp_files.append(temp_output.name)
+                    torchaudio.save(
+                        temp_output.name,
+                        result["audio"],
+                        sample_rate=SAMPLE_RATE
+                    )
+                    
+                    # Read audio file as binary
+                    with open(temp_output.name, 'rb') as audio_file:
+                        audio_data = audio_file.read()
+                
+                # Prepare response
+                response_data = {
+                    'audio': base64.b64encode(audio_data).decode('utf-8'),
+                    'transcripts': result["transcripts"]
+                }
+                
+                logger.info(f"Request {request_id}: Successfully processed with {backend_name} backend")
+                return jsonify(response_data)
+                
+        finally:
+            # Clean up temp files
+            for temp_file in temp_files:
+                cleanup_file(temp_file)
+            
+    except Exception as e:
+        TRANSLATION_ERRORS.inc()
+        logger.error(f"Translation error: {str(e)}", exc_info=True)
+        return ErrorHandler.handle_error(e)
+
+@app.route('/available-backends', methods=['GET'])
+def available_backends():
+    """Return a list of available translation backends"""
+    try:
+        backends = translation_manager.get_available_backends()
+        return jsonify({
+            'backends': backends,
+            'default': translation_manager.default_backend
+        })
+    except Exception as e:
+        logger.error(f"Error getting available backends: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/supported-languages', methods=['GET'])
+def supported_languages():
+    """Return supported languages for each backend"""
+    try:
+        backend_name = request.args.get('backend', 'seamless')
+        backend = translation_manager.get_backend(backend_name)
+        languages = backend.get_supported_languages()
+        return jsonify({'languages': languages})
+    except Exception as e:
+        logger.error(f"Error getting supported languages: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 # And update your process_audio_url route to handle CORS:
 @app.route('/process-audio-url', methods=['POST', 'OPTIONS'])
@@ -439,27 +563,15 @@ def process_audio_url():
 def process_video():
     try:
         target_language = request.form.get('target_language', 'fra')
-        return handle_video_processing(target_language)
+        backend_name = request.form.get('backend', 'seamless')  # Added backend selection
+        logger.info(f"Processing video with {backend_name} backend for language {target_language}")
+        
+        # Get backend from manager for video processing
+        backend = translation_manager.get_backend(backend_name)
+        
+        # Pass backend to video processing handler
+        return handle_video_processing(target_language, backend)
     except Exception as e:
-        return ErrorHandler.handle_error(e)
-
-
-
-@app.route('/translate', methods=['POST', 'OPTIONS'])
-@limiter.limit("10 per minute")
-@require_model
-@performance_logger
-def translate_audio_endpoint():
-    global processor, model, text_model, tokenizer
-    TRANSLATION_REQUESTS.inc()
-    
-    try:
-        return handle_translation(
-            processor, model, text_model, tokenizer,
-            DEVICE, SAMPLE_RATE, LANGUAGE_MAP, LANGUAGE_CODES
-        )
-    except Exception as e:
-        TRANSLATION_ERRORS.inc()
         return ErrorHandler.handle_error(e)
 
 @app.route('/upload_podcast', methods=['POST', 'OPTIONS'])
@@ -589,6 +701,8 @@ if __name__ == '__main__':
         logger.info(f"- CORS enabled: {bool(app.config.get('CORS_ENABLED', True))}")
         logger.info(f"- Rate limiting: 10 requests per minute")
         logger.info(f"- Metrics enabled: True (port 8000)")
+        logger.info(f"- Translation backends: {', '.join(translation_manager.backends.keys())}")
+        logger.info(f"- Default backend: {translation_manager.default_backend}")
         
         logger.info("="*50)
         

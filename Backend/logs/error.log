@@ -6562,3 +6562,109 @@ frame=  206 fps=0.0 q=-1.0 Lsize=     415KiB time=00:00:06.80 bitrate= 499.6kbit
 [libx264 @ 0x140f0cca0] kb/s:407.16
 [aac @ 0x140e0c380] Qavg: 3823.135
 
+2025-03-26 08:21:52,587 - __main__ - ERROR - [app.py:502] - Error getting available backends: 'TranslationManager' object has no attribute 'get_available_backends'
+2025-03-26 08:21:52,591 - __main__ - ERROR - [app.py:502] - Error getting available backends: 'TranslationManager' object has no attribute 'get_available_backends'
+2025-03-26 08:28:44,776 - services.error_handler - ERROR - [error_handler.py:36] - Error f328b8fb: handle_video_processing() takes 1 positional argument but 2 were given
+Traceback (most recent call last):
+  File "/Users/robmills/audio-translation/Backend/app.py", line 573, in process_video
+    return handle_video_processing(target_language, backend)
+TypeError: handle_video_processing() takes 1 positional argument but 2 were given
+2025-03-26 09:20:24,518 - __main__ - ERROR - [app.py:502] - Error getting available backends: Object of type ESPnetBackend is not JSON serializable
+2025-03-26 09:20:24,522 - __main__ - ERROR - [app.py:502] - Error getting available backends: Object of type ESPnetBackend is not JSON serializable
+2025-03-26 09:24:06,026 - services.video_routes - ERROR - [video_routes.py:582] - Process stderr: 
+  0%|          | 0/2 [00:00<?, ?it/s]
+
+  0%|          | 0/13 [00:00<?, ?it/s][A
+
+  8%|▊         | 1/13 [00:11<02:21, 11.81s/it][A
+
+ 15%|█▌        | 2/13 [00:23<02:09, 11.74s/it][A
+
+ 23%|██▎       | 3/13 [00:34<01:55, 11.58s/it][A
+
+ 31%|███       | 4/13 [00:46<01:43, 11.54s/it][A
+
+ 38%|███▊      | 5/13 [00:58<01:33, 11.63s/it][A
+
+ 46%|████▌     | 6/13 [01:10<01:22, 11.79s/it][A
+
+ 54%|█████▍    | 7/13 [01:21<01:10, 11.77s/it][A
+
+ 62%|██████▏   | 8/13 [01:33<00:58, 11.67s/it][A
+
+ 69%|██████▉   | 9/13 [01:44<00:46, 11.59s/it][A
+
+ 77%|███████▋  | 10/13 [01:56<00:34, 11.49s/it][A
+
+ 85%|████████▍ | 11/13 [02:07<00:22, 11.42s/it][A
+
+ 92%|█████████▏| 12/13 [02:18<00:11, 11.45s/it][A
+
+100%|██████████| 13/13 [02:20<00:00,  8.55s/it][A
+100%|██████████| 13/13 [02:20<00:00, 10.83s/it]
+
+ 50%|█████     | 1/2 [02:24<02:24, 144.22s/it]
+100%|██████████| 2/2 [02:25<00:00, 60.38s/it] 
+100%|██████████| 2/2 [02:25<00:00, 72.95s/it]
+ffmpeg version 7.1 Copyright (c) 2000-2024 the FFmpeg developers
+  built with Apple clang version 16.0.0 (clang-1600.0.26.4)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/7.1_4 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags='-Wl,-ld_classic' --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+[aist#0:0/pcm_s16le @ 0x132a05170] Guessed Channel Layout: mono
+Input #0, wav, from 'temp/translated_audio.wav':
+  Duration: 00:00:06.58, bitrate: 256 kb/s
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Input #1, avi, from 'temp/result.avi':
+  Metadata:
+    software        : Lavf61.7.100
+  Duration: 00:00:06.47, start: 0.000000, bitrate: 811 kb/s
+  Stream #1:0: Video: mpeg4 (Simple Profile) (DIVX / 0x58564944), yuv420p, 810x540 [SAR 1:1 DAR 3:2], 802 kb/s, 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #1:0 -> #0:0 (mpeg4 (native) -> h264 (libx264))
+  Stream #0:0 -> #0:1 (pcm_s16le (native) -> aac (native))
+Press [q] to stop, [?] for help
+[libx264 @ 0x132908530] -qscale is ignored, -crf is recommended.
+[libx264 @ 0x132908530] using SAR=1/1
+[libx264 @ 0x132908530] using cpu capabilities: ARMv8 NEON
+[libx264 @ 0x132908530] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 0x132908530] 264 - core 164 r3108 31e19f9 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=16 lookahead_threads=2 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to 'temp/synced_video.mp4':
+  Metadata:
+    encoder         : Lavf61.7.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 810x540 [SAR 1:1 DAR 3:2], q=2-31, 30 fps, 15360 tbn
+      Metadata:
+        encoder         : Lavc61.19.100 libx264
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 16000 Hz, mono, fltp, 69 kb/s
+      Metadata:
+        encoder         : Lavc61.19.100 aac
+[out#0/mp4 @ 0x132907550] video:322KiB audio:64KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.318656%
+frame=  194 fps=0.0 q=-1.0 Lsize=     392KiB time=00:00:06.40 bitrate= 501.2kbits/s speed=24.3x    
+[libx264 @ 0x132908530] frame I:1     Avg QP:19.03  size: 13524
+[libx264 @ 0x132908530] frame P:51    Avg QP:19.82  size:  4145
+[libx264 @ 0x132908530] frame B:142   Avg QP:22.44  size:   737
+[libx264 @ 0x132908530] consecutive B-frames:  0.5%  5.2%  1.5% 92.8%
+[libx264 @ 0x132908530] mb I  I16..4: 32.2% 66.8%  1.0%
+[libx264 @ 0x132908530] mb P  I16..4:  3.2%  9.5%  0.1%  P16..4: 40.4%  7.4%  4.1%  0.0%  0.0%    skip:35.4%
+[libx264 @ 0x132908530] mb B  I16..4:  0.3%  1.4%  0.0%  B16..8: 25.9%  0.6%  0.0%  direct: 0.4%  skip:71.3%  L0:51.1% L1:48.3% BI: 0.6%
+[libx264 @ 0x132908530] 8x8 transform intra:75.9% inter:88.8%
+[libx264 @ 0x132908530] coded y,uvDC,uvAC intra: 33.9% 48.7% 3.6% inter: 3.4% 7.2% 0.0%
+[libx264 @ 0x132908530] i16 v,h,dc,p: 24% 24% 31% 21%
+[libx264 @ 0x132908530] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 15% 16% 64%  1%  0%  1%  1%  1%  1%
+[libx264 @ 0x132908530] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 31% 18% 34%  4%  3%  4%  2%  2%  2%
+[libx264 @ 0x132908530] i8c dc,h,v,p: 50% 20% 27%  3%
+[libx264 @ 0x132908530] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x132908530] ref P L0: 64.4%  5.6% 20.7%  9.2%
+[libx264 @ 0x132908530] ref B L0: 81.3% 14.9%  3.8%
+[libx264 @ 0x132908530] ref B L1: 96.4%  3.6%
+[libx264 @ 0x132908530] kb/s:407.65
+[aac @ 0x131f17860] Qavg: 2094.574
+

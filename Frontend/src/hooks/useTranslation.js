@@ -187,7 +187,8 @@ export const useTranslation = () => {
   };
 
   // Enhanced translation process with robust error handling and progress tracking
-  const processAudio = async () => {
+  // Now accepts a backend parameter with 'seamless' as default
+  const processAudio = async (backend = 'seamless') => {
     cleanup();
     abortControllerRef.current = new AbortController();
 
@@ -218,6 +219,10 @@ export const useTranslation = () => {
       }
       formData.append('file', file);
       formData.append('target_language', targetLanguage);
+      formData.append('backend', backend); // Add the backend parameter
+
+      // Log which backend is being used
+      console.log(`Using translation backend: ${backend}`);
 
       // Make request with timeout and abort controller
       const response = await fetch('http://localhost:5001/translate', {

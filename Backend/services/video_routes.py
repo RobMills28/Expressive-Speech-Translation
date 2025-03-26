@@ -714,10 +714,10 @@ class VideoProcessor:
             logger.error(f"Lip sync with Wav2Lip failed: {str(e)}", exc_info=True)
             return False
 
-    def process_video(self, video_file, target_language: str) -> Generator[str, None, None]:
+    def process_video(self, video_file, target_language: str, backend=None) -> Generator[str, None, None]:
         """Process video file and yield progress events."""
         start_time = time.time()
-        logger.info(f"Starting video processing for language: {target_language}")
+        logger.info(f"Starting video processing for language: {target_language}, backend: {backend}")
         
         temp_files = []
         try:
@@ -885,23 +885,31 @@ class VideoProcessor:
                     logger.error(f"Failed to cleanup {file_path}: {str(e)}")
             logger.debug("Temporary file cleanup complete")
 
-def handle_video_processing(target_language: str):
-    """Route handler for video processing requests."""
-    logger.info(f"Received video processing request for language: {target_language}")
-    
-    if 'video' not in request.files:
-        logger.error("No video file provided in request")
-        return ErrorHandler.format_validation_error('No video file provided')
+
+def handle_video_processing(target_language: str, backend=None):
+        """Route handler for video processing requests."""
+        logger.info(f"Received video processing request for language: {target_language}")
         
-    video_file = request.files['video']
-    if not video_file.filename:
-        logger.error("Empty video filename in request")
-        return ErrorHandler.format_validation_error('No video file selected')
-    
-    logger.info(f"Processing video: {video_file.filename} for language: {target_language}")
-    
-    processor = VideoProcessor()
-    return Response(
-        stream_with_context(processor.process_video(video_file, target_language)),
-        mimetype='text/event-stream'
-    )
+        if 'video' not in request.files:
+            logger.error("No video file provided in request")
+            return ErrorHandler.format_validation_error('No video file provided')
+            
+        video_file = request.files['video']
+        if not video_file.filename:
+            logger.error("Empty video filename in request")
+            return ErrorHandler.format_validation_error('No video file selected')
+        
+        logger.info(f"Processing video: {video_file.filename} for language: {target_language}")
+        
+        processor = VideoProcessor()
+        # Use the provided backend if available
+        if backend:
+            return Response(
+                stream_with_context(processor.process_video(video_file, target_language, backend)),
+                mimetype='text/event-stream'
+            )
+        else:
+            return Response(
+                stream_with_context(processor.process_video(video_file, target_language)),
+                mimetype='text/event-stream'
+            )

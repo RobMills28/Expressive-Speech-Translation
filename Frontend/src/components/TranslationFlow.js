@@ -5,6 +5,7 @@ import { Progress } from "./ui/progress";
 import { Upload, Globe, Play, Pause, CheckCircle, AlertCircle, ChevronDown, Check, Film, Mic, Loader2 } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import BackendSelector from './BackendSelector';
 
 const TranslationFlow = () => {
   // States from the translation hook
@@ -46,6 +47,7 @@ const TranslationFlow = () => {
   const [processing, setProcessing] = useState(false);
   const [processPhase, setProcessPhase] = useState('');
   const [error, setError] = useState('');
+  const [selectedBackend, setSelectedBackend] = useState('seamless'); // Default backend
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const resultVideoRef = useRef(null);
@@ -70,6 +72,12 @@ const TranslationFlow = () => {
   const handleMediaTypeSelect = (type) => {
     setMediaType(type);
     setStep(2);
+  };
+
+  // Handle backend change
+  const handleBackendChange = (backend) => {
+    setSelectedBackend(backend);
+    console.log(`Translation backend changed to: ${backend}`);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,6 +189,7 @@ const TranslationFlow = () => {
       const formData = new FormData();
       formData.append('video', videoFile);
       formData.append('target_language', targetLang);
+      formData.append('backend', selectedBackend); // Add backend selection
 
       // This exact endpoint worked in VideoSyncInterface
       const response = await fetch('http://localhost:5001/process-video', {
@@ -278,7 +287,8 @@ const TranslationFlow = () => {
       
       // If we also have audio to process (audio-only or both)
       if ((mediaType === 'audio' || mediaType === 'both') && file) {
-        await processAudio();
+        // Include the selected backend in the processAudio call
+        await processAudio(selectedBackend);
         
         // Update translations state
         setTranslations(prev => ({
@@ -356,6 +366,15 @@ const TranslationFlow = () => {
       {step === 1 && (
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-semibold text-center mb-8">Choose Content Type</h2>
+          
+          {/* Add Backend Selector above content type options */}
+          <div className="mb-8">
+            <BackendSelector 
+              onBackendChange={handleBackendChange}
+              className="max-w-xs mx-auto"
+            />
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div 
               className="flex flex-col items-center p-6 rounded-lg border hover:border-fuchsia-300 cursor-pointer transition-all hover:shadow-md"
@@ -464,6 +483,14 @@ const TranslationFlow = () => {
           )}
           
           <h2 className="text-xl font-semibold mb-6">Choose Languages</h2>
+          
+          {/* Display current backend selection */}
+          <div className="mb-6 p-3 bg-fuchsia-50 rounded-md">
+            <p className="text-sm text-fuchsia-700">
+              Translation Engine: <strong>{selectedBackend === 'seamless' ? 'Seamless' : 'ESPnet (Experimental)'}</strong>
+              {selectedBackend === 'espnet' && ' - Limited language support available'}
+            </p>
+          </div>
           
           {mediaType === 'video' || mediaType === 'both' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -584,6 +611,13 @@ const TranslationFlow = () => {
             )}
             
             <h2 className="text-xl font-semibold mb-6">Preview Translations</h2>
+            
+            {/* Show which backend was used */}
+            <div className="mb-6 p-3 bg-gray-50 rounded-md">
+              <p className="text-sm text-gray-600">
+                Translation Engine: <strong>{selectedBackend === 'seamless' ? 'Seamless' : 'ESPnet (Experimental)'}</strong>
+              </p>
+            </div>
             
             {/* For video content */}
             {(mediaType === 'video' || mediaType === 'both') && (

@@ -98,6 +98,11 @@ class TranslationManager:
         else:
             raise ValueError("No translation backend available")
     
+    # Add this method to fix the first error
+    def get_available_backends(self) -> dict:
+        """Get all available backends"""
+        return self.backends
+    
     def select_backend_for_language(self, target_lang: str) -> TranslationBackend:
         """Select appropriate backend for a given language"""
         # Try default backend first
