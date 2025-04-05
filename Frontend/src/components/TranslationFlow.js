@@ -6,6 +6,7 @@ import { Upload, Globe, Play, Pause, CheckCircle, AlertCircle, ChevronDown, Chec
 import { useTranslation } from '../hooks/useTranslation';
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import BackendSelector from './BackendSelector';
+import TranscriptView from "./ui/TranscriptView";
 
 const TranslationFlow = () => {
   // States from the translation hook
@@ -31,7 +32,9 @@ const TranslationFlow = () => {
     setError: setHookError,
     setAudioStatus,
     setAudioReady,
-    setIsPlaying
+    setIsPlaying,
+    setSourceText,
+    setTargetText
   } = useTranslation();
 
   // Local states for the flow UI
@@ -52,6 +55,7 @@ const TranslationFlow = () => {
   const videoRef = useRef(null);
   const resultVideoRef = useRef(null);
   const eventSourceRef = useRef(null);
+
 
   // Supported file types
   const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg', '.m4a'];
@@ -242,6 +246,12 @@ const TranslationFlow = () => {
                 );
                 const videoUrl = URL.createObjectURL(videoBlob);
                 setResultVideo(videoUrl);
+              }
+
+              // Extract transcript data if available
+              if (data.transcripts) {
+                setSourceText(data.transcripts.source || '');
+                setTargetText(data.transcripts.target || '');
               }
             } catch (e) {
               console.error('Error parsing SSE message:', e);
@@ -664,6 +674,19 @@ const TranslationFlow = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+            
+            {/* Add Transcript section for video translations */}
+            {(mediaType === 'video' || mediaType === 'both') && resultVideo && (
+              <div className="mt-6 mb-6">
+                <TranscriptView 
+                  sourceText={sourceText}
+                  targetText={targetText}
+                  targetLang={selectedLanguages[0]}
+                  sourceLang="English"
+                  isOpen={true}
+                />
               </div>
             )}
             

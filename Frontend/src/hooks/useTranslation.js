@@ -332,6 +332,8 @@ export const useTranslation = () => {
     setAudioReady,
     setError,
     setIsPlaying,
-    setShowTranscript
+    setShowTranscript,
+    setSourceText,
+    setTargetText
   };
 };

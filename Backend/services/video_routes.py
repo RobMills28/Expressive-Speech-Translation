@@ -154,10 +154,17 @@ class VideoProcessor:
         """Save audio tensor to file."""
         logger.info(f"Saving audio tensor of shape {audio_tensor.shape} to {path}")
         try:
-            # Ensure audio is mono and properly shaped
-            if len(audio_tensor.shape) > 1:
-                logger.debug(f"Squeezing audio tensor from shape {audio_tensor.shape}")
+            # Ensure audio is 2D (channels, samples)
+            if len(audio_tensor.shape) > 2:
+                logger.debug(f"Reshaping audio tensor from {audio_tensor.shape}")
+                # If 3D tensor [batch, channels, samples], remove batch dimension
                 audio_tensor = audio_tensor.squeeze(0)
+                logger.debug(f"After reshaping: {audio_tensor.shape}")
+            
+            # Ensure audio is mono and properly shaped
+            if len(audio_tensor.shape) == 1:
+                logger.debug(f"Adding channel dimension to tensor of shape {audio_tensor.shape}")
+                audio_tensor = audio_tensor.unsqueeze(0)  # Add channel dimension
             
             # Log audio properties
             logger.debug(f"Audio tensor stats: min={audio_tensor.min()}, max={audio_tensor.max()}, mean={audio_tensor.mean()}")
@@ -165,7 +172,7 @@ class VideoProcessor:
             # Convert to numpy and save using torchaudio
             torchaudio.save(
                 path,
-                audio_tensor.unsqueeze(0),  # Add channel dimension
+                audio_tensor,  # Already in the right shape
                 sample_rate=16000,
                 encoding='PCM_S',
                 bits_per_sample=16
@@ -179,7 +186,7 @@ class VideoProcessor:
             logger.error(f"Failed to save audio tensor: {str(e)}", exc_info=True)
             raise ValueError(f"Failed to save translated audio: {str(e)}")
 
-    def translate_audio(self, audio: torch.Tensor, target_language: str) -> torch.Tensor:
+    def translate_audio(self, audio: torch.Tensor, target_language: str) -> Dict[str, Any]:
         """Translate audio using SeamlessM4T."""
         logger.info(f"Translating audio of shape {audio.shape} to language {target_language}")
         try:
@@ -204,9 +211,26 @@ class VideoProcessor:
             if self.device.type == 'cuda':
                 logger.debug("Moving inputs to CUDA")
                 inputs = {k: v.to(self.device) for k, v in inputs.items()}
+            
+            # Generate source text (English)
+            source_text = ""
+            try:
+                logger.info("Generating source text (English)")
+                with torch.no_grad():
+                    source_output = self.text_model.generate(
+                        input_features=inputs["input_features"],
+                        tgt_lang="eng",
+                        num_beams=5,
+                        max_new_tokens=200
+                    )
+                    source_text = self.processor.batch_decode(source_output, skip_special_tokens=True)[0]
+                    logger.info(f"Generated source text: {source_text}")
+            except Exception as e:
+                logger.error(f"Error generating source text: {str(e)}")
         
-            # First generate translated text to verify translation is working
+            # Generate translated text to verify translation is working
             logger.info(f"Generating text translation in {target_language}")
+            target_text = ""
             with torch.no_grad():
                 text_output = self.text_model.generate(
                     input_features=inputs["input_features"],
@@ -214,8 +238,8 @@ class VideoProcessor:
                     num_beams=5,
                     max_new_tokens=200
                 )
-                text = self.processor.batch_decode(text_output, skip_special_tokens=True)[0]
-                logger.info(f"Generated text: {text}")
+                target_text = self.processor.batch_decode(text_output, skip_special_tokens=True)[0]
+                logger.info(f"Generated text: {target_text}")
 
             # Now generate translated speech
             logger.info(f"Generating translated speech for language {target_language}")
@@ -260,7 +284,15 @@ class VideoProcessor:
                 logger.debug(f"Audio after normalization: min={translated_audio.min()}, max={translated_audio.max()}")
         
                 logger.info(f"Translation successful, audio shape: {translated_audio.shape}")
-                return translated_audio
+                
+                # Return both audio and transcripts
+                return {
+                    "audio": translated_audio,
+                    "transcripts": {
+                        "source": source_text,
+                        "target": target_text
+                    }
+                }
             
         except Exception as e:
             logger.error(f"Audio translation failed: {str(e)}", exc_info=True)
@@ -757,10 +789,29 @@ class VideoProcessor:
         
             yield self._progress_event(40, "Translating speech...")
         
-            # Translate audio
+            # Translate audio - NOW RETURNS DICT WITH TRANSCRIPT
             logger.debug(f"Translating audio to {target_language}")
             translation_start = time.time()
-            translated_audio = self.translate_audio(audio_tensor, target_language)
+            
+            # Handle different backends
+            if backend and hasattr(backend, 'translate_speech'):
+                # Use provided backend
+                logger.info(f"Using provided backend: {type(backend).__name__}")
+                translation_result = backend.translate_speech(
+                    audio_tensor=audio_tensor,
+                    source_lang="eng",
+                    target_lang=target_language
+                )
+                translated_audio = translation_result["audio"]
+                source_text = translation_result["transcripts"]["source"]
+                target_text = translation_result["transcripts"]["target"]
+            else:
+                # Use default implementation
+                translation_result = self.translate_audio(audio_tensor, target_language)
+                translated_audio = translation_result["audio"]
+                source_text = translation_result["transcripts"]["source"]
+                target_text = translation_result["transcripts"]["target"]
+                
             translation_time = time.time() - translation_start
             logger.info(f"Translation completed in {translation_time:.2f} seconds")
         
@@ -859,15 +910,34 @@ class VideoProcessor:
             data_length = len(video_data)
             logger.info(f"Encoded video data in {encoding_time:.2f} seconds (length: {data_length} characters)")
             logger.debug(f"Sending final result to client")
-        
-            yield f"data: {json.dumps({'result': video_data})}\n\n"
+            
+            # Include transcripts in the response
+            logger.info(f"Including transcripts in response: source={len(source_text)} chars, target={len(target_text)} chars")
+            
+            # Create the JSON structure first
+            response_data = {
+                'result': video_data,
+                'transcripts': {
+                    'source': source_text,
+                    'target': target_text
+                }
+            }
+            
+            # Then convert to JSON and yield as a string
+            response_json = json.dumps(response_data)
+            yield f"data: {response_json}\n\n"
             
             total_time = time.time() - start_time
             logger.info(f"Total video processing completed in {total_time:.2f} seconds")
         
         except Exception as e:
             logger.error(f"Video processing failed: {str(e)}", exc_info=True)
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            
+            # Similarly for the error case
+            error_data = {'error': str(e)}
+            error_json = json.dumps(error_data)
+            yield f"data: {error_json}\n\n"
+
         
         finally:
             # Cleanup temp files

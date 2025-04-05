@@ -493,7 +493,8 @@ def translate_audio_endpoint():
 def available_backends():
     """Return a list of available translation backends"""
     try:
-        backends = translation_manager.get_available_backends()
+        # Return backend names as strings instead of objects
+        backends = list(translation_manager.backends.keys())
         return jsonify({
             'backends': backends,
             'default': translation_manager.default_backend
