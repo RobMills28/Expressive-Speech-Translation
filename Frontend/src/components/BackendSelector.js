@@ -13,18 +13,18 @@ const BackendSelector = ({ onBackendChange, className }) => {
         const response = await fetch('http://localhost:5001/available-backends');
         if (response.ok) {
           const data = await response.json();
-          setBackends(Object.keys(data.backends || {}));
+          setBackends(data.backends || []);
           setSelectedBackend(data.default || 'seamless');
         } else {
           console.error('Failed to fetch backends');
           // Default fallback if API fails
-          setBackends(['seamless', 'espnet']);
+          setBackends(['seamless', 'espnet', 'cascaded']);
           setSelectedBackend('seamless');
         }
       } catch (error) {
         console.error('Error fetching backends:', error);
         // Default fallback if API fails
-        setBackends(['seamless', 'espnet']);
+        setBackends(['seamless', 'espnet', 'cascaded']);
         setSelectedBackend('seamless');
       } finally {
         setLoading(false);
@@ -60,6 +60,7 @@ const BackendSelector = ({ onBackendChange, className }) => {
             <option key={backend} value={backend}>
               {backend === 'seamless' ? 'Seamless (Default)' : 
                backend === 'espnet' ? 'ESPnet (Experimental)' : 
+               backend === 'cascaded' ? 'Cascaded (Whisper+NLLB+OpenVoice)' :
                backend}
             </option>
           ))
@@ -68,6 +69,11 @@ const BackendSelector = ({ onBackendChange, className }) => {
       {selectedBackend === 'espnet' && (
         <p className="mt-1 text-xs text-amber-600">
           ESPnet is experimental and currently supports limited languages.
+        </p>
+      )}
+      {selectedBackend === 'cascaded' && (
+        <p className="mt-1 text-xs text-green-600">
+          Cascaded approach uses Whisper for ASR, NLLB for translation, and OpenVoice for voice-preserving TTS.
         </p>
       )}
     </div>

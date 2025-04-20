@@ -69,6 +69,7 @@ from services.health_routes import handle_model_health
 from services.translation_strategy import TranslationManager
 from services.seamless_backend import SeamlessBackend
 from services.espnet_backend import ESPnetBackend
+from services.cascaded_backend import CascadedBackend
 
 # Initialize environment
 load_dotenv()
@@ -401,6 +402,10 @@ translation_manager.register_backend("seamless", seamless_backend, is_default=Tr
 espnet_backend = ESPnetBackend(device=DEVICE)
 translation_manager.register_backend("espnet", espnet_backend)
 
+cascaded_backend = CascadedBackend(device=DEVICE)
+translation_manager.register_backend("cascaded", cascaded_backend)
+logger.info(f"Registered backends: {list(translation_manager.backends.keys())}")
+
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
 @require_model
@@ -653,7 +658,7 @@ signal.signal(signal.SIGINT, sigint_handler)  # Changed to use sigint_handler
 if __name__ == '__main__':
     try:
         # Start metrics server
-        start_http_server(8000)
+        start_http_server(8001)
         logger.info("Metrics server started on port 8000")
 
         # Validate environment
