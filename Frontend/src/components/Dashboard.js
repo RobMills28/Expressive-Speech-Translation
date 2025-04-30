@@ -154,12 +154,12 @@ const Dashboard = () => {
       <div className="w-64 border-r bg-white">
         <div className="p-4">
           <div className="mb-6">
-            <h1 className="text-xl font-bold text-fuchsia-600">Magenta AI</h1>
+            <h1 className="text-xl font-bold text-fuchsia-600">Workspace</h1>
           </div>
 
           <div className="space-y-6">
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">WORKSPACE</p>
+              <p className="text-xs font-medium text-gray-500 mb-2 py-2">WORKSPACE</p>
               <div className="space-y-1">
                 <div 
                   className={`flex items-center text-gray-800 hover:bg-gray-100 rounded-lg px-3 py-2.5 cursor-pointer ${
