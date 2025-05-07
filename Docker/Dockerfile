@@ -30,11 +30,17 @@ RUN mkdir -p /app/checkpoints_v2/converter \
     && mkdir -p /app/checkpoints_v2/base_speakers/ses \
     && mkdir -p /app/processed
 
+# Return to app directory
+WORKDIR /app
+
 # Copy our API wrapper code
-COPY ./docker/openvoice_api.py /app/
+COPY ./Docker/openvoice_api.py /app/
 
 # Expose the port
 EXPOSE 8000
 
-# Run the API server
-CMD ["uvicorn", "openvoice_api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Set Python path to ensure module can be found
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+
+# Run the API server with Python directly
+CMD ["python", "-c", "import uvicorn; uvicorn.run('openvoice_api:app', host='0.0.0.0', port=8000)"]
