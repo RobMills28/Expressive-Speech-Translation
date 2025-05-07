@@ -1,0 +1,17 @@
+services:
+  openvoice:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - openvoice_data:/app/processed
+      - openvoice_checkpoints:/app/checkpoints_v2
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+volumes:
+  openvoice_data:
+  openvoice_checkpoints:
