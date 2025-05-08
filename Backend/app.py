@@ -68,8 +68,31 @@ from services.health_routes import handle_model_health
 # Import the translation backends and manager
 from services.translation_strategy import TranslationManager
 from services.seamless_backend import SeamlessBackend
-from services.espnet_backend import ESPnetBackend
+try:
+    from services.espnet_backend import ESPnetBackend
+    ESPNET_AVAILABLE = True
+except ImportError:
+    print("ESPnet not available - this backend will be disabled")
+    ESPNET_AVAILABLE = False
+
+# Set up logging
+# setup_logging() 
+logger = logging.getLogger(__name__)
+
+# Import the translation backends and manager
+from services.translation_strategy import TranslationManager
+from services.seamless_backend import SeamlessBackend
+try:
+    from services.espnet_backend import ESPnetBackend
+    ESPNET_AVAILABLE = True
+except ImportError:
+    print("ESPnet not available - this backend will be disabled")
+    ESPNET_AVAILABLE = False
+
 from services.cascaded_backend import CascadedBackend
+
+# Initialize environment
+load_dotenv()
 
 # Initialize environment
 load_dotenv()
@@ -196,10 +219,6 @@ def setup_logging():
     logging.getLogger().addHandler(console_handler)
     
     logging.getLogger('werkzeug').setLevel(logging.WARNING)
-
-# Set up logging
-setup_logging()
-logger = logging.getLogger(__name__)
 
 def graceful_shutdown():
     """Graceful shutdown handler"""
@@ -399,12 +418,12 @@ translation_manager = TranslationManager()
 seamless_backend = SeamlessBackend(device=DEVICE, auth_token=auth_token)
 translation_manager.register_backend("seamless", seamless_backend, is_default=True)
 
-espnet_backend = ESPnetBackend(device=DEVICE)
-translation_manager.register_backend("espnet", espnet_backend)
-
-cascaded_backend = CascadedBackend(device=DEVICE)
-translation_manager.register_backend("cascaded", cascaded_backend)
-logger.info(f"Registered backends: {list(translation_manager.backends.keys())}")
+# Only register if available
+if 'ESPNET_AVAILABLE' in globals() and ESPNET_AVAILABLE:
+    espnet_backend = ESPnetBackend(device=DEVICE)
+    translation_manager.register_backend("espnet", espnet_backend)
+else:
+    logger.warning("ESPnet backend disabled due to missing dependencies")
 
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
