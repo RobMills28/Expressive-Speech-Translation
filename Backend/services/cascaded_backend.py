@@ -325,14 +325,29 @@ class CascadedBackend(TranslationBackend):
                     output_path = temp_dir / "cloned_audio.wav"
                     
                     try:
-                        # Preprocess the audio to ensure it's in the right format
-                        audio_data, sr = librosa.load(str(base_wav_path), sr=16000, mono=True)
-                        preprocessed_path = temp_dir / "preprocessed_audio.wav"
-                        sf.write(str(preprocessed_path), audio_data, 16000)
+                        # Save the original input audio as source for voice extraction
+                        original_audio_path = temp_dir / "original_audio.wav"
+                        original_audio_np = audio_tensor.squeeze().cpu().numpy()
                         
-                        # Call the OpenVoice API
-                        with open(str(preprocessed_path), "rb") as f:
-                            files = {"audio_file": (os.path.basename(str(preprocessed_path)), f, "audio/wav")}
+                        # Check if original audio is valid
+                        if len(original_audio_np) < 8000:  # Less than 0.5 seconds at 16kHz
+                            logger.warning(f"Original audio too short for voice cloning: {len(original_audio_np)} samples")
+                            raise ValueError("Original audio too short for voice cloning")
+                            
+                        # Save original audio as WAV for OpenVoice reference
+                        sf.write(str(original_audio_path), original_audio_np, 16000)
+                        logger.info(f"Saved original audio for voice extraction: {os.path.getsize(str(original_audio_path))} bytes")
+                        
+                        # For target content, use the gTTS-generated audio
+                        target_audio_path = base_wav_path
+                        
+                        # Call the OpenVoice API with original voice and target content
+                        with open(str(original_audio_path), "rb") as f_source, open(str(target_audio_path), "rb") as f_target:
+                            files = {
+                                "audio_file": (os.path.basename(str(original_audio_path)), f_source, "audio/wav"),
+                                "target_file": (os.path.basename(str(target_audio_path)), f_target, "audio/wav")
+                            }
+                            logger.info("Sending request to OpenVoice API")
                             response = requests.post("http://localhost:8000/clone-voice", files=files)
                         
                         # Check API response
@@ -357,11 +372,6 @@ class CascadedBackend(TranslationBackend):
                         # Fall back to base audio
                         y, sr = sf.read(str(base_wav_path))
                         output_tensor = torch.FloatTensor(y).unsqueeze(0)
-                else:
-                    # Just use gTTS output
-                    logger.info("Using base gTTS audio (no voice cloning)")
-                    y, sr = sf.read(str(base_wav_path))
-                    output_tensor = torch.FloatTensor(y).unsqueeze(0)
                 
                 # Return results
                 duration = time.time() - start_time
