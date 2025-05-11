@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { AlertCircle, Upload, Loader2, Play, Pause, Film, Mic, AudioWaveform } from 'lucide-react';
 import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
+import BackendSelector from './BackendSelector';
+
 
 // Language options
 const LANGUAGES = {
@@ -34,6 +36,9 @@ const ContentTranslator = () => {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  // Add these new state variables
+  const [useVoiceCloning, setUseVoiceCloning] = useState(true);
+  const [backendType, setBackendType] = useState('seamless');
   
   // Refs for media elements
   const mediaRef = useRef(null);
@@ -100,22 +105,25 @@ const ContentTranslator = () => {
       setError('Please upload a file first');
       return;
     }
-
+  
     if (!targetLanguage) {
       setError('Please select a target language');
       return;
     }
-
+  
     try {
       setIsProcessing(true);
       setProgress(0);
       setProcessPhase('Preparing content for processing...');
       setError('');
-
+  
       const formData = new FormData();
       formData.append(contentType === 'audio' ? 'audio' : 'video', file);
       formData.append('target_language', targetLanguage);
-
+      // Add these new form fields
+      formData.append('backend', backendType);
+      formData.append('use_voice_cloning', useVoiceCloning ? 'true' : 'false');
+  
       const endpoint = contentType === 'audio' ? 
         'http://localhost:5001/process-audio' : 
         'http://localhost:5001/process-video';

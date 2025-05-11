@@ -99,6 +99,9 @@ const VideoSyncInterface = () => {
   const [processPhase, setProcessPhase] = useState('');
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+  // Add these new state variables
+  const [useVoiceCloning, setUseVoiceCloning] = useState(true);
+  const [backendType, setBackendType] = useState('seamless');
   
   const videoRef = useRef(null);
   const resultRef = useRef(null);
@@ -131,11 +134,14 @@ const VideoSyncInterface = () => {
       setProgress(0);
       setProcessPhase('Preparing video for processing...');
       setError('');
-
+  
       const formData = new FormData();
       formData.append('video', video);
       formData.append('target_language', targetLanguage);
-
+      // Add these new form fields
+      formData.append('backend', backendType);
+      formData.append('use_voice_cloning', useVoiceCloning ? 'true' : 'false');
+  
       const response = await fetch('http://localhost:5001/process-video', {
         method: 'POST',
         body: formData
@@ -274,59 +280,72 @@ const VideoSyncInterface = () => {
       </div>
 
       {/* Processing Controls */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <Select 
-                value={targetLanguage} 
-                onValueChange={setTargetLanguage}
-                disabled={isProcessing}
-              >
-                <SelectTrigger className="w-60">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent className="max-h-80 overflow-y-auto">
-                  {Object.entries(SUPPORTED_LANGUAGES).map(([code, name]) => (
-                    <SelectItem key={code} value={code}>
-                      <span>{LANGUAGE_FLAGS[code]}</span> <span className="ml-2">{name}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+  <Card>
+    <CardContent className="pt-6">
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Select 
+            value={targetLanguage} 
+            onValueChange={setTargetLanguage}
+            disabled={isProcessing}
+          >
+            <SelectTrigger className="w-60">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent className="max-h-80 overflow-y-auto">
+              {Object.entries(SUPPORTED_LANGUAGES).map(([code, name]) => (
+                <SelectItem key={code} value={code}>
+                  <span>{LANGUAGE_FLAGS[code]}</span> <span className="ml-2">{name}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-              <Button
-                className="bg-fuchsia-600 hover:bg-fuchsia-700"
-                disabled={!video || isProcessing}
-                onClick={handleProcess}
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  'Translate & Synchronize'
-                )}
-              </Button>
-            </div>
+          {/* Add the BackendSelector here */}
+          <BackendSelector
+            onBackendChange={(backend) => {
+              setBackendType(backend);
+              if (backend !== 'cascaded') {
+                setUseVoiceCloning(false);
+              }
+            }}
+            className="flex-1"
+          />
 
-            {isProcessing && (
-              <div className="space-y-2">
-                <Progress value={progress} className="[&>div]:bg-fuchsia-600" />
-                <p className="text-sm text-gray-500">{processPhase}</p>
-              </div>
+          <Button
+            className="bg-fuchsia-600 hover:bg-fuchsia-700"
+            disabled={!video || isProcessing}
+            onClick={handleProcess}
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              'Translate & Synchronize'
             )}
+          </Button>
+        </div>
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+        {/* Add the voice cloning checkbox after the button */}
+        {backendType === 'cascaded' && (
+          <div className="mt-3 flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="voice-cloning"
+              checked={useVoiceCloning}
+              onChange={(e) => setUseVoiceCloning(e.target.checked)}
+              disabled={backendType !== 'cascaded' || isProcessing}
+            />
+            <label htmlFor="voice-cloning" className="text-sm font-medium">
+              Preserve original voice characteristics (OpenVoice)
+            </label>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
+    </CardContent>
+  </Card>
     </div>
   );
 };

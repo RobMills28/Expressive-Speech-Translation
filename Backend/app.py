@@ -418,12 +418,31 @@ translation_manager = TranslationManager()
 seamless_backend = SeamlessBackend(device=DEVICE, auth_token=auth_token)
 translation_manager.register_backend("seamless", seamless_backend, is_default=True)
 
+# AFTER:
 # Only register if available
 if 'ESPNET_AVAILABLE' in globals() and ESPNET_AVAILABLE:
     espnet_backend = ESPnetBackend(device=DEVICE)
     translation_manager.register_backend("espnet", espnet_backend)
 else:
     logger.warning("ESPnet backend disabled due to missing dependencies")
+
+# Register cascaded backend with OpenVoice integration
+try:
+    # First check if OpenVoice is available
+    from services.cascaded_backend import CascadedBackend, check_openvoice_api
+    openvoice_available = check_openvoice_api()
+    logger.info(f"OpenVoice API available: {openvoice_available}")
+    
+    # Register cascaded backend
+    cascaded_backend = CascadedBackend(
+        device=DEVICE, 
+        use_voice_cloning=openvoice_available
+    )
+    translation_manager.register_backend("cascaded", cascaded_backend)
+    logger.info(f"Registered cascaded backend with voice cloning: {openvoice_available}")
+except Exception as e:
+    logger.error(f"Failed to register cascaded backend: {str(e)}")
+    logger.warning("Cascaded backend will not be available")
 
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
@@ -598,6 +617,25 @@ def process_video():
         return handle_video_processing(target_language, backend)
     except Exception as e:
         return ErrorHandler.handle_error(e)
+
+# Add this new endpoint to check OpenVoice status
+@app.route('/openvoice-status', methods=['GET'])
+def openvoice_status():
+    """Check if OpenVoice API is available"""
+    try:
+        from services.cascaded_backend import check_openvoice_api
+        is_available = check_openvoice_api()
+        return jsonify({
+            'available': is_available,
+            'message': "OpenVoice API is available" if is_available else "OpenVoice API is not available"
+        })
+    except Exception as e:
+        logger.error(f"Error checking OpenVoice status: {str(e)}")
+        return jsonify({
+            'available': False,
+            'message': f"Error checking OpenVoice status: {str(e)}"
+        }), 500
+
 
 @app.route('/upload_podcast', methods=['POST', 'OPTIONS'])
 @limiter.limit("5 per minute")
