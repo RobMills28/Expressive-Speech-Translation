@@ -130,6 +130,13 @@ const VideoSyncInterface = () => {
 
   const handleProcess = async () => {
     try {
+      console.log("[VideoSyncInterface] Starting processing with:", {
+        backendType,
+        useVoiceCloning,
+        targetLanguage,
+        videoSize: video ? video.size : 'no video'
+      });
+      
       setIsProcessing(true);
       setProgress(0);
       setProcessPhase('Preparing video for processing...');
@@ -138,9 +145,14 @@ const VideoSyncInterface = () => {
       const formData = new FormData();
       formData.append('video', video);
       formData.append('target_language', targetLanguage);
-      // Add these new form fields
-      formData.append('backend', backendType);
-      formData.append('use_voice_cloning', useVoiceCloning ? 'true' : 'false');
+      formData.append('backend', 'cascaded');
+      formData.append('use_voice_cloning', 'true');
+      
+      console.log("[VideoSyncInterface] Form data prepared with:", {
+        backend: backendType,
+        useVoiceCloning: useVoiceCloning ? 'true' : 'false',
+        targetLanguage
+      });
   
       const response = await fetch('http://localhost:5001/process-video', {
         method: 'POST',

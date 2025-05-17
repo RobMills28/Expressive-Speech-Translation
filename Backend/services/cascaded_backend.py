@@ -11,6 +11,7 @@ from gtts import gTTS
 import librosa
 import time
 import warnings
+import traceback
 from pydub import AudioSegment
 
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
@@ -175,22 +176,29 @@ class CascadedBackend(TranslationBackend):
         """Get dictionary of supported language codes and names"""
         return self.languages
     
-    def _clone_voice_with_api(self, input_audio_path, target_text, output_audio_path):
+    def _clone_voice_with_api(self, input_audio_path, target_text, output_audio_path, target_lang='fra'):
         """Clone voice using the OpenVoice Docker API with text input"""
+        logger.info(f"[CLONE_VOICE_API] Starting with target_lang={target_lang}")
+        logger.info(f"[CLONE_VOICE_API] Input audio: {input_audio_path} ({os.path.getsize(input_audio_path)} bytes)")
+        logger.info(f"[CLONE_VOICE_API] Target text (first 100 chars): '{target_text[:100]}...'")
+        
         if not OPENVOICE_AVAILABLE:
-            logger.warning("OpenVoice API is not available")
+            logger.warning("[CLONE_VOICE_API] OpenVoice API is not available")
             return False
             
         try:
-            logger.info(f"Attempting voice cloning with OpenVoice API")
-            logger.info(f"Text to be synthesized: {target_text[:100]}...")
+            logger.info(f"[CLONE_VOICE_API] Attempting voice cloning with OpenVoice API")
             
             # Step 1: Generate base audio with gTTS (text-to-speech)
             temp_dir = os.path.dirname(output_audio_path)
             base_audio_path = os.path.join(temp_dir, "base_tts.wav")
             
-            # Generate TTS audio from the translated text
-            tts = gTTS(text=target_text, lang='en', slow=False)
+            # Convert target language code to gTTS format
+            gtts_lang = self._convert_to_gtts_code(target_lang)
+            logger.info(f"Using gTTS language code: {gtts_lang}")
+            
+            # Generate TTS audio from the translated text with the correct language
+            tts = gTTS(text=target_text, lang=gtts_lang, slow=False)
             temp_mp3 = os.path.join(temp_dir, "temp.mp3")
             tts.save(temp_mp3)
             
@@ -198,26 +206,33 @@ class CascadedBackend(TranslationBackend):
             sound = AudioSegment.from_mp3(temp_mp3)
             sound.export(base_audio_path, format="wav")
             logger.info(f"Generated base TTS audio at {base_audio_path} ({os.path.getsize(base_audio_path)} bytes)")
-            
+                    
             # Step 2: Send both files to OpenVoice API for voice cloning
             logger.info(f"Sending files to OpenVoice API:")
             logger.info(f"- Reference voice: {input_audio_path} ({os.path.getsize(input_audio_path)} bytes)")
             logger.info(f"- Base TTS: {base_audio_path} ({os.path.getsize(base_audio_path)} bytes)")
             
             # Send both files to the API
+            logger.info(f"[CLONE_VOICE_API] About to call API with files:")
+            logger.info(f"[CLONE_VOICE_API] - audio_file: {input_audio_path} ({os.path.getsize(input_audio_path)} bytes)")
+            logger.info(f"[CLONE_VOICE_API] - target_file: {base_audio_path} ({os.path.getsize(base_audio_path)} bytes)")
+
             with open(input_audio_path, "rb") as f_source, open(base_audio_path, "rb") as f_target:
                 files = {
                     "audio_file": (os.path.basename(input_audio_path), f_source, "audio/wav"),
                     "target_file": (os.path.basename(base_audio_path), f_target, "audio/wav")
                 }
                 response = requests.post("http://localhost:8000/clone-voice", files=files, timeout=30)
-            
+
+            logger.info(f"[CLONE_VOICE_API] API response status: {response.status_code}")
+            logger.info(f"[CLONE_VOICE_API] Response content size: {len(response.content)} bytes")
+
             # Check response
             if response.status_code == 200:
                 # Save response to output file
                 with open(output_audio_path, "wb") as f:
                     f.write(response.content)
-                logger.info(f"Voice cloning successful via API: {os.path.getsize(output_audio_path)} bytes")
+                logger.info(f"[CLONE_VOICE_API] Voice cloning successful via API: {os.path.getsize(output_audio_path)} bytes")
                 
                 # Clean up temporary files
                 try:
@@ -234,7 +249,7 @@ class CascadedBackend(TranslationBackend):
             logger.error(f"Error during API voice cloning: {str(e)}")
             logger.error(traceback.format_exc())
             return False
-    
+        
     def translate_speech(
         self, 
         audio_tensor: torch.Tensor, 
@@ -247,6 +262,9 @@ class CascadedBackend(TranslationBackend):
         2. NLLB for translation
         3. gTTS + OpenVoice for voice cloning
         """
+        logger.info(f"[CASCADED BACKEND] translate_speech called with params: source_lang={source_lang}, target_lang={target_lang}")
+        logger.info(f"[CASCADED BACKEND] Voice cloning status: use_voice_cloning={self.use_voice_cloning}, OPENVOICE_AVAILABLE={OPENVOICE_AVAILABLE}")
+        
         if not self.initialized:
             self.initialize()
         
@@ -293,7 +311,8 @@ class CascadedBackend(TranslationBackend):
                     source_text = asr_result["text"] if isinstance(asr_result, dict) else asr_result
                 
                 logger.info(f"ASR result: {source_text}")
-                
+                logger.info(f"[CASCADED] ASR Result: '{source_text}'")
+
                 # 2. Text translation with NLLB model
                 logger.info(f"Translating text from {src_name} to {tgt_name}")
                 
@@ -310,13 +329,30 @@ class CascadedBackend(TranslationBackend):
                 
                 # Generate translation
                 with torch.no_grad():
-                    translated_tokens = self.translator_model.generate(
-                        input_ids,
-                        forced_bos_token_id=self.translator_tokenizer.lang_code_to_id[tgt_code],
-                        max_length=1024,
-                        num_beams=5,
-                        length_penalty=1.0
-                    )
+                    # Check if the tokenizer has the lang_code_to_id attribute
+                    if hasattr(self.translator_tokenizer, 'lang_code_to_id'):
+                        forced_bos_id = self.translator_tokenizer.lang_code_to_id[tgt_code]
+                    else:
+                        # Alternative way to get the correct token ID
+                        special_tokens = self.translator_tokenizer.special_tokens_map
+                        if 'bos_token' in special_tokens:
+                            forced_bos_id = self.translator_tokenizer.convert_tokens_to_ids(special_tokens['bos_token'])
+                        else:
+                            # Use the first token from the tokenizer's vocabulary as fallback
+                            forced_bos_id = None
+                            logger.warning(f"Could not find bos_token for {tgt_code}, skipping forced_bos_token_id")
+                    
+                    # Generate with appropriate parameters
+                    generation_kwargs = {
+                        "input_ids": input_ids,
+                        "max_length": 1024,
+                        "num_beams": 5,
+                        "length_penalty": 1.0
+                    }
+                    if forced_bos_id is not None:
+                        generation_kwargs["forced_bos_token_id"] = forced_bos_id
+                        
+                    translated_tokens = self.translator_model.generate(**generation_kwargs)
                 
                 # Decode back to text
                 target_text = self.translator_tokenizer.batch_decode(
@@ -325,7 +361,8 @@ class CascadedBackend(TranslationBackend):
                 )[0]
                 
                 logger.info(f"Translated text: {target_text}")
-                
+                logger.info(f"[CASCADED] Translated text: '{target_text}'")
+
                 # 3. Text-to-Speech (TTS) with gTTS and voice cloning
                 logger.info(f"Generating speech in {tgt_name} with gTTS")
                 
@@ -351,10 +388,13 @@ class CascadedBackend(TranslationBackend):
                 if not base_wav_path.exists() or base_wav_path.stat().st_size == 0:
                     raise ValueError("Failed to generate base audio with gTTS")
                 
+                logger.info(f"[CASCADED] Base TTS audio generated: {os.path.getsize(str(base_wav_path))} bytes")
+
                 # Voice cloning with OpenVoice if available
                 if self.use_voice_cloning and OPENVOICE_AVAILABLE:
                     # Apply voice cloning with OpenVoice API
-                    logger.info("Applying voice cloning with OpenVoice API")
+                    logger.info("[CASCADED BACKEND] Voice cloning conditions met, proceeding with OpenVoice API")
+                    logger.info(f"[CASCADED BACKEND] self.use_voice_cloning={self.use_voice_cloning}, OPENVOICE_AVAILABLE={OPENVOICE_AVAILABLE}")
                     
                     output_path = temp_dir / "cloned_audio.wav"
                     
@@ -365,19 +405,22 @@ class CascadedBackend(TranslationBackend):
                         
                         # Check if original audio is valid
                         if len(original_audio_np) < 8000:  # Less than 0.5 seconds at 16kHz
-                            logger.warning(f"Original audio too short for voice cloning: {len(original_audio_np)} samples")
+                            logger.warning(f"[CASCADED BACKEND] Original audio too short for voice cloning: {len(original_audio_np)} samples")
                             raise ValueError("Original audio too short for voice cloning")
                             
                         # Save original audio as WAV for OpenVoice reference
                         sf.write(str(original_audio_path), original_audio_np, 16000)
-                        logger.info(f"Saved original audio for voice extraction: {os.path.getsize(str(original_audio_path))} bytes")
+                        logger.info(f"[CASCADED BACKEND] Saved original audio for voice extraction: {os.path.getsize(str(original_audio_path))} bytes")
                         
                         # Call the voice cloning function with the original audio and the translated text
                         voice_cloning_success = self._clone_voice_with_api(
                             input_audio_path=str(original_audio_path),
                             target_text=target_text,  # Use the actual translated text here
-                            output_audio_path=str(output_path)
+                            output_audio_path=str(output_path),
+                            target_lang=target_lang  # Pass the target language
                         )
+
+                        logger.info(f"[CASCADED] Voice cloning status: {voice_cloning_success}")
                         
                         if voice_cloning_success:
                             # Load the converted audio
@@ -394,14 +437,6 @@ class CascadedBackend(TranslationBackend):
                         logger.error(f"Voice cloning error: {str(e)}")
                         logger.warning("Falling back to base audio due to error")
                         # Load the base audio as fallback
-                        y, sr = sf.read(str(base_wav_path))
-                        output_tensor = torch.FloatTensor(y).unsqueeze(0)
-                            
-                    except Exception as e:
-                        logger.error(f"Voice cloning via API failed: {str(e)}")
-                        logger.warning("Falling back to base audio")
-                        
-                        # Fall back to base audio
                         y, sr = sf.read(str(base_wav_path))
                         output_tensor = torch.FloatTensor(y).unsqueeze(0)
                 

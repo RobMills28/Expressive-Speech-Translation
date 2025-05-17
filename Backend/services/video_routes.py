@@ -797,6 +797,11 @@ class VideoProcessor:
             if backend and hasattr(backend, 'translate_speech'):
                 # Use provided backend
                 logger.info(f"Using provided backend: {type(backend).__name__}")
+                
+                # Log voice cloning status
+                if hasattr(backend, 'use_voice_cloning'):
+                    logger.info(f"Voice cloning enabled on backend: {backend.use_voice_cloning}")
+                
                 translation_result = backend.translate_speech(
                     audio_tensor=audio_tensor,
                     source_lang="eng",
@@ -805,16 +810,17 @@ class VideoProcessor:
                 translated_audio = translation_result["audio"]
                 source_text = translation_result["transcripts"]["source"]
                 target_text = translation_result["transcripts"]["target"]
+                
+                # Log the transcripts to verify they're available
+                logger.info(f"Source transcript: {source_text[:100]}...")
+                logger.info(f"Target transcript: {target_text[:100]}...")
             else:
                 # Use default implementation
                 translation_result = self.translate_audio(audio_tensor, target_language)
                 translated_audio = translation_result["audio"]
                 source_text = translation_result["transcripts"]["source"]
                 target_text = translation_result["transcripts"]["target"]
-                
-            translation_time = time.time() - translation_start
-            logger.info(f"Translation completed in {translation_time:.2f} seconds")
-        
+            
             # Save translated audio
             translated_audio_path = str(self.temp_dir / 'translated_audio.wav')
             logger.debug(f"Saving translated audio to {translated_audio_path}")
@@ -957,29 +963,38 @@ class VideoProcessor:
 
 
 def handle_video_processing(target_language: str, backend=None):
-        """Route handler for video processing requests."""
-        logger.info(f"Received video processing request for language: {target_language}")
+    """Route handler for video processing requests."""
+    logger.info(f"Received video processing request for language: {target_language}")
+    
+    if 'video' not in request.files:
+        logger.error("No video file provided in request")
+        return ErrorHandler.format_validation_error('No video file provided')
         
-        if 'video' not in request.files:
-            logger.error("No video file provided in request")
-            return ErrorHandler.format_validation_error('No video file provided')
-            
-        video_file = request.files['video']
-        if not video_file.filename:
-            logger.error("Empty video filename in request")
-            return ErrorHandler.format_validation_error('No video file selected')
-        
-        logger.info(f"Processing video: {video_file.filename} for language: {target_language}")
-        
-        processor = VideoProcessor()
-        # Use the provided backend if available
-        if backend:
-            return Response(
-                stream_with_context(processor.process_video(video_file, target_language, backend)),
-                mimetype='text/event-stream'
-            )
-        else:
-            return Response(
-                stream_with_context(processor.process_video(video_file, target_language)),
-                mimetype='text/event-stream'
-            )
+    video_file = request.files['video']
+    if not video_file.filename:
+        logger.error("Empty video filename in request")
+        return ErrorHandler.format_validation_error('No video file selected')
+    
+    # Capture use_voice_cloning parameter from request
+    use_voice_cloning = request.form.get('use_voice_cloning', 'true').lower() == 'true'
+    logger.info(f"Processing video: {video_file.filename} for language: {target_language}")
+    logger.info(f"Voice cloning enabled: {use_voice_cloning}")
+    
+    # Set voice cloning parameter on backend if available
+    if backend and hasattr(backend, 'use_voice_cloning'):
+        original_setting = backend.use_voice_cloning
+        backend.use_voice_cloning = use_voice_cloning
+        logger.info(f"Updated backend voice cloning setting from {original_setting} to {use_voice_cloning}")
+    
+    processor = VideoProcessor()
+    # Use the provided backend if available
+    if backend:
+        return Response(
+            stream_with_context(processor.process_video(video_file, target_language, backend)),
+            mimetype='text/event-stream'
+        )
+    else:
+        return Response(
+            stream_with_context(processor.process_video(video_file, target_language)),
+            mimetype='text/event-stream'
+        )

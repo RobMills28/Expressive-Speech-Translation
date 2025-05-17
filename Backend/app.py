@@ -415,10 +415,13 @@ LANGUAGE_MAP = {
 translation_manager = TranslationManager()
 
 # Register backends
-seamless_backend = SeamlessBackend(device=DEVICE, auth_token=auth_token)
-translation_manager.register_backend("seamless", seamless_backend, is_default=True)
+# Initialize translation manager
+translation_manager = TranslationManager()
 
-# AFTER:
+# Register backends
+seamless_backend = SeamlessBackend(device=DEVICE, auth_token=auth_token)
+translation_manager.register_backend("seamless", seamless_backend, is_default=False)
+
 # Only register if available
 if 'ESPNET_AVAILABLE' in globals() and ESPNET_AVAILABLE:
     espnet_backend = ESPnetBackend(device=DEVICE)
@@ -438,7 +441,7 @@ try:
         device=DEVICE, 
         use_voice_cloning=openvoice_available
     )
-    translation_manager.register_backend("cascaded", cascaded_backend)
+    translation_manager.register_backend("cascaded", cascaded_backend, is_default=True)
     logger.info(f"Registered cascaded backend with voice cloning: {openvoice_available}")
 except Exception as e:
     logger.error(f"Failed to register cascaded backend: {str(e)}")
@@ -607,11 +610,20 @@ def process_audio_url():
 def process_video():
     try:
         target_language = request.form.get('target_language', 'fra')
-        backend_name = request.form.get('backend', 'seamless')  # Added backend selection
+        # FORCE CASCADED BACKEND - IGNORE WHAT'S SENT FROM FRONTEND
+        backend_name = 'cascaded'  # Force cascaded backend
+        use_voice_cloning = True  # Force voice cloning
+        
         logger.info(f"Processing video with {backend_name} backend for language {target_language}")
+        logger.info(f"Voice cloning enabled: {use_voice_cloning}")
         
         # Get backend from manager for video processing
         backend = translation_manager.get_backend(backend_name)
+        
+        # Update voice cloning setting if supported
+        if hasattr(backend, 'use_voice_cloning'):
+            backend.use_voice_cloning = use_voice_cloning
+            logger.info(f"Updated backend voice cloning setting to: {use_voice_cloning}")
         
         # Pass backend to video processing handler
         return handle_video_processing(target_language, backend)
@@ -648,6 +660,75 @@ def upload_podcast():
 def model_health():
     return handle_model_health(DEVICE)
 
+@app.route('/test-openvoice', methods=['GET'])
+def test_openvoice():
+    """Test the OpenVoice integration directly"""
+    try:
+        logger.info("[TEST OPENVOICE] Starting test of OpenVoice integration")
+        
+        # Import OpenVoice API
+        from services.cascaded_backend import CascadedBackend, check_openvoice_api
+        
+        # Check API availability
+        logger.info("[TEST OPENVOICE] Checking API availability")
+        api_available = check_openvoice_api()
+        logger.info(f"[TEST OPENVOICE] API available: {api_available}")
+        
+        if not api_available:
+            return jsonify({
+                'api_available': False,
+                'voice_cloning_success': False,
+                'message': "OpenVoice API is not available"
+            })
+        
+        # Create a test audio file
+        import os
+        import tempfile
+        import numpy as np
+        import soundfile as sf
+        
+        logger.info("[TEST OPENVOICE] Creating test audio file")
+        # Create a 3-second sine wave audio file
+        sample_rate = 16000
+        duration = 3  # seconds
+        t = np.linspace(0, duration, sample_rate * duration)
+        audio = np.sin(2 * np.pi * 440 * t)  # 440Hz sine wave
+        
+        temp_dir = tempfile.mkdtemp()
+        test_audio_path = os.path.join(temp_dir, "test_audio.wav")
+        sf.write(test_audio_path, audio, sample_rate)
+        logger.info(f"[TEST OPENVOICE] Created test audio at {test_audio_path}")
+        
+        # Test voice cloning directly
+        logger.info("[TEST OPENVOICE] Testing voice cloning with direct call")
+        backend = CascadedBackend(device=DEVICE, use_voice_cloning=True)
+        success = backend._clone_voice_with_api(
+            input_audio_path=test_audio_path,
+            target_text="This is a test of the OpenVoice integration.",
+            output_audio_path=os.path.join(temp_dir, "output.wav"),
+            target_lang="eng"
+        )
+        logger.info(f"[TEST OPENVOICE] Voice cloning result: {success}")
+        
+        # Clean up
+        try:
+            import shutil
+            shutil.rmtree(temp_dir)
+        except Exception as e:
+            logger.warning(f"[TEST OPENVOICE] Failed to clean up temp dir: {str(e)}")
+        
+        # Return results
+        return jsonify({
+            'api_available': api_available,
+            'voice_cloning_success': success,
+            'message': "OpenVoice test completed"
+        })
+    except Exception as e:
+        logger.error(f"[TEST OPENVOICE] Test failed: {str(e)}")
+        return jsonify({
+            'error': str(e),
+            'message': "OpenVoice test failed"
+        }), 500
 
 def cleanup_temp_files():
     """Clean up any temporary files in the temp directory"""
