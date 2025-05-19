@@ -1,3 +1,4 @@
+# services/model_manager.py
 import os
 import gc
 import time
@@ -7,247 +8,109 @@ import threading
 from transformers import (
     SeamlessM4TProcessor,
     SeamlessM4Tv2Model,
-    SeamlessM4TTokenizer,
     SeamlessM4Tv2ForSpeechToText
 )
 
-# Set up logging
 logger = logging.getLogger(__name__)
 
-# Constants
-MODEL_NAME = "facebook/seamless-m4t-v2-large"
+# Module-level DEVICE constant, for this manager IF it loads models
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+SEAMLESS_MODEL_ENV_VAR = "SEAMLESS_MODEL_NAME_FOR_MM" # Specific env var name
+DEFAULT_SEAMLESS_MODEL_FOR_MM = "facebook/seamless-m4t-v2-large"
 
 class ModelManager:
     """
-    Singleton class to manage the ML model lifecycle and resources.
+    Singleton class to manage OPTIONAL SeamlessM4T components,
+    if any specific route explicitly requires them.
+    Primary S2ST should use TranslationManager with CascadedBackend.
     """
     _instance = None
     _lock = threading.Lock()
     
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._initialize()
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+                    cls._instance._models_loaded = False # Different flag
+                    cls._instance.DEVICE_INSTANCE = DEVICE 
+                    cls._instance.processor = None
+                    cls._instance.model = None
+                    cls._instance.text_model = None
+                    cls._instance.is_loading_seamless = False
+                    logger.info("ModelManager (for optional SeamlessM4T) instance created. Models NOT loaded.")
         return cls._instance
     
-    def _initialize(self):
-        """Initialize model manager state"""
-        self.processor = None
-        self.model = None
-        self.text_model = None
-        self.tokenizer = None
-        self.last_used = None
-        self.is_initializing = False
-        self._load_model()
+    def _load_seamless_models_if_needed(self):
+        if self._models_loaded and self.processor and self.model and self.text_model:
+            return # Already loaded
 
-    def _verify_model(self) -> bool:
-        """
-        Verify model loaded correctly with enhanced scenario testing.
-    
-        Returns:
-            bool: True if model verification successful, False otherwise
-        """
-        try:
-            logger.info("Starting enhanced model verification")
-        
-            # Test scenarios
-            scenarios = {
-                'clean_speech': torch.randn(1, 16000),  # Clean speech
-                'speech_with_music': torch.randn(1, 16000) * 0.7 + torch.sin(torch.linspace(0, 1000, 16000)).unsqueeze(0) * 0.3,  # Speech with music
-            }
-        
-            test_languages = ["fra", "deu"]  # Test a couple languages but don't assume any specific one
-        
-            for scenario_name, audio in scenarios.items():
-                logger.info(f"Testing {scenario_name}")
+        if self.is_loading_seamless:
+            logger.info("ModelManager: SeamlessM4T models are already being loaded by another call.")
+            return # Another thread is loading
+
+        with ModelManager._lock: # Ensure only one thread loads
+            if self._models_loaded and self.processor: # Check again after acquiring lock
+                return
+
+            self.is_loading_seamless = True
+            model_name_to_load = os.getenv(SEAMLESS_MODEL_ENV_VAR, DEFAULT_SEAMLESS_MODEL_FOR_MM)
+            logger.info(f"ModelManager: Explicit request to load SeamlessM4T model: {model_name_to_load} onto {self.DEVICE_INSTANCE}")
             
-                for test_lang in test_languages:
-                    # Process through the processor
-                    inputs = self.processor(
-                        audios=audio.numpy(),
-                        sampling_rate=16000,
-                        return_tensors="pt",
-                        src_lang="eng",
-                        tgt_lang=test_lang,
-                        padding=True
-                    )
+            try:
+                auth_token = os.getenv('HUGGINGFACE_TOKEN')
+                if not auth_token: logger.warning("ModelManager: HUGGINGFACE_TOKEN not found for SeamlessM4T.")
                 
-                    if DEVICE.type == 'cuda':
-                        inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
+                self.processor = SeamlessM4TProcessor.from_pretrained(model_name_to_load, token=auth_token, trust_remote_code=True)
+                self.model = SeamlessM4Tv2Model.from_pretrained(model_name_to_load, token=auth_token, torch_dtype=torch.float32)
+                self.text_model = SeamlessM4Tv2ForSpeechToText.from_pretrained(model_name_to_load, token=auth_token, torch_dtype=torch.float32, use_safetensors=True)
+
+                if self.DEVICE_INSTANCE.type == 'cuda' and torch.cuda.is_available():
+                    self.model = self.model.to(self.DEVICE_INSTANCE)
+                    self.text_model = self.text_model.to(self.DEVICE_INSTANCE)
+                self.model.eval(); self.text_model.eval()
                 
-                    with torch.no_grad():
-                        # First test speech recognition
-                        text_outputs = self.text_model.generate(
-                            input_features=inputs["input_features"],
-                            tgt_lang="eng",
-                            num_beams=4,
-                            max_new_tokens=50,
-                            do_sample=False,
-                            return_dict_in_generate=True
-                        )
-                    
-                        # Then test translation
-                        translation_outputs = self.text_model.generate(
-                            input_features=inputs["input_features"],
-                            tgt_lang=test_lang,
-                            num_beams=4,
-                            max_new_tokens=50,
-                            do_sample=False,
-                            return_dict_in_generate=True
-                        )
-                    
-                        # Test audio generation
-                        outputs = self.model.generate(
-                            **inputs,
-                            tgt_lang=test_lang,
-                            num_beams=1,
-                            max_new_tokens=50
-                        )
-            
-                logger.info(f"Successfully verified {scenario_name}")
-        
-            logger.info("Model verification successful")
-            return True
-        
-        except Exception as e:
-            logger.error(f"Model verification failed: {str(e)}")
-            return False
-    
-    def _load_model(self):
-        """Load model components with enhanced speech recognition configuration"""
-        try:
-            logger.info(f"Loading SeamlessM4T model: {MODEL_NAME}")
-            self.is_initializing = True
-            
-            if DEVICE.type == 'cuda':
-                torch.cuda.empty_cache()
-                gc.collect()
-            
-            auth_token = os.getenv('HUGGINGFACE_TOKEN')
-            if not auth_token:
-                raise ValueError("HUGGINGFACE_TOKEN not found in environment variables")
-            
-            # Load processor with speech recognition focus
-            self.processor = SeamlessM4TProcessor.from_pretrained(
-                MODEL_NAME, 
-                token=auth_token,
-                trust_remote_code=True
-            )
-            
-            # Load main model for translation
-            self.model = SeamlessM4Tv2Model.from_pretrained(
-                MODEL_NAME, 
-                token=auth_token,
-                torch_dtype=torch.float32,
-            )
-            
-            # Load specialized speech-to-text model with optimized config
-            self.text_model = SeamlessM4Tv2ForSpeechToText.from_pretrained(
-                MODEL_NAME,
-                token=auth_token,
-                torch_dtype=torch.float32,
-                use_safetensors=True
-            )
-            
-            # Configure text model for better speech recognition
-            if hasattr(self.text_model, 'config'):
-                self.text_model.config.speech_encoder_chunk_size = 10000  # Reduced chunk size
-                self.text_model.config.use_cache = False                  # Disable cache for accuracy
-                self.text_model.config.speech_encoder_layerdrop = 0.0    # Disable layerdrop
-            
-            self.tokenizer = SeamlessM4TTokenizer.from_pretrained(
-                MODEL_NAME, 
-                token=auth_token,
-                trust_remote_code=True
-            )
-            
-            if DEVICE.type == 'cuda':
-                self.model = self.model.to(DEVICE)
-                self.text_model = self.text_model.to(DEVICE)
-                
-                # Set models to eval mode explicitly
-                self.model.eval()
-                self.text_model.eval()
-                
-                if torch.cuda.is_available():
-                    torch.cuda.empty_cache()
-                    torch.backends.cudnn.benchmark = True  # Enable cudnn autotuner
-                
-                logger.info(f"Models loaded on GPU: {torch.cuda.get_device_name(0)}")
-                memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
-                memory_reserved = torch.cuda.memory_reserved(0) / 1024**2
-                logger.info(f"GPU Memory after loading - Allocated: {memory_allocated:.2f}MB, Reserved: {memory_reserved:.2f}MB")
-            else:
-                self.model.eval()
-                self.text_model.eval()
-                logger.info("Models loaded on CPU")
-            
-            if not self._verify_model():
-                raise ValueError("Model verification failed after loading")
-            
-            self.last_used = time.time()
-            logger.info("Model initialization successful")
-            
-        except Exception as e:
-            logger.error(f"Error initializing model: {str(e)}", exc_info=True)
-            self.processor = None
-            self.model = None
-            self.text_model = None
-            self.tokenizer = None
-            raise
-        finally:
-            self.is_initializing = False
-    
+                self._models_loaded = True # Set flag after successful load
+                logger.info(f"ModelManager: SeamlessM4T model '{model_name_to_load}' loaded successfully.")
+            except Exception as e:
+                logger.error(f"ModelManager: Error loading SeamlessM4T model '{model_name_to_load}': {e}", exc_info=True)
+                self.processor = self.model = self.text_model = None
+                self._models_loaded = False # Explicitly false on error
+            finally:
+                self.is_loading_seamless = False
+
     def get_model_components(self):
         """
-        Get model components with validation and monitoring
-        
-        Returns:
-            tuple: (processor, model, text_model, tokenizer) or (None, None, None, None) if error
+        Get SeamlessM4T model components. Loads them only if called and not already loaded.
+        This should ONLY be called by routes that specifically need SeamlessM4T.
         """
-        try:
-            if self.last_used and time.time() - self.last_used > 3600:
-                logger.info("Model inactive for too long, reloading...")
-                self._load_model()
-            
-            if not self._verify_model():
-                logger.error("Model verification failed during component request")
-                return None, None, None, None
-            
-            self.last_used = time.time()
-            
-            if DEVICE.type == 'cuda':
-                memory_allocated = torch.cuda.memory_allocated(0) / 1024**2
-                logger.debug(f"GPU Memory at component request: {memory_allocated:.2f}MB")
-            
-            return self.processor, self.model, self.text_model, self.tokenizer
-            
-        except Exception as e:
-            logger.error(f"Error getting model components: {str(e)}")
-            return None, None, None, None
-    
+        logger.info("ModelManager: get_model_components (for SeamlessM4T) called.")
+        self._load_seamless_models_if_needed()
+        
+        if not self._models_loaded or not self.processor:
+             logger.error("ModelManager: SeamlessM4T components failed to load or were not loaded. Returning None.")
+             return None, None, None, None 
+        
+        return self.processor, self.model, self.text_model, self.processor.tokenizer 
+
     def cleanup(self):
-        """Clean up model resources"""
+        """Clean up SeamlessM4T model resources, if they were loaded."""
+        if not self._models_loaded and not self.processor:
+            logger.info("ModelManager: SeamlessM4T models were not loaded, no cleanup needed from this manager.")
+            return
+
+        logger.info("ModelManager: Initiating cleanup of any loaded SeamlessM4T models...")
         try:
-            logger.info("Cleaning up model resources")
-            if DEVICE.type == 'cuda':
-                if self.model is not None:
-                    self.model.cpu()
-                if self.text_model is not None:
-                    self.text_model.cpu()
-                torch.cuda.empty_cache()
-                gc.collect()
-                
-            self.processor = None
-            self.model = None
-            self.text_model = None
-            self.tokenizer = None
-            logger.info("Model cleanup completed successfully")
+            if self.DEVICE_INSTANCE.type == 'cuda' and torch.cuda.is_available():
+                if self.model: self.model.cpu()
+                if self.text_model: self.text_model.cpu()
             
+            del self.processor; del self.model; del self.text_model
+            self.processor = None; self.model = None; self.text_model = None
+            self._models_loaded = False
+            
+            gc.collect()
+            if self.DEVICE_INSTANCE.type == 'cuda' and torch.cuda.is_available(): torch.cuda.empty_cache()
+            logger.info("ModelManager: SeamlessM4T model cleanup completed.")
         except Exception as e:
-            logger.error(f"Error during model cleanup: {str(e)}")
-            
-    def __del__(self):
-        """Destructor to ensure cleanup"""
-        self.cleanup()
+            logger.error(f"ModelManager: Error during SeamlessM4T model cleanup: {e}", exc_info=True)

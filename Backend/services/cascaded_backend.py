@@ -7,461 +7,377 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 import tempfile
 import soundfile as sf
-from gtts import gTTS
 import librosa
 import time
-import warnings
 import traceback
 from pydub import AudioSegment
+import requests 
 
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 
-# Try to import whisper, but make it optional
+# --- MeloTTS Import ---
+try:
+    from melo.api import TTS as MeloTTS_API 
+    MELOTTS_AVAILABLE = True
+    logger_melo = logging.getLogger(__name__)
+    logger_melo.info("MeloTTS library FOUND and imported successfully.")
+except ImportError:
+    logger_melo = logging.getLogger(__name__)
+    logger_melo.warning("MeloTTS library NOT FOUND. TTS will fallback to gTTS.")
+    MELOTTS_AVAILABLE = False
+    MeloTTS_API = None
+# --- End MeloTTS Import ---
+
+logger = logging.getLogger(__name__)
+if not logging.getLogger().hasHandlers(): 
+    import sys
+    logger.setLevel(logging.INFO)
+    ch = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    logger.propagate = False 
+    logger.warning("Root logger has no handlers. CascadedBackend is setting up its own console logger.")
+else:
+    logger.setLevel(logging.INFO)
+
 try:
     import whisper
-    WHISPER_AVAILABLE = True
+    WHISPER_AVAILABLE_FLAG = True 
+    logger.info("Whisper library FOUND and imported successfully.")
 except ImportError:
-    print("Whisper not available - will use transformers pipeline instead")
-    WHISPER_AVAILABLE = False
+    logger.warning("Whisper library NOT FOUND. ASR will use transformers pipeline as fallback.")
+    WHISPER_AVAILABLE_FLAG = False
 
-# Use OpenVoice Docker API instead of direct imports
-import requests
-
-# Check if Docker API is available
 def check_openvoice_api():
     try:
-        response = requests.get("http://localhost:8000/status", timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            return True
-        return False
-    except Exception as e:
-        print(f"OpenVoice API not available: {e}")
-        return False
-
-OPENVOICE_AVAILABLE = check_openvoice_api()
+        response = requests.get("http://localhost:8000/status", timeout=2)
+        if response.status_code == 200: logger.info("OpenVoice API is available."); return True
+        logger.warning(f"OpenVoice API status check failed: {response.status_code}"); return False
+    except Exception as e: logger.warning(f"OpenVoice API not available: {e}"); return False
+OPENVOICE_API_AVAILABLE = check_openvoice_api()
     
 from .translation_strategy import TranslationBackend
 
-logger = logging.getLogger(__name__)
-
 class CascadedBackend(TranslationBackend):
-    """
-    A modular cascaded translation backend using:
-    - Whisper or transformers pipeline for Speech Recognition (ASR)
-    - NLLB for Machine Translation (MT)
-    - gTTS + OpenVoice for Text-to-Speech (TTS) with voice cloning
-    """
-    
     def __init__(self, device=None, use_voice_cloning=True):
-        """Initialize the Cascaded backend"""
+        logger.info(f"Initializing CascadedBackend with device: {device}, use_voice_cloning_config: {use_voice_cloning}")
         self.device = device if device else torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        logger.info(f"CascadedBackend will use device: {self.device}")
         self.initialized = False
-        self.use_voice_cloning = use_voice_cloning and OPENVOICE_AVAILABLE
+        self.use_voice_cloning_config = use_voice_cloning 
         
-        # Base paths for OpenVoice API (not direct integration anymore)
-        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        
-        # Language mappings
-        self.languages = {
-            'eng': 'English',
-            'fra': 'French',
-            'spa': 'Spanish',
-            'deu': 'German',
-            'ita': 'Italian',
-            'por': 'Portuguese',
-            'cmn': 'Chinese (Simplified)',
-            'jpn': 'Japanese',
-            'kor': 'Korean',
-            'ara': 'Arabic',
-            'hin': 'Hindi',
-            'nld': 'Dutch',
-            'rus': 'Russian',
-            'pol': 'Polish',
-            'tur': 'Turkish'
+        # App's internal lang codes (e.g., 'eng', 'deu') mapped to MeloTTS language codes
+        # From MeloTTS README: EN_US, EN_BR, ES, FR, ZH, JP, KR.
+        # Accents like EN_AU, EN_IN are speaker IDs within the 'EN' language model.
+        self.melo_lang_map = { 
+            'eng': 'EN',    # Generic English, specific accent via speaker_id
+            'spa': 'ES',
+            'fra': 'FR',
+            'deu': 'DE',    # *** CRITICAL: MeloTTS README does NOT list German ('DE') ***
+                            # This will likely cause MeloTTS to fail for German, then fallback.
+            'cmn': 'ZH',    # For Chinese
+            'jpn': 'JP',
+            'kor': 'KR'
         }
-        
-        # Models will be loaded during initialization
-        self.asr_model = None
-        self.asr_pipeline = None
-        self.translator_model = None
-        self.translator_tokenizer = None
+        # Speaker IDs for different English accents in MeloTTS (example, verify from MeloTTS)
+        self.melo_english_speaker_ids_map = {
+            'eng_us': 'EN_US', # American English speaker ID from MeloTTS
+            'eng_br': 'EN_BR', # British English
+            'eng_au': 'EN_AU', # Australian English
+            'eng_in': 'EN_IN', # Indian English
+            'eng': 'EN-Default' # A generic/default English speaker ID from MeloTTS
+        }
+        # Default speaker for each MeloTTS language if no accent is specified
+        self.melo_default_speaker_for_lang = {
+            'EN': 'EN_US', # Default to American English
+            'ES': 'ES',    # Assuming 'ES' is a valid speaker key
+            'FR': 'FR',    # Assuming 'FR' is a valid speaker key
+            'ZH': 'ZH',
+            'JP': 'JP',
+            'KR': 'KR',
+            'DE': None     # No default German speaker ID known for MeloTTS
+        }
+
+        # For gTTS fallback and Whisper language hints
+        self.simple_lang_code_map = { # app_code -> simple_code (e.g., 'deu' -> 'de')
+            'eng': 'en', 'fra': 'fr', 'spa': 'es', 'deu': 'de', 'ita': 'it',
+            'por': 'pt', 'cmn': 'zh-cn', 'jpn': 'ja', 'kor': 'ko', 'ara': 'ar', 
+            'hin': 'hi', 'nld': 'nl', 'rus': 'ru', 'pol': 'pl', 'tur': 'tr', 'ukr': 'uk',
+            'ces': 'cs', 'hun': 'hu'
+        }
+        self.display_language_names = {
+            'eng': 'English', 'fra': 'French', 'spa': 'Spanish', 'deu': 'German', 
+            'cmn': 'Chinese', 'jpn': 'Japanese', 'kor': 'Korean', 
+            # Add others to match your frontend display needs
+            'ita': 'Italian', 'por': 'Portuguese', 'rus': 'Russian', 'ara': 'Arabic',
+            'hin': 'Hindi', 'nld': 'Dutch', 'pol': 'Polish', 'tur': 'Turkish', 'ukr': 'Ukrainian'
+        }
+
+        self.asr_model = None; self.asr_pipeline = None
+        self.translator_model = None; self.translator_tokenizer = None
+        self.melo_tts_models_cache = {} # Cache for loaded MeloTTS models (one per language-model)
+
+        logger.info(f"CascadedBackend __init__. Whisper: {WHISPER_AVAILABLE_FLAG}, OpenVoice API: {OPENVOICE_API_AVAILABLE}, MeloTTS Lib: {MELOTTS_AVAILABLE}")
     
+    def _load_melo_tts_model_for_lang(self, melo_lang_code: str): # melo_lang_code like 'EN', 'ES'
+        if not MELOTTS_AVAILABLE:
+            logger.warning(f"MeloTTS library not available. Cannot load model for {melo_lang_code}.")
+            return None
+        
+        cached_model = self.melo_tts_models_cache.get(melo_lang_code)
+        if cached_model:
+            logger.info(f"Using cached MeloTTS model for language: {melo_lang_code}.")
+            return cached_model
+        
+        try:
+            logger.info(f"Loading MeloTTS model for language code: {melo_lang_code} on device: {self.device}")
+            melo_device_str = str(self.device.type) if self.device.type != 'cpu' else 'cpu'
+            if self.device.type == 'cuda' and torch.cuda.is_available():
+                melo_device_str = f"cuda:{self.device.index if self.device.index is not None else 0}"
+            
+            model = MeloTTS_API(language=melo_lang_code, device=melo_device_str)
+            self.melo_tts_models_cache[melo_lang_code] = model
+            logger.info(f"MeloTTS model for {melo_lang_code} loaded and cached successfully.")
+            return model
+        except KeyError: # MeloTTS raises KeyError if the language string is not one it was initialized with
+            logger.error(f"MeloTTS does not support the language code '{melo_lang_code}' for model initialization (known: EN, ES, FR, ZH, JP, KR). This language will use fallback TTS.")
+            self.melo_tts_models_cache[melo_lang_code] = None 
+            return None
+        except Exception as e:
+            logger.error(f"Failed to load MeloTTS model for '{melo_lang_code}': {str(e)}", exc_info=True)
+            self.melo_tts_models_cache[melo_lang_code] = None
+            return None
+
     def initialize(self):
-        """Initialize all required models"""
-        if self.initialized:
-            return
-            
+        if self.initialized: logger.info("CascadedBackend already initialized."); return
         try:
-            logger.info(f"Initializing Cascaded backend on {self.device}")
-            start_time = time.time()
+            logger.info(f"Initializing CascadedBackend on device: {self.device}"); start_time = time.time()
             
-            # Load ASR model - either whisper or transformers pipeline
-            logger.info("Loading ASR model...")
-            if WHISPER_AVAILABLE:
-                self.asr_model = whisper.load_model("medium", device=self.device)
+            if WHISPER_AVAILABLE_FLAG:
+                logger.info("Loading Whisper 'medium' ASR model..."); self.asr_model = whisper.load_model("medium", device=self.device); logger.info("Whisper ASR model loaded.")
             else:
-                # Use transformers pipeline as an alternative
-                logger.info("Using transformers pipeline for ASR")
-                self.asr_pipeline = pipeline(
-                    "automatic-speech-recognition",
-                    model="openai/whisper-small",
-                    device=0 if self.device.type == 'cuda' else -1
-                )
+                logger.warning("Loading transformers 'openai/whisper-small' ASR pipeline."); self.asr_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-small", device=0 if self.device.type == 'cuda' and torch.cuda.is_available() else -1); logger.info("Transformers ASR pipeline loaded.")
             
-            # Load NLLB for translation
-            logger.info("Loading NLLB translation model...")
-            self.translator_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
-            self.translator_tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
-            
-            # Move models to device if using GPU
-            if self.device.type == 'cuda':
-                self.translator_model = self.translator_model.to(self.device)
-                # Whisper handles device placement internally
-            
-            self.initialized = True
-            logger.info(f"Cascaded backend initialized successfully in {time.time() - start_time:.2f} seconds")
-            
+            logger.info("Loading NLLB translation model..."); self.translator_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M"); self.translator_tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
+            if self.device.type == 'cuda' and torch.cuda.is_available(): self.translator_model = self.translator_model.to(self.device)
+            logger.info("NLLB translation model and tokenizer loaded.")
+
+            if MELOTTS_AVAILABLE: # Attempt to load a default MeloTTS model (e.g. English) to check setup
+                self._load_melo_tts_model_for_lang('EN') 
+            else: logger.warning("MeloTTS library not available. TTS will rely on gTTS fallback.")
+
+            self.initialized = True; logger.info(f"CascadedBackend initialized in {time.time() - start_time:.2f}s")
         except Exception as e:
-            logger.error(f"Failed to initialize Cascaded backend: {str(e)}")
-            raise
+            logger.error(f"Failed to initialize CascadedBackend: {e}", exc_info=True); self.initialized = False; raise 
     
-    def _convert_to_nllb_code(self, lang_code: str) -> str:
-        """Convert standard language code to NLLB format"""
-        mapping = {
-            'eng': 'eng_Latn',
-            'fra': 'fra_Latn',
-            'spa': 'spa_Latn',
-            'deu': 'deu_Latn',
-            'ita': 'ita_Latn',
-            'por': 'por_Latn',
-            'rus': 'rus_Cyrl',
-            'cmn': 'zho_Hans',
-            'jpn': 'jpn_Jpan',
-            'kor': 'kor_Hang',
-            'ara': 'ara_Arab',
-            'hin': 'hin_Deva',
-            'nld': 'nld_Latn',
-            'pol': 'pol_Latn',
-            'tur': 'tur_Latn',
-        }
-        return mapping.get(lang_code, 'eng_Latn')  # Default to English
-    
-    def _convert_to_gtts_code(self, lang_code: str) -> str:
-        """Convert standard language code to gTTS format"""
-        mapping = {
-            'eng': 'en',
-            'fra': 'fr',
-            'spa': 'es',
-            'deu': 'de',
-            'ita': 'it',
-            'por': 'pt',
-            'cmn': 'zh-CN',
-            'jpn': 'ja',
-            'kor': 'ko',
-            'ara': 'ar',
-            'hin': 'hi',
-            'nld': 'nl',
-            'rus': 'ru',
-            'pol': 'pl',
-            'tur': 'tr',
-        }
-        return mapping.get(lang_code, 'en')  # Default to English
-    
-    def is_language_supported(self, lang_code: str) -> bool:
-        """Check if a language is supported by this backend"""
-        return lang_code in self.languages
-    
-    def get_supported_languages(self) -> Dict[str, str]:
-        """Get dictionary of supported language codes and names"""
-        return self.languages
-    
-    def _clone_voice_with_api(self, input_audio_path, target_text, output_audio_path, target_lang='fra'):
-        """Clone voice using the OpenVoice Docker API with text input"""
-        logger.info(f"[CLONE_VOICE_API] Starting with target_lang={target_lang}")
-        logger.info(f"[CLONE_VOICE_API] Input audio: {input_audio_path} ({os.path.getsize(input_audio_path)} bytes)")
-        logger.info(f"[CLONE_VOICE_API] Target text (first 100 chars): '{target_text[:100]}...'")
+    def _convert_to_nllb_code(self, lang_code_app: str) -> str:
+        mapping = { 
+            'eng':'eng_Latn', 'fra':'fra_Latn', 'spa':'spa_Latn', 'deu':'deu_Latn', 'ita':'ita_Latn', 
+            'por':'por_Latn', 'rus':'rus_Cyrl', 'cmn':'zho_Hans', 'jpn':'jpn_Jpan', 'kor':'kor_Hang', 
+            'ara':'ara_Arab', 'hin':'hin_Deva', 'nld':'nld_Latn', 'pol':'pol_Latn', 'tur':'tur_Latn', 
+            'ukr':'ukr_Cyrl', 'ces':'ces_Latn', 'hun':'hun_Latn'}
+        return mapping.get(lang_code_app, 'eng_Latn')
+
+    def _get_simple_lang_code(self, lang_code_app: str) -> str: 
+        return self.simple_lang_code_map.get(lang_code_app, 'en')
+
+    def _generate_base_tts_audio(self, text: str, lang_code_app: str, temp_audio_dir: Path) -> Optional[Path]:
+        logger.info(f"[_generate_base_tts_audio] For app_lang '{lang_code_app}', text: '{text[:70]}...'")
+        base_tts_output_wav_path = temp_audio_dir / f"base_tts_content_{lang_code_app}.wav"
+
+        melo_target_lang_code = self.melo_lang_map.get(lang_code_app) # e.g., 'DE' for 'deu' if mapped
+        melo_model_instance = None
+        if melo_target_lang_code and MELOTTS_AVAILABLE:
+            melo_model_instance = self._load_melo_tts_model_for_lang(melo_target_lang_code)
         
-        if not OPENVOICE_AVAILABLE:
-            logger.warning("[CLONE_VOICE_API] OpenVoice API is not available")
-            return False
-            
-        try:
-            logger.info(f"[CLONE_VOICE_API] Attempting voice cloning with OpenVoice API")
-            
-            # Step 1: Generate base audio with gTTS (text-to-speech)
-            temp_dir = os.path.dirname(output_audio_path)
-            base_audio_path = os.path.join(temp_dir, "base_tts.wav")
-            
-            # Convert target language code to gTTS format
-            gtts_lang = self._convert_to_gtts_code(target_lang)
-            logger.info(f"Using gTTS language code: {gtts_lang}")
-            
-            # Generate TTS audio from the translated text with the correct language
-            tts = gTTS(text=target_text, lang=gtts_lang, slow=False)
-            temp_mp3 = os.path.join(temp_dir, "temp.mp3")
-            tts.save(temp_mp3)
-            
-            # Convert MP3 to WAV
-            sound = AudioSegment.from_mp3(temp_mp3)
-            sound.export(base_audio_path, format="wav")
-            logger.info(f"Generated base TTS audio at {base_audio_path} ({os.path.getsize(base_audio_path)} bytes)")
-                    
-            # Step 2: Send both files to OpenVoice API for voice cloning
-            logger.info(f"Sending files to OpenVoice API:")
-            logger.info(f"- Reference voice: {input_audio_path} ({os.path.getsize(input_audio_path)} bytes)")
-            logger.info(f"- Base TTS: {base_audio_path} ({os.path.getsize(base_audio_path)} bytes)")
-            
-            # Send both files to the API
-            logger.info(f"[CLONE_VOICE_API] About to call API with files:")
-            logger.info(f"[CLONE_VOICE_API] - audio_file: {input_audio_path} ({os.path.getsize(input_audio_path)} bytes)")
-            logger.info(f"[CLONE_VOICE_API] - target_file: {base_audio_path} ({os.path.getsize(base_audio_path)} bytes)")
-
-            with open(input_audio_path, "rb") as f_source, open(base_audio_path, "rb") as f_target:
-                files = {
-                    "audio_file": (os.path.basename(input_audio_path), f_source, "audio/wav"),
-                    "target_file": (os.path.basename(base_audio_path), f_target, "audio/wav")
-                }
-                response = requests.post("http://localhost:8000/clone-voice", files=files, timeout=30)
-
-            logger.info(f"[CLONE_VOICE_API] API response status: {response.status_code}")
-            logger.info(f"[CLONE_VOICE_API] Response content size: {len(response.content)} bytes")
-
-            # Check response
-            if response.status_code == 200:
-                # Save response to output file
-                with open(output_audio_path, "wb") as f:
-                    f.write(response.content)
-                logger.info(f"[CLONE_VOICE_API] Voice cloning successful via API: {os.path.getsize(output_audio_path)} bytes")
+        if melo_model_instance:
+            try:
+                logger.info(f"Using MeloTTS for language code '{melo_target_lang_code}'.")
+                all_speaker_ids = melo_model_instance.hps.data.spk2id
                 
-                # Clean up temporary files
-                try:
-                    os.remove(temp_mp3)
-                    os.remove(base_audio_path)
-                except:
-                    pass
-                    
-                return True
-            else:
-                logger.error(f"Voice cloning API error: {response.status_code} - {response.text}")
-                return False
-        except Exception as e:
-            logger.error(f"Error during API voice cloning: {str(e)}")
-            logger.error(traceback.format_exc())
-            return False
+                # Determine which speaker ID to use for MeloTTS
+                # Default to a specific accent if app_code provides it (e.g. 'eng_us' -> 'EN_US')
+                # Otherwise, use the default for the base language (e.g. 'eng' -> 'EN_US')
+                speaker_key_to_use = self.melo_english_speaker_ids_map.get(lang_code_app, 
+                                        self.melo_default_speaker_for_lang.get(melo_target_lang_code))
+
+                if not speaker_key_to_use or speaker_key_to_use not in all_speaker_ids:
+                    logger.warning(f"MeloTTS: Speaker key '{speaker_key_to_use}' not found for lang '{melo_target_lang_code}'. Trying first available for the language.")
+                    # Fallback: find any speaker for the base language
+                    found_key = None
+                    for key in all_speaker_ids.keys():
+                        if key.startswith(melo_target_lang_code):
+                            found_key = key
+                            break
+                    if not found_key and all_speaker_ids: # Absolute fallback
+                        found_key = list(all_speaker_ids.keys())[0]
+                        logger.warning(f"MeloTTS: Falling back to first overall speaker: {found_key}")
+                    speaker_key_to_use = found_key
+                
+                if not speaker_key_to_use or speaker_key_to_use not in all_speaker_ids:
+                    raise ValueError(f"MeloTTS: Could not determine a valid speaker ID for language {melo_target_lang_code} from available keys: {list(all_speaker_ids.keys())}")
+
+                chosen_melo_speaker_id_value = all_speaker_ids[speaker_key_to_use]
+                logger.info(f"Using MeloTTS speaker key '{speaker_key_to_use}' (ID: {chosen_melo_speaker_id_value}) for language {melo_target_lang_code}")
+
+                melo_model_instance.tts_to_file(text, chosen_melo_speaker_id_value, str(base_tts_output_wav_path), speed=1.0)
+
+                if base_tts_output_wav_path.exists() and base_tts_output_wav_path.stat().st_size > 1000:
+                    logger.info(f"MeloTTS audio generated: {base_tts_output_wav_path} (size: {base_tts_output_wav_path.stat().st_size})")
+                    y, sr = sf.read(str(base_tts_output_wav_path)) 
+                    if sr != 16000:
+                        logger.info(f"Resampling MeloTTS output from {sr}Hz to 16000Hz for OpenVoice.")
+                        y_resampled = librosa.resample(y.astype(np.float32), orig_sr=sr, target_sr=16000)
+                        sf.write(str(base_tts_output_wav_path), y_resampled, 16000)
+                    return base_tts_output_wav_path
+                else: logger.error("MeloTTS generated an empty or too small file.")
+            except Exception as e_melo:
+                logger.error(f"MeloTTS generation failed for lang '{melo_target_lang_code}': {e_melo}. Falling back to gTTS.", exc_info=True)
+        elif melo_target_lang_code and not MELOTTS_AVAILABLE:
+             logger.warning(f"MeloTTS library not installed, cannot use for '{lang_code_app}'. Falling back.")
+        elif not melo_target_lang_code:
+             logger.warning(f"Language '{lang_code_app}' not mapped for MeloTTS (e.g. German not in MeloTTS default list). Falling back to gTTS.")
+
+
+        logger.warning(f"Falling back to gTTS for language '{lang_code_app}'.")
+        try: from gtts import gTTS
+        except ImportError: logger.error("gTTS library not installed."); return None
+        gtts_lang_code = self._get_simple_lang_code(lang_code_app)
+        base_tts_mp3_path = temp_audio_dir / f"base_tts_{lang_code_app}_gtts_fallback.mp3"
+        try:
+            tts_g = gTTS(text=text, lang=gtts_lang_code, slow=False)
+            tts_g.save(str(base_tts_mp3_path))
+            if not base_tts_mp3_path.exists() or base_tts_mp3_path.stat().st_size == 0: logger.error(f"gTTS MP3 gen failed."); return None
+            sound = AudioSegment.from_mp3(str(base_tts_mp3_path))
+            sound = sound.set_frame_rate(16000).set_channels(1)
+            sound.export(str(base_tts_output_wav_path), format="wav")
+            if not base_tts_output_wav_path.exists() or base_tts_output_wav_path.stat().st_size < 1000: logger.error(f"gTTS WAV conversion failed."); return None
+            logger.info(f"gTTS (fallback) WAV audio generated: {base_tts_output_wav_path}");
+            try: os.remove(base_tts_mp3_path)
+            except OSError: pass
+            return base_tts_output_wav_path
+        except Exception as e_gtts: logger.error(f"gTTS fallback failed: {e_gtts}", exc_info=True); return None
+
+    def _clone_voice_with_api(self, ref_voice_audio_path, target_content_audio_path, output_audio_path):
+        # ... (This method remains the same as the last correct version)
+        logger.info(f"[_clone_voice_with_api] Calling OpenVoice API.")
+        if not OPENVOICE_API_AVAILABLE: logger.warning("OpenVoice API NOT available."); return False
+        if not Path(ref_voice_audio_path).exists() or Path(ref_voice_audio_path).stat().st_size < 1000:
+            logger.error(f"Ref voice MISSING/small: {ref_voice_audio_path}"); return False
+        if not Path(target_content_audio_path).exists() or Path(target_content_audio_path).stat().st_size < 1000:
+            logger.error(f"Target content audio (TTS) MISSING/small: {target_content_audio_path}"); return False
+        try:
+            with open(ref_voice_audio_path, "rb") as f_ref, open(target_content_audio_path, "rb") as f_target:
+                files = {"audio_file": (Path(ref_voice_audio_path).name, f_ref, "audio/wav"),
+                         "target_file": (Path(target_content_audio_path).name, f_target, "audio/wav")}
+                response = requests.post("http://localhost:8000/clone-voice", files=files, timeout=180)
+            logger.info(f"OpenVoice API status: {response.status_code}")
+            if response.status_code == 200:
+                with open(output_audio_path, "wb") as f_out: f_out.write(response.content)
+                if Path(output_audio_path).exists() and Path(output_audio_path).stat().st_size > 1000:
+                    logger.info(f"OpenVoice cloning OK: {output_audio_path}"); return True
+                logger.error(f"OpenVoice output file problematic: {output_audio_path}"); return False
+            logger.error(f"OpenVoice API error: {response.status_code} - {response.text[:200]}"); return False
+        except Exception as e: logger.error(f"Exception in OpenVoice API call: {e}", exc_info=True); return False
         
-    def translate_speech(
-        self, 
-        audio_tensor: torch.Tensor, 
-        source_lang: str = "eng",
-        target_lang: str = "fra"
-    ) -> Dict[str, Any]:
-        """
-        Translate speech using a cascaded approach:
-        1. Whisper for ASR
-        2. NLLB for translation
-        3. gTTS + OpenVoice for voice cloning
-        """
-        logger.info(f"[CASCADED BACKEND] translate_speech called with params: source_lang={source_lang}, target_lang={target_lang}")
-        logger.info(f"[CASCADED BACKEND] Voice cloning status: use_voice_cloning={self.use_voice_cloning}, OPENVOICE_AVAILABLE={OPENVOICE_AVAILABLE}")
+    def translate_speech(self, audio_tensor: torch.Tensor, source_lang: str = "eng", target_lang: str = "fra") -> Dict[str, Any]:
+        logger.info(f"[translate_speech] CALLED. app_source_lang='{source_lang}', app_target_lang='{target_lang}'")
+        if not self.initialized: self.initialize()
         
-        if not self.initialized:
-            self.initialize()
-        
-        # Start timer for performance tracking
         start_time = time.time()
-        
-        # Create temp dir for intermediate files
         with tempfile.TemporaryDirectory() as temp_dir_str:
             temp_dir = Path(temp_dir_str)
-            
-            # Source and target language names for gTTS
-            src_name = self.languages.get(source_lang, "English")
-            tgt_name = self.languages.get(target_lang, "French")
-            
+            source_text, target_text = "ASR_FAILED", "TRANSLATION_FAILED"
+            output_tensor = torch.zeros((1, 16000), dtype=torch.float32) 
+
             try:
-                # 1. Speech recognition (ASR) using Whisper or transformers pipeline
-                logger.info(f"Starting ASR for {src_name}")
-                
-                # Use whisper or transformers pipeline to transcribe the audio
-                audio_numpy = audio_tensor.squeeze().numpy()
-                
-                # Normalize audio
-                if np.abs(audio_numpy).max() > 0:
-                    audio_numpy = audio_numpy / np.abs(audio_numpy).max()
-                
-                # Process with either whisper or transformers pipeline
-                if WHISPER_AVAILABLE and self.asr_model is not None:
-                    # Use whisper directly
-                    asr_result = self.asr_model.transcribe(
-                        audio_numpy,
-                        language=self._convert_to_gtts_code(source_lang),
-                        task="transcribe",
-                        fp16=False
-                    )
-                    source_text = asr_result["text"]
+                audio_numpy = audio_tensor.squeeze().cpu().numpy().astype(np.float32)
+                original_audio_ref_path = temp_dir / "original_audio_ref_for_cloning.wav"
+                sf.write(str(original_audio_ref_path), audio_numpy, 16000)
+
+                if np.abs(audio_numpy).max() < 1e-5: source_text = "" 
+                elif WHISPER_AVAILABLE_FLAG and self.asr_model:
+                    whisper_lang_hint = self._get_simple_lang_code(source_lang)
+                    asr_result = self.asr_model.transcribe(audio_numpy, language=whisper_lang_hint, task="transcribe", fp16=(self.device.type == 'cuda' and torch.cuda.is_available()))
+                    source_text = asr_result["text"]; logger.info(f"Whisper ASR: '{source_text[:70]}...'")
+                elif self.asr_pipeline:
+                    temp_asr_path = temp_dir / "asr_input.wav"; sf.write(str(temp_asr_path), audio_numpy, 16000)
+                    source_text = self.asr_pipeline(str(temp_asr_path))["text"]; logger.info(f"Transformers ASR: '{source_text[:70]}...'")
+                else: logger.error("No ASR model available.")
+
+                if not source_text or source_text == "ASR_FAILED": target_text = ""
                 else:
-                    # Use transformers pipeline
-                    # Save audio to a temporary file
-                    temp_audio_path = temp_dir / "temp_audio.wav"
-                    sf.write(str(temp_audio_path), audio_numpy, 16000)
-                    
-                    # Run ASR with transformers
-                    asr_result = self.asr_pipeline(str(temp_audio_path))
-                    source_text = asr_result["text"] if isinstance(asr_result, dict) else asr_result
+                    src_nllb_code = self._convert_to_nllb_code(source_lang); tgt_nllb_code = self._convert_to_nllb_code(target_lang)
+                    input_ids = self.translator_tokenizer(source_text, return_tensors="pt", padding=True).input_ids.to(self.device)
+                    forced_bos_id = None # NLLB BOS ID logic as before
+                    if hasattr(self.translator_tokenizer, 'get_lang_id'):
+                        try: forced_bos_id = self.translator_tokenizer.get_lang_id(tgt_nllb_code)
+                        except Exception: 
+                            forced_bos_id = self.translator_tokenizer.convert_tokens_to_ids(tgt_nllb_code)
+                            if forced_bos_id == self.translator_tokenizer.unk_token_id: forced_bos_id = None
+                    elif hasattr(self.translator_tokenizer, 'lang_code_to_id') and tgt_nllb_code in self.translator_tokenizer.lang_code_to_id:
+                        forced_bos_id = self.translator_tokenizer.lang_code_to_id[tgt_nllb_code]
+                    if forced_bos_id is None: logger.warning(f"NLLB BOS for '{tgt_nllb_code}' not found.")
+                    gen_kwargs = {"input_ids": input_ids, "max_length": 1024, "num_beams": 5, "length_penalty": 1.0}
+                    if forced_bos_id is not None: gen_kwargs["forced_bos_token_id"] = forced_bos_id
+                    with torch.no_grad(): translated_tokens = self.translator_model.generate(**gen_kwargs)
+                    target_text = self.translator_tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
+                logger.info(f"NLLB Translation: '{target_text[:70]}...'")
                 
-                logger.info(f"ASR result: {source_text}")
-                logger.info(f"[CASCADED] ASR Result: '{source_text}'")
+                base_tts_path = None
+                if not target_text.strip(): logger.warning("Target text empty, TTS output will be silent.")
+                else: base_tts_path = self._generate_base_tts_audio(target_text, target_lang, temp_dir)
+                
+                if base_tts_path and base_tts_path.exists():
+                    y_base, _ = sf.read(str(base_tts_path)); output_tensor = torch.FloatTensor(y_base.astype(np.float32)).unsqueeze(0)
+                else: logger.error("Base TTS audio generation failed or text was empty. Using silence.")
+                
+                should_clone = self.use_voice_cloning_config and OPENVOICE_API_AVAILABLE and base_tts_path is not None
+                logger.info(f"OpenVoice cloning decision: Config={self.use_voice_cloning_config}, API={OPENVOICE_API_AVAILABLE}, BaseTTS_OK={base_tts_path is not None} -> Clone={should_clone}")
+                if should_clone:
+                    cloned_final_path = temp_dir / "cloned_final_audio.wav"
+                    clone_success = self._clone_voice_with_api(str(original_audio_ref_path), str(base_tts_path), str(cloned_final_path))
+                    if clone_success and cloned_final_path.exists() and cloned_final_path.stat().st_size > 1000:
+                        y_cloned, _ = sf.read(str(cloned_final_path)); output_tensor = torch.FloatTensor(y_cloned.astype(np.float32)).unsqueeze(0)
+                        logger.info(f"Using OpenVoice CLONED audio.")
+                    else: logger.warning("OpenVoice cloning FAILED. Using base TTS audio.")
+                else: logger.info("OpenVoice cloning SKIPPED.")
+                logger.info(f"Final audio shape: {output_tensor.shape}, dtype: {output_tensor.dtype}")
+            except Exception as e: logger.error(f"Error in translate_speech pipeline: {e}", exc_info=True)
+            logger.info(f"Processing completed in {time.time() - start_time:.2f}s")            
+            return {"audio": output_tensor, "transcripts": {"source": source_text, "target": target_text}}
 
-                # 2. Text translation with NLLB model
-                logger.info(f"Translating text from {src_name} to {tgt_name}")
-                
-                # Prepare for NLLB translation
-                src_code = self._convert_to_nllb_code(source_lang)
-                tgt_code = self._convert_to_nllb_code(target_lang)
-                
-                # Encode with tokenizer
-                input_ids = self.translator_tokenizer(
-                    source_text, 
-                    return_tensors="pt", 
-                    padding=True
-                ).input_ids.to(self.device)
-                
-                # Generate translation
-                with torch.no_grad():
-                    # Check if the tokenizer has the lang_code_to_id attribute
-                    if hasattr(self.translator_tokenizer, 'lang_code_to_id'):
-                        forced_bos_id = self.translator_tokenizer.lang_code_to_id[tgt_code]
-                    else:
-                        # Alternative way to get the correct token ID
-                        special_tokens = self.translator_tokenizer.special_tokens_map
-                        if 'bos_token' in special_tokens:
-                            forced_bos_id = self.translator_tokenizer.convert_tokens_to_ids(special_tokens['bos_token'])
-                        else:
-                            # Use the first token from the tokenizer's vocabulary as fallback
-                            forced_bos_id = None
-                            logger.warning(f"Could not find bos_token for {tgt_code}, skipping forced_bos_token_id")
-                    
-                    # Generate with appropriate parameters
-                    generation_kwargs = {
-                        "input_ids": input_ids,
-                        "max_length": 1024,
-                        "num_beams": 5,
-                        "length_penalty": 1.0
-                    }
-                    if forced_bos_id is not None:
-                        generation_kwargs["forced_bos_token_id"] = forced_bos_id
-                        
-                    translated_tokens = self.translator_model.generate(**generation_kwargs)
-                
-                # Decode back to text
-                target_text = self.translator_tokenizer.batch_decode(
-                    translated_tokens, 
-                    skip_special_tokens=True
-                )[0]
-                
-                logger.info(f"Translated text: {target_text}")
-                logger.info(f"[CASCADED] Translated text: '{target_text}'")
+    def is_language_supported(self, lang_code_app: str) -> bool:
+        if MELOTTS_AVAILABLE and lang_code_app in self.melo_lang_map:
+            # Further check: can we actually load a MeloTTS model for this mapped lang?
+            melo_lang = self.melo_lang_map.get(lang_code_app)
+            if melo_lang and self._load_melo_tts_model_for_lang(melo_lang) is not None:
+                return True
+        if lang_code_app in self.simple_lang_code_map: # Check gTTS fallback
+            logger.debug(f"[is_language_supported] MeloTTS not primary for '{lang_code_app}' or unavailable/unsupported. Checking gTTS fallback.")
+            return True
+        logger.warning(f"[is_language_supported] '{lang_code_app}' is not supported by configured TTS engines.")
+        return False
+    
+    def get_supported_languages(self) -> Dict[str, str]:
+        langs_for_display = {}
+        # Prioritize languages explicitly supported by MeloTTS (according to our map)
+        if MELOTTS_AVAILABLE:
+            for app_code, melo_code in self.melo_lang_map.items():
+                # Test if we can actually load this MeloTTS language model
+                # This is a bit heavy for get_supported_languages, ideally pre-check on init or cache results
+                # For now, assume if it's in the map, we intend to support it via MeloTTS
+                langs_for_display[app_code] = self.display_language_names.get(app_code, f"{app_code.upper()} (MeloTTS)")
+        
+        # Add other languages that only gTTS might cover (if not already added by MeloTTS)
+        for app_code in self.simple_lang_code_map.keys():
+            if app_code not in langs_for_display:
+                 langs_for_display[app_code] = self.display_language_names.get(app_code, f"{app_code.upper()} (gTTS only)")
+        
+        if not langs_for_display: # Fallback if no specific maps filled, list all display names with gTTS assumption
+             logger.warning("[get_supported_languages] No languages mapped for MeloTTS. Listing all known display names with gTTS assumption.")
+             return {k: v + " (gTTS)" for k,v in self.display_language_names.items() if k in self.simple_lang_code_map}
 
-                # 3. Text-to-Speech (TTS) with gTTS and voice cloning
-                logger.info(f"Generating speech in {tgt_name} with gTTS")
-                
-                # Base audio file path
-                base_wav_path = temp_dir / "base_audio.wav"
-                
-                # Use gTTS to generate base audio
-                tts = gTTS(
-                    text=target_text,
-                    lang=self._convert_to_gtts_code(target_lang),
-                    slow=False
-                )
-                
-                # Save as MP3 first
-                temp_mp3 = temp_dir / "temp.mp3"
-                tts.save(str(temp_mp3))
-                
-                # Convert MP3 to WAV for further processing
-                sound = AudioSegment.from_mp3(str(temp_mp3))
-                sound.export(str(base_wav_path), format="wav")
-                
-                # Check if base audio file exists and has content
-                if not base_wav_path.exists() or base_wav_path.stat().st_size == 0:
-                    raise ValueError("Failed to generate base audio with gTTS")
-                
-                logger.info(f"[CASCADED] Base TTS audio generated: {os.path.getsize(str(base_wav_path))} bytes")
-
-                # Voice cloning with OpenVoice if available
-                if self.use_voice_cloning and OPENVOICE_AVAILABLE:
-                    # Apply voice cloning with OpenVoice API
-                    logger.info("[CASCADED BACKEND] Voice cloning conditions met, proceeding with OpenVoice API")
-                    logger.info(f"[CASCADED BACKEND] self.use_voice_cloning={self.use_voice_cloning}, OPENVOICE_AVAILABLE={OPENVOICE_AVAILABLE}")
-                    
-                    output_path = temp_dir / "cloned_audio.wav"
-                    
-                    try:
-                        # Save the original input audio as source for voice extraction
-                        original_audio_path = temp_dir / "original_audio.wav"
-                        original_audio_np = audio_tensor.squeeze().cpu().numpy()
-                        
-                        # Check if original audio is valid
-                        if len(original_audio_np) < 8000:  # Less than 0.5 seconds at 16kHz
-                            logger.warning(f"[CASCADED BACKEND] Original audio too short for voice cloning: {len(original_audio_np)} samples")
-                            raise ValueError("Original audio too short for voice cloning")
-                            
-                        # Save original audio as WAV for OpenVoice reference
-                        sf.write(str(original_audio_path), original_audio_np, 16000)
-                        logger.info(f"[CASCADED BACKEND] Saved original audio for voice extraction: {os.path.getsize(str(original_audio_path))} bytes")
-                        
-                        # Call the voice cloning function with the original audio and the translated text
-                        voice_cloning_success = self._clone_voice_with_api(
-                            input_audio_path=str(original_audio_path),
-                            target_text=target_text,  # Use the actual translated text here
-                            output_audio_path=str(output_path),
-                            target_lang=target_lang  # Pass the target language
-                        )
-
-                        logger.info(f"[CASCADED] Voice cloning status: {voice_cloning_success}")
-                        
-                        if voice_cloning_success:
-                            # Load the converted audio
-                            y_converted, sr_converted = sf.read(str(output_path))
-                            output_tensor = torch.FloatTensor(y_converted).unsqueeze(0)
-                            
-                            logger.info(f"Voice cloning successful, output shape: {output_tensor.shape}")
-                        else:
-                            # Fallback to base audio if voice cloning failed
-                            logger.warning("Voice cloning failed, falling back to base audio")
-                            y, sr = sf.read(str(base_wav_path))
-                            output_tensor = torch.FloatTensor(y).unsqueeze(0)
-                    except Exception as e:
-                        logger.error(f"Voice cloning error: {str(e)}")
-                        logger.warning("Falling back to base audio due to error")
-                        # Load the base audio as fallback
-                        y, sr = sf.read(str(base_wav_path))
-                        output_tensor = torch.FloatTensor(y).unsqueeze(0)
-                
-                # Return results
-                duration = time.time() - start_time
-                logger.info(f"Translation completed in {duration:.2f}s")
-                
-                return {
-                    "audio": output_tensor,
-                    "transcripts": {
-                        "source": source_text,
-                        "target": target_text
-                    }
-                }
-                    
-            except Exception as e:
-                logger.error(f"Translation failed: {str(e)}")
-                
-                # Create a silent audio response as fallback
-                silent_audio = torch.zeros((1, 16000))  # 1 second of silence
-                
-                return {
-                    "audio": silent_audio,
-                    "transcripts": {
-                        "source": "Error occurred during translation",
-                        "target": "Error occurred during translation"
-                    }
-                }
+        logger.debug(f"[get_supported_languages] Returning: {langs_for_display}")
+        return langs_for_display
