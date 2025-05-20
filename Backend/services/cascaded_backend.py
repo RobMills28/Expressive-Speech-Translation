@@ -15,25 +15,25 @@ import requests
 
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 
-# --- MeloTTS Import ---
+# --- AWS Polly (boto3) Import ---
 try:
-    from melo.api import TTS as MeloTTS_API 
-    MELOTTS_AVAILABLE = True
-    logger_melo = logging.getLogger(__name__)
-    logger_melo.info("MeloTTS library FOUND and imported successfully.")
+    import boto3
+    BOTO3_AVAILABLE = True
+    logger_polly = logging.getLogger(__name__)
+    logger_polly.info("AWS SDK (boto3) FOUND and imported successfully.")
 except ImportError:
-    logger_melo = logging.getLogger(__name__)
-    logger_melo.warning("MeloTTS library NOT FOUND. TTS will fallback to gTTS.")
-    MELOTTS_AVAILABLE = False
-    MeloTTS_API = None
-# --- End MeloTTS Import ---
+    logger_polly = logging.getLogger(__name__)
+    logger_polly.warning("AWS SDK (boto3) NOT FOUND. AWS Polly TTS will not be available.")
+    BOTO3_AVAILABLE = False
+    boto3 = None 
+# --- End AWS Polly Import ---
 
 logger = logging.getLogger(__name__)
 if not logging.getLogger().hasHandlers(): 
     import sys
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - [%(funcName)s:%(lineno)d - %(message)s')
     ch.setFormatter(formatter)
     logger.addHandler(ch)
     logger.propagate = False 
@@ -67,180 +67,144 @@ class CascadedBackend(TranslationBackend):
         self.initialized = False
         self.use_voice_cloning_config = use_voice_cloning 
         
-        # App's internal lang codes (e.g., 'eng', 'deu') mapped to MeloTTS language codes
-        # From MeloTTS README: EN_US, EN_BR, ES, FR, ZH, JP, KR.
-        # Accents like EN_AU, EN_IN are speaker IDs within the 'EN' language model.
-        self.melo_lang_map = { 
-            'eng': 'EN',    # Generic English, specific accent via speaker_id
-            'spa': 'ES',
-            'fra': 'FR',
-            'deu': 'DE',    # *** CRITICAL: MeloTTS README does NOT list German ('DE') ***
-                            # This will likely cause MeloTTS to fail for German, then fallback.
-            'cmn': 'ZH',    # For Chinese
-            'jpn': 'JP',
-            'kor': 'KR'
+        # App's internal language codes (e.g., 'eng', 'deu') mapped to Polly VoiceID, Engine, and Region
+        # Find Voice IDs & Regions: https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
+        # Neural voices are generally higher quality.
+        self.polly_voice_map = {
+            'eng': {'VoiceId': 'Joanna', 'Engine': 'neural', 'Region': 'us-east-1'},  # US English
+            'deu': {'VoiceId': 'Vicki',  'Engine': 'neural', 'Region': 'eu-central-1'}, # German
+            'spa': {'VoiceId': 'Lucia',  'Engine': 'neural', 'Region': 'eu-west-1'},   # Castilian Spanish
+            'fra': {'VoiceId': 'Lea',    'Engine': 'neural', 'Region': 'eu-west-1'},   # French
+            'ita': {'VoiceId': 'Bianca', 'Engine': 'neural', 'Region': 'eu-central-1'},# Italian
+            'jpn': {'VoiceId': 'Mizuki', 'Engine': 'standard', 'Region': 'ap-northeast-1'},# Japanese (Standard, check for Neural if avail)
+            'kor': {'VoiceId': 'Seoyeon','Engine': 'neural', 'Region': 'ap-northeast-2'},# Korean
+            'por': {'VoiceId': 'Camila', 'Engine': 'neural', 'Region': 'sa-east-1'},   # Brazilian Portuguese
+            'rus': {'VoiceId': 'Tatyana','Engine': 'standard', 'Region': 'eu-central-1'},# Russian
+            'cmn': {'VoiceId': 'Zhiyu',  'Engine': 'neural', 'Region': 'ap-northeast-1'},# Mandarin Chinese
+            'ara': {'VoiceId': 'Zeina',  'Engine': 'standard', 'Region': 'me-south-1'},  # Arabic
+            'hin': {'VoiceId': 'Aditi',  'Engine': 'standard', 'Region': 'ap-south-1'},  # Hindi (Indian English accent)
+            'nld': {'VoiceId': 'Laura',  'Engine': 'neural', 'Region': 'eu-west-1'},   # Dutch
+            'pol': {'VoiceId': 'Ewa',    'Engine': 'neural', 'Region': 'eu-central-1'},  # Polish
+            'tur': {'VoiceId': 'Filiz',  'Engine': 'standard', 'Region': 'eu-central-1'},# Turkish
+            'ukr': {'VoiceId': 'Tatyana','Engine': 'standard', 'Region': 'eu-central-1'}, # No dedicated Ukrainian, use Russian as fallback
+            # Add more languages and ensure VoiceId/Engine/Region are correct from Polly docs
         }
-        # Speaker IDs for different English accents in MeloTTS (example, verify from MeloTTS)
-        self.melo_english_speaker_ids_map = {
-            'eng_us': 'EN_US', # American English speaker ID from MeloTTS
-            'eng_br': 'EN_BR', # British English
-            'eng_au': 'EN_AU', # Australian English
-            'eng_in': 'EN_IN', # Indian English
-            'eng': 'EN-Default' # A generic/default English speaker ID from MeloTTS
+        
+        # For gTTS fallback and Whisper ASR language hint (maps app codes 'deu' -> 'de')
+        self.simple_lang_code_map = { 
+            'eng': 'en', 'fra': 'fr', 'spa': 'es', 'deu': 'de', 'ita': 'it', 'por': 'pt', 
+            'cmn': 'zh-cn', 'jpn': 'ja', 'kor': 'ko', 'ara': 'ar', 'hin': 'hi', 
+            'nld': 'nl', 'rus': 'ru', 'pol': 'pl', 'tur': 'tr', 'ukr': 'uk'
+            # Add any other app codes you use that need mapping to simple ISO 639-1
         }
-        # Default speaker for each MeloTTS language if no accent is specified
-        self.melo_default_speaker_for_lang = {
-            'EN': 'EN_US', # Default to American English
-            'ES': 'ES',    # Assuming 'ES' is a valid speaker key
-            'FR': 'FR',    # Assuming 'FR' is a valid speaker key
-            'ZH': 'ZH',
-            'JP': 'JP',
-            'KR': 'KR',
-            'DE': None     # No default German speaker ID known for MeloTTS
-        }
-
-        # For gTTS fallback and Whisper language hints
-        self.simple_lang_code_map = { # app_code -> simple_code (e.g., 'deu' -> 'de')
-            'eng': 'en', 'fra': 'fr', 'spa': 'es', 'deu': 'de', 'ita': 'it',
-            'por': 'pt', 'cmn': 'zh-cn', 'jpn': 'ja', 'kor': 'ko', 'ara': 'ar', 
-            'hin': 'hi', 'nld': 'nl', 'rus': 'ru', 'pol': 'pl', 'tur': 'tr', 'ukr': 'uk',
-            'ces': 'cs', 'hun': 'hu'
-        }
-        self.display_language_names = {
-            'eng': 'English', 'fra': 'French', 'spa': 'Spanish', 'deu': 'German', 
-            'cmn': 'Chinese', 'jpn': 'Japanese', 'kor': 'Korean', 
-            # Add others to match your frontend display needs
-            'ita': 'Italian', 'por': 'Portuguese', 'rus': 'Russian', 'ara': 'Arabic',
-            'hin': 'Hindi', 'nld': 'Dutch', 'pol': 'Polish', 'tur': 'Turkish', 'ukr': 'Ukrainian'
+        self.display_language_names = { # For get_supported_languages to show in UI
+            'eng': 'English (US - Joanna)', 'fra': 'French (Lea)', 'spa': 'Spanish (Lucia)', 
+            'deu': 'German (Vicki)', 'ita': 'Italian (Bianca)', 'jpn': 'Japanese (Mizuki)',
+            'kor': 'Korean (Seoyeon)', 'por': 'Portuguese (BR - Camila)', 'rus': 'Russian (Tatyana)',
+            'cmn': 'Chinese (Mandarin - Zhiyu)', 'ara': 'Arabic (Zeina)', 'hin': 'Hindi (Aditi)',
+            'nld': 'Dutch (Laura)', 'pol': 'Polish (Ewa)', 'tur': 'Turkish (Filiz)',
+            'ukr': 'Ukrainian (Fallback Tatyana/Russian Voice)'
         }
 
         self.asr_model = None; self.asr_pipeline = None
         self.translator_model = None; self.translator_tokenizer = None
-        self.melo_tts_models_cache = {} # Cache for loaded MeloTTS models (one per language-model)
+        self.polly_clients_cache = {} # Cache Polly clients per region
 
-        logger.info(f"CascadedBackend __init__. Whisper: {WHISPER_AVAILABLE_FLAG}, OpenVoice API: {OPENVOICE_API_AVAILABLE}, MeloTTS Lib: {MELOTTS_AVAILABLE}")
+        logger.info(f"CascadedBackend __init__. Whisper: {WHISPER_AVAILABLE_FLAG}, OpenVoice API: {OPENVOICE_API_AVAILABLE}, AWS Polly (boto3): {BOTO3_AVAILABLE}")
     
-    def _load_melo_tts_model_for_lang(self, melo_lang_code: str): # melo_lang_code like 'EN', 'ES'
-        if not MELOTTS_AVAILABLE:
-            logger.warning(f"MeloTTS library not available. Cannot load model for {melo_lang_code}.")
-            return None
-        
-        cached_model = self.melo_tts_models_cache.get(melo_lang_code)
-        if cached_model:
-            logger.info(f"Using cached MeloTTS model for language: {melo_lang_code}.")
-            return cached_model
-        
+    def _get_polly_client(self, region_name: str):
+        if not BOTO3_AVAILABLE: logger.warning("boto3 not available."); return None
+        if region_name in self.polly_clients_cache:
+            return self.polly_clients_cache[region_name]
         try:
-            logger.info(f"Loading MeloTTS model for language code: {melo_lang_code} on device: {self.device}")
-            melo_device_str = str(self.device.type) if self.device.type != 'cpu' else 'cpu'
-            if self.device.type == 'cuda' and torch.cuda.is_available():
-                melo_device_str = f"cuda:{self.device.index if self.device.index is not None else 0}"
-            
-            model = MeloTTS_API(language=melo_lang_code, device=melo_device_str)
-            self.melo_tts_models_cache[melo_lang_code] = model
-            logger.info(f"MeloTTS model for {melo_lang_code} loaded and cached successfully.")
-            return model
-        except KeyError: # MeloTTS raises KeyError if the language string is not one it was initialized with
-            logger.error(f"MeloTTS does not support the language code '{melo_lang_code}' for model initialization (known: EN, ES, FR, ZH, JP, KR). This language will use fallback TTS.")
-            self.melo_tts_models_cache[melo_lang_code] = None 
-            return None
+            logger.info(f"Creating AWS Polly client for region: {region_name}")
+            client = boto3.client('polly', region_name=region_name)
+            self.polly_clients_cache[region_name] = client
+            logger.info(f"AWS Polly client for {region_name} created successfully.")
+            return client
         except Exception as e:
-            logger.error(f"Failed to load MeloTTS model for '{melo_lang_code}': {str(e)}", exc_info=True)
-            self.melo_tts_models_cache[melo_lang_code] = None
+            logger.error(f"Failed to create AWS Polly client for region {region_name}: {e}", exc_info=True)
             return None
 
     def initialize(self):
         if self.initialized: logger.info("CascadedBackend already initialized."); return
         try:
             logger.info(f"Initializing CascadedBackend on device: {self.device}"); start_time = time.time()
+            if WHISPER_AVAILABLE_FLAG: # ASR
+                self.asr_model = whisper.load_model("medium", device=self.device); logger.info("Whisper ASR loaded.")
+            else: self.asr_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-small", device=0 if self.device.type == 'cuda' and torch.cuda.is_available() else -1); logger.info("Transformers ASR loaded.")
             
-            if WHISPER_AVAILABLE_FLAG:
-                logger.info("Loading Whisper 'medium' ASR model..."); self.asr_model = whisper.load_model("medium", device=self.device); logger.info("Whisper ASR model loaded.")
-            else:
-                logger.warning("Loading transformers 'openai/whisper-small' ASR pipeline."); self.asr_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-small", device=0 if self.device.type == 'cuda' and torch.cuda.is_available() else -1); logger.info("Transformers ASR pipeline loaded.")
-            
-            logger.info("Loading NLLB translation model..."); self.translator_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M"); self.translator_tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
+            # NLLB Translation
+            self.translator_model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M"); self.translator_tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
             if self.device.type == 'cuda' and torch.cuda.is_available(): self.translator_model = self.translator_model.to(self.device)
             logger.info("NLLB translation model and tokenizer loaded.")
 
-            if MELOTTS_AVAILABLE: # Attempt to load a default MeloTTS model (e.g. English) to check setup
-                self._load_melo_tts_model_for_lang('EN') 
-            else: logger.warning("MeloTTS library not available. TTS will rely on gTTS fallback.")
+            # Initialize Polly client for a default/common region to check credentials early
+            if BOTO3_AVAILABLE: self._get_polly_client(os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
 
             self.initialized = True; logger.info(f"CascadedBackend initialized in {time.time() - start_time:.2f}s")
         except Exception as e:
             logger.error(f"Failed to initialize CascadedBackend: {e}", exc_info=True); self.initialized = False; raise 
     
     def _convert_to_nllb_code(self, lang_code_app: str) -> str:
-        mapping = { 
-            'eng':'eng_Latn', 'fra':'fra_Latn', 'spa':'spa_Latn', 'deu':'deu_Latn', 'ita':'ita_Latn', 
-            'por':'por_Latn', 'rus':'rus_Cyrl', 'cmn':'zho_Hans', 'jpn':'jpn_Jpan', 'kor':'kor_Hang', 
-            'ara':'ara_Arab', 'hin':'hin_Deva', 'nld':'nld_Latn', 'pol':'pol_Latn', 'tur':'tur_Latn', 
-            'ukr':'ukr_Cyrl', 'ces':'ces_Latn', 'hun':'hun_Latn'}
+        mapping = { 'eng':'eng_Latn', 'fra':'fra_Latn', 'spa':'spa_Latn', 'deu':'deu_Latn', 'ita':'ita_Latn', 
+                    'por':'por_Latn', 'rus':'rus_Cyrl', 'cmn':'zho_Hans', 'jpn':'jpn_Jpan', 'kor':'kor_Hang', 
+                    'ara':'ara_Arab', 'hin':'hin_Deva', 'nld':'nld_Latn', 'pol':'pol_Latn', 'tur':'tur_Latn', 
+                    'ukr':'ukr_Cyrl', 'ces':'ces_Latn', 'hun':'hun_Latn'}
         return mapping.get(lang_code_app, 'eng_Latn')
 
     def _get_simple_lang_code(self, lang_code_app: str) -> str: 
         return self.simple_lang_code_map.get(lang_code_app, 'en')
 
+    def _generate_base_tts_audio_with_polly(self, text: str, lang_code_app: str, temp_audio_dir: Path) -> Optional[Path]:
+        polly_voice_config = self.polly_voice_map.get(lang_code_app)
+        if not polly_voice_config:
+            logger.warning(f"No AWS Polly voice config for app lang '{lang_code_app}'. Cannot use Polly.")
+            return None
+
+        polly_client = self._get_polly_client(polly_voice_config['Region'])
+        if not polly_client:
+            logger.warning(f"AWS Polly client for region '{polly_voice_config['Region']}' not available.")
+            return None
+        
+        logger.info(f"Attempting Polly TTS for '{lang_code_app}' with VoiceId '{polly_voice_config['VoiceId']}'.")
+        output_mp3_path = temp_audio_dir / f"base_tts_polly_{lang_code_app}.mp3"
+        final_wav_path = temp_audio_dir / f"base_tts_polly_{lang_code_app}_16k.wav"
+
+        try:
+            response = polly_client.synthesize_speech(
+                Text=text, OutputFormat='mp3', VoiceId=polly_voice_config['VoiceId'], Engine=polly_voice_config['Engine']
+            )
+            if 'AudioStream' in response:
+                with open(output_mp3_path, 'wb') as f: f.write(response['AudioStream'].read())
+                if not output_mp3_path.exists() or output_mp3_path.stat().st_size < 100:
+                    logger.error("Polly MP3 output small/missing."); return None
+                logger.info(f"Polly MP3 OK: {output_mp3_path} ({output_mp3_path.stat().st_size}b)")
+                
+                sound = AudioSegment.from_mp3(str(output_mp3_path))
+                sound = sound.set_frame_rate(16000).set_channels(1)
+                sound.export(str(final_wav_path), format="wav")
+                if not final_wav_path.exists() or final_wav_path.stat().st_size < 1000:
+                    logger.error("Polly MP3->WAV conversion failed."); return None
+                logger.info(f"Polly 16kHz WAV OK: {final_wav_path}")
+                try: os.remove(output_mp3_path)
+                except: pass
+                return final_wav_path
+            else: logger.error(f"Polly response no AudioStream: {response}"); return None
+        except Exception as e: logger.error(f"Polly TTS failed for '{lang_code_app}': {e}", exc_info=True); return None
+
     def _generate_base_tts_audio(self, text: str, lang_code_app: str, temp_audio_dir: Path) -> Optional[Path]:
         logger.info(f"[_generate_base_tts_audio] For app_lang '{lang_code_app}', text: '{text[:70]}...'")
-        base_tts_output_wav_path = temp_audio_dir / f"base_tts_content_{lang_code_app}.wav"
-
-        melo_target_lang_code = self.melo_lang_map.get(lang_code_app) # e.g., 'DE' for 'deu' if mapped
-        melo_model_instance = None
-        if melo_target_lang_code and MELOTTS_AVAILABLE:
-            melo_model_instance = self._load_melo_tts_model_for_lang(melo_target_lang_code)
         
-        if melo_model_instance:
-            try:
-                logger.info(f"Using MeloTTS for language code '{melo_target_lang_code}'.")
-                all_speaker_ids = melo_model_instance.hps.data.spk2id
-                
-                # Determine which speaker ID to use for MeloTTS
-                # Default to a specific accent if app_code provides it (e.g. 'eng_us' -> 'EN_US')
-                # Otherwise, use the default for the base language (e.g. 'eng' -> 'EN_US')
-                speaker_key_to_use = self.melo_english_speaker_ids_map.get(lang_code_app, 
-                                        self.melo_default_speaker_for_lang.get(melo_target_lang_code))
-
-                if not speaker_key_to_use or speaker_key_to_use not in all_speaker_ids:
-                    logger.warning(f"MeloTTS: Speaker key '{speaker_key_to_use}' not found for lang '{melo_target_lang_code}'. Trying first available for the language.")
-                    # Fallback: find any speaker for the base language
-                    found_key = None
-                    for key in all_speaker_ids.keys():
-                        if key.startswith(melo_target_lang_code):
-                            found_key = key
-                            break
-                    if not found_key and all_speaker_ids: # Absolute fallback
-                        found_key = list(all_speaker_ids.keys())[0]
-                        logger.warning(f"MeloTTS: Falling back to first overall speaker: {found_key}")
-                    speaker_key_to_use = found_key
-                
-                if not speaker_key_to_use or speaker_key_to_use not in all_speaker_ids:
-                    raise ValueError(f"MeloTTS: Could not determine a valid speaker ID for language {melo_target_lang_code} from available keys: {list(all_speaker_ids.keys())}")
-
-                chosen_melo_speaker_id_value = all_speaker_ids[speaker_key_to_use]
-                logger.info(f"Using MeloTTS speaker key '{speaker_key_to_use}' (ID: {chosen_melo_speaker_id_value}) for language {melo_target_lang_code}")
-
-                melo_model_instance.tts_to_file(text, chosen_melo_speaker_id_value, str(base_tts_output_wav_path), speed=1.0)
-
-                if base_tts_output_wav_path.exists() and base_tts_output_wav_path.stat().st_size > 1000:
-                    logger.info(f"MeloTTS audio generated: {base_tts_output_wav_path} (size: {base_tts_output_wav_path.stat().st_size})")
-                    y, sr = sf.read(str(base_tts_output_wav_path)) 
-                    if sr != 16000:
-                        logger.info(f"Resampling MeloTTS output from {sr}Hz to 16000Hz for OpenVoice.")
-                        y_resampled = librosa.resample(y.astype(np.float32), orig_sr=sr, target_sr=16000)
-                        sf.write(str(base_tts_output_wav_path), y_resampled, 16000)
-                    return base_tts_output_wav_path
-                else: logger.error("MeloTTS generated an empty or too small file.")
-            except Exception as e_melo:
-                logger.error(f"MeloTTS generation failed for lang '{melo_target_lang_code}': {e_melo}. Falling back to gTTS.", exc_info=True)
-        elif melo_target_lang_code and not MELOTTS_AVAILABLE:
-             logger.warning(f"MeloTTS library not installed, cannot use for '{lang_code_app}'. Falling back.")
-        elif not melo_target_lang_code:
-             logger.warning(f"Language '{lang_code_app}' not mapped for MeloTTS (e.g. German not in MeloTTS default list). Falling back to gTTS.")
-
+        if BOTO3_AVAILABLE and lang_code_app in self.polly_voice_map:
+            polly_audio_path = self._generate_base_tts_audio_with_polly(text, lang_code_app, temp_audio_dir)
+            if polly_audio_path: return polly_audio_path
+            logger.warning(f"AWS Polly failed for '{lang_code_app}', trying gTTS fallback...")
+        else: logger.info(f"AWS Polly not configured/available for '{lang_code_app}'. Trying gTTS fallback.")
 
         logger.warning(f"Falling back to gTTS for language '{lang_code_app}'.")
+        # ... (gTTS logic from your last working version, ensure unique output path for gTTS) ...
+        base_tts_gtts_output_wav_path = temp_audio_dir / f"base_tts_gtts_{lang_code_app}.wav"
         try: from gtts import gTTS
         except ImportError: logger.error("gTTS library not installed."); return None
         gtts_lang_code = self._get_simple_lang_code(lang_code_app)
@@ -251,16 +215,21 @@ class CascadedBackend(TranslationBackend):
             if not base_tts_mp3_path.exists() or base_tts_mp3_path.stat().st_size == 0: logger.error(f"gTTS MP3 gen failed."); return None
             sound = AudioSegment.from_mp3(str(base_tts_mp3_path))
             sound = sound.set_frame_rate(16000).set_channels(1)
-            sound.export(str(base_tts_output_wav_path), format="wav")
-            if not base_tts_output_wav_path.exists() or base_tts_output_wav_path.stat().st_size < 1000: logger.error(f"gTTS WAV conversion failed."); return None
-            logger.info(f"gTTS (fallback) WAV audio generated: {base_tts_output_wav_path}");
+            sound.export(str(base_tts_gtts_output_wav_path), format="wav")
+            if not base_tts_gtts_output_wav_path.exists() or base_tts_gtts_output_wav_path.stat().st_size < 1000: logger.error(f"gTTS WAV conversion failed."); return None
+            logger.info(f"gTTS (fallback) WAV audio generated: {base_tts_gtts_output_wav_path}");
             try: os.remove(base_tts_mp3_path)
             except OSError: pass
-            return base_tts_output_wav_path
+            return base_tts_gtts_output_wav_path
         except Exception as e_gtts: logger.error(f"gTTS fallback failed: {e_gtts}", exc_info=True); return None
 
+        logger.error(f"All TTS options failed for language '{lang_code_app}'.")
+        return None
+
+    # _clone_voice_with_api, translate_speech methods remain the same as message #48 (the one with MeloTTS that you said was good apart from German)
+    # Ensure translate_speech calls _generate_base_tts_audio correctly.
+
     def _clone_voice_with_api(self, ref_voice_audio_path, target_content_audio_path, output_audio_path):
-        # ... (This method remains the same as the last correct version)
         logger.info(f"[_clone_voice_with_api] Calling OpenVoice API.")
         if not OPENVOICE_API_AVAILABLE: logger.warning("OpenVoice API NOT available."); return False
         if not Path(ref_voice_audio_path).exists() or Path(ref_voice_audio_path).stat().st_size < 1000:
@@ -268,9 +237,9 @@ class CascadedBackend(TranslationBackend):
         if not Path(target_content_audio_path).exists() or Path(target_content_audio_path).stat().st_size < 1000:
             logger.error(f"Target content audio (TTS) MISSING/small: {target_content_audio_path}"); return False
         try:
-            with open(ref_voice_audio_path, "rb") as f_ref, open(target_content_audio_path, "rb") as f_target:
+            with open(ref_voice_audio_path, "rb") as f_ref, open(target_content_audio_path, "rb") as f_target_content:
                 files = {"audio_file": (Path(ref_voice_audio_path).name, f_ref, "audio/wav"),
-                         "target_file": (Path(target_content_audio_path).name, f_target, "audio/wav")}
+                         "target_file": (Path(target_content_audio_path).name, f_target_content, "audio/wav")}
                 response = requests.post("http://localhost:8000/clone-voice", files=files, timeout=180)
             logger.info(f"OpenVoice API status: {response.status_code}")
             if response.status_code == 200:
@@ -310,7 +279,7 @@ class CascadedBackend(TranslationBackend):
                 else:
                     src_nllb_code = self._convert_to_nllb_code(source_lang); tgt_nllb_code = self._convert_to_nllb_code(target_lang)
                     input_ids = self.translator_tokenizer(source_text, return_tensors="pt", padding=True).input_ids.to(self.device)
-                    forced_bos_id = None # NLLB BOS ID logic as before
+                    forced_bos_id = None 
                     if hasattr(self.translator_tokenizer, 'get_lang_id'):
                         try: forced_bos_id = self.translator_tokenizer.get_lang_id(tgt_nllb_code)
                         except Exception: 
@@ -348,36 +317,29 @@ class CascadedBackend(TranslationBackend):
             logger.info(f"Processing completed in {time.time() - start_time:.2f}s")            
             return {"audio": output_tensor, "transcripts": {"source": source_text, "target": target_text}}
 
+    # --- Implementation of Abstract Methods ---
     def is_language_supported(self, lang_code_app: str) -> bool:
-        if MELOTTS_AVAILABLE and lang_code_app in self.melo_lang_map:
-            # Further check: can we actually load a MeloTTS model for this mapped lang?
-            melo_lang = self.melo_lang_map.get(lang_code_app)
-            if melo_lang and self._load_melo_tts_model_for_lang(melo_lang) is not None:
-                return True
-        if lang_code_app in self.simple_lang_code_map: # Check gTTS fallback
-            logger.debug(f"[is_language_supported] MeloTTS not primary for '{lang_code_app}' or unavailable/unsupported. Checking gTTS fallback.")
-            return True
-        logger.warning(f"[is_language_supported] '{lang_code_app}' is not supported by configured TTS engines.")
+        if BOTO3_AVAILABLE and lang_code_app in self.polly_voice_map: return True
+        # Add MeloTTS check here if you re-integrate it as a primary option
+        # if MELOTTS_AVAILABLE and lang_code_app in self.melo_lang_map: ... return True ...
+        if lang_code_app in self.simple_lang_code_map: return True # gTTS fallback
+        logger.warning(f"[is_language_supported] '{lang_code_app}' not in Polly map or gTTS map.")
         return False
     
     def get_supported_languages(self) -> Dict[str, str]:
-        langs_for_display = {}
-        # Prioritize languages explicitly supported by MeloTTS (according to our map)
-        if MELOTTS_AVAILABLE:
-            for app_code, melo_code in self.melo_lang_map.items():
-                # Test if we can actually load this MeloTTS language model
-                # This is a bit heavy for get_supported_languages, ideally pre-check on init or cache results
-                # For now, assume if it's in the map, we intend to support it via MeloTTS
-                langs_for_display[app_code] = self.display_language_names.get(app_code, f"{app_code.upper()} (MeloTTS)")
+        supported_for_display = {}
+        if BOTO3_AVAILABLE:
+            for app_code, polly_config in self.polly_voice_map.items():
+                display_name = self.display_language_names.get(app_code, f"{app_code.upper()} (Polly: {polly_config['VoiceId']})")
+                supported_for_display[app_code] = display_name
         
-        # Add other languages that only gTTS might cover (if not already added by MeloTTS)
+        # If you add MeloTTS back as a primary, merge its languages here, prioritizing Polly if a lang is in both
+        # For gTTS fallback for languages not covered by Polly:
         for app_code in self.simple_lang_code_map.keys():
-            if app_code not in langs_for_display:
-                 langs_for_display[app_code] = self.display_language_names.get(app_code, f"{app_code.upper()} (gTTS only)")
+            if app_code not in supported_for_display:
+                 supported_for_display[app_code] = self.display_language_names.get(app_code, app_code.upper()) + " (gTTS fallback)"
         
-        if not langs_for_display: # Fallback if no specific maps filled, list all display names with gTTS assumption
-             logger.warning("[get_supported_languages] No languages mapped for MeloTTS. Listing all known display names with gTTS assumption.")
+        if not supported_for_display: # Absolute fallback
              return {k: v + " (gTTS)" for k,v in self.display_language_names.items() if k in self.simple_lang_code_map}
-
-        logger.debug(f"[get_supported_languages] Returning: {langs_for_display}")
-        return langs_for_display
+        logger.debug(f"[get_supported_languages] Returning: {supported_for_display}")
+        return supported_for_display
