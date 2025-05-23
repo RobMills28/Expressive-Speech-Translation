@@ -6668,3 +6668,240 @@ frame=  194 fps=0.0 q=-1.0 Lsize=     392KiB time=00:00:06.40 bitrate= 501.2kbit
 [libx264 @ 0x132908530] kb/s:407.65
 [aac @ 0x131f17860] Qavg: 2094.574
 
+2025-05-20 16:37:37,908 - __main__ - ERROR - [app.py:297] - Error during shutdown_handler_tasks: name 'gc' is not defined
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/app.py", line 296, in shutdown_handler_tasks
+    gc.collect(); logger.info("All resource cleanup attempts completed.")
+NameError: name 'gc' is not defined
+2025-05-20 17:01:48,692 - services.video_routes - ERROR - [video_routes.py:192] - Wav2Lip process timed out after 10 minutes.
+2025-05-21 16:58:27,517 - services.video_routes - ERROR - [video_routes.py:70] - CRITICAL: NEITHER Wav2Lip standard nor GAN checkpoint found. Lip sync will fail.
+2025-05-21 16:58:39,346 - services.video_routes - ERROR - [video_routes.py:145] - CRITICAL: No Wav2Lip checkpoint (.pth file) found. Lip sync cannot proceed.
+2025-05-22 20:18:33,799 - services.video_routes - ERROR - [video_routes.py:177] - Wav2Lip process failed with code 1.
+2025-05-22 20:18:33,800 - services.video_routes - ERROR - [video_routes.py:178] - Wav2Lip STDOUT:
+Using cpu for inference.
+Reading video frames...
+Number of frames available for inference: 484
+
+2025-05-22 20:18:33,800 - services.video_routes - ERROR - [video_routes.py:179] - Wav2Lip STDERR:
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 280, in <module>
+    main()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 225, in main
+    mel = audio.melspectrogram(wav)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 47, in melspectrogram
+    S = _amp_to_db(_linear_to_mel(np.abs(D))) - hp.ref_level_db
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 95, in _linear_to_mel
+    _mel_basis = _build_mel_basis()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 100, in _build_mel_basis
+    return librosa.filters.mel(hp.sample_rate, hp.n_fft, n_mels=hp.num_mels,
+TypeError: mel() takes 0 positional arguments but 2 positional arguments (and 3 keyword-only arguments) were given
+
+2025-05-22 21:08:23,640 - services.video_routes - ERROR - [video_routes.py:177] - Wav2Lip process failed with code 1.
+2025-05-22 21:08:23,641 - services.video_routes - ERROR - [video_routes.py:178] - Wav2Lip STDOUT:
+Using cpu for inference.
+Reading video frames...
+Number of frames available for inference: 484
+
+2025-05-22 21:08:23,641 - services.video_routes - ERROR - [video_routes.py:179] - Wav2Lip STDERR:
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 280, in <module>
+    main()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 225, in main
+    mel = audio.melspectrogram(wav)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 47, in melspectrogram
+    S = _amp_to_db(_linear_to_mel(np.abs(D))) - hp.ref_level_db
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 95, in _linear_to_mel
+    _mel_basis = _build_mel_basis()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 100, in _build_mel_basis
+    return librosa.filters.mel(hp.sample_rate, hp.n_fft, n_mels=hp.num_mels,
+TypeError: mel() takes 0 positional arguments but 2 positional arguments (and 3 keyword-only arguments) were given
+
+2025-05-22 21:37:05,114 - services.video_routes - ERROR - [video_routes.py:199] - Wav2Lip process failed with code 1.
+2025-05-22 21:37:05,115 - services.video_routes - ERROR - [video_routes.py:200] - Wav2Lip STDOUT:
+
+2025-05-22 21:37:05,115 - services.video_routes - ERROR - [video_routes.py:201] - Wav2Lip STDERR:
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 3, in <module>
+    import scipy, cv2, os, sys, argparse, audio
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/audio.py", line 1, in <module>
+    import librosa
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/librosa/__init__.py", line 13, in <module>
+    from . import core
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/librosa/core/__init__.py", line 114, in <module>
+    from .time_frequency import *  # pylint: disable=wildcard-import
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/librosa/core/time_frequency.py", line 10, in <module>
+    from ..util.exceptions import ParameterError
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/librosa/util/__init__.py", line 73, in <module>
+    from . import decorators
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/librosa/util/decorators.py", line 9, in <module>
+    from numba.decorators import jit as optional_jit
+ModuleNotFoundError: No module named 'numba.decorators'
+
+2025-05-22 22:18:01,391 - services.video_routes - ERROR - [video_routes.py:214] - Wav2Lip process timed out after 10 minutes.
+2025-05-22 22:38:46,779 - services.video_routes - ERROR - [video_routes.py:199] - Wav2Lip process failed with code 1.
+2025-05-22 22:38:46,785 - services.video_routes - ERROR - [video_routes.py:200] - Wav2Lip STDOUT:
+Using cpu for inference.
+Reading video frames...
+Number of frames available for inference: 127
+(80, 98)
+Length of mel chunks: 33
+Recovering from OOM error; New batch size: 8
+Load checkpoint from: /Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/checkpoints/wav2lip.pth
+
+2025-05-22 22:38:46,785 - services.video_routes - ERROR - [video_routes.py:201] - Wav2Lip STDERR:
+
+  0%|          | 0/1 [00:00<?, ?it/s]
+
+  0%|          | 0/3 [00:00<?, ?it/s][A
+  0%|          | 0/3 [00:51<?, ?it/s]
+
+
+  0%|          | 0/5 [00:00<?, ?it/s][A
+
+ 20%|██        | 1/5 [01:11<04:47, 71.84s/it][A
+
+ 40%|████      | 2/5 [02:00<03:14, 64.91s/it][A
+
+ 60%|██████    | 3/5 [02:58<02:05, 62.87s/it][A
+
+ 80%|████████  | 4/5 [03:43<00:57, 57.48s/it][A
+
+100%|██████████| 5/5 [03:45<00:00, 40.89s/it][A
+100%|██████████| 5/5 [03:45<00:00, 45.15s/it]
+/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/serialization.py:779: UserWarning: 'torch.load' received a zip file that looks like a TorchScript archive dispatching to 'torch.jit.load' (call 'torch.jit.load' directly to silence this warning)
+  warnings.warn("'torch.load' received a zip file that looks like a TorchScript archive"
+
+  0%|          | 0/1 [04:37<?, ?it/s]
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 280, in <module>
+    main()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 252, in main
+    model = load_model(args.checkpoint_path)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 171, in load_model
+    checkpoint = _load(path)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 164, in _load
+    checkpoint = torch.load(checkpoint_path,
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/serialization.py", line 783, in load
+    return torch.jit.load(opened_file, map_location=map_location)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/jit/_serialization.py", line 156, in load
+    map_location = validate_map_location(map_location)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/jit/_serialization.py", line 176, in validate_map_location
+    raise ValueError(
+ValueError: map_location should be either None, string or torch.device, but got type: <class 'function'>
+
+2025-05-22 23:06:29,170 - services.video_routes - ERROR - [video_routes.py:214] - Wav2Lip process timed out after 10 minutes.
+2025-05-22 23:22:01,685 - services.video_routes - ERROR - [video_routes.py:214] - Wav2Lip process timed out after 10 minutes.
+2025-05-23 07:47:37,974 - services.video_routes - ERROR - [video_routes.py:199] - Wav2Lip process failed with code 1.
+2025-05-23 07:47:37,975 - services.video_routes - ERROR - [video_routes.py:200] - Wav2Lip STDOUT:
+Using cpu for inference.
+Reading video frames...
+Number of frames available for inference: 420
+Audio file is already WAV: /Users/robmills/Documents/Magenta AI/Backend/temp_video_processing_requests/7748eb9b-7105-4777-a415-7de93bc831f2/7748eb9b-7105-4777-a415-7de93bc831f2_final_audio_for_lipsync.wav
+Mel spectrogram shape: (80, 615)
+Length of mel chunks: 227
+
+2025-05-23 07:47:37,975 - services.video_routes - ERROR - [video_routes.py:201] - Wav2Lip STDERR:
+
+Wav2Lip batch processing:   0%|          | 0/2 [00:00<?, ?it/s]
+
+Face detection:   0%|          | 0/15 [00:00<?, ?it/s][A
+Face detection:   0%|          | 0/15 [00:49<?, ?it/s]
+
+Wav2Lip batch processing:   0%|          | 0/2 [00:50<?, ?it/s]
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 556, in <module>
+    main()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 413, in main
+    for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen, 
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/tqdm/std.py", line 1127, in __iter__
+    for obj in iterable:
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 134, in datagen
+    face_det_results = face_detect(frames) # BGR2RGB for CNN face detection
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 89, in face_detect
+    raise e
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 78, in face_detect
+    predictions.extend(detector.get_detections_for_batch(np.array(images[i:i + batch_size])))
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/api.py", line 66, in get_detections_for_batch
+    detected_faces = self.face_detector.detect_from_batch(images.copy())
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/detection/sfd/sfd_detector.py", line 42, in detect_from_batch
+    bboxlists = batch_detect(self.face_detector, images, device=self.device)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/detection/sfd/detect.py", line 68, in batch_detect
+    olist = net(imgs)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/detection/sfd/net_s3fd.py", line 97, in forward
+    h = F.relu(self.fc6(h))
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 463, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 459, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: NNPACK SpatialConvolution_updateOutput failed
+
+2025-05-23 07:54:31,230 - services.video_routes - ERROR - [video_routes.py:199] - Wav2Lip process failed with code 1.
+2025-05-23 07:54:31,231 - services.video_routes - ERROR - [video_routes.py:200] - Wav2Lip STDOUT:
+Using cpu for inference.
+Reading video frames...
+Number of frames available for inference: 420
+Audio file is already WAV: /Users/robmills/Documents/Magenta AI/Backend/temp_video_processing_requests/972519cf-3a3f-49dd-8682-1a9a5f06a6e8/972519cf-3a3f-49dd-8682-1a9a5f06a6e8_final_audio_for_lipsync.wav
+Mel spectrogram shape: (80, 523)
+Length of mel chunks: 192
+
+2025-05-23 07:54:31,232 - services.video_routes - ERROR - [video_routes.py:201] - Wav2Lip STDERR:
+
+Wav2Lip batch processing:   0%|          | 0/2 [00:00<?, ?it/s]
+
+Face detection:   0%|          | 0/12 [00:00<?, ?it/s][A
+Face detection:   0%|          | 0/12 [00:55<?, ?it/s]
+
+Wav2Lip batch processing:   0%|          | 0/2 [00:55<?, ?it/s]
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 556, in <module>
+    main()
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 413, in main
+    for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen, 
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/tqdm/std.py", line 1127, in __iter__
+    for obj in iterable:
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 134, in datagen
+    face_det_results = face_detect(frames) # BGR2RGB for CNN face detection
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 89, in face_detect
+    raise e
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/inference.py", line 78, in face_detect
+    predictions.extend(detector.get_detections_for_batch(np.array(images[i:i + batch_size])))
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/api.py", line 66, in get_detections_for_batch
+    detected_faces = self.face_detector.detect_from_batch(images.copy())
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/detection/sfd/sfd_detector.py", line 42, in detect_from_batch
+    bboxlists = batch_detect(self.face_detector, images, device=self.device)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/detection/sfd/detect.py", line 68, in batch_detect
+    olist = net(imgs)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/face_detection/detection/sfd/net_s3fd.py", line 97, in forward
+    h = F.relu(self.fc6(h))
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 463, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/Users/robmills/Documents/Magenta AI/Backend/Wav2Lip/venv_wav2lip/lib/python3.9/site-packages/torch/nn/modules/conv.py", line 459, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: NNPACK SpatialConvolution_updateOutput failed
+
+2025-05-23 08:17:56,335 - services.video_routes - ERROR - [video_routes.py:214] - Wav2Lip process timed out after 10 minutes.
+2025-05-23 09:53:50,047 - werkzeug - ERROR - [_internal.py:97] - Error on request:
+Traceback (most recent call last):
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/werkzeug/serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/werkzeug/serving.py", line 333, in execute
+    for data in application_iter:
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/werkzeug/wsgi.py", line 256, in __next__
+    return self._next()
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/werkzeug/wrappers/response.py", line 32, in _iter_encoded
+    for item in iterable:
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/flask/helpers.py", line 125, in generator
+    yield from gen
+  File "/Users/robmills/Documents/Magenta AI/Backend/services/video_routes.py", line 248, in process_video
+    request_id = str(uuid.uuid4())
+NameError: name 'uuid' is not defined
+2025-05-23 12:00:44,039 - services.video_routes - ERROR - [video_routes.py:199] - [ead57a7b-7596-4ac2-9a95-66a136ddd9a9] Wav2Lip process failed with code -9.
+2025-05-23 12:25:17,721 - services.video_routes - ERROR - [video_routes.py:199] - [1c6d9719-4423-4b56-8a97-bd13b830b808] Wav2Lip process failed with code -2.

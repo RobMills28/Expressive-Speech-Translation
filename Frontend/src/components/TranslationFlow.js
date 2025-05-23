@@ -1,11 +1,12 @@
 // src/components/TranslationFlow.js
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent } from "./ui/card";
+import { Card /* CardContent was unused */ } from "./ui/card"; // Assuming Card is used, CardContent removed
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { AlertCircle, Upload, Loader2, Film, Mic, AudioWaveform } from 'lucide-react';
+import { AlertCircle, Upload, Loader2, Film, /* Mic was unused */ AudioWaveform, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
+import { Label } from "./ui/label"; // Label can still be used with HTML checkbox
 
 const LANGUAGES = {
   'eng': { name: 'English', flag: '🇺🇸' },
@@ -32,6 +33,7 @@ const ContentTranslator = () => {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const [resultTranscripts, setResultTranscripts] = useState({ source: '', target: '' });
+  const [applyLipSync, setApplyLipSync] = useState(true); 
 
   const originalMediaRef = useRef(null);
   const translatedMediaRef = useRef(null);
@@ -42,16 +44,17 @@ const ContentTranslator = () => {
     setFile(null); setFileUrl(null); setResult(null);
     setResultTranscripts({ source: '', target: '' });
     setError(''); setProgress(0); setProcessPhase('');
-    setTargetLanguage(''); 
+    setTargetLanguage(type === 'audio' ? 'fra' : ''); 
+    setApplyLipSync(true); 
   };
 
   const handleFileUpload = (e) => {
-    const uploadedFile = e.target.files?.[0]; // This is the correct variable name
+    const uploadedFile = e.target.files?.[0]; 
     if (!uploadedFile) return;
 
     let valid = false;
     const isAudio = uploadedFile.type.startsWith('audio/');
-    const isVideo = uploadedFile.type.startsWith('video/'); // CORRECTED: use uploadedFile
+    const isVideo = uploadedFile.type.startsWith('video/'); 
 
     if (contentType === 'audio' && isAudio) valid = true;
     else if ((contentType === 'video' || contentType === 'both') && isVideo) valid = true;
@@ -66,26 +69,8 @@ const ContentTranslator = () => {
     setProgress(0); setProcessPhase('');
   };
   
-  // useEffect for audio player state for original audio - not strictly needed if using native controls
-  // but kept if you want custom play/pause later
-  const [isOriginalPlaying, setIsOriginalPlaying] = useState(false);
-  useEffect(() => {
-    const audioElement = originalMediaRef.current;
-    if (contentType === 'audio' && audioElement) {
-      const onPlay = () => setIsOriginalPlaying(true);
-      const onPause = () => setIsOriginalPlaying(false);
-      const onEnded = () => setIsOriginalPlaying(false);
-      audioElement.addEventListener('play', onPlay);
-      audioElement.addEventListener('pause', onPause);
-      audioElement.addEventListener('ended', onEnded);
-      return () => {
-        audioElement.removeEventListener('play', onPlay);
-        audioElement.removeEventListener('pause', onPause);
-        audioElement.removeEventListener('ended', onEnded);
-      };
-    }
-  }, [fileUrl, contentType]);
-
+  // Removed isOriginalPlaying state and its useEffect as it wasn't used for UI changes
+  // and the <audio controls /> attribute handles playback.
 
   const handleTranslate = async () => {
     if (!file) { setError('Please upload a file.'); return; }
@@ -98,7 +83,11 @@ const ContentTranslator = () => {
     formData.append(fileKey, file);
     formData.append('target_language', targetLanguage);
     formData.append('backend', 'cascaded'); 
-    formData.append('use_voice_cloning', 'true'); 
+    
+    if (contentType === 'video' || contentType === 'both') {
+      formData.append('apply_lip_sync', applyLipSync ? 'true' : 'false');
+      console.log("Frontend sending apply_lip_sync:", applyLipSync);
+    }
 
     const endpoint = contentType === 'audio' ? 'http://localhost:5001/translate' : 'http://localhost:5001/process-video';
 
@@ -106,7 +95,7 @@ const ContentTranslator = () => {
       const response = await fetch(endpoint, { method: 'POST', body: formData });
       if (!response.ok) {
         const errData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }));
-        throw new Error(errData.error || `Request failed.`);
+        throw new Error(errData.error || `Request failed: ${response.statusText}`);
       }
 
       if (contentType === 'audio') { 
@@ -129,7 +118,11 @@ const ContentTranslator = () => {
         let buffer = '';
         while (true) {
           const { done, value } = await reader.read();
-          if (done) { setProcessPhase(prev => prev.includes('Error') ? prev : 'Final video processed.'); break;}
+          if (done) { 
+            setProcessPhase(prev => error || prev.includes('Error') ? prev : 'Final video processed.'); 
+            if(!error) setProgress(100); 
+            break;
+          }
           buffer += decoder.decode(value, { stream: true });
           const messages = buffer.split('\n\n');
           buffer = messages.pop() || '';
@@ -137,7 +130,12 @@ const ContentTranslator = () => {
             if (message.trim().startsWith('data: ')) {
               try {
                 const data = JSON.parse(message.trim().slice(6));
-                if (data.error) { setError(data.error); setProcessPhase(`Error: ${data.phase || ''}`); throw new Error(data.error); }
+                if (data.error) { 
+                    setError(data.error + (data.phase ? ` (during ${data.phase})` : '')); 
+                    setProcessPhase(`Error: ${data.phase || 'processing'}`); 
+                    setIsProcessing(false); 
+                    return; 
+                }
                 if (data.progress !== undefined) setProgress(data.progress);
                 if (data.phase) setProcessPhase(data.phase);
                 if (data.result) {
@@ -149,15 +147,27 @@ const ContentTranslator = () => {
                   if (result) URL.revokeObjectURL(result); 
                   setResult(URL.createObjectURL(videoBlob));
                   setProcessPhase('Video ready!');
+                  setProgress(100); 
                 }
                 if (data.transcripts) setResultTranscripts(data.transcripts);
-              } catch (e) { console.error('SSE parse error:', e, message); }
+              } catch (e) { 
+                  console.error('SSE parse error:', e, "Message:", message); 
+                  if (!error) setError("Error processing video stream from server.");
+              }
             }
           }
         }
       }
-    } catch (err) { setError(err.message); console.error("Translate error:", err); setProcessPhase('Failed.'); }
-    finally { setIsProcessing(false); }
+    } catch (err) { 
+        setError(err.message); 
+        console.error("Translate error:", err); 
+        setProcessPhase('Failed.'); 
+    }
+    if (!error && isProcessing) { // Check isProcessing before setting to false
+        setIsProcessing(false);
+    } else if (error && isProcessing) { 
+        setIsProcessing(false);
+    }
   };
   
   const handleReset = () => {
@@ -167,7 +177,8 @@ const ContentTranslator = () => {
     setFileUrl(null); setTargetLanguage(''); setResult(null);
     setResultTranscripts({ source: '', target: '' }); setError('');
     setProgress(0); setProcessPhase('');
-    setIsOriginalPlaying(false); // Reset play state for audio
+    // setIsOriginalPlaying(false); // Removed as state was removed
+    setApplyLipSync(true); 
   };
 
   const renderSelectionScreen = () => (
@@ -188,15 +199,15 @@ const ContentTranslator = () => {
             <Film className="h-8 w-8 text-fuchsia-600" />
           </div>
           <h3 className="font-medium mb-2">Video Translation</h3>
-          <p className="text-sm text-gray-500 text-center">Videos with audio track.</p>
+          <p className="text-sm text-gray-500 text-center">Translate video audio track.</p>
         </div>
         <div className="flex flex-col items-center p-6 rounded-lg border hover:border-fuchsia-300 cursor-pointer transition-all hover:shadow-md"
              onClick={() => handleContentTypeSelect('both')}>
           <div className="w-16 h-16 rounded-full bg-fuchsia-100 flex items-center justify-center mb-4">
-            <div className="relative"><Film className="h-8 w-8 text-fuchsia-600" /><AudioWaveform className="h-4 w-4 text-fuchsia-600 absolute -bottom-1 -right-1" /></div>
+            <div className="relative"><Film className="h-8 w-8 text-fuchsia-600" /><Zap className="h-5 w-5 text-yellow-500 absolute -bottom-1 -right-1" /></div>
           </div>
-          <h3 className="font-medium mb-2">Video Dubbing</h3>
-          <p className="text-sm text-gray-500 text-center">Full video voice-over.</p>
+          <h3 className="font-medium mb-2">Video Dubbing & Lip Sync</h3>
+          <p className="text-sm text-gray-500 text-center">Full video voice-over with lip sync.</p>
         </div>
       </div>
     </div>
@@ -251,7 +262,14 @@ const ContentTranslator = () => {
   const renderVideoInterface = () => (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="p-6 border-b flex justify-between items-center">
-        <div><h1 className="text-2xl font-semibold">{contentType === 'both' ? 'Video Dubbing' : 'Video Translation'}</h1><p className="text-gray-500">Translate and voice-over your video content</p></div>
+        <div>
+            <h1 className="text-2xl font-semibold">
+                {contentType === 'both' ? 'Video Dubbing & Lip Sync' : 'Video Translation'}
+            </h1>
+            <p className="text-gray-500">
+                {contentType === 'both' ? 'Translate, voice-over, and lip-sync your video' : 'Translate the audio track of your video'}
+            </p>
+        </div>
         <Button variant="outline" onClick={handleReset}>Change Type</Button>
       </div>
       {error && <div className="px-6 pt-6"><Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert></div>}
@@ -259,7 +277,7 @@ const ContentTranslator = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <h3 className="font-medium text-lg mb-2">Original Video</h3>
-            <div className="w-full bg-gray-100 rounded-lg aspect-square max-h-[calc(50vh-6rem)] flex items-center justify-center">
+            <div className="w-full bg-gray-100 rounded-lg aspect-video max-h-[calc(50vh-8rem)] flex items-center justify-center overflow-hidden">
               {fileUrl ? (<video ref={originalMediaRef} src={fileUrl} className="w-full h-full object-contain" controls />)
                : (<label className="cursor-pointer flex flex-col items-center justify-center p-8 h-full"><Upload className="w-12 h-12 text-fuchsia-600" /><span className="text-gray-600 mt-2">Upload Video</span><input type="file" className="hidden" accept="video/*" onChange={handleFileUpload} /></label>)}
             </div>
@@ -267,7 +285,7 @@ const ContentTranslator = () => {
           </div>
           <div>
             <h3 className="font-medium text-lg mb-2">{targetLanguage && LANGUAGES[targetLanguage] ? `${LANGUAGES[targetLanguage].name} Translation` : 'Translated Video'}</h3>
-            <div className="w-full bg-gray-100 rounded-lg aspect-square max-h-[calc(50vh-6rem)] flex items-center justify-center">
+            <div className="w-full bg-gray-100 rounded-lg aspect-video max-h-[calc(50vh-8rem)] flex items-center justify-center overflow-hidden">
               {result ? (<video ref={translatedMediaRef} src={result} className="w-full h-full object-contain" controls />)
                : (<div className="flex flex-col items-center justify-center text-gray-500 p-8 h-full">{isProcessing ? <><Loader2 className="w-10 h-10 animate-spin text-fuchsia-600 mb-3" /><div><p className="text-center">{processPhase || "Processing..."}</p>{progress > 0 && <Progress value={progress} className="w-full mt-2 [&>div]:bg-fuchsia-600"/>}</div></> : "Translated video appears here"}</div>)}
             </div>
@@ -275,15 +293,43 @@ const ContentTranslator = () => {
         </div>
         {fileUrl && (
           <div className="space-y-4 pt-4 border-t mt-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center"> 
               <Select value={targetLanguage} onValueChange={setTargetLanguage} disabled={isProcessing}>
                 <SelectTrigger className="w-full"><SelectValue placeholder="Select target language" /></SelectTrigger>
                 <SelectContent>{Object.entries(LANGUAGES).map(([code, { name, flag }]) => (<SelectItem key={code} value={code}>{`${flag} ${name}`}</SelectItem>))}</SelectContent>
               </Select>
-              <Button className="w-full bg-fuchsia-600 hover:bg-fuchsia-700" disabled={!file || !targetLanguage || isProcessing} onClick={handleTranslate}>
-                {isProcessing ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{processPhase || "Processing..."}</> : 'Translate & Synchronize'}
-              </Button>
+              
+              {/* --- LIP SYNC TOGGLE (HTML Checkbox) --- */}
+              {(contentType === 'video' || contentType === 'both') && (
+                <div className="flex items-center space-x-2 justify-self-start md:justify-self-end py-2">
+                  <input
+                    type="checkbox"
+                    id="lip-sync-toggle"
+                    checked={applyLipSync}
+                    onChange={(e) => setApplyLipSync(e.target.checked)}
+                    disabled={isProcessing}
+                    className="form-checkbox h-5 w-5 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500 cursor-pointer"
+                  />
+                  <label htmlFor="lip-sync-toggle" className="text-sm font-medium text-gray-700 whitespace-nowrap flex items-center cursor-pointer">
+                    Apply Lip Sync <Zap size={16} className={`ml-1 ${applyLipSync ? "text-yellow-500" : "text-gray-400"}`}/>
+                  </label>
+                </div>
+              )}
             </div>
+            <Button 
+              className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white" 
+              disabled={!file || !targetLanguage || isProcessing} 
+              onClick={handleTranslate}
+            >
+              {isProcessing 
+                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{processPhase || "Processing..."}</> 
+                : (contentType === 'both' && applyLipSync) 
+                  ? 'Translate & Lip Sync Video' 
+                  : (contentType === 'video' && applyLipSync)
+                    ? 'Translate Audio & Lip Sync' 
+                    : 'Translate Video Audio'
+              }
+            </Button>
           </div>
         )}
         {resultTranscripts.source && (
