@@ -52,6 +52,7 @@
       4,
       4
     ],
-    "gin_channels": 256
+    "gin_channels": 256,
+    "contentvec_final_proj": false
   }
 }

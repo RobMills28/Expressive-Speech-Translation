@@ -1,232 +1,185 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 import os
 import time
 import tempfile
 import torch
 import soundfile as sf
 import shutil
-from typing import Optional
+from typing import Optional, Tuple, Generator 
 import logging
+import librosa 
+import numpy as np 
+import torch.nn.functional as F 
+import json 
+from pathlib import Path
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+from openvoice.api import ToneColorConverter
+from openvoice import se_extractor 
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
 logger = logging.getLogger(__name__)
-
-# Initialize the API
 app = FastAPI(title="OpenVoice API", description="API for voice cloning with OpenVoice")
 
-# Global variables for models
-tone_converter = None
-source_se = None
+tone_converter_model: Optional[ToneColorConverter] = None
+default_source_se: Optional[torch.Tensor] = None 
 
 @app.on_event("startup")
 async def startup_event():
-   """Initialize OpenVoice models on startup"""
-   global tone_converter, source_se
+   global tone_converter_model, default_source_se
+   current_device = "cpu" 
    try:
-       from openvoice.api import ToneColorConverter
-       import json
-       import torch.nn.functional as F
-       
-       # Initialize models
-       logger.info("Loading OpenVoice models...")
-       config_path = "/app/checkpoints_v2/converter/config.json"
-       checkpoint_path = "/app/checkpoints_v2/converter/checkpoint.pth"
-       
-       # Check if config exists and modify it for compatibility
-       if os.path.exists(config_path):
-           with open(config_path, 'r') as f:
-               config = json.load(f)
-               
-           # Add the fix from GitHub issue
-           if "model" in config and "contentvec_final_proj" not in config["model"]:
-               logger.info("Adding 'contentvec_final_proj': false to config")
-               config["model"]["contentvec_final_proj"] = False
-               
-           # Save the modified config
-           with open(config_path, 'w') as f:
-               json.dump(config, f, indent=4)
-               
-           logger.info("Modified config saved")
-       
-       # Load ToneColorConverter with modified config
-       tone_converter = ToneColorConverter(config_path, device="cpu")
-       tone_converter.load_ckpt(checkpoint_path)
-       
-       # Try to load speaker embedding
-       try:
-           speaker_path = "/app/checkpoints_v2/base_speakers/ses/en-us.pth"
-           if os.path.exists(speaker_path):
-               # Load the embedding with proper error handling
-               source_se = torch.load(speaker_path, map_location="cpu")
-               
-               # Ensure correct shape
-               if source_se.shape != (1, 256):
-                   if source_se.numel() >= 256:
-                       # Reshape to the expected size
-                       source_se = source_se.flatten()[:256].reshape(1, 256)
-                       logger.info(f"Reshaped source_se to [1, 256]")
-                   else:
-                       logger.error(f"Source SE has insufficient elements: {source_se.numel()}, needed 256")
-                       raise ValueError("Insufficient elements in speaker embedding")
-               
-               # Normalize the embedding
-               source_se = F.normalize(source_se, p=2, dim=1)
-               logger.info(f"Speaker embedding loaded and normalized, shape: {source_se.shape}")
+       logger.info(f"OpenVoice API starting up. Attempting to load models on device: {current_device}")
+       config_path_str = "/app/checkpoints_v2/converter/config.json" 
+       checkpoint_path_str = "/app/checkpoints_v2/converter/checkpoint.pth"
+       config_path = Path(config_path_str); checkpoint_path = Path(checkpoint_path_str)
+       if not config_path.exists(): raise FileNotFoundError(f"Config not found: {config_path_str}")
+       if not checkpoint_path.exists(): raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path_str}")
+       logger.info(f"Reading ToneColorConverter config from: {config_path_str}")
+       with open(config_path, 'r') as f: config = json.load(f)
+       if "model" in config and "contentvec_final_proj" not in config["model"]:
+           logger.warning("! 'contentvec_final_proj' missing in config.json. MANUAL EDIT OF HOST FILE NEEDED & REBUILD DOCKER !")
+       else: logger.info("Converter config check: 'contentvec_final_proj' key ok.")
+       tone_converter_model = ToneColorConverter(str(config_path), device=current_device)
+       tone_converter_model.load_ckpt(str(checkpoint_path))
+       logger.info(f"ToneColorConverter model loaded successfully.")
+       default_speaker_path_str = "/app/checkpoints_v2/base_speakers/ses/en-us.pth" 
+       default_speaker_path = Path(default_speaker_path_str)
+       if default_speaker_path.exists():
+           logger.info(f"Loading default source SE from: {default_speaker_path_str}")
+           default_source_se_raw = torch.load(default_speaker_path, map_location=current_device)
+           if default_source_se_raw.shape == (1, 256): default_source_se = F.normalize(default_source_se_raw, p=2, dim=1)
+           elif default_source_se_raw.numel() >= 256: 
+                default_source_se_flat = default_source_se_raw.flatten()[:256].reshape(1, 256)
+                default_source_se = F.normalize(default_source_se_flat, p=2, dim=1)
+                logger.info(f"Reshaped default_source_se to {default_source_se.shape}")
            else:
-               logger.warning(f"Speaker embedding file not found: {speaker_path}")
-               raise FileNotFoundError(f"Speaker embedding not found")
-       except Exception as e:
-           logger.error(f"Failed to load speaker embedding: {str(e)}")
-           # Create a normalized placeholder embedding as fallback
-           source_se = torch.randn(1, 256)
-           source_se = F.normalize(source_se, p=2, dim=1)
-           logger.info(f"Created fallback speaker embedding with shape {source_se.shape}")
-           
-       logger.info("Models loaded successfully")
-           
+               logger.warning(f"Default SE bad shape: {default_source_se_raw.shape}. Using random."); default_source_se = F.normalize(torch.randn(1, 256, device=current_device), p=2, dim=1)
+           logger.info(f"Default source SE loaded, shape: {default_source_se.shape}")
+       else:
+           logger.warning(f"Default source SE file NOT FOUND: {default_speaker_path_str}. Using random."); default_source_se = F.normalize(torch.randn(1, 256, device=current_device), p=2, dim=1) 
+           logger.info(f"Created fallback default_source_se, shape: {default_source_se.shape}")
+       logger.info("OpenVoice API: Startup complete.")
    except Exception as e:
-       logger.error(f"Error initializing OpenVoice: {str(e)}")
-       raise
+       logger.error(f"CRITICAL STARTUP FAILURE OpenVoice API: {str(e)}", exc_info=True)
+       tone_converter_model = None; default_source_se = None
 
 @app.get("/")
-async def root():
-    """Root endpoint to check if the API is running"""
-    return {"message": "OpenVoice API is running"}
+async def root(): return {"message": "OpenVoice API is running"}
 
 @app.get("/status")
 async def status():
-    """Check if the models are loaded"""
-    return {
-        "tone_converter_loaded": tone_converter is not None,
-        "source_se_loaded": source_se is not None
-    }
+    tone_converter_loaded_flag = tone_converter_model is not None
+    default_source_se_loaded_flag = default_source_se is not None
+    if tone_converter_loaded_flag and default_source_se_loaded_flag:
+        return {"tone_converter_model_loaded": True, "default_source_se_loaded": True, "message": "Models loaded."}
+    else: 
+        logger.error(f"OpenVoice API /status check: Models NOT loaded. Converter: {tone_converter_loaded_flag}, DefaultSE: {default_source_se_loaded_flag}")
+        raise HTTPException(status_code=503, detail="Models not loaded.")
+
+def _save_upload_file_to_temp(upload_file: UploadFile, temp_dir_path: Path, desired_filename: str) -> Path: # Takes Path for temp_dir_path
+    temp_file_path = temp_dir_path / desired_filename
+    try:
+        with open(temp_file_path, "wb") as f_buffer: shutil.copyfileobj(upload_file.file, f_buffer)
+        logger.info(f"Saved '{upload_file.filename}' to '{temp_file_path}', size: {temp_file_path.stat().st_size}")
+        return temp_file_path
+    except Exception as e: logger.error(f"Failed to save {upload_file.filename} to {temp_file_path}: {e}", exc_info=True); raise
+
+def _preprocess_audio_for_openvoice(audio_path: Path, temp_dir_path: Path, filename_prefix: str) -> Path: # Takes Path for temp_dir_path
+    try:
+        logger.info(f"Preprocessing OV audio: {audio_path.name}")
+        audio_np, sr = librosa.load(str(audio_path), sr=16000, mono=True)
+        if len(audio_np) < 1600: raise ValueError(f"Audio '{audio_path.name}' too short (min 0.1s).")
+        processed_path = temp_dir_path / f"{filename_prefix}_processed_16k.wav"
+        sf.write(str(processed_path), audio_np, 16000)
+        logger.info(f"Processed OV audio saved: {processed_path} (Size: {processed_path.stat().st_size})")
+        return processed_path
+    except Exception as e: logger.error(f"Error processing OV audio {audio_path}: {e}", exc_info=True); raise ValueError(f"Failed to process '{audio_path.name}': {e}")
+
+async def _cleanup_temp_dir_async(temp_dir_path_str: str): # Takes string path for safety with background task
+    try:
+        if os.path.exists(temp_dir_path_str): 
+            shutil.rmtree(temp_dir_path_str)
+            logger.info(f"Async cleanup: Successfully cleaned up temp directory: {temp_dir_path_str}")
+    except Exception as e:
+        logger.error(f"Async cleanup: Error cleaning up temp directory {temp_dir_path_str}: {e}", exc_info=True)
 
 @app.post("/clone-voice")
 async def clone_voice(
-   audio_file: UploadFile = File(...),
-   target_file: Optional[UploadFile] = None
+   reference_audio_file: UploadFile = File(..., description="Audio file of the voice to clone."),
+   content_audio_file: UploadFile = File(..., description="Audio file whose content will be spoken in the cloned voice.")
 ):
-   """
-   Clone a voice from an audio file
+   req_id = str(time.time())[-5:] 
+   logger.info(f"--- [{req_id}] /clone-voice endpoint CALLED ---")
+   logger.info(f"[{req_id}] Reference: {reference_audio_file.filename}, Type: {reference_audio_file.content_type}")
+   logger.info(f"[{req_id}] Content: {content_audio_file.filename}, Type: {content_audio_file.content_type}")
+
+   if not tone_converter_model or default_source_se is None:
+       logger.error(f"[{req_id}] Models not loaded."); raise HTTPException(status_code=503, detail="Models not available.")
    
-   - audio_file: The source audio file to use as reference
-   - target_file: (Optional) Audio file to convert, if not provided, the source will be used
-   """
-   if tone_converter is None or source_se is None:
-       raise HTTPException(status_code=503, detail="Models not loaded. Please check the logs.")
+   request_temp_dir_str = tempfile.mkdtemp(prefix=f"ov_clone_req_{req_id}_")
+   request_temp_dir = Path(request_temp_dir_str) # Convert to Path object for use
+   logger.info(f"[{req_id}] Created temporary directory for request: {request_temp_dir}")
    
-   # Create temp directory in a persistent location
-   persistent_dir = "/app/processed"
-   os.makedirs(persistent_dir, exist_ok=True)
-   timestamp = int(time.time())
-   temp_dir = os.path.join(persistent_dir, f"request_{timestamp}")
-   os.makedirs(temp_dir, exist_ok=True)
-   logger.info(f"Created persistent directory: {temp_dir}")
-   
+   output_path: Optional[Path] = None # Define output_path here to ensure it's in scope for FileResponse
+
    try:
-       # Save source audio to a file
-       source_path = os.path.join(temp_dir, "source.wav")
-       source_content = await audio_file.read()
-       logger.info(f"Received source audio: {len(source_content)} bytes")
+       raw_ref_path = _save_upload_file_to_temp(reference_audio_file, request_temp_dir, "ref_raw.wav")
+       proc_ref_path = _preprocess_audio_for_openvoice(raw_ref_path, request_temp_dir, "ref_16k")
        
-       with open(source_path, "wb") as f:
-           f.write(source_content)
+       raw_content_path = _save_upload_file_to_temp(content_audio_file, request_temp_dir, "content_raw.wav")
+       proc_content_path = _preprocess_audio_for_openvoice(raw_content_path, request_temp_dir, "content_16k")
        
-       # Use source as target if no target provided
-       if target_file is None:
-           target_path = source_path
-           logger.info("Using source as target")
-       else:
-           # Save target file
-           target_path = os.path.join(temp_dir, "target.wav")
-           target_content = await target_file.read()
-           logger.info(f"Received target audio: {len(target_content)} bytes")
-           
-           with open(target_path, "wb") as f:
-               f.write(target_content)
+       logger.info(f"[{req_id}] Extracting target SE from: {proc_ref_path.name}")
+       se_out_dir = request_temp_dir / "se_ref_output"; se_out_dir.mkdir(exist_ok=True) # Use Path object
        
-       # Process audio to ensure correct format
-       import librosa
-       try:
-           target_audio, sr = librosa.load(target_path, sr=16000, mono=True)
-           logger.info(f"Loaded target audio: {len(target_audio)} samples")
-           
-           # Check for very short audio
-           if len(target_audio) < 8000:
-               logger.error(f"Audio too short: {len(target_audio)} samples")
-               raise HTTPException(status_code=400, detail="Audio too short for processing")
-               
-           processed_path = os.path.join(temp_dir, "processed.wav")
-           sf.write(processed_path, target_audio, 16000)
-           logger.info(f"Saved processed audio: {os.path.getsize(processed_path)} bytes")
-           
-           # Use the processed file
-           target_path = processed_path
-       except Exception as e:
-           logger.error(f"Audio processing error: {str(e)}")
-           raise HTTPException(status_code=400, detail=f"Failed to process audio: {str(e)}")
+       tgt_se_tensor, _ = se_extractor.get_se(str(proc_ref_path), tone_converter_model, vad=True, target_dir=str(se_out_dir))
+
+       if tgt_se_tensor is None or tgt_se_tensor.numel() == 0: raise ValueError("Reference SE extraction failed.")
+       if tgt_se_tensor.shape != (1,256):
+           if tgt_se_tensor.numel() >= 256: tgt_se_tensor = tgt_se_tensor.flatten()[:256].reshape(1,256)
+           else: raise ValueError(f"Reference SE insufficient elements: {tgt_se_tensor.numel()}")
+       tgt_se_norm = F.normalize(tgt_se_tensor.to(default_source_se.device), p=2, dim=1) 
+       logger.info(f"[{req_id}] Target SE extracted & normalized, shape: {tgt_se_norm.shape}")
+
+       src_se_3d = default_source_se.unsqueeze(2) if default_source_se.ndim == 2 else default_source_se
+       tgt_se_3d = tgt_se_norm.unsqueeze(2) if tgt_se_norm.ndim == 2 else tgt_se_norm
+       if src_se_3d.shape!=(1,256,1) or tgt_se_3d.shape!=(1,256,1): raise HTTPException(status_code=500, detail="Internal SE shape error.")
+
+       output_path = request_temp_dir / "cloned_output.wav" # output_path is defined here
+       logger.info(f"[{req_id}] Converting '{proc_content_path.name}' to '{output_path.name}' using target SE from '{reference_audio_file.filename}'")
+       tone_converter_model.convert(str(proc_content_path), src_se_3d, tgt_se_3d, str(output_path), message="@MyShell")
        
-       # Set output path
-       output_path = os.path.join(temp_dir, "output.wav")
-       conversion_success = False
+       if not output_path.exists() or output_path.stat().st_size < 1000: 
+           logger.error(f"[{req_id}] Cloning produced invalid output. File: {output_path}, Exists: {output_path.exists()}, Size: {output_path.stat().st_size if output_path.exists() else 'N/A'}")
+           raise HTTPException(status_code=500, detail="Cloning produced invalid output.")
        
-       # Just try with 3D shape since we know it works
-       # Create a 3D version
-       reshaped_se = source_se.unsqueeze(2)  # [1, 256] -> [1, 256, 1]
-       logger.info(f"Attempting conversion with 3D shape: {reshaped_se.shape}")
+       logger.info(f"[{req_id}] Cloning successful! Output generated at: {output_path}")
        
-       try:
-           # Perform the conversion
-           tone_converter.convert(
-               audio_src_path=target_path,
-               src_se=reshaped_se,
-               tgt_se=reshaped_se,
-               output_path=output_path
-           )
-           
-           # Check if output file exists
-           if os.path.exists(output_path) and os.path.getsize(output_path) > 1000:
-               logger.info(f"Conversion successful! Output at {output_path}")
-               conversion_success = True
-           else:
-               logger.error(f"Output file missing or too small: {os.path.exists(output_path)}")
-       except Exception as e:
-           logger.error(f"Conversion error: {str(e)}")
-       
-       # If conversion failed, use a fallback
-       if not conversion_success:
-           logger.warning("Using fallback audio (processed original)")
-           # Create a simple sine wave as fallback
-           import numpy as np
-           fallback_path = os.path.join(temp_dir, "fallback.wav")
-           duration = 3  # seconds
-           sr_fallback = 16000
-           t = np.linspace(0, duration, sr_fallback * duration)
-           audio_fallback = np.sin(2 * np.pi * 440 * t)  # 440 Hz sine wave
-           sf.write(fallback_path, audio_fallback, sr_fallback)
-           output_path = fallback_path
-       
-       # Verify output file exists
-       if not os.path.exists(output_path):
-           raise HTTPException(status_code=500, detail="Failed to generate output file")
-           
-       if os.path.getsize(output_path) < 1000:
-           logger.error(f"Output file too small: {os.path.getsize(output_path)} bytes")
-           raise HTTPException(status_code=500, detail="Generated output file is too small")
-       
-       logger.info(f"Returning output file: {output_path} ({os.path.getsize(output_path)} bytes)")
-           
-       # Return the audio file - the file is in a persistent location so it won't be deleted
-       return FileResponse(
-           output_path, 
+       # The file needs to be read and sent, then the directory can be cleaned up.
+       # Use a generator to stream the file and clean up afterwards.
+       async def file_iterator_with_cleanup(file_path_to_stream: Path, dir_to_clean: str) -> Generator[bytes, None, None]:
+           try:
+               with open(file_path_to_stream, "rb") as f:
+                   while chunk := f.read(65536): # Read in 64KB chunks
+                       yield chunk
+           finally:
+               await _cleanup_temp_dir_async(dir_to_clean) # Await the async cleanup
+
+       return StreamingResponse(
+           file_iterator_with_cleanup(output_path, request_temp_dir_str), 
            media_type="audio/wav",
-           filename="cloned_voice.wav"
+           headers={"Content-Disposition": f"attachment; filename=cloned_voice_output.wav"}
        )
-   
-   except HTTPException:
-       raise
-   except Exception as e:
-       logger.error(f"Unexpected error: {str(e)}")
-       raise HTTPException(status_code=500, detail=f"Voice conversion failed: {str(e)}")
+
+   except HTTPException: 
+       await _cleanup_temp_dir_async(request_temp_dir_str) # Ensure cleanup on HTTPException before re-raising
+       raise 
+   except ValueError as ve: 
+       logger.warning(f"[{req_id}] Input error: {str(ve)}")
+       await _cleanup_temp_dir_async(request_temp_dir_str)
+       raise HTTPException(status_code=400, detail=f"Input error: {str(ve)}")
+   except Exception as e: 
+       logger.error(f"[{req_id}] Critical error in /clone-voice: {str(e)}", exc_info=True)
+       await _cleanup_temp_dir_async(request_temp_dir_str) 
+       raise HTTPException(status_code=500, detail="Server error during cloning.")
