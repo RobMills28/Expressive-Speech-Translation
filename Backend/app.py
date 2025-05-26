@@ -9,17 +9,12 @@ import logging
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from pathlib import Path
 import gc
-import warnings # Import the warnings module
+import warnings
 
-# --- Suppress Specific FutureWarning categories ---
 warnings.filterwarnings("ignore", category=FutureWarning, module="espnet2")
 warnings.filterwarnings("ignore", message=".*torch.cuda.amp.autocast.*is deprecated.*", category=FutureWarning)
 warnings.filterwarnings("ignore", message=".*You are using `torch.load` with `weights_only=False`.*", category=FutureWarning)
 warnings.filterwarnings("ignore", message=".*transformers.deepspeed module is deprecated.*", category=FutureWarning)
-# The "Failed to import Flash Attention" is a UserWarning or similar, not a FutureWarning.
-# If you want to suppress it:
-# warnings.filterwarnings("ignore", message=".*Failed to import Flash Attention.*")
-# However, it's often better to address the underlying optional dependency if possible or confirm it's truly benign.
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -71,7 +66,7 @@ def initial_logging_setup():
 
     libraries_config = {
         'boto3': logging.DEBUG,
-        'botocore': logging.DEBUG, # This includes botocore.credentials
+        'botocore': logging.DEBUG,
         's3transfer': logging.INFO,
         'werkzeug': logging.WARNING,
         'pydub': logging.WARNING,
@@ -89,14 +84,8 @@ def initial_logging_setup():
         logging.getLogger(lib_name).setLevel(level)
         logging.debug(f"Initial Logging: Set log level for '{lib_name}' to {logging.getLevelName(level)}.")
 
-    # **** KEY CHANGE HERE ****
-    # Explicitly set the log level for your application's 'services' package logger.
-    # This ensures all loggers like 'services.cascaded_backend', 'services.audio_processor'
-    # will process DEBUG messages and pass them to the root handlers.
     logging.getLogger('services').setLevel(logging.DEBUG)
     logging.debug(f"Initial Logging: Set log level for parent 'services' logger to DEBUG.")
-    # You can also be more specific if needed:
-    # logging.getLogger('services.cascaded_backend').setLevel(logging.DEBUG)
 
     logging.info("Global logging setup complete from app.py. Root effective level: %s. Console set to: %s.",
                  logging.getLevelName(logging.getLogger().getEffectiveLevel()),
@@ -104,13 +93,10 @@ def initial_logging_setup():
 
 initial_logging_setup()
 
-logger = logging.getLogger(__name__) # For app.py ('__main__')
+logger = logging.getLogger(__name__)
 logger.info("--- app.py module logger initialized ---")
 
-# ... (rest of your app.py imports and code remain IDENTICAL to the last version I provided that fixed the f-string error) ...
-# Standard library imports
 import hashlib
-# import warnings # Already imported above
 import tempfile
 import json
 import base64
@@ -118,8 +104,6 @@ import io
 import traceback
 from datetime import datetime
 import uuid
-
-# Third-party library imports
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 import psutil
@@ -135,7 +119,13 @@ from dotenv import load_dotenv
 logger.info("--- app.py: Starting service module imports ---")
 from services.audio_link_routes import handle_audio_url_processing
 from services.audio_processor import AudioProcessor
-from services.model_manager import ModelManager, DEVICE as APP_WIDE_DEVICE
+# Removed ModelManager import as it's being deleted or its SeamlessM4T parts are.
+# from services.model_manager import ModelManager, DEVICE as APP_WIDE_DEVICE
+# Determine APP_WIDE_DEVICE differently or if it was only for ModelManager, it might not be needed here.
+# For now, let's define a default APP_WIDE_DEVICE directly in app.py if cascaded_backend needs it.
+APP_WIDE_DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+logger.info(f"Application-wide ML device set to: {APP_WIDE_DEVICE}")
+
 from services.error_handler import ErrorHandler
 from services.utils import cleanup_file, performance_logger
 from services.video_routes import handle_video_processing
@@ -164,7 +154,8 @@ UPLOAD_FOLDER = Path('uploads/podcasts')
 ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a'}
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
-logger.info("Creating ModelManager instance..."); model_manager_instance = ModelManager()
+# Removed ModelManager instantiation
+# logger.info("Creating ModelManager instance..."); model_manager_instance = ModelManager()
 logger.info("Creating TranslationManager instance..."); translation_manager = TranslationManager()
 
 hf_auth_token = os.getenv('HUGGINGFACE_TOKEN')
@@ -215,7 +206,8 @@ def after_request_middleware(response: Response) -> Response:
 def central_error_handler(e: Exception):
     error_response, status_code = ErrorHandler.handle_error(e); return error_response, status_code
 
-# --- Routes ---
+# --- Routes (Copied from your provided app.py, ensure they are complete and correct) ---
+# (All your routes - /translate, /process-video, etc. - remain here, unchanged from the last version I provided)
 @app.route('/translate', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute")
 @performance_logger
@@ -358,16 +350,20 @@ def upload_podcast_route():
 
 @app.route('/health/model', methods=['GET'])
 def model_health_route():
-    return handle_model_health(APP_WIDE_DEVICE, translation_manager, model_manager_instance)
+    # Pass None for model_manager_instance as it's being removed
+    return handle_model_health(APP_WIDE_DEVICE, translation_manager, None)
 
 
 # --- Graceful Shutdown Logic ---
 def _app_cleanup_tasks():
     logger.info("Shutdown: Cleaning up application resources...")
     try:
-        if model_manager_instance and hasattr(model_manager_instance, '_models_loaded') and model_manager_instance._models_loaded:
-            logger.info("Cleaning up ModelManager (SeamlessM4T)..."); model_manager_instance.cleanup()
-        else: logger.info("ModelManager (for optional on-demand models like SeamlessM4T) not loaded or already cleaned, skipping its cleanup.")
+        # Removed ModelManager cleanup as it's being deleted
+        # if model_manager_instance and hasattr(model_manager_instance, '_models_loaded') and model_manager_instance._models_loaded:
+        #     logger.info("Cleaning up ModelManager (SeamlessM4T)..."); model_manager_instance.cleanup()
+        # else: logger.info("ModelManager (for optional on-demand models like SeamlessM4T) not loaded or already cleaned, skipping its cleanup.")
+        logger.info("ModelManager cleanup skipped as it has been removed from the application.")
+
         if 'translation_manager' in globals() and translation_manager.backends:
             logger.info("Cleaning up translation backends...")
             for name, backend in translation_manager.get_available_backends().items():
@@ -408,7 +404,8 @@ if __name__ == '__main__':
         except Exception as e_init_check:
             logger.critical(f"CRITICAL FAILURE during default backend get/initialization check: {e_init_check}", exc_info=True)
             sys.exit(1)
-        logger.info("ModelManager (for optional on-demand models like SeamlessM4T) instance confirmed created.")
+        # Removed ModelManager log message
+        # logger.info("ModelManager (for optional on-demand models like SeamlessM4T) instance confirmed created.")
         logger.info(f"Flask app starting on port 5001. ML Processing Device: {APP_WIDE_DEVICE}")
         app.run(host='0.0.0.0', port=5001, debug=False, use_reloader=False, threaded=True)
     except SystemExit:
