@@ -6905,3 +6905,50 @@ Traceback (most recent call last):
 NameError: name 'uuid' is not defined
 2025-05-23 12:00:44,039 - services.video_routes - ERROR - [video_routes.py:199] - [ead57a7b-7596-4ac2-9a95-66a136ddd9a9] Wav2Lip process failed with code -9.
 2025-05-23 12:25:17,721 - services.video_routes - ERROR - [video_routes.py:199] - [1c6d9719-4423-4b56-8a97-bd13b830b808] Wav2Lip process failed with code -2.
+2025-05-23 22:31:56,319 - services.cascaded_backend - ERROR - [cascaded_backend.py:250] - OpenVoice API error: 422 - {"detail":[{"type":"missing","loc":["body","reference_audio_file"],"msg":"Field required","input":null},{"type":"missing","loc":["body","content_audio_file"],"msg":"Field required","input":null}]}
+2025-05-23 23:27:39,748 - services.cascaded_backend - ERROR - [cascaded_backend.py:476] - [.59304] Error in translate_speech pipeline: NllbTokenizerFast has no attribute lang_code_to_id
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/services/cascaded_backend.py", line 419, in translate_speech
+    forced_bos_token_id = self.translator_tokenizer.lang_code_to_id.get(tgt_nllb_code)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/transformers/tokenization_utils_base.py", line 1108, in __getattr__
+    raise AttributeError(f"{self.__class__.__name__} has no attribute {key}")
+AttributeError: NllbTokenizerFast has no attribute lang_code_to_id
+2025-05-23 23:37:27,551 - services.cascaded_backend - ERROR - [cascaded_backend.py:304] - OpenVoice API /clone-voice error: 422 - Detail: [{'type': 'missing', 'loc': ['body', 'audio_file'], 'msg': 'Field required', 'input': None}, {'type': 'missing', 'loc': ['body', 'target_file'], 'msg': 'Field required', 'input': None}]
+2025-05-23 23:56:11,293 - services.cascaded_backend - ERROR - [cascaded_backend.py:308] - OpenVoice API /clone-voice error: 500 - Detail: Unexpected server error during voice cloning.
+2025-05-23 23:56:30,916 - services.cascaded_backend - ERROR - [cascaded_backend.py:308] - OpenVoice API /clone-voice error: 500 - Detail: Unexpected server error during voice cloning.
+2025-05-24 00:06:13,807 - services.video_routes - ERROR - [video_routes.py:199] - [89c32fde-7c88-4ae7-b6ca-f437c75b77cf] Wav2Lip process failed with code -2.
+2025-05-24 00:09:26,999 - services.cascaded_backend - ERROR - [cascaded_backend.py:308] - OpenVoice API /clone-voice error: 422 - Detail: [{'type': 'missing', 'loc': ['body', 'reference_audio_file'], 'msg': 'Field required', 'input': None}, {'type': 'missing', 'loc': ['body', 'content_audio_file'], 'msg': 'Field required', 'input': None}]
+2025-05-24 00:43:44,350 - services.cascaded_backend - ERROR - [cascaded_backend.py:291] - [cloned_final_430011] OpenVoice API Error 500 - Detail: Server error during cloning.
+2025-05-24 01:04:42,006 - services.cascaded_backend - ERROR - [cascaded_backend.py:220] - [046564] OpenVoice API Error 500 - Detail: Server error during cloning.
+2025-05-24 23:01:01,580 - services.cascaded_backend - ERROR - [cascaded_backend.py:220] - [202821] OpenVoice API Error 500 - Detail: Server error during cloning.
+2025-05-25 10:48:51,343 - services.cascaded_backend - ERROR - [cascaded_backend.py:220] - [133079] OpenVoice API Error 500 - Response: Internal Server Error
+2025-05-25 11:18:44,809 - services.cascaded_backend - ERROR - [cascaded_backend.py:220] - [919734] OpenVoice API Error 500 - Detail: Server error during cloning.
+2025-05-25 11:38:40,957 - services.cascaded_backend - ERROR - [cascaded_backend.py:150] - Polly TTS failed for 'por': An error occurred (ValidationException) when calling the SynthesizeSpeech operation: The selected engine is not supported in this region
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/services/cascaded_backend.py", line 139, in _generate_base_tts_audio_with_polly
+    resp = polly_client.synthesize_speech(**req_params)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/botocore/client.py", line 570, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/botocore/context.py", line 124, in wrapper
+    return func(*args, **kwargs)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/botocore/client.py", line 1031, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (ValidationException) when calling the SynthesizeSpeech operation: The selected engine is not supported in this region
+2025-05-25 11:50:06,819 - services.cascaded_backend - ERROR - [cascaded_backend.py:150] - Polly TTS failed for 'por': An error occurred (ValidationException) when calling the SynthesizeSpeech operation: The selected engine is not supported in this region
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/services/cascaded_backend.py", line 139, in _generate_base_tts_audio_with_polly
+    resp = polly_client.synthesize_speech(**req_params)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/botocore/client.py", line 570, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/botocore/context.py", line 124, in wrapper
+    return func(*args, **kwargs)
+  File "/opt/anaconda3/envs/speech_env/lib/python3.9/site-packages/botocore/client.py", line 1031, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (ValidationException) when calling the SynthesizeSpeech operation: The selected engine is not supported in this region
+2025-05-26 09:01:14,637 - services.cascaded_backend.boto3_init - ERROR - [cascaded_backend.py:39] - Failed to import boto3: No module named 'boto3'
+Traceback (most recent call last):
+  File "/Users/robmills/Documents/Magenta AI/Backend/services/cascaded_backend.py", line 23, in <module>
+    import boto3
+ModuleNotFoundError: No module named 'boto3'
+2025-05-26 09:14:04,122 - services.cascaded_backend.boto3_init - ERROR - [cascaded_backend.py:38] - Failed to import boto3: No module named 'boto3'. AWS Polly will be unavailable.
+2025-05-26 09:14:29,113 - services.cascaded_backend.boto3_init - ERROR - [cascaded_backend.py:38] - Failed to import boto3: No module named 'boto3'. AWS Polly will be unavailable.
