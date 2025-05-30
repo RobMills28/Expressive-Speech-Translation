@@ -1,0 +1,49 @@
+# Dockerfile.similarity
+FROM python:3.9-slim-buster
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV OMP_NUM_THREADS=1 
+
+# --- ATTEMPT TO PRELOAD LIBGOMP ---
+# This path might vary by architecture (aarch64 vs amd64).
+# For a python:3.9-slim-buster (Debian Buster), libgomp.so.1 is usually in /usr/lib/x86_64-linux-gnu/ or /usr/lib/aarch64-linux-gnu/
+# We install libgomp1 below, which should place it in a standard path.
+# If errors persist, you might need to find the exact path after installation and set LD_PRELOAD.
+# For now, let's rely on the standard installation path.
+# ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgomp.so.1 # Example for amd64, adjust if needed after checking the built image
+
+WORKDIR /app
+
+# Install system dependencies: libsndfile1 (for soundfile) and libgomp1 (for PyTorch/Torchaudio)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libsndfile1 \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PyTorch and torchaudio (CPU version is fine for this)
+RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install SpeechBrain, scikit-learn, FastAPI, Uvicorn, and other dependencies
+RUN pip install --no-cache-dir \
+    speechbrain \
+    scikit-learn \
+    fastapi \
+    uvicorn[standard] \
+    python-multipart \
+    soundfile \
+    librosa 
+
+# Copy the similarity analyzer script and the API script
+COPY ./Backend/services/voice_similarity_analyzer.py /app/voice_similarity_analyzer.py
+COPY ./Docker/similarity_api.py /app/similarity_api.py
+
+# Create a directory for pretrained models that SpeechBrain will download
+RUN mkdir -p /app/pretrained_models
+ENV SPEECHBRAIN_PRETRAINED_PATH=/app/pretrained_models 
+# This tells SpeechBrain where to cache models inside the container
+
+EXPOSE 8001
+
+CMD ["uvicorn", "similarity_api:app", "--host", "0.0.0.0", "--port", "8001", "--log-level", "info"]
