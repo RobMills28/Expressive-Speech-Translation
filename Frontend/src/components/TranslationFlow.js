@@ -19,6 +19,7 @@ const LANGUAGES = {
   'jpn': { name: 'Japanese', flag: '🇯🇵' },
   'cmn': { name: 'Chinese (Simplified)', flag: '🇨🇳' },
   'ukr': { name: 'Ukrainian', flag: '🇺🇦' }
+  // Add other languages from VideoSyncInterface if needed for consistency
 };
 
 const ContentTranslator = () => {
@@ -33,7 +34,8 @@ const ContentTranslator = () => {
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const [resultTranscripts, setResultTranscripts] = useState({ source: '', target: '' });
-  const [applyLipSync, setApplyLipSync] = useState(true); 
+  const [applyLipSync, setApplyLipSync] = useState(true);
+  const [useVoiceCloningVideo, setUseVoiceCloningVideo] = useState(true); // Added state for voice cloning for video
 
   const originalMediaRef = useRef(null);
   const translatedMediaRef = useRef(null);
@@ -44,33 +46,31 @@ const ContentTranslator = () => {
     setFile(null); setFileUrl(null); setResult(null);
     setResultTranscripts({ source: '', target: '' });
     setError(''); setProgress(0); setProcessPhase('');
-    setTargetLanguage(type === 'audio' ? 'fra' : ''); 
-    setApplyLipSync(true); 
+    setTargetLanguage(type === 'audio' ? 'fra' : '');
+    setApplyLipSync(true);
+    setUseVoiceCloningVideo(true); // Reset voice cloning for video
   };
 
   const handleFileUpload = (e) => {
-    const uploadedFile = e.target.files?.[0]; 
+    const uploadedFile = e.target.files?.[0];
     if (!uploadedFile) return;
 
     let valid = false;
     const isAudio = uploadedFile.type.startsWith('audio/');
-    const isVideo = uploadedFile.type.startsWith('video/'); 
+    const isVideo = uploadedFile.type.startsWith('video/');
 
     if (contentType === 'audio' && isAudio) valid = true;
     else if ((contentType === 'video' || contentType === 'both') && isVideo) valid = true;
-    
+
     if (!valid) { setError(`Please upload a valid ${contentType} file.`); return; }
     if (uploadedFile.size > 150 * 1024 * 1024) { setError('File max 150MB.'); return; }
 
     setFile(uploadedFile);
-    if (fileUrl) URL.revokeObjectURL(fileUrl); 
+    if (fileUrl) URL.revokeObjectURL(fileUrl);
     setFileUrl(URL.createObjectURL(uploadedFile));
     setError(''); setResult(null); setResultTranscripts({ source: '', target: '' });
     setProgress(0); setProcessPhase('');
   };
-  
-  // Removed isOriginalPlaying state and its useEffect as it wasn't used for UI changes
-  // and the <audio controls /> attribute handles playback.
 
   const handleTranslate = async () => {
     if (!file) { setError('Please upload a file.'); return; }
@@ -79,14 +79,16 @@ const ContentTranslator = () => {
     setIsProcessing(true); setProgress(0); setProcessPhase('Preparing...'); setError(''); setResult(null); setResultTranscripts({ source: '', target: ''});
 
     const formData = new FormData();
-    const fileKey = contentType === 'audio' ? 'file' : 'video'; 
+    const fileKey = contentType === 'audio' ? 'file' : 'video';
     formData.append(fileKey, file);
     formData.append('target_language', targetLanguage);
-    formData.append('backend', 'cascaded'); 
-    
+    formData.append('backend', 'cascaded'); // Currently hardcoded backend
+
     if (contentType === 'video' || contentType === 'both') {
       formData.append('apply_lip_sync', applyLipSync ? 'true' : 'false');
-      console.log("Frontend sending apply_lip_sync:", applyLipSync);
+      // Add use_voice_cloning for video types
+      formData.append('use_voice_cloning', useVoiceCloningVideo ? 'true' : 'false');
+      console.log("Frontend sending apply_lip_sync:", applyLipSync, "use_voice_cloning:", useVoiceCloningVideo);
     }
 
     const endpoint = contentType === 'audio' ? 'http://localhost:5001/translate' : 'http://localhost:5001/process-video';
@@ -98,7 +100,7 @@ const ContentTranslator = () => {
         throw new Error(errData.error || `Request failed: ${response.statusText}`);
       }
 
-      if (contentType === 'audio') { 
+      if (contentType === 'audio') {
         const data = await response.json();
         if (data.error) throw new Error(data.error);
         const byteCharacters = atob(data.audio);
@@ -108,19 +110,19 @@ const ContentTranslator = () => {
         }
         const byteArray = new Uint8Array(byteNumbers);
         const audioBlob = new Blob([byteArray], { type: 'audio/wav' });
-        if (result) URL.revokeObjectURL(result); 
+        if (result) URL.revokeObjectURL(result);
         setResult(URL.createObjectURL(audioBlob));
         setResultTranscripts(data.transcripts || { source: '', target: '' });
         setProgress(100); setProcessPhase('Completed!');
-      } else { 
+      } else { // Video processing with SSE
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
         while (true) {
           const { done, value } = await reader.read();
-          if (done) { 
-            setProcessPhase(prev => error || prev.includes('Error') ? prev : 'Final video processed.'); 
-            if(!error) setProgress(100); 
+          if (done) {
+            setProcessPhase(prev => error || prev.includes('Error') ? prev : 'Final video processed.');
+            if(!error) setProgress(100);
             break;
           }
           buffer += decoder.decode(value, { stream: true });
@@ -130,46 +132,45 @@ const ContentTranslator = () => {
             if (message.trim().startsWith('data: ')) {
               try {
                 const data = JSON.parse(message.trim().slice(6));
-                if (data.error) { 
-                    setError(data.error + (data.phase ? ` (during ${data.phase})` : '')); 
-                    setProcessPhase(`Error: ${data.phase || 'processing'}`); 
-                    setIsProcessing(false); 
-                    return; 
+                if (data.error) {
+                    setError(data.error + (data.phase ? ` (during ${data.phase})` : ''));
+                    setProcessPhase(`Error: ${data.phase || 'processing'}`);
+                    setIsProcessing(false);
+                    return;
                 }
                 if (data.progress !== undefined) setProgress(data.progress);
                 if (data.phase) setProcessPhase(data.phase);
-                if (data.result) {
+                if (data.result) { // Base64 video data
                   const byteChars = atob(data.result);
                   const byteNums = new Array(byteChars.length);
                   for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
                   const byteArr = new Uint8Array(byteNums);
                   const videoBlob = new Blob([byteArr], { type: 'video/mp4' });
-                  if (result) URL.revokeObjectURL(result); 
+                  if (result) URL.revokeObjectURL(result);
                   setResult(URL.createObjectURL(videoBlob));
                   setProcessPhase('Video ready!');
-                  setProgress(100); 
+                  setProgress(100);
                 }
                 if (data.transcripts) setResultTranscripts(data.transcripts);
-              } catch (e) { 
-                  console.error('SSE parse error:', e, "Message:", message); 
+              } catch (e) {
+                  console.error('SSE parse error:', e, "Message:", message);
                   if (!error) setError("Error processing video stream from server.");
               }
             }
           }
         }
       }
-    } catch (err) { 
-        setError(err.message); 
-        console.error("Translate error:", err); 
-        setProcessPhase('Failed.'); 
+    } catch (err) {
+        setError(err.message);
+        console.error("Translate error:", err);
+        setProcessPhase('Failed.');
     }
-    if (!error && isProcessing) { // Check isProcessing before setting to false
-        setIsProcessing(false);
-    } else if (error && isProcessing) { 
+    // Only set isProcessing to false if it wasn't already set by an error condition in SSE
+    if (isProcessing) { // Check if still true before setting
         setIsProcessing(false);
     }
   };
-  
+
   const handleReset = () => {
     if (fileUrl) URL.revokeObjectURL(fileUrl);
     if (result) URL.revokeObjectURL(result);
@@ -177,8 +178,8 @@ const ContentTranslator = () => {
     setFileUrl(null); setTargetLanguage(''); setResult(null);
     setResultTranscripts({ source: '', target: '' }); setError('');
     setProgress(0); setProcessPhase('');
-    // setIsOriginalPlaying(false); // Removed as state was removed
-    setApplyLipSync(true); 
+    setApplyLipSync(true);
+    setUseVoiceCloningVideo(true);
   };
 
   const renderSelectionScreen = () => (
@@ -214,6 +215,7 @@ const ContentTranslator = () => {
   );
 
   const renderAudioInterface = () => (
+    // ... (Audio interface remains the same, no voice cloning option here)
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="p-6 border-b flex justify-between items-center">
         <div><h1 className="text-2xl font-semibold">Audio Translation</h1><p className="text-gray-500">Translate speech in audio files</p></div>
@@ -293,40 +295,57 @@ const ContentTranslator = () => {
         </div>
         {fileUrl && (
           <div className="space-y-4 pt-4 border-t mt-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center"> 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
               <Select value={targetLanguage} onValueChange={setTargetLanguage} disabled={isProcessing}>
                 <SelectTrigger className="w-full"><SelectValue placeholder="Select target language" /></SelectTrigger>
                 <SelectContent>{Object.entries(LANGUAGES).map(([code, { name, flag }]) => (<SelectItem key={code} value={code}>{`${flag} ${name}`}</SelectItem>))}</SelectContent>
               </Select>
-              
-              {/* --- LIP SYNC TOGGLE (HTML Checkbox) --- */}
-              {(contentType === 'video' || contentType === 'both') && (
-                <div className="flex items-center space-x-2 justify-self-start md:justify-self-end py-2">
-                  <input
-                    type="checkbox"
-                    id="lip-sync-toggle"
-                    checked={applyLipSync}
-                    onChange={(e) => setApplyLipSync(e.target.checked)}
-                    disabled={isProcessing}
-                    className="form-checkbox h-5 w-5 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500 cursor-pointer"
-                  />
-                  <label htmlFor="lip-sync-toggle" className="text-sm font-medium text-gray-700 whitespace-nowrap flex items-center cursor-pointer">
-                    Apply Lip Sync <Zap size={16} className={`ml-1 ${applyLipSync ? "text-yellow-500" : "text-gray-400"}`}/>
-                  </label>
-                </div>
-              )}
+
+              <div className="flex items-center space-x-4 justify-self-start md:justify-self-end py-2">
+                {(contentType === 'video' || contentType === 'both') && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="lip-sync-toggle"
+                      checked={applyLipSync}
+                      onChange={(e) => setApplyLipSync(e.target.checked)}
+                      disabled={isProcessing}
+                      className="form-checkbox h-5 w-5 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500 cursor-pointer"
+                    />
+                    <label htmlFor="lip-sync-toggle" className="text-sm font-medium text-gray-700 whitespace-nowrap flex items-center cursor-pointer">
+                      Apply Lip Sync <Zap size={16} className={`ml-1 ${applyLipSync ? "text-yellow-500" : "text-gray-400"}`}/>
+                    </label>
+                  </div>
+                )}
+                 {/* Voice Cloning Toggle for Video */}
+                {(contentType === 'video' || contentType === 'both') && (
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            id="voice-cloning-video-toggle"
+                            checked={useVoiceCloningVideo}
+                            onChange={(e) => setUseVoiceCloningVideo(e.target.checked)}
+                            disabled={isProcessing}
+                            className="form-checkbox h-5 w-5 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500 cursor-pointer"
+                        />
+                        <label htmlFor="voice-cloning-video-toggle" className="text-sm font-medium text-gray-700 whitespace-nowrap flex items-center cursor-pointer">
+                            Preserve Voice <AudioWaveform size={16} className={`ml-1 ${useVoiceCloningVideo ? "text-fuchsia-500" : "text-gray-400"}`} />
+                        </label>
+                    </div>
+                )}
+              </div>
             </div>
-            <Button 
-              className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white" 
-              disabled={!file || !targetLanguage || isProcessing} 
+            <Button
+              className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+              disabled={!file || !targetLanguage || isProcessing}
               onClick={handleTranslate}
             >
-              {isProcessing 
-                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{processPhase || "Processing..."}</> 
-                : (contentType === 'both' && applyLipSync) 
-                  ? 'Translate & Lip Sync Video' 
+              {isProcessing
+                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{processPhase || "Processing..."}</>
+                : (contentType === 'both' && applyLipSync)
+                  ? 'Translate, Dub & Lip Sync Video'
                   : (contentType === 'video' && applyLipSync)
-                    ? 'Translate Audio & Lip Sync' 
+                    ? 'Translate Audio & Lip Sync'
                     : 'Translate Video Audio'
               }
             </Button>
