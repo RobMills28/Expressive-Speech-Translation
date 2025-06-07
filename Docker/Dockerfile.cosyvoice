@@ -1,0 +1,79 @@
+# Force the amd64 platform for the base Python image
+FROM --platform=linux/amd64 python:3.10-slim-buster
+
+LABEL maintainer="Rob Mills"
+LABEL description="Docker image for CosyVoice API service with Miniconda (x86_64) installed manually"
+
+ENV PYTHONUNBUFFERED=1
+ENV CONDA_DIR /opt/conda
+ENV PATH $CONDA_DIR/bin:$PATH 
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    git \
+    sox \
+    libsox-dev \
+    ffmpeg \
+    ca-certificates \
+    bzip2 \
+    unzip \
+    build-essential \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Miniconda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p $CONDA_DIR && \
+    rm ~/miniconda.sh && \
+    $CONDA_DIR/bin/conda init bash && \
+    $CONDA_DIR/bin/conda clean --all --yes
+
+SHELL ["/bin/bash", "--login", "-c"]
+
+# Verify conda and python installation
+RUN echo "Checking conda and python versions after Miniconda install:" && \
+    which conda && \
+    conda --version && \
+    which python && \
+    python --version
+
+# Clone the CosyVoice repository
+RUN git clone --recursive --depth 1 https://github.com/FunAudioLLM/CosyVoice.git CosyVoice
+
+WORKDIR /app/CosyVoice
+
+# Install pynini using conda
+RUN echo "Attempting to install pynini..." && \
+    conda install -y -c conda-forge pynini==2.1.5 && \
+    echo "Pynini installation attempt finished."
+
+# Install Python packages from requirements.txt
+# MODIFIED: Removed Alibaba mirror, added --default-timeout
+RUN echo "Installing packages from requirements.txt..." && \
+    pip install --default-timeout=600 --no-cache-dir -r requirements.txt && \
+    echo "requirements.txt installation finished."
+
+# Install FastAPI and Uvicorn
+RUN echo "Installing FastAPI and Uvicorn..." && \
+    pip install --no-cache-dir fastapi uvicorn[standard] python-multipart && \
+    echo "FastAPI and Uvicorn installed."
+
+# Pre-download models
+RUN mkdir -p pretrained_models
+COPY Docker/download_cosy_models_in_docker.py .
+RUN echo "Running model download script..." && \
+    python download_cosy_models_in_docker.py && \
+    echo "Model download script finished."
+
+WORKDIR /app
+COPY Docker/cosyvoice_api.py .
+
+ENV PYTHONPATH /app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}
+
+EXPOSE 8000
+
+CMD export PYTHONPATH="/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}" && \
+    conda run -n base uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info

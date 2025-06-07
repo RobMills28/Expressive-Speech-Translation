@@ -1,64 +1,71 @@
-version: '3.8' # Or your current version
+version: '3.8'
 
 services:
-  openvoice: # This is your existing OpenVoice service
+  openvoice: # You can keep this if you still want to experiment with it, or remove it
     build:
-      context: ..  # Build context is one level up (Magenta AI directory)
-      dockerfile: Docker/Dockerfile # Path to your OpenVoice Dockerfile
-    container_name: docker-openvoice # Good practice to name containers
+      context: .. 
+      dockerfile: Docker/Dockerfile 
+    container_name: docker-openvoice
     ports:
       - "8000:8000"
     volumes:
-      # This volume is for any files the API might write out temporarily or persistently
-      # If openvoice_api.py writes to /app/processed and you want to access it from host:
-      # - ./processed_openvoice_data:/app/processed 
-      # If openvoice_api.py uses /tmp for its operations, that's usually fine as it's ephemeral.
-      
-      # THIS IS THE CORRECTED BIND MOUNT FOR YOUR CHECKPOINTS
-      # It maps your local "Magenta AI/checkpoints_v2" to "/app/checkpoints_v2" inside the container
       - ../checkpoints_v2:/app/checkpoints_v2:ro 
-      # ':ro' makes the mount read-only inside the container, good for model files
-
-      # Optional: Persist Hugging Face cache if OpenVoice downloads models
-      # - huggingface_cache_openvoice:/app/huggingface_cache
     environment:
       - PYTHONUNBUFFERED=1
-      - HF_HOME=/app/huggingface_cache # Consistent with your Dockerfile
-      # - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN} # Uncomment and set in .env if needed by OpenVoice
     restart: unless-stopped
-    networks: # Add openvoice to the shared network
+    networks:
       - app-network
 
-  # --- NEW Voice Similarity Service ---
   voice-similarity:
     build:
-      context: .. # Context is the root of your Magenta AI project
-      dockerfile: Docker/Dockerfile.similarity # Path to the NEW Dockerfile for this service
+      context: .. 
+      dockerfile: Docker/Dockerfile.similarity 
     container_name: docker-voice-similarity
     ports:
-      - "8001:8001" # Expose port 8001 for the similarity API
+      - "8001:8001" 
     volumes:
-      # Mount a directory to cache SpeechBrain's downloaded models inside the container.
-      # This path on the host (./pretrained_models_similarity) will be created if it doesn't exist.
-      # This makes model downloads persistent across container restarts/rebuilds.
+      # This volume caches downloaded SpeechBrain models on your host
       - ./pretrained_models_similarity:/app/pretrained_models 
-      # If your main backend (running locally for now) needs to write files for this service to read:
-      # You'd mount a shared directory. For example:
-      # - ./temp_audio_for_similarity:/app/shared_audio:rw
     environment:
       - PYTHONUNBUFFERED=1
-      # SPEECHBRAIN_PRETRAINED_PATH is set in Dockerfile.similarity, 
-      # the volume mount above ensures this path is persistent on the host.
     restart: unless-stopped
-    networks: # Add this service to the shared network
+    networks:
       - app-network
 
-# Define a top-level networks key if you haven't
+  # --- NEW CosyVoice Service ---
+  cosyvoice:
+    build:
+      context: .. # Root of Magenta AI project
+      dockerfile: Docker/Dockerfile.cosyvoice # Path to the new Dockerfile
+    container_name: docker-cosyvoice
+    ports:
+      - "8002:8000" # Expose CosyVoice API on host port 8002, container port 8000
+    volumes:
+      # This volume caches the downloaded CosyVoice models on your host
+      # The path inside the container should match where Dockerfile.cosyvoice downloads/expects them
+      # which is /app/CosyVoice/pretrained_models
+      - ./pretrained_cosyvoice_models:/app/CosyVoice/pretrained_models
+    # If using GPU:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOKENIZERS_PARALLELISM=false # Good practice for Hugging Face tokenizers
+      # Add any other environment variables CosyVoice might need
+    restart: unless-stopped
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
 
-# Define named volumes if you used them (optional for now, but good for persistent data)
-# volumes:
-  # huggingface_cache_openvoice: # For OpenVoice Hugging Face cache
-  # pretrained_models_similarity: # This named volume is an alternative to the bind mount for similarity models
+# Define named volumes for persistent model caches
+volumes:
+  pretrained_models_similarity:
+  pretrained_cosyvoice_models: # Ensures models persist across container recreation

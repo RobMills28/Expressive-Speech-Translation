@@ -11,13 +11,15 @@ from pathlib import Path
 import gc
 import warnings
 
-warnings.filterwarnings("ignore", category=FutureWarning, module="espnet2")
+# --- Warnings and Environment Configuration ---
+warnings.filterwarnings("ignore", category=FutureWarning, module="espnet2") # If you still have ESPnet code
 warnings.filterwarnings("ignore", message=".*torch.cuda.amp.autocast.*is deprecated.*", category=FutureWarning)
 warnings.filterwarnings("ignore", message=".*You are using `torch.load` with `weights_only=False`.*", category=FutureWarning)
 warnings.filterwarnings("ignore", message=".*transformers.deepspeed module is deprecated.*", category=FutureWarning)
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["TOKENIZERS_PARALLELISM"] = "false" # For Hugging Face tokenizers
 
+# --- Logging Configuration ---
 LOG_LEVEL_CONSOLE = logging.INFO
 LOG_LEVEL_FILE_MAIN = logging.INFO
 LOG_LEVEL_FILE_DEBUG = logging.DEBUG
@@ -37,7 +39,7 @@ def initial_logging_setup():
     else:
         print("Initial Logging: Root logger has no pre-existing handlers.")
 
-    root_logger.setLevel(LOG_LEVEL_FILE_DEBUG)
+    root_logger.setLevel(LOG_LEVEL_FILE_DEBUG) # Set root logger to lowest level
 
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(DETAILED_FORMATTER)
@@ -65,26 +67,30 @@ def initial_logging_setup():
     print(f"Initial Logging: Error file handler added ({error_log_path.name}) with level {logging.getLevelName(LOG_LEVEL_FILE_ERROR)}.")
 
     libraries_config = {
-        'boto3': logging.DEBUG,
-        'botocore': logging.DEBUG,
-        's3transfer': logging.INFO,
+        'boto3': logging.WARNING, # Quieter by default unless debugging Polly
+        'botocore': logging.WARNING,
+        's3transfer': logging.WARNING,
         'werkzeug': logging.WARNING,
         'pydub': logging.WARNING,
         'matplotlib': logging.WARNING,
         'urllib3': logging.INFO,
         'asyncio': logging.INFO,
         'h5py': logging.WARNING,
-        'numba': logging.WARNING,
+        'numba': logging.WARNING, # Whisper uses numba
         'whisper': logging.INFO,
         'transformers.tokenization_utils_base': logging.WARNING,
         'transformers': logging.INFO,
         'torchaudio': logging.INFO,
+        'TTS': logging.INFO, # For Coqui TTS (if it were used locally)
+        'httpx': logging.INFO, # For Gradio client if used
+        'multipart': logging.INFO,
+        'speechbrain': logging.INFO, # For similarity checker
     }
     for lib_name, level in libraries_config.items():
         logging.getLogger(lib_name).setLevel(level)
         logging.debug(f"Initial Logging: Set log level for '{lib_name}' to {logging.getLevelName(level)}.")
 
-    logging.getLogger('services').setLevel(logging.DEBUG)
+    logging.getLogger('services').setLevel(logging.DEBUG) # Your services modules
     logging.debug(f"Initial Logging: Set log level for parent 'services' logger to DEBUG.")
 
     logging.info("Global logging setup complete from app.py. Root effective level: %s. Console set to: %s.",
@@ -93,23 +99,23 @@ def initial_logging_setup():
 
 initial_logging_setup()
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) # This is the __main__ logger
 logger.info("--- app.py module logger initialized ---")
 
+# --- Core Imports ---
 import hashlib
 import tempfile
 import json
 import base64
-import io
 import traceback
 from datetime import datetime
-import uuid
+import uuid # For request IDs if needed elsewhere
 from werkzeug.utils import secure_filename
-from pydub import AudioSegment
-import psutil
+import psutil # For health checks
 import torch
-import numpy as np
-import torchaudio
+import torchaudio # For audio saving
+
+# --- Flask and Extensions ---
 from flask import Flask, request, jsonify, make_response, Response, stream_with_context
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -117,24 +123,21 @@ from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
 
 logger.info("--- app.py: Starting service module imports ---")
-from services.audio_link_routes import handle_audio_url_processing
-from services.audio_processor import AudioProcessor
-# Removed ModelManager import as it's being deleted or its SeamlessM4T parts are.
-# from services.model_manager import ModelManager, DEVICE as APP_WIDE_DEVICE
-# Determine APP_WIDE_DEVICE differently or if it was only for ModelManager, it might not be needed here.
-# For now, let's define a default APP_WIDE_DEVICE directly in app.py if cascaded_backend needs it.
+from services.audio_link_routes import handle_audio_url_processing # Assuming this is updated or not CosyVoice dependent
+from services.audio_processor import AudioProcessor # General audio utilities
 APP_WIDE_DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 logger.info(f"Application-wide ML device set to: {APP_WIDE_DEVICE}")
 
 from services.error_handler import ErrorHandler
 from services.utils import cleanup_file, performance_logger
 from services.video_routes import handle_video_processing
-from services.podcast_routes import handle_podcast_upload
+from services.podcast_routes import handle_podcast_upload # Assuming this is updated or not CosyVoice dependent
 from services.health_routes import handle_model_health
 from services.translation_strategy import TranslationManager
-from services.cascaded_backend import CascadedBackend, check_openvoice_api
+from services.cascaded_backend import CascadedBackend # This will be the CosyVoice API calling version
 logger.info("--- app.py: Core service module imports complete ---")
 
+# Optional ESPnet backend (if you still want to support it as an alternative)
 try:
     from services.espnet_backend import ESPnetBackend
     ESPNET_AVAILABLE = True; logger.info("ESPnet backend components potentially available.")
@@ -147,122 +150,157 @@ except Exception as e_espnet:
 
 load_dotenv(); logger.info(".env file loaded if present.")
 
-MAX_AUDIO_LENGTH = 300
-MAX_PODCAST_LENGTH = 3600
-SAMPLE_RATE = 16000
-UPLOAD_FOLDER = Path('uploads/podcasts')
-ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a'}
-UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
+# --- Application Constants ---
+MAX_AUDIO_LENGTH_SECONDS = 300  # Max length for direct audio translation (5 minutes)
+MAX_PODCAST_LENGTH_SECONDS = 3600 # Max length for podcast (1 hour)
+MAX_VIDEO_MB = 150 # Max video upload size in MB
+SAMPLE_RATE = 16000 # Standard sample rate for ASR and final audio output tensor
 
-# Removed ModelManager instantiation
-# logger.info("Creating ModelManager instance..."); model_manager_instance = ModelManager()
+UPLOAD_FOLDER_PODCASTS = Path('uploads/podcasts')
+ALLOWED_PODCAST_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'}
+UPLOAD_FOLDER_PODCASTS.mkdir(parents=True, exist_ok=True)
+
+
+# --- Application Setup ---
 logger.info("Creating TranslationManager instance..."); translation_manager = TranslationManager()
 
+# HuggingFace Token (mainly for NLLB or other HF model downloads if not cached)
 hf_auth_token = os.getenv('HUGGINGFACE_TOKEN')
 if not hf_auth_token:
-    logger.warning("HUGGINGFACE_TOKEN environment variable not set. Model downloads may fail.")
+    logger.warning("HUGGINGFACE_TOKEN environment variable not set. Some model downloads may fail.")
 
-logger.info("Attempting to instantiate and register default backend (CascadedBackend)...")
+logger.info("Attempting to instantiate and register default backend (CascadedBackend for CosyVoice API)...")
+cascaded_backend_instance = None # Define for finally block
 try:
-    cascaded_backend_instance = CascadedBackend(device=APP_WIDE_DEVICE, use_voice_cloning=True)
+    cascaded_backend_instance = CascadedBackend(device=APP_WIDE_DEVICE) # use_voice_cloning is implicit now
     translation_manager.register_backend("cascaded", cascaded_backend_instance, is_default=True)
 except Exception as e_backend_reg:
     logger.critical(f"CRITICAL FAILURE: Could not instantiate/register CascadedBackend: {e_backend_reg}", exc_info=True)
-    sys.exit(1)
+    sys.exit(1) # Exit if backend cannot be registered
 
 app = Flask(__name__); logger.info("Flask app instance created.")
 CORS(app, resources={ r"/*": { "origins": ["http://localhost:3000", "http://localhost:3001"], "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type", "Accept", "Authorization", "X-Requested-With", "Range", "Accept-Ranges", "Origin"], "expose_headers": ["Content-Type", "Content-Length", "Content-Range", "Content-Disposition", "Accept-Ranges", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"], "supports_credentials": True, "max_age": 120, "automatic_options": True }})
 logger.info("CORS configured.")
-limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["200 per day", "50 per hour"])
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["500 per day", "100 per hour"]) # Generous limits for testing
 logger.info("Flask-Limiter initialized.")
 app.config['IS_SHUTTING_DOWN'] = False
-app.config['MAX_CONTENT_LENGTH'] = 150 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = MAX_VIDEO_MB * 1024 * 1024 # Set max content length for uploads
 
+# --- Request Handling Middleware ---
 @app.before_request
 def before_request_middleware():
-    if request.method == 'OPTIONS': return
+    if request.method == 'OPTIONS': return # Allow CORS preflight
+    # Basic validation (can be expanded)
     if request.method not in ['GET', 'POST', 'HEAD']:
         logger.warning(f"Method not allowed: {request.method} for {request.path}")
         return jsonify({'error': 'Method not allowed'}), 405
     if request.method == 'POST':
         content_type = request.headers.get('Content-Type', '').lower()
+        # Allow JSON and multipart/form-data for POST requests
         if not content_type.startswith('multipart/form-data') and \
            not content_type.startswith('application/json'):
-            if not (request.form or request.files):
-                 logger.warning(f"Invalid content type for POST: '{content_type}' for {request.path}. Expected JSON or multipart/form-data.")
+            # Check if it's an empty POST or truly invalid content type
+            if not (request.form or request.files or request.is_json):
+                 logger.warning(f"Invalid content type for POST: '{content_type}' for {request.path}.")
                  return jsonify({'error': 'Invalid content type for POST. Expected JSON or multipart/form-data.'}), 400
-    request.start_time = time.time()
+    request.start_time = time.time() # For performance logging
 
 @app.after_request
 def after_request_middleware(response: Response) -> Response:
     if hasattr(request, 'start_time'):
         duration = time.time() - request.start_time
         logger.info(f"REQ: {request.method} {request.path} ({request.remote_addr}) -> RSP: {response.status_code} [{duration:.2f}s]")
-    else:
+    else: # Should not happen if before_request runs
         logger.info(f"REQ: {request.method} {request.path} ({request.remote_addr}) -> RSP: {response.status_code} [duration N/A]")
     return response
 
 @app.errorhandler(Exception)
 def central_error_handler(e: Exception):
+    # Log the full traceback for any unhandled exception
+    logger.error(f"Unhandled Exception: {request.method} {request.path}", exc_info=True)
+    # Use your custom ErrorHandler
     error_response, status_code = ErrorHandler.handle_error(e); return error_response, status_code
 
-# --- Routes (Copied from your provided app.py, ensure they are complete and correct) ---
-# (All your routes - /translate, /process-video, etc. - remain here, unchanged from the last version I provided)
+
+# --- API Routes ---
 @app.route('/translate', methods=['POST', 'OPTIONS'])
-@limiter.limit("10 per minute")
+@limiter.limit("20 per minute") # Adjusted limit for audio
 @performance_logger
 def translate_audio_route():
-    if request.method == 'OPTIONS': resp = make_response(); return resp
+    if request.method == 'OPTIONS': return make_response() # Handle CORS preflight
+    
     temp_files_to_clean = []
     try:
-        backend_to_use = translation_manager.get_backend()
+        backend_to_use = translation_manager.get_backend() 
         logger.info(f"Using backend: {type(backend_to_use).__name__} for /translate")
-        if 'file' not in request.files: return ErrorHandler.format_validation_error('No file uploaded')
+        
+        if 'file' not in request.files: return ErrorHandler.format_validation_error('No file part found in request.')
         file = request.files['file']
-        if not file.filename: return ErrorHandler.format_validation_error('No file selected')
-        target_language_app_code = request.form.get('target_language', 'fra')
-        logger.info(f"/translate: Target='{target_language_app_code}' for file '{file.filename}'")
+        if not file or not file.filename: return ErrorHandler.format_validation_error('No file selected or filename is empty.')
+        
+        target_language_app_code = request.form.get('target_language', 'fra') # Default to French
+        logger.info(f"/translate request: Target='{target_language_app_code}' for file '{file.filename}'")
 
         audio_processor = AudioProcessor()
-        temp_suffix = Path(secure_filename(file.filename)).suffix or '.tmp'
+        temp_suffix = Path(secure_filename(file.filename)).suffix or '.tmp' # Ensure a suffix
         temp_dir_uploads = Path(tempfile.gettempdir()) / "magenta_translate_uploads"
         temp_dir_uploads.mkdir(parents=True, exist_ok=True)
 
+        # Save uploaded file temporarily
         with tempfile.NamedTemporaryFile(delete=False, suffix=temp_suffix, dir=temp_dir_uploads) as tmp_in_file:
             file.save(tmp_in_file.name)
             temp_files_to_clean.append(tmp_in_file.name)
-            logger.debug(f"Uploaded file saved to temp path: {tmp_in_file.name}")
+            logger.debug(f"Uploaded audio file saved to temp path: {tmp_in_file.name}")
         
-        valid_audio, error_msg = audio_processor.validate_audio_length(tmp_in_file.name)
-        if not valid_audio:
-             logger.error(f"Audio validation failed for {tmp_in_file.name}: {error_msg}")
-             return ErrorHandler.format_validation_error(error_msg)
+        # Validate audio length
+        is_valid_length, length_error_msg = audio_processor.validate_audio_length(tmp_in_file.name, max_length_seconds=MAX_AUDIO_LENGTH_SECONDS)
+        if not is_valid_length:
+             logger.error(f"Audio length validation failed for {tmp_in_file.name}: {length_error_msg}")
+             return ErrorHandler.format_validation_error(length_error_msg)
         
-        audio_tensor = audio_processor.process_audio(tmp_in_file.name)
-        if not audio_processor.is_valid_audio(audio_tensor):
-            logger.error(f"Processed audio tensor is invalid for {tmp_in_file.name}")
+        # Process audio to 16kHz mono tensor
+        audio_tensor = audio_processor.process_audio(tmp_in_file.name) # Returns 16kHz tensor
+        if not audio_processor.is_valid_audio(audio_tensor): # Basic check for silence/validity
+            logger.error(f"Processed audio tensor is invalid (e.g., silent) for {tmp_in_file.name}")
             return ErrorHandler.handle_error(ValueError("Processed audio is invalid or silent."))
 
-        result = backend_to_use.translate_speech(audio_tensor=audio_tensor, source_lang="eng", target_lang=target_language_app_code)
+        # Perform translation using the backend (now CosyVoice API via CascadedBackend)
+        result = backend_to_use.translate_speech(
+            audio_tensor=audio_tensor, # This is the 16kHz source audio
+            source_lang="eng", # Assuming source is English for now
+            target_lang=target_language_app_code
+        )
+        
+        # Backend should return audio tensor at 16kHz
+        translated_audio_tensor = result["audio"] 
+        
         with tempfile.NamedTemporaryFile(suffix='.wav', delete=False, dir=temp_dir_uploads) as tmp_out_file:
             temp_files_to_clean.append(tmp_out_file.name)
-            audio_save = result["audio"]
-            if audio_save.ndim > 1 and audio_save.shape[0] == 1: audio_save = audio_save.squeeze(0)
-            torchaudio.save(tmp_out_file.name, audio_save.cpu(), SAMPLE_RATE)
-            logger.debug(f"Translated audio saved to temp path: {tmp_out_file.name}")
+            # Ensure tensor is 2D [channels, samples] for torchaudio.save
+            if translated_audio_tensor.ndim == 1: translated_audio_tensor = translated_audio_tensor.unsqueeze(0)
+            if translated_audio_tensor.shape[0] > 1 and translated_audio_tensor.shape[1] == 1: # Handle [samples, 1]
+                translated_audio_tensor = translated_audio_tensor.transpose(0,1)
+
+            torchaudio.save(tmp_out_file.name, translated_audio_tensor.cpu(), SAMPLE_RATE) # Save at 16kHz
+            logger.debug(f"Translated audio (16kHz) saved to temp path: {tmp_out_file.name}")
+            
             with open(tmp_out_file.name, 'rb') as audio_data_obj:
                 audio_b64 = base64.b64encode(audio_data_obj.read()).decode('utf-8')
+        
         return jsonify({'audio': audio_b64, 'transcripts': result["transcripts"]})
+
     except Exception as e:
         logger.error(f"Error in /translate route: {e}", exc_info=True)
-        return ErrorHandler.handle_error(e)
+        return ErrorHandler.handle_error(e) # Use your centralized error handler
     finally:
         for f_path in temp_files_to_clean: cleanup_file(f_path)
 
+
 @app.route('/process-video', methods=['POST', 'OPTIONS'])
-@limiter.limit("5 per minute")
+@limiter.limit("10 per minute") # Adjusted for video
 @performance_logger
 def process_video_route():
+    # ... (video route logic, largely unchanged but backend instance will be the CosyVoice API one)
     logger.info(f"Request for /process-video (Method: {request.method})")
     if request.method == 'OPTIONS': logger.info("Handling OPTIONS for /process-video"); resp = make_response(); return resp
     try:
@@ -276,21 +314,26 @@ def process_video_route():
             logger.error("No video file selected or filename empty for /process-video")
             def err_stream_fn(): yield f"data: {json.dumps({'error': 'No video file selected or filename empty.', 'phase': 'File Upload Error'})}\n\n"
             return Response(stream_with_context(err_stream_fn()),mimetype='text/event-stream', status=400)
-        target_language = request.form.get('target_language', 'fra')
-        apply_lip_sync_str = request.form.get('apply_lip_sync', 'true')
+        
+        target_language = request.form.get('target_language', 'fra') 
+        apply_lip_sync_str = request.form.get('apply_lip_sync', 'true') 
         apply_lip_sync_bool = apply_lip_sync_str.lower() == 'true'
-        logger.info(f"Video processing: Target Lang='{target_language}', Apply Lip Sync='{apply_lip_sync_bool}'")
-        video_processing_backend = translation_manager.get_backend('cascaded')
+        
+        form_voice_cloning_str = request.form.get('use_voice_cloning', 'true') # Frontend still sends this
+        logger.info(f"Video processing: Target Lang='{target_language}', Apply Lip Sync='{apply_lip_sync_bool}', Form 'use_voice_cloning'='{form_voice_cloning_str}' (Note: CosyVoice API backend handles cloning implicitly based on reference audio sent)")
+
+        video_processing_backend = translation_manager.get_backend('cascaded') 
         if not video_processing_backend.initialized:
-            logger.error("Failed to get/initialize CascadedBackend for video in /process-video.")
+            logger.error("Failed to get/initialize CascadedBackend (for CosyVoice API) for video in /process-video.")
             def err_stream_backend(): yield f"data: {json.dumps({'error': 'Backend service not ready.', 'phase': 'Backend Error'})}\n\n"
             return Response(stream_with_context(err_stream_backend()), mimetype='text/event-stream', status=503)
+        
+        # The use_voice_cloning_config on CascadedBackend might not be directly used if it's always cloning via API
+        # but it's good that the frontend can signal intent.
         if hasattr(video_processing_backend, 'use_voice_cloning_config'):
-            form_voice_cloning = request.form.get('use_voice_cloning', 'true').lower() == 'true'
-            video_processing_backend.use_voice_cloning_config = form_voice_cloning
-            logger.info(f"Video processing: Set use_voice_cloning on '{type(video_processing_backend).__name__}' to: {form_voice_cloning}")
-        else:
-            logger.warning(f"Backend '{type(video_processing_backend).__name__}' does not have 'use_voice_cloning_config' attribute.")
+            video_processing_backend.use_voice_cloning_config = form_voice_cloning_str == 'true'
+
+
         return handle_video_processing(request.files, target_language, video_processing_backend, apply_lip_sync_bool)
     except Exception as e:
         logger.error(f"Error in /process-video route: {e}", exc_info=True)
@@ -299,8 +342,10 @@ def process_video_route():
             yield f"data: {err_payload}\n\n"
         return Response(stream_with_context(err_stream_exc()), mimetype='text/event-stream', status=500)
 
+
 @app.route('/available-backends', methods=['GET'])
 def available_backends_route():
+    # ... (no change)
     try:
         backends_dict = translation_manager.get_available_backends(); backend_names = list(backends_dict.keys())
         default_backend_name = translation_manager.default_backend
@@ -309,9 +354,10 @@ def available_backends_route():
 
 @app.route('/supported-languages', methods=['GET'])
 def supported_languages_route():
+    # ... (no change)
     try:
-        backend_name_query = request.args.get('backend')
-        backend_to_check = translation_manager.get_backend(backend_name_query)
+        backend_name_query = request.args.get('backend') 
+        backend_to_check = translation_manager.get_backend(backend_name_query) 
         return jsonify({'languages': backend_to_check.get_supported_languages()})
     except Exception as e: return ErrorHandler.handle_error(e)
 
@@ -319,12 +365,13 @@ def supported_languages_route():
 @limiter.limit("10 per minute")
 @performance_logger
 def process_audio_url_route():
+    # ... (Pass translation_manager to handle_audio_url_processing)
     if request.method == 'OPTIONS': resp = make_response(); return resp
     try:
         data = request.get_json();
         if not data or 'url' not in data: return ErrorHandler.format_validation_error('No URL provided')
         url = data['url']
-        result = handle_audio_url_processing(url)
+        result = handle_audio_url_processing(url, translation_manager) 
         if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], int): return jsonify(result[0]), result[1]
         if 'error' in result and isinstance(result, dict) : return jsonify(result), result.get('status_code', 400)
         response = make_response(result['audio_data']); response.headers['Content-Type'] = result['mime_type']
@@ -332,36 +379,49 @@ def process_audio_url_route():
     except Exception as e: return ErrorHandler.handle_error(e)
 
 
-@app.route('/openvoice-status', methods=['GET'])
-def openvoice_status_route():
+@app.route('/translation-service-status', methods=['GET'])
+def translation_service_status_route():
+    # ... (no change from previous XTTS version)
     try:
-        is_available = check_openvoice_api()
-        return jsonify({'available': is_available, 'message': "OpenVoice API available and models loaded." if is_available else "OpenVoice API not available or models not loaded."})
+        default_backend = translation_manager.get_backend() 
+        is_ready = default_backend.initialized
+        backend_type = type(default_backend).__name__
+        
+        status_message = f"{backend_type} is initialized."
+        # Specific check for CosyVoice API readiness could be added if _check_cosyvoice_api_status exposed a public status
+        # For now, `initialized` implies the API was healthy during its init.
+        if hasattr(default_backend, '_check_cosyvoice_api_status') and not default_backend._check_cosyvoice_api_status():
+             is_ready = False
+             status_message = f"{backend_type} initialized, but downstream CosyVoice API is not healthy."
+
+        return jsonify({
+            'service_status': 'ready' if is_ready else 'not_ready',
+            'backend_type': backend_type,
+            'message': status_message
+        })
     except Exception as e:
-        logger.error(f"Error checking OpenVoice status: {e}", exc_info=True)
-        return jsonify({'available': False, 'message': f"Error checking OpenVoice: {str(e)}"}), 500
+        logger.error(f"Error checking translation service status: {e}", exc_info=True)
+        return jsonify({'service_status': 'error', 'message': f"Error: {str(e)}"}), 500
+
 
 @app.route('/upload_podcast', methods=['POST', 'OPTIONS'])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute") 
 @performance_logger
 def upload_podcast_route():
+    # ... (Pass translation_manager to handle_podcast_upload)
     if request.method == 'OPTIONS': resp = make_response(); return resp
-    return handle_podcast_upload(UPLOAD_FOLDER, MAX_PODCAST_LENGTH, ALLOWED_EXTENSIONS)
+    return handle_podcast_upload(UPLOAD_FOLDER_PODCASTS, MAX_PODCAST_LENGTH_SECONDS, ALLOWED_PODCAST_EXTENSIONS, translation_manager)
 
 @app.route('/health/model', methods=['GET'])
 def model_health_route():
-    # Pass None for model_manager_instance as it's being removed
-    return handle_model_health(APP_WIDE_DEVICE, translation_manager, None)
+    # ... (no change)
+    return handle_model_health(APP_WIDE_DEVICE, translation_manager, None) 
 
 
 # --- Graceful Shutdown Logic ---
 def _app_cleanup_tasks():
     logger.info("Shutdown: Cleaning up application resources...")
     try:
-        # Removed ModelManager cleanup as it's being deleted
-        # if model_manager_instance and hasattr(model_manager_instance, '_models_loaded') and model_manager_instance._models_loaded:
-        #     logger.info("Cleaning up ModelManager (SeamlessM4T)..."); model_manager_instance.cleanup()
-        # else: logger.info("ModelManager (for optional on-demand models like SeamlessM4T) not loaded or already cleaned, skipping its cleanup.")
         logger.info("ModelManager cleanup skipped as it has been removed from the application.")
 
         if 'translation_manager' in globals() and translation_manager.backends:
@@ -372,7 +432,11 @@ def _app_cleanup_tasks():
                     try: backend.cleanup()
                     except Exception as e_clean: logger.error(f"Error cleaning backend {name}: {e_clean}", exc_info=True)
         else: logger.info("TranslationManager or its backends not found, skipping backend cleanup.")
-        if torch.cuda.is_available(): logger.info("Emptying CUDA cache..."); torch.cuda.empty_cache()
+        
+        # Check if APP_WIDE_DEVICE is CUDA before trying to empty cache
+        if isinstance(APP_WIDE_DEVICE, torch.device) and APP_WIDE_DEVICE.type == 'cuda' and torch.cuda.is_available(): 
+            logger.info("Emptying CUDA cache..."); torch.cuda.empty_cache()
+        
         gc.collect(); logger.info("Resource cleanup by _app_cleanup_tasks complete.")
     except Exception as e: logger.error(f"Error during _app_cleanup_tasks: {e}", exc_info=True)
 
@@ -381,7 +445,10 @@ def _graceful_shutdown_signal_handler(_signum, _frame):
     if not app.config.get('IS_SHUTTING_DOWN', False):
         app.config['IS_SHUTTING_DOWN'] = True
         logger.info("Graceful shutdown tasks to be run by atexit handler. Exiting now to trigger atexit.")
-        sys.exit(0)
+        # Note: sys.exit(0) in a signal handler might not always trigger atexit in all threaded scenarios.
+        # A more robust way might involve setting a flag and having the main Flask loop check it,
+        # or using a different shutdown mechanism if issues arise. For now, this is standard.
+        sys.exit(0) 
 
 atexit.register(_app_cleanup_tasks)
 signal.signal(signal.SIGTERM, _graceful_shutdown_signal_handler)
@@ -391,25 +458,35 @@ signal.signal(signal.SIGINT, _graceful_shutdown_signal_handler)
 if __name__ == '__main__':
     try:
         logger.info("="*50);
-        logger.info("Starting Magenta AI Backend Main Application (app.py)")
+        logger.info("Starting Magenta AI Backend Main Application (app.py - Targeting CosyVoice API)")
         logger.info(f"Running with Python version: {sys.version.splitlines()[0]}")
-        if not os.getenv('HUGGINGFACE_TOKEN'): logger.warning("HUGGINGFACE_TOKEN environment variable not set. Some model downloads may fail.")
+        if not os.getenv('HUGGINGFACE_TOKEN'): 
+            logger.warning("HUGGINGFACE_TOKEN environment variable not set. Some model downloads may fail.")
+        
         logger.info(f"Attempting to initialize default S2ST backend: '{translation_manager.default_backend or 'Cascaded (default will be set)'}'")
-        try:
-            default_backend_instance = translation_manager.get_backend()
-            if not default_backend_instance.initialized:
-                 logger.critical(f"CRITICAL FAILURE: Default backend '{translation_manager.default_backend}' DID NOT successfully initialize AFTER get_backend call. Check logs from its initialization routine (e.g., CascadedBackend).")
-                 sys.exit(1)
-            logger.info(f"Default S2ST backend '{translation_manager.default_backend}' (type: {type(default_backend_instance).__name__}) confirmed initialized.")
-        except Exception as e_init_check:
-            logger.critical(f"CRITICAL FAILURE during default backend get/initialization check: {e_init_check}", exc_info=True)
-            sys.exit(1)
-        # Removed ModelManager log message
-        # logger.info("ModelManager (for optional on-demand models like SeamlessM4T) instance confirmed created.")
+        
+        # This block will trigger initialization of CascadedBackend, which includes CosyVoice API health check.
+        default_backend_instance = translation_manager.get_backend() 
+        
+        if not default_backend_instance.initialized:
+             logger.critical(
+                 f"CRITICAL FAILURE: Default backend '{translation_manager.default_backend}' "
+                 f"(type: {type(default_backend_instance).__name__}) "
+                 f"DID NOT successfully initialize. Check logs from its initialization routine, "
+                 f"especially regarding dependent API health (e.g., CosyVoice API at {os.getenv('COSYVOICE_API_URL')})."
+             )
+             sys.exit(1) # Exit if backend isn't initialized (e.g. CosyVoice API unhealthy)
+        
+        logger.info(
+            f"Default S2ST backend '{translation_manager.default_backend}' "
+            f"(type: {type(default_backend_instance).__name__}) "
+            f"confirmed initialized (dependent APIs were healthy during init)."
+        )
+        
         logger.info(f"Flask app starting on port 5001. ML Processing Device: {APP_WIDE_DEVICE}")
         app.run(host='0.0.0.0', port=5001, debug=False, use_reloader=False, threaded=True)
-    except SystemExit:
-        logger.info("Application exiting due to SystemExit (likely from signal handler).")
+    except SystemExit: 
+        logger.info("Application exiting due to SystemExit (likely signal handler or startup check failure).")
     except Exception as e_startup:
         logger.critical(f"FATAL: Application startup sequence failed: {e_startup}", exc_info=True)
     finally:
