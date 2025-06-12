@@ -1,15 +1,16 @@
-version: '3.8'
+version: '3.8' # This version tag is becoming obsolete but doesn't hurt for now
 
 services:
-  openvoice: # You can keep this if you still want to experiment with it, or remove it
+  openvoice:
     build:
-      context: .. 
-      dockerfile: Docker/Dockerfile 
+      context: .. # Relative to this docker-compose.yml, context is "Magenta AI"
+      dockerfile: Docker/Dockerfile # Path to Dockerfile relative to context
     container_name: docker-openvoice
     ports:
       - "8000:8000"
     volumes:
-      - ../checkpoints_v2:/app/checkpoints_v2:ro 
+      # Assumes checkpoints_v2 is in "Magenta AI/checkpoints_v2"
+      - ../checkpoints_v2:/app/checkpoints_v2:ro
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
@@ -18,40 +19,41 @@ services:
 
   voice-similarity:
     build:
-      context: .. 
-      dockerfile: Docker/Dockerfile.similarity 
+      context: .. # Relative to this docker-compose.yml, context is "Magenta AI"
+      dockerfile: Docker/Dockerfile.similarity # Path to Dockerfile relative to context
     container_name: docker-voice-similarity
     ports:
-      - "8001:8001" 
+      - "8001:8001"
     volumes:
       # This volume caches downloaded SpeechBrain models on your host
-      - ./pretrained_models_similarity:/app/pretrained_models 
+      # Creates/uses "Magenta AI/Docker/pretrained_models_similarity" on the host
+      - ./pretrained_models_similarity:/app/pretrained_models
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     networks:
       - app-network
 
-  # --- NEW CosyVoice Service ---
   cosyvoice:
     build:
-      context: .. # Root of Magenta AI project
-      dockerfile: Docker/Dockerfile.cosyvoice # Path to the new Dockerfile
+      context: .. # Relative to this docker-compose.yml, context is "Magenta AI"
+      dockerfile: Docker/Dockerfile.cosyvoice # Path to Dockerfile relative to context
     container_name: docker-cosyvoice
     ports:
       - "8002:8000" # Expose CosyVoice API on host port 8002, container port 8000
     volumes:
-      # This volume caches the downloaded CosyVoice models on your host
-      # The path inside the container should match where Dockerfile.cosyvoice downloads/expects them
-      # which is /app/CosyVoice/pretrained_models
-      - ./pretrained_cosyvoice_models:/app/CosyVoice/pretrained_models
-    # If using GPU:
+      # --- THIS IS THE CRITICAL CORRECTION ---
+      # Host path is relative to THIS docker-compose.yml file (which is in Magenta AI/Docker/)
+      # So, ../ goes up to "Magenta AI", then we go into "Backend/CosyVoice/pretrained_models"
+      # This mounts your existing downloaded models from the host into the container.
+      - ../Backend/CosyVoice/pretrained_models:/app/CosyVoice/pretrained_models:ro
+    # If using GPU (uncomment and configure if you have an NVIDIA GPU and drivers):
     # deploy:
     #   resources:
     #     reservations:
     #       devices:
     #         - driver: nvidia
-    #           count: 1
+    #           count: 1 # Or 'all'
     #           capabilities: [gpu]
     environment:
       - PYTHONUNBUFFERED=1
@@ -65,7 +67,14 @@ networks:
   app-network:
     driver: bridge
 
-# Define named volumes for persistent model caches
+# Named volumes defined here are not strictly necessary if you are using
+# bind mounts (specific host paths) for all persistent data as done above.
+# Keeping them doesn't hurt but can be removed if unused.
+# The "pretrained_models_similarity" is a bind mount: "./pretrained_models_similarity"
+# The "pretrained_cosyvoice_models" is now a bind mount: "../Backend/CosyVoice/pretrained_models"
+# If you want to use Docker-managed named volumes instead of host paths for caching,
+# you would change the service volume definitions and ensure these match.
+# For now, using direct host paths (bind mounts) is clearer.
 volumes:
-  pretrained_models_similarity:
-  pretrained_cosyvoice_models: # Ensures models persist across container recreation
+  pretrained_models_similarity: # This will use the bind mount defined in the service
+  pretrained_cosyvoice_models:  # This name is defined, but the service uses a bind mount now

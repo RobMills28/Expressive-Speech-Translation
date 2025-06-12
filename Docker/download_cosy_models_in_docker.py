@@ -3,12 +3,13 @@ from modelscope import snapshot_download
 import os
 
 # This script runs inside the Docker build, paths are relative to /app/CosyVoice
-model_dir_base = 'pretrained_models' 
+model_dir_base = 'pretrained_models'
 os.makedirs(model_dir_base, exist_ok=True)
 
 models_to_download = {
     "CosyVoice2-0.5B": "iic/CosyVoice2-0.5B",
-    "CosyVoice-ttsfrd": "iic/CosyVoice-ttsfrd"
+    "CosyVoice-ttsfrd": "iic/CosyVoice-ttsfrd",
+    "CosyVoice-300M": "iic/CosyVoice-300M"  # <<<< ADD THIS LINE
 }
 
 for name, model_id in models_to_download.items():
@@ -18,7 +19,5 @@ for name, model_id in models_to_download.items():
         print(f"Successfully downloaded {name}.")
     except Exception as e:
         print(f"ERROR downloading {name}: {e}")
-        # Decide if you want the build to fail here or continue
-        # For now, it will continue, but the service might not work if models are missing.
 
 print("Model download process complete from within Docker build.")

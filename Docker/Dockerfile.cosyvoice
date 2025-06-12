@@ -1,4 +1,4 @@
-# Force the amd64 platform for the base Python image
+# Dockerfile.cosyvoice
 FROM --platform=linux/amd64 python:3.10-slim-buster
 
 LABEL maintainer="Rob Mills"
@@ -6,7 +6,7 @@ LABEL description="Docker image for CosyVoice API service with Miniconda (x86_64
 
 ENV PYTHONUNBUFFERED=1
 ENV CONDA_DIR /opt/conda
-ENV PATH $CONDA_DIR/bin:$PATH 
+ENV PATH $CONDA_DIR/bin:$PATH
 
 WORKDIR /app
 
@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     build-essential \
     nano \
+    sed \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Miniconda
@@ -45,35 +46,82 @@ RUN git clone --recursive --depth 1 https://github.com/FunAudioLLM/CosyVoice.git
 
 WORKDIR /app/CosyVoice
 
-# Install pynini using conda
+# Install pynini using conda (needed for WeTextProcessing)
 RUN echo "Attempting to install pynini..." && \
     conda install -y -c conda-forge pynini==2.1.5 && \
     echo "Pynini installation attempt finished."
 
+# Strip hashes from requirements.txt before installing
+RUN echo "Stripping hashes from requirements.txt..." && \
+    sed -i 's/ --hash=[^ ]*//g' requirements.txt && \
+    echo "Hashes stripped."
+
+# --- NEW: Comment out TensorRT lines for CPU-only build ---
+RUN echo "Commenting out TensorRT packages in requirements.txt for CPU-only build..." && \
+    sed -i '/tensorrt-cu12/s/^/#/' requirements.txt && \
+    cat requirements.txt | grep 'tensorrt-cu12' && \
+    echo "TensorRT packages commented out (lines above should show them commented if grep found them)."
+# --- END NEW ---
+
 # Install Python packages from requirements.txt
-# MODIFIED: Removed Alibaba mirror, added --default-timeout
-RUN echo "Installing packages from requirements.txt..." && \
+RUN echo "Installing packages from requirements.txt (TensorRT should be skipped)..." && \
     pip install --default-timeout=600 --no-cache-dir -r requirements.txt && \
     echo "requirements.txt installation finished."
+
+# Pre-download models
+RUN mkdir -p pretrained_models
+COPY Docker/download_cosy_models_in_docker.py .
+RUN echo "Running model download script (for ttsfrd resources and ALL main models)..." && \
+    python download_cosy_models_in_docker.py && \
+    echo "Model download script finished."
+
+# Rename YAML file for CosyVoice2-0.5B
+RUN YAML_V2_PATH="/app/CosyVoice/pretrained_models/CosyVoice2-0.5B/cosyvoice2.yaml" && \
+    YAML_V1_PATH="/app/CosyVoice/pretrained_models/CosyVoice2-0.5B/cosyvoice.yaml" && \
+    if [ -f "$YAML_V2_PATH" ]; then \
+        echo "Renaming $YAML_V2_PATH to $YAML_V1_PATH..."; \
+        mv "$YAML_V2_PATH" "$YAML_V1_PATH"; \
+        echo "Rename complete."; \
+    else \
+        echo "WARNING: $YAML_V2_PATH not found for renaming. cosyvoice.yaml might already exist or path is incorrect."; \
+        if [ -f "$YAML_V1_PATH" ]; then \
+            echo "INFO: $YAML_V1_PATH already exists."; \
+        fi; \
+    fi
+
+# Prepare ttsfrd resources (unzip them)
+WORKDIR /app/CosyVoice/pretrained_models/CosyVoice-ttsfrd
+RUN if [ -f resource.zip ]; then \
+        echo "Unzipping ttsfrd resource.zip into current directory..."; \
+        unzip -o resource.zip -d .; \
+        echo "ttsfrd resource.zip unzipped."; \
+    else \
+        echo "ttsfrd resource.zip not found, skipping unzip."; \
+    fi
+
+# TTSFRD WHEEL INSTALLATION IS CURRENTLY COMMENTED OUT (from previous debug step)
+# If WeTextProcessing works, we keep this commented. If WeTextProcessing fails later,
+# we might revisit installing ttsfrd if other issues are resolved.
+# RUN echo "Attempting to install ttsfrd wheels from current directory..." && \
+#     pip install --no-cache-dir ./ttsfrd_dependency-0.1-py3-none-any.whl && \
+#     pip install --no-cache-dir ./ttsfrd-0.4.2-cp310-cp310-linux_x86_64.whl && \
+#     echo "ttsfrd wheels installation attempt finished."
+RUN echo "SKIPPED TTSFRD WHEEL INSTALLATION FOR DEBUGGING."
+
+# Return to main app directory
+WORKDIR /app
 
 # Install FastAPI and Uvicorn
 RUN echo "Installing FastAPI and Uvicorn..." && \
     pip install --no-cache-dir fastapi uvicorn[standard] python-multipart && \
     echo "FastAPI and Uvicorn installed."
 
-# Pre-download models
-RUN mkdir -p pretrained_models
-COPY Docker/download_cosy_models_in_docker.py .
-RUN echo "Running model download script..." && \
-    python download_cosy_models_in_docker.py && \
-    echo "Model download script finished."
-
-WORKDIR /app
+# Copy the API script
 COPY Docker/cosyvoice_api.py .
 
 ENV PYTHONPATH /app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}
 
 EXPOSE 8000
 
-CMD export PYTHONPATH="/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}" && \
-    conda run -n base uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info
+# Keep debug CMD to prevent Uvicorn auto-start, allowing for `docker exec` testing
+CMD echo "Container started for debugging (TensorRT install skipped, ttsfrd install skipped). PYTHONPATH is set. Uvicorn NOT started. Ready for exec." && tail -f /dev/null

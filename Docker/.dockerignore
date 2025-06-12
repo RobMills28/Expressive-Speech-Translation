@@ -1,0 +1,65 @@
+# .dockerignore (Place in Magenta AI/ directory)
+
+# Python virtual environments
+venv/
+.venv/
+env/
+# Your main app's venv is speech_env, if it's inside Magenta AI/
+speech_env/
+
+# Python cache
+*.pyc
+*.pyo
+__pycache__/
+*.egg-info/
+
+# Node.js (from your Frontend and MobileApp structure)
+Frontend/node_modules/
+Frontend/build/
+Frontend/dist/
+MobileApp/node_modules/ # Assuming MobileApp might have these
+MobileApp/build/        # Assuming MobileApp might have these
+
+# macOS specific
+.DS_Store
+*.AppleDouble
+
+# Git
+.git/
+.gitignore
+
+# IDE specific
+.idea/
+.vscode/
+
+# Large media files / datasets / other models not explicitly handled by volumes
+# Examples - uncomment and adjust if you have these at the Magenta AI/ level
+# Movie on 07-*.mov
+# Translated Videos/
+# Audio Samples/
+
+# Backend specific large files not needed in the CosyVoice image build context
+# because they are either downloaded inside the Dockerfile or mounted via volumes.
+Backend/checkpoints_v2/
+Backend/uploads/ # If your app.py creates uploads here
+Backend/CosyVoice/pretrained_models/ # Models are downloaded in Dockerfile or mounted via volume for cosyvoice service
+Backend/Wav2Lip/checkpoints/ # If these exist and are large
+
+# Docker specific folders that might be created on host due to volume mounts
+# These are caches or outputs, not needed for the *build context* of another image
+Docker/pretrained_cosyvoice_models/
+Docker/pretrained_models_similarity/
+
+# Log files
+*.log
+logs/ # Your root logs folder (if any)
+Backend/logs/ # From app.py
+Docker/openvoice_setup.log # From your setup script
+
+# Temporary files or specific large directories from your app's operation
+temp_video_processing_requests/ # From video_routes.py (if created on host)
+uploads/ # General uploads folder at root, if any
+
+# Other potential large directories based on your screenshots
+# model_cache/ # If this is large and not needed for image builds
+# processed/   # If this contains large processed outputs
