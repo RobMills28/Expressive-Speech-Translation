@@ -67,14 +67,17 @@ networks:
   app-network:
     driver: bridge
 
-# Named volumes defined here are not strictly necessary if you are using
-# bind mounts (specific host paths) for all persistent data as done above.
-# Keeping them doesn't hurt but can be removed if unused.
-# The "pretrained_models_similarity" is a bind mount: "./pretrained_models_similarity"
-# The "pretrained_cosyvoice_models" is now a bind mount: "../Backend/CosyVoice/pretrained_models"
-# If you want to use Docker-managed named volumes instead of host paths for caching,
-# you would change the service volume definitions and ensure these match.
-# For now, using direct host paths (bind mounts) is clearer.
+# This 'volumes:' block defines Docker-managed named volumes.
+# Since we are using specific host-path bind mounts for model persistence in the service definitions,
+# these named volumes here are not strictly mapping to those.
+# For example, 'pretrained_models_similarity' in the voice-similarity service uses a BIND MOUNT
+# to './pretrained_models_similarity' on the host.
+# If you intended to use a DOCKER NAMED VOLUME for that, the service definition would be:
+#    volumes:
+#      - pretrained_models_similarity:/app/pretrained_models
+# And then this block below would correctly define that named volume.
+# For clarity, I will leave this block as is, but understand the distinction.
+# The cosyvoice service is definitely using a BIND MOUNT to your host's Backend/... folder.
 volumes:
-  pretrained_models_similarity: # This will use the bind mount defined in the service
-  pretrained_cosyvoice_models:  # This name is defined, but the service uses a bind mount now
+  pretrained_models_similarity:
+  pretrained_cosyvoice_models: # This name is defined but the service above uses a specific host path bind mount.
