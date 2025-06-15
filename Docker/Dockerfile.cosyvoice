@@ -74,6 +74,12 @@ RUN echo "Cloning CosyVoice repository..." && \
 
 WORKDIR /app/CosyVoice
 
+# --- MODIFIED: Install libstdcxx-ng from conda-forge BEFORE pynini ---
+    RUN echo "Installing libstdcxx-ng from conda-forge..." && \
+    conda install -y -c conda-forge libstdcxx-ng && \
+    echo "libstdcxx-ng installation attempt finished."
+# --- END MODIFICATION ---
+
 # --- Pynini Installation (Essential for WeTextProcessing fallback) ---
 RUN echo "Installing pynini via Conda..." && \
     conda install -y -c conda-forge pynini==2.1.5 && \
@@ -174,7 +180,11 @@ COPY Docker/cosyvoice_api.py .
 ENV PYTHONPATH /app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}
 EXPOSE 8000
 
-# --- CMD TO START THE API SERVICE ---
-CMD export PYTHONPATH="/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}" && \
+# --- CMD TO START THE API SERVICE (Explicitly setting LD_LIBRARY_PATH) ---
+    CMD export CONDA_LIB_PATH="${CONDA_DIR}/lib" && \
+    export LD_LIBRARY_PATH="${CONDA_LIB_PATH}:${LD_LIBRARY_PATH}" && \
+    echo "DEBUG: Set LD_LIBRARY_PATH to: ${LD_LIBRARY_PATH}" && \
+    export PYTHONPATH="/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}" && \
     echo "Attempting to start Uvicorn API service with CosyVoice-300M..." && \
-    uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info --workers 1
+    echo "Running command: ${CONDA_DIR}/bin/python -m uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info --workers 1" && \
+    "${CONDA_DIR}/bin/python" -m uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info --workers 1
