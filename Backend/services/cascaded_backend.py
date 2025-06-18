@@ -88,22 +88,43 @@ class CascadedBackend(TranslationBackend):
 
     def _check_cosyvoice_api_status(self) -> bool:
         try:
-            response = requests.get(f"{COSYVOICE_API_URL}/health", timeout=10)
+            logger.info(f"Checking CosyVoice API status at {COSYVOICE_API_URL}/health") # Added log
+            response = requests.get(f"{COSYVOICE_API_URL}/health", timeout=15) # Slightly increased timeout
+
             if response.status_code == 200:
-                health_data = response.json()
-                if health_data.get("status") == "healthy" and health_data.get("message") == "CosyVoice model loaded.": # Check specific message
-                    logger.info(f"CosyVoice API is healthy: {health_data.get('message')}")
-                    return True
-                else:
-                    logger.warning(f"CosyVoice API reported unhealthy or model not loaded: {health_data}")
+                try:
+                    health_data = response.json()
+                    api_status = health_data.get("status")
+                    api_message = health_data.get("message", "") # Get message, default to empty string
+
+                    # --- THIS IS THE MODIFIED AND MORE ROBUST CHECK ---
+                    if api_status == "healthy" and \
+                       "CosyVoice model" in api_message and \
+                       "loaded" in api_message:
+                        logger.info(f"CosyVoice API is healthy: {api_message}")
+                        return True
+                    else:
+                        logger.warning(f"CosyVoice API reported status '{api_status}' with message '{api_message}', which does not meet all health criteria. Full response: {health_data}")
+                        return False
+                    # --- END OF MODIFIED CHECK ---
+
+                except json.JSONDecodeError as e_json:
+                    logger.error(f"CosyVoice API health response was not valid JSON: {e_json}. Status: {response.status_code}. Response text: {response.text[:500]}")
                     return False
             else:
-                logger.warning(f"CosyVoice API status check failed: {response.status_code} - {response.text[:200]}")
+                logger.warning(f"CosyVoice API status check HTTP request failed: {response.status_code} - {response.text[:200]}")
                 return False
-        except requests.exceptions.RequestException as e:
-            logger.error(f"CosyVoice API unreachable at {COSYVOICE_API_URL}/health: {e}")
+
+        except requests.exceptions.Timeout:
+            logger.error(f"CosyVoice API timed out connecting to {COSYVOICE_API_URL}/health after 15 seconds.")
             return False
-        except Exception as e_gen_status:
+        except requests.exceptions.ConnectionError as e_conn: # More specific for connection issues
+            logger.error(f"CosyVoice API connection error at {COSYVOICE_API_URL}/health: {e_conn}")
+            return False
+        except requests.exceptions.RequestException as e_req: # General requests error
+            logger.error(f"CosyVoice API request error for {COSYVOICE_API_URL}/health: {e_req}")
+            return False
+        except Exception as e_gen_status: # General catch-all
             logger.error(f"Unexpected error checking CosyVoice API status: {e_gen_status}", exc_info=True)
             return False
 

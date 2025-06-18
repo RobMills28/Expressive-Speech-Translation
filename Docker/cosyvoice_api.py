@@ -153,9 +153,9 @@ async def generate_speech(
         
         generated_chunks = []
         for i, result_chunk in enumerate(cosy_model.inference_zero_shot(
-            text=text_to_synthesize, 
-            prompt_text=style_prompt_text if style_prompt_text else "", 
-            prompt_speech_16k=prompt_speech_16k_np, 
+            text_to_synthesize, 
+            style_prompt_text if style_prompt_text else "", 
+            prompt_speech_16k_np,
             stream=False 
         )):
             if 'tts_speech' not in result_chunk or result_chunk['tts_speech'] is None:
