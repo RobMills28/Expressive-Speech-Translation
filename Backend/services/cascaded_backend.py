@@ -394,7 +394,7 @@ class CascadedBackend(TranslationBackend):
                     }
 
                     try:
-                        response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=300)
+                        response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=3600)
                         files['reference_speaker_wav'][1].close()
 
                         if response.status_code == 200:
