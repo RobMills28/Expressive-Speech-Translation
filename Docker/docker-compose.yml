@@ -1,4 +1,4 @@
-version: '3.8' # This version tag is becoming obsolete but doesn't hurt for now
+version: '3.8' # Retained for compatibility, though becoming obsolete
 
 services:
   openvoice:
@@ -42,42 +42,50 @@ services:
     ports:
       - "8002:8000" # Expose CosyVoice API on host port 8002, container port 8000
     volumes:
-      # --- THIS IS THE CRITICAL CORRECTION ---
       # Host path is relative to THIS docker-compose.yml file (which is in Magenta AI/Docker/)
       # So, ../ goes up to "Magenta AI", then we go into "Backend/CosyVoice/pretrained_models"
-      # This mounts your existing downloaded models from the host into the container.
       - ../Backend/CosyVoice/pretrained_models:/app/CosyVoice/pretrained_models:ro
-    # If using GPU (uncomment and configure if you have an NVIDIA GPU and drivers):
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1 # Or 'all'
-    #           capabilities: [gpu]
     environment:
       - PYTHONUNBUFFERED=1
       - TOKENIZERS_PARALLELISM=false # Good practice for Hugging Face tokenizers
-      # Add any other environment variables CosyVoice might need
     restart: unless-stopped
     networks:
       - app-network
+
+  musetalk: # NEW SERVICE
+    build:
+      context: .. # Build context is "Magenta AI/" (one level up from this docker-compose.yml)
+      dockerfile: Docker/Dockerfile.musetalk # Path relative to context
+    container_name: docker-musetalk
+    ports:
+      - "8003:8000" # MuseTalk API on host port 8003, container port 8000
+    # The provided Dockerfile.musetalk COPIES models into the image.
+    # If you change it to mount models, add a volume like this:
+    # volumes:
+    #   - ../MuseTalk/MuseTalk/models:/app/MuseTalk/models:ro 
+    #   # Ensure Magenta AI/MuseTalk/MuseTalk/models exists on your host
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Add any specific env vars MuseTalk might need for inference
+      # e.g., HF_HOME=/app/huggingface_cache if any sub-component tries to download more things
+    restart: unless-stopped
+    networks:
+      - app-network
+    # If running on a machine with limited resources and multiple containers, 
+    # you might consider adding resource limits for development, though this
+    # can also cause unexpected failures if limits are too low.
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2.0' # Example: limit to 2 CPUs for this container if needed
+    #       memory: 8G  # Example: limit to 8GB RAM for this container if needed
 
 networks:
   app-network:
     driver: bridge
 
-# This 'volumes:' block defines Docker-managed named volumes.
-# Since we are using specific host-path bind mounts for model persistence in the service definitions,
-# these named volumes here are not strictly mapping to those.
-# For example, 'pretrained_models_similarity' in the voice-similarity service uses a BIND MOUNT
-# to './pretrained_models_similarity' on the host.
-# If you intended to use a DOCKER NAMED VOLUME for that, the service definition would be:
-#    volumes:
-#      - pretrained_models_similarity:/app/pretrained_models
-# And then this block below would correctly define that named volume.
-# For clarity, I will leave this block as is, but understand the distinction.
-# The cosyvoice service is definitely using a BIND MOUNT to your host's Backend/... folder.
 volumes:
-  pretrained_models_similarity:
-  pretrained_cosyvoice_models: # This name is defined but the service above uses a specific host path bind mount.
+  pretrained_models_similarity: {} # Defines the named volume used by voice-similarity
+  # pretrained_cosyvoice_models: # This was defined but cosyvoice uses a bind mount. Can be removed if not used elsewhere.
+  # If you were to use a named volume for MuseTalk models (instead of COPY or bind mount), define it here:
+  # pretrained_musetalk_models: {} 
