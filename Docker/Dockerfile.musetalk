@@ -1,98 +1,40 @@
-# Magenta AI/Docker/Dockerfile.musetalk
+# Final Dockerfile - Based on running scripts, not importing a broken library
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 
-LABEL maintainer="Rob Mills"
-LABEL description="Docker image for MuseTalk API service (CPU Emulation) - Models Downloaded in Build"
+ENV PYTHONUNBUFFERED=1
 
-ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=1200 \
-    CONDA_DIR=/opt/conda \
-    LC_ALL=C.UTF-8 \
-    LANG=C.UTF-8 \
-    PATH=${CONDA_DIR}/bin:${PATH} \
-    DEBIAN_FRONTEND=noninteractive \
-    HF_HOME=/app/huggingface_cache
+# 1. System Dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git wget ffmpeg build-essential cmake libgl1-mesa-glx && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# 2. PyTorch & MMLab dependencies
 WORKDIR /app
-
-# --- System Dependencies ---
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-    wget \
-    git \
-    ffmpeg \
-    build-essential \
-    cmake \
-    tar \
-    # For potential opencv-python/MMLab headless dependencies
-    libgl1-mesa-glx libglib2.0-0 libsm6 libxext6 libxrender-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# --- Miniconda Installation ---
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    /bin/bash /tmp/miniconda.sh -b -p "${CONDA_DIR}" && \
-    rm /tmp/miniconda.sh && \
-    "${CONDA_DIR}/bin/conda" init bash && \
-    "${CONDA_DIR}/bin/conda" clean --all --yes
-
-SHELL ["/bin/bash", "--login", "-c"]
-
-# --- Install PyTorch (CPU) & Basic Tools ---
-RUN echo "Installing PyTorch CPU and essential tools..." && \
-    pip install --upgrade pip setuptools wheel && \
-    pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu && \
-    pip install Cython && \
-    # Ensure numpy is compatible and the version MuseTalk expects from its requirements
-    pip install numpy==1.23.5 --force-reinstall 
-
-# --- Clone MuseTalk Repository ---
-RUN echo "Cloning MuseTalk repository into /app/MuseTalk..." && \
-    git clone https://github.com/TMElyralab/MuseTalk.git /app/MuseTalk
-WORKDIR /app/MuseTalk
-
-# --- Install MuseTalk Python Dependencies (from requirements.txt) ---
-RUN echo "Patching MuseTalk requirements.txt..." && \
-    cp requirements.txt requirements.original.txt && \
-    sed -i '/tensorflow/d' requirements.txt && \
-    echo "Patched requirements.txt" && \
-    pip install -r requirements.txt
-    # numpy should already be 1.23.5
-
-# --- Install MMLab Stack ---
-RUN echo "Installing MMLab stack..." && \
-    pip install -U openmim && \
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -U openmim && \
     mim install mmengine && \
     mim install "mmcv==2.0.1" && \
-    # xtcocotools (expecting pre-built wheel for linux)
-    pip install "xtcocotools==1.14.3" && \
+    pip install --no-cache-dir "xtcocotools>=1.12" && \
     mim install "mmdet==3.1.0" && \
-    mim install "mmpose==1.1.0" && \
-    echo "MMLab stack installation attempt finished."
+    mim install "mmpose==1.1.0"
 
-# --- Download Model Weights using the script from the cloned repo ---
-# This step will take a long time during the build.
-RUN echo "Downloading MuseTalk model weights using download_weights.sh..." && \
-    chmod +x ./download_weights.sh && \
-    # Ensure gdown and huggingface_hub are available (should be from requirements.txt or openmim)
-    # If download_weights.sh fails due to missing commands, install them explicitly before this:
-    # pip install huggingface_hub gdown
-    sh ./download_weights.sh && \
-    echo "MuseTalk model weights download attempt finished." && \
-    # Verify some key model files exist to catch download issues early
-    test -f models/musetalkV15/unet.pth || (echo "ERROR: UNet model not found after download" && exit 1) && \
-    test -f models/dwpose/dw-ll_ucoco_384.pth || (echo "ERROR: DWPose model not found after download" && exit 1) && \
-    echo "Key model files verified."
+# 3. Copy MuseTalk project and install its requirements
+COPY MuseTalk /app/MuseTalk
+WORKDIR /app/MuseTalk
+RUN sed -i '/tensorflow/d' requirements.txt && \
+    sed -i '/tensorboard/d' requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt
 
-# --- Application Setup ---
-WORKDIR /app 
-# COPY the API script from the Docker context (Magenta AI/Docker/musetalk_api.py)
+# 4. Download Weights
+RUN chmod +x ./download_weights.sh && ./download_weights.sh
+
+# 5. Copy our API logic
+WORKDIR /app
+COPY Docker/api_inference_logic.py .
 COPY Docker/musetalk_api.py .
+RUN pip install --no-cache-dir fastapi "uvicorn[standard]"
 
-RUN pip install fastapi uvicorn[standard] python-multipart httpx
-
-ENV PYTHONPATH="/app/MuseTalk:${PYTHONPATH}"
+# 6. Run
 EXPOSE 8000
-
-CMD ["python", "-m", "uvicorn", "musetalk_api:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info", "--workers", "1"]
+CMD ["uvicorn", "musetalk_api:app", "--host", "0.0.0.0", "--port", "8000"]

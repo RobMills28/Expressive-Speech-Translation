@@ -1,39 +1,37 @@
-# --- General ---
-# Git files & specific config
+# --- Git ---
 .git/
-# .gitignore # Don't ignore the .dockerignore file itself
+.gitignore
 .gitattributes
 *.pem
 *.key
 
-# macOS specific
+# --- macOS & IDE specific ---
 .DS_Store
 *.AppleDouble
 ._*
-
-# IDE specific
 .idea/
 .vscode/
 *.code-workspace
 
-# Python virtual environments
+# --- Python Virtual Environments ---
 venv/
 .venv/
 env/
 speech_env/
 MuseTalk_env/ 
 
-# Python cache and build artifacts
+# --- Python Cache & Local Build Artifacts ---
 **/__pycache__/
 *.pyc
 *.pyo
+*.egg
 *.egg-info/
-*.so 
 build/ 
 dist/  
-*.egg
+# *.so # Commented out: if your COPIED MuseTalk code includes pre-compiled .so files you want to use.
+       # However, it's generally better for Docker to build/use Linux .so files.
 
-# Node.js (Frontend and MobileApp)
+# --- Node.js (Frontend and MobileApp) ---
 Frontend/node_modules/
 Frontend/build/
 Frontend/dist/
@@ -41,40 +39,41 @@ MobileApp/node_modules/
 MobileApp/build/
 MobileApp/dist/
 
-# Log files
+# --- Log files ---
 *.log
 logs/ 
 Backend/logs/
 Docker/openvoice_setup.log 
 
-# Test reports / coverage data
+# --- Test reports / coverage data ---
 htmlcov/
 .coverage
 .pytest_cache/
 .tox/
 
-# --- Application Specific Large/Temporary Directories ---
+# --- Application Specific Large/Temporary Directories (Runtime, not for build context) ---
 model_cache/            
 processed/              
 uploads/                
 Backend/uploads/        
 Backend/temp_video_processing_requests/ 
-Docker/pretrained_cosyvoice_models/
-Docker/pretrained_models_similarity/
+Docker/pretrained_cosyvoice_models/ 
+Docker/pretrained_models_similarity/  
 
-# --- MuseTalk Specific ---
-# *** IGNORE LOCAL MODELS because Dockerfile.musetalk downloads them ***
-MuseTalk/MuseTalk/models/       
-MuseTalk/MuseTalk/results/      
-MuseTalk/MuseTalk/build/        
-MuseTalk/MuseTalk/.git/         # The .git folder of the cloned MuseTalk repo itself
-MuseTalk/MuseTalk/**/*.so       
-MuseTalk/MuseTalk/**/*.egg-info/
-MuseTalk/MuseTalk/**/__pycache__/
-MuseTalk/MuseTalk/*.egg
+# --- MuseTalk Specific Exclusions from your LOCAL clone ---
+# The Dockerfile will COPY the contents of Magenta AI/MuseTalk/MuseTalk/ (the code)
+# BUT we want to exclude very large subdirectories from that COPY operation's CONTEXT,
+# as the Dockerfile handles some of these differently (e.g., downloads weights).
+
+MuseTalk/MuseTalk/.git/         # Exclude the .git history of your local MuseTalk clone
+MuseTalk/MuseTalk/models/       # Exclude your LOCAL downloaded WEIGHTS; Dockerfile will download fresh ones.
+MuseTalk/MuseTalk/results/      # Exclude local test results
+MuseTalk/MuseTalk/build/        # Exclude local build artifacts for MuseTalk if any
+# MuseTalk/MuseTalk/**/__pycache__/ # Covered by global pattern
+# MuseTalk/MuseTalk/**/*.egg      # Covered by global pattern
+# MuseTalk/MuseTalk/**/*.egg-info # Covered by global pattern
 MuseTalk/MuseTalk/temp_xtcocotools_build/ 
 
-# Other potentially large directories not needed in build context
-# Backend/checkpoints_v2/ 
-# Backend/CosyVoice/pretrained_models/ # CosyVoice service mounts this or its Dockerfile downloads.
-                                     # Not needed in build context for musetalk image.
+# --- Other Model/Checkpoint Directories ON HOST that are NOT being COPIED by THIS Dockerfile ---
+Backend/CosyVoice/pretrained_models/ 
+Backend/checkpoints_v2/              
