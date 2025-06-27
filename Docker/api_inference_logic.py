@@ -1,4 +1,3 @@
-# Docker/api_inference_logic.py (v6 - Final version with all functions and imports corrected)
 import os
 import sys
 from pathlib import Path
@@ -20,15 +19,15 @@ if str(MUSETALK_PROJECT_ROOT) not in sys.path:
 # These imports are now 100% verified against your provided files.
 from utils.utils import load_all_model, get_video_fps
 from utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder
+from utils.blending import get_image # This one was correct
 from utils.audio_processor import AudioProcessor
 from mmpose.apis import init_model as init_pose_estimator, inference_topdown
 from mmpose.structures import merge_data_samples
-from utils.blending import get_image
 
 logger = logging.getLogger(__name__)
 
-# --- HELPER FUNCTIONS COPIED FROM SCRIPTS ---
-# These functions do not exist in the library files, so we define them here.
+# --- HELPER FUNCTIONS COPIED FROM OFFICIAL SCRIPTS ---
+# These functions do not exist in the library utility files, so we define them here.
 def smooth_facial_landmarks(landmarks, window_size=5):
     """Smooth facial landmarks using a moving average filter."""
     smoothed_landmarks = []
@@ -54,7 +53,6 @@ def smooth_bbox(bboxes, window_size=5):
     return smoothed_bboxes
 # --- END OF HELPER FUNCTIONS ---
 
-
 # This dictionary will be populated once at startup
 MODELS = {}
 
@@ -71,7 +69,6 @@ def load_models_for_api():
     logger.info("Loading all models for the API...")
     device = torch.device("cpu")
     
-    # Correct singular function name from utils.utils
     vae, unet, pe = load_all_model(device=device)
     MODELS['vae'] = vae
     MODELS['unet'] = unet
@@ -85,11 +82,8 @@ def load_models_for_api():
     whisper_path = str(models_dir / "whisper" / "tiny.pt")
     MODELS['audio_processor'] = AudioProcessor(whisper_model_type="tiny", model_path=whisper_path)
 
-    # Initialize FaceParser from face_parsing.py
-    # This was a missing piece from previous versions.
     from musetalk.utils.face_parsing.face_parsing import FaceParsing
     MODELS['face_parser'] = FaceParsing()
-
 
     logger.info("All models loaded successfully.")
     return True
@@ -128,11 +122,24 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
     pe = MODELS['pe']
     fp = MODELS['face_parser']
 
+    pose_estimator = MODELS['pose_estimator']
+    all_landmarks_for_video = []
+    logger.info("Running pose estimation on all frames...")
+    for frame in original_frames:
+        pose_results = inference_topdown(pose_estimator, frame, bbox_format='xyxy')
+        merged_results = merge_data_samples(pose_results)
+        keypoints = merged_results.pred_instances.keypoints[0]
+        all_landmarks_for_video.append(keypoints)
+
+    lmk_results = smooth_facial_landmarks(all_landmarks_for_video, window_size=5)
+    logger.info("Landmark smoothing complete.")
 
     for i, (bbox, audio_chunk) in enumerate(zip(bbox_results, whisper_chunks)):
         if i >= len(original_frames): break
         if bbox == coord_placeholder: continue
+        if i >= len(lmk_results): break # Ensure we don't go out of bounds for landmarks
 
+        lmk = lmk_results[i]
         x1, y1, x2, y2 = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
         
         face_frame_np = original_frames[i][y1:y2, x1:x2]
@@ -149,14 +156,13 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
         audio_emb = torch.from_numpy(audio_chunk).unsqueeze(0).to(device)
         audio_emb = pe(audio_emb)
 
+        # The inference logic for v1.5 does not seem to use landmarks directly in the UNet
         noise_pred = unet(sample=latents, timestep=timesteps, encoder_hidden_states=audio_emb).sample
         pred_latents = latents - noise_pred
         
         output_frame_np = vae.decode(pred_latents / vae.config.scaling_factor, return_dict=False)[0]
         output_frame_np = (output_frame_np.permute(1, 2, 0) * 255).clamp(0, 255).cpu().numpy().astype(np.uint8)
-        output_frame = Image.fromarray(output_frame_np)
-
-        # Use the get_image function from blending.py
+        
         pasted_frame = get_image(original_frames[i], output_frame_np, bbox, fp=fp)
         
         output_path = generated_frames_dir / f"{i:08d}.png"
