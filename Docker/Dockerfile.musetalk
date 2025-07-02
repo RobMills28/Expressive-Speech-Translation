@@ -1,4 +1,4 @@
-# Final Dockerfile v2 - Added pip retries for network robustness
+# Final Dockerfile v5 - Installs gdown with pip
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
@@ -22,13 +22,21 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # 3. Copy MuseTalk project and install its requirements
 COPY MuseTalk /app/MuseTalk
 WORKDIR /app/MuseTalk
-# <<<< THIS IS THE ONLY CHANGED LINE >>>>
 RUN sed -i '/tensorflow/d' requirements.txt && \
     sed -i '/tensorboard/d' requirements.txt && \
     pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt
 
-# 4. Download Weights
+# 4. Download Weights (Best Effort)
 RUN chmod +x ./download_weights.sh && ./download_weights.sh
+
+# 4.5. Manually download critical models to ensure they exist.
+RUN mkdir -p ./models/face-parse-bisent/ && \
+    mkdir -p ./models/musetalkV15/ && \
+    pip install --no-cache-dir gdown && \
+    gdown --id 154JgKpzCPW82qINcVieuPH3fZ2e0P812 -O ./models/face-parse-bisent/79999_iter.pth && \
+    wget -O ./models/face-parse-bisent/resnet18-5c106cde.pth https://download.pytorch.org/models/resnet18-5c106cde.pth && \
+    wget -O ./models/musetalkV15/unet.pth https://huggingface.co/TMElyralab/MuseTalk/resolve/main/musetalkV15/unet.pth && \
+    pip uninstall -y gdown
 
 # 5. Copy our API logic
 WORKDIR /app
