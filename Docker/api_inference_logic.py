@@ -1,3 +1,4 @@
+# Docker/api_inference_logic.py (v11 - The Final VAE Object Fix)
 import os
 import sys
 from pathlib import Path
@@ -9,6 +10,7 @@ import tempfile
 import shutil
 import subprocess
 import logging
+from tqdm import tqdm
 
 # Set up paths and logging
 MUSETALK_PROJECT_ROOT = Path("/app/MuseTalk").resolve()
@@ -53,9 +55,7 @@ MODELS = {}
 
 def load_models_for_api():
     global MODELS
-    if MODELS:
-        logger.info("Models are already loaded.")
-        return True
+    if MODELS: return True
 
     logger.info("Loading all models for the API...")
     device = torch.device("cpu")
@@ -66,14 +66,15 @@ def load_models_for_api():
     MODELS['pe'] = pe
 
     models_dir = MUSETALK_PROJECT_ROOT / "models"
+    
     pose_config = str(MUSETALK_PROJECT_ROOT / 'musetalk' / 'utils' / 'dwpose' / 'rtmpose-l_8xb32-270e_coco-ubody-wholebody-384x288.py')
     pose_checkpoint = str(models_dir / 'dwpose' / 'dw-ll_ucoco_384.pth')
-    MODELS['pose_estimator'] = init_pose_estimator(pose_config, pose_checkpoint, device=str(device))
+    MODELS['pose_estimator'] = init_model(pose_config, pose_checkpoint, device=str(device))
 
     whisper_feature_extractor_path = str(models_dir / "whisper")
     MODELS['audio_processor'] = AudioProcessor(feature_extractor_path=whisper_feature_extractor_path)
 
-    from musetalk.utils.face_parsing.face_parsing import FaceParsing
+    from musetalk.utils.face_parsing import FaceParsing
     MODELS['face_parser'] = FaceParsing()
     
     MODELS['whisper_model'] = WhisperModel.from_pretrained(whisper_feature_extractor_path).to(device=device).eval()
@@ -86,26 +87,19 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
     input_video_path = Path(video_path_str)
     temp_dir = input_video_path.parent
     
-    # ---- START OF CORRECTED BLOCK ----
-    # 1. Extract frames from video into a temporary directory
     logger.info("Step 1: Extracting frames from video...")
     frames_dir = temp_dir / "input_frames"
     frames_dir.mkdir()
-    cmd = f"ffmpeg -v fatal -i {video_path_str} -start_number 0 {frames_dir}/%08d.png"
+    cmd = f"ffmpeg -v fatal -i {video_path_str} -start_number 0 -q:v 2 {frames_dir}/%08d.png"
     subprocess.run(cmd, shell=True, check=True)
     
-    img_list = sorted(list(frames_dir.glob('*.png')))
-    if not img_list:
-        raise ValueError("FFmpeg failed to extract frames from the video.")
-    img_list = [str(p) for p in img_list] # Convert Path objects to strings
+    img_list = sorted([str(p) for p in frames_dir.glob('*.png')])
+    if not img_list: raise ValueError("FFmpeg failed to extract frames.")
 
-    # 2. Preprocessing using the list of frame paths
     logger.info(f"Step 2: Preprocessing {len(img_list)} frames...")
-    
     coords_list, original_frames = get_landmark_and_bbox(img_list=img_list, upperbondrange=bbox_shift)
     
     if not coords_list: raise ValueError("Failed to get bboxes from video frames.")
-    if not original_frames: raise ValueError("Failed to read frames from image list.")
 
     fps = get_video_fps(video_path_str)
     bbox_results = smooth_bbox(coords_list, window_size=5)
@@ -115,11 +109,10 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
     whisper_chunks = audio_processor.get_whisper_chunk(
         whisper_input_features, device, MODELS['unet'].model.dtype, MODELS['whisper_model'], librosa_length, fps=fps)
 
-    # Prepare latent inputs
     input_latent_list = []
     for bbox, frame in zip(coords_list, original_frames):
-        if bbox == coord_placeholder: 
-            input_latent_list.append(None) # Add placeholder for skipped frames
+        if bbox == coord_placeholder:
+            input_latent_list.append(None)
             continue
         x1, y1, x2, y2 = bbox
         crop_frame = frame[y1:y2, x1:x2]
@@ -130,39 +123,35 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
         latents = MODELS['vae'].get_latents_for_unet(crop_frame)
         input_latent_list.append(latents)
     
-    # ---- END OF CORRECTED BLOCK ----
-
-    # 3. Core Inference Loop
     logger.info("Step 3: Starting inference loop...")
     generated_frames_dir = temp_dir / "generated_frames"
     generated_frames_dir.mkdir()
     
     timesteps = torch.tensor([0], device=device)
     unet = MODELS['unet'].model
-    vae = MODELS['vae'].vae
+    
+    # <<< THE ONLY CORRECTION IS HERE >>>
+    # We use the entire VAE wrapper object, not the raw .vae inside it
+    vae_wrapper = MODELS['vae']
     pe = MODELS['pe']
     fp = MODELS['face_parser']
-
-    gen = datagen(
-        whisper_chunks=whisper_chunks,
-        vae_encode_latents=input_latent_list,
-        batch_size=8,
-        device=device,
-    )
+    
+    gen = datagen(whisper_chunks, input_latent_list, batch_size=8, device=device)
     
     res_frame_list = []
     for i, (whisper_batch, latent_batch) in enumerate(tqdm(gen, desc="Generating frames")):
-        if latent_batch is None: continue # Skip if latent batch is None
+        if latent_batch is None: continue
         
         audio_feature_batch = pe(whisper_batch)
         latent_batch = latent_batch.to(dtype=unet.dtype)
         
         pred_latents = unet(latent_batch, timesteps, encoder_hidden_states=audio_feature_batch).sample
-        recon = vae.decode_latents(pred_latents / vae.config.scaling_factor)
+        
+        # Use the correct method from our VAE wrapper class
+        recon = vae_wrapper.decode_latents(pred_latents)
         for res_frame in recon:
             res_frame_list.append(res_frame)
 
-    # 4. Blending and Saving Frames
     logger.info("Step 4: Blending frames...")
     for i, res_frame in enumerate(tqdm(res_frame_list, desc="Blending frames")):
         if i >= len(coords_list): break
@@ -181,7 +170,6 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
         output_path = generated_frames_dir / f"{i:08d}.png"
         cv2.imwrite(str(output_path), combine_frame)
 
-    # 5. Postprocessing (FFmpeg)
     logger.info("Step 5: Stitching frames into video...")
     temp_silent_video_path = temp_dir / "temp_silent.mp4"
     final_output_video_path = temp_dir / "final_output.mp4"
