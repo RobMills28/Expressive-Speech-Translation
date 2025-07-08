@@ -69,7 +69,7 @@ def load_models_for_api():
     
     pose_config = str(MUSETALK_PROJECT_ROOT / 'musetalk' / 'utils' / 'dwpose' / 'rtmpose-l_8xb32-270e_coco-ubody-wholebody-384x288.py')
     pose_checkpoint = str(models_dir / 'dwpose' / 'dw-ll_ucoco_384.pth')
-    MODELS['pose_estimator'] = init_model(pose_config, pose_checkpoint, device=str(device))
+    MODELS['pose_estimator'] = init_pose_estimator(pose_config, pose_checkpoint, device=str(device))
 
     whisper_feature_extractor_path = str(models_dir / "whisper")
     MODELS['audio_processor'] = AudioProcessor(feature_extractor_path=whisper_feature_extractor_path)
@@ -97,7 +97,9 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
     if not img_list: raise ValueError("FFmpeg failed to extract frames.")
 
     logger.info(f"Step 2: Preprocessing {len(img_list)} frames...")
-    coords_list, original_frames = get_landmark_and_bbox(img_list=img_list, upperbondrange=bbox_shift)
+    # Fetch the loaded model from our dictionary
+    pose_estimator_model = MODELS['pose_estimator']
+    coords_list, original_frames = get_landmark_and_bbox(pose_estimator_model, img_list=img_list, upperbondrange=bbox_shift)
     
     if not coords_list: raise ValueError("Failed to get bboxes from video frames.")
 

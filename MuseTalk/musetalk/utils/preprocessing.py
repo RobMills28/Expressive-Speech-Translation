@@ -22,8 +22,9 @@ checkpoint_file = os.path.join(project_root, 'models', 'dwpose', 'dw-ll_ucoco_38
 # --- END OF CORRECTED BLOCK ---
 
 # initialize the mmpose model
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = init_model(config_file, checkpoint_file, device=device)
+# We will initialize this model once in our API logic to avoid redundancy.
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# model = init_model(config_file, checkpoint_file, device=device)
 
 # initialize the face detection model
 face_alignment_device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -84,7 +85,7 @@ def get_bbox_range(img_list,upperbondrange =0):
     return text_range
 
 
-def get_landmark_and_bbox(img_list,upperbondrange =0):
+def get_landmark_and_bbox(model, img_list, upperbondrange=0):
     frames = read_imgs(img_list)
     batch_size_fa = 1
     batches = [frames[i:i + batch_size_fa] for i in range(0, len(frames), batch_size_fa)]
