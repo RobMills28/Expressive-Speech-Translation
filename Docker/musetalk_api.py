@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse
 from api_inference_logic import load_models_for_api, run_lip_sync
 
 # --- Logging Setup ---
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d (%(funcName)s)] - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d (%(funcName)s)] - %(message)s')
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="MuseTalk LipSync API", description="API for lip-syncing videos using MuseTalk.")
