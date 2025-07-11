@@ -274,3 +274,5 @@ if __name__ == "__main__":
     parser.add_argument("--version", type=str, default="v15", choices=["v1", "v15"], help="Model version to use")
     args = parser.parse_args()
     main(args)
+
+# I hope this works!
