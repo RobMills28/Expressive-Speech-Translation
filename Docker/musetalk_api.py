@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(0, '/app/MuseTalk') # Force Python to look in the MuseTalk project root
-
 import os
 from pathlib import Path
 import shutil

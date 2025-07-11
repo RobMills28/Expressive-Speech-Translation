@@ -1,13 +1,9 @@
-# Dockerfile v11 - The "No Assumptions" AWS Fix
+# Dockerfile v12 - The ENTRYPOINT Bootstrap Fix
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
 
-# --- THE CRITICAL CHANGE - SET THE MASTER PATH ---
-# We tell Python explicitly to look in /app/MuseTalk for all 'musetalk' packages
-# and in /app/MuseTalk/musetalk/utils for all nested packages.
-# This should solve all import errors at once.
-ENV PYTHONPATH=/app/MuseTalk:/app/MuseTalk/musetalk/utils
+# We no longer need ENV PYTHONPATH here, the script will handle it.
 
 # 1. System Dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -45,16 +41,18 @@ RUN (cd /app/MuseTalk && \
     wget -O ./models/musetalkV15/unet.pth https://huggingface.co/TMElyralab/MuseTalk/resolve/main/musetalkV15/unet.pth && \
     pip uninstall -y gdown)
 
-# 5. Copy our API logic. We will place it in /app/MuseTalk for simplicity.
+# 5. Copy our API logic and the new bootstrap script
 COPY Docker/api_inference_logic.py /app/MuseTalk/
 COPY Docker/musetalk_api.py /app/MuseTalk/
+COPY Docker/run_api.sh /app/MuseTalk/
+RUN chmod +x /app/MuseTalk/run_api.sh
 RUN pip install --no-cache-dir fastapi "uvicorn[standard]"
 
 # 6. Set the final working directory
 WORKDIR /app/MuseTalk
 
-# 7. Run the API
-# Uvicorn runs from the WORKDIR and will find the API scripts.
-# The PYTHONPATH will handle all imports.
+# 7. --- THE NEW EXECUTION METHOD ---
+# Use ENTRYPOINT to run our bootstrap script.
+# The CMD is now empty, as the command is in the script.
 EXPOSE 8000
-CMD ["uvicorn", "musetalk_api:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["/app/MuseTalk/run_api.sh"]
