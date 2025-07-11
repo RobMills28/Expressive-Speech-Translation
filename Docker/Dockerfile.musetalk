@@ -1,17 +1,11 @@
-# Dockerfile v15 - Debugging file paths
-FROM --platform=linux/amd64 python:3.10-slim-bullseye
+# Dockerfile v17 - Final Debug Attempt
+FROM python:3.10-slim-bullseye
 
 WORKDIR /app
-
-# Copy the project to see its structure
-COPY MuseTalk /app/MuseTalk_temp
+COPY MuseTalk /app/MuseTalk_project
 
 # --- THE DEBUGGING STEP ---
-# List the contents of the temp directory, including subdirectories,
-# so we can see the exact structure. The '|| true' ensures the build doesn't fail
-# if a subdirectory doesn't exist.
-RUN ls -la /app/MuseTalk_temp && \
-    ls -la /app/MuseTalk_temp/musetalk || true
-
-# We will let the build fail after this on purpose. The output is all we need.
-RUN exit 1
+# This command will first list the contents of /app/MuseTalk_project.
+# Then it will try to list the contents of a subdirectory. If the subdirectory
+# name is wrong, the build will fail here and show us the output of the first ls.
+RUN ls -la /app/MuseTalk_project && ls -la /app/MuseTalk_project/THIS_WILL_FAIL
