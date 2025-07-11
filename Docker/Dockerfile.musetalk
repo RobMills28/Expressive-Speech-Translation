@@ -1,66 +1,17 @@
-# Dockerfile v14 - Corrected "Flatten the Package" Paths
+# Dockerfile v15 - Debugging file paths
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 
-ENV PYTHONUNBUFFERED=1
-
-# 1. System Dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git wget ffmpeg build-essential cmake libgl1-mesa-glx && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# 2. PyTorch & MMLab dependencies - GPU VERSION FOR AWS
 WORKDIR /app
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118 && \
-    pip install --no-cache-dir -U openmim && \
-    mim install mmengine && \
-    mim install "mmcv==2.0.1" && \
-    pip install --no-cache-dir "xtcocotools>=1.12" && \
-    mim install "mmdet==3.1.0" && \
-    mim install "mmpose==1.1.0"
 
-# 3. Copy the entire MuseTalk project into a temporary location
+# Copy the project to see its structure
 COPY MuseTalk /app/MuseTalk_temp
 
-# 4. --- THE CRITICAL RESTRUCTURE (WITH CORRECTED PATHS) ---
-# Create the final, clean project directory
-RUN mkdir -p /app/MuseTalk
+# --- THE DEBUGGING STEP ---
+# List the contents of the temp directory, including subdirectories,
+# so we can see the exact structure. The '|| true' ensures the build doesn't fail
+# if a subdirectory doesn't exist.
+RUN ls -la /app/MuseTalk_temp && \
+    ls -la /app/MuseTalk_temp/musetalk || true
 
-# Use a single RUN layer to move all necessary files and folders
-# from their actual locations into the new flattened structure.
-RUN mv /app/MuseTalk_temp/musetalk/* /app/MuseTalk/ && \
-    mv /app/MuseTalk_temp/models /app/MuseTalk/ && \
-    mv /app/MuseTalk_temp/requirements.txt /app/MuseTalk/ && \
-    mv /app/MuseTalk_temp/download_weights.sh /app/MuseTalk/
-
-# Clean up the temporary directory
-RUN rm -rf /app/MuseTalk_temp
-
-# 5. Set the final, simple working directory
-WORKDIR /app/MuseTalk
-
-# 6. Install requirements from the new flattened location
-RUN sed -i '/tensorflow/d' requirements.txt && \
-    sed -i '/tensorboard/d' requirements.txt && \
-    pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt
-
-# 7. Download Weights from the new flattened location
-RUN chmod +x ./download_weights.sh && ./download_weights.sh
-
-# 8. Manually download critical models
-RUN mkdir -p ./models/face-parse-bisent/ && \
-    mkdir -p ./models/musetalkV15/ && \
-    pip install --no-cache-dir gdown && \
-    gdown --id 154JgKpzCPW82qINcVieuPH3fZ2e0P812 -O ./models/face-parse-bisent/79999_iter.pth && \
-    wget -O ./models/face-parse-bisent/resnet18-5c106cde.pth https://download.pytorch.org/models/resnet18-5c106cde.pth && \
-    wget -O ./models/musetalkV15/unet.pth https://huggingface.co/TMElyralab/MuseTalk/resolve/main/musetalkV15/unet.pth && \
-    pip uninstall -y gdown
-
-# 9. Copy our API logic into the flattened project directory
-COPY Docker/api_inference_logic.py /app/MuseTalk/
-COPY Docker/musetalk_api.py /app/MuseTalk/
-RUN pip install --no-cache-dir fastapi "uvicorn[standard]"
-
-# 10. Run the API from the simple, flat directory
-EXPOSE 8000
-CMD ["uvicorn", "musetalk_api:app", "--host", "0.0.0.0", "--port", "8000"]
+# We will let the build fail after this on purpose. The output is all we need.
+RUN exit 1
