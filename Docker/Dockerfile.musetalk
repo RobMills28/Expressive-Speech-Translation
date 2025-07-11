@@ -1,9 +1,7 @@
-# Dockerfile v13 - The "Flatten the Package" Fix
+# Dockerfile v14 - Corrected "Flatten the Package" Paths
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
-
-# We no longer need any PYTHONPATH or complex WORKDIR/CMD logic.
 
 # 1. System Dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -21,37 +19,35 @@ RUN pip install --no-cache-dir --upgrade pip && \
     mim install "mmdet==3.1.0" && \
     mim install "mmpose==1.1.0"
 
-# 3. --- THE CRITICAL RESTRUCTURE ---
-# Copy the entire MuseTalk project into a temporary location
+# 3. Copy the entire MuseTalk project into a temporary location
 COPY MuseTalk /app/MuseTalk_temp
 
+# 4. --- THE CRITICAL RESTRUCTURE (WITH CORRECTED PATHS) ---
 # Create the final, clean project directory
 RUN mkdir -p /app/MuseTalk
 
-# Move the CORE contents of the 'musetalk' sub-package up to the main level.
-# This makes 'utils', 'models', etc., top-level directories.
-RUN mv /app/MuseTalk_temp/musetalk/* /app/MuseTalk/
-
-# Move the top-level 'models' and other necessary files into our final directory.
-RUN mv /app/MuseTalk_temp/models /app/MuseTalk/
-RUN mv /app/MuseTalk_temp/requirements.txt /app/MuseTalk/
-RUN mv /app/MuseTalk_temp/download_weights.sh /app/MuseTalk/
+# Use a single RUN layer to move all necessary files and folders
+# from their actual locations into the new flattened structure.
+RUN mv /app/MuseTalk_temp/musetalk/* /app/MuseTalk/ && \
+    mv /app/MuseTalk_temp/models /app/MuseTalk/ && \
+    mv /app/MuseTalk_temp/requirements.txt /app/MuseTalk/ && \
+    mv /app/MuseTalk_temp/download_weights.sh /app/MuseTalk/
 
 # Clean up the temporary directory
 RUN rm -rf /app/MuseTalk_temp
 
-# 4. Set the final, simple working directory
+# 5. Set the final, simple working directory
 WORKDIR /app/MuseTalk
 
-# 5. Install requirements from the new flattened location
+# 6. Install requirements from the new flattened location
 RUN sed -i '/tensorflow/d' requirements.txt && \
     sed -i '/tensorboard/d' requirements.txt && \
     pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt
 
-# 6. Download Weights from the new flattened location
+# 7. Download Weights from the new flattened location
 RUN chmod +x ./download_weights.sh && ./download_weights.sh
 
-# 7. Manually download critical models
+# 8. Manually download critical models
 RUN mkdir -p ./models/face-parse-bisent/ && \
     mkdir -p ./models/musetalkV15/ && \
     pip install --no-cache-dir gdown && \
@@ -60,11 +56,11 @@ RUN mkdir -p ./models/face-parse-bisent/ && \
     wget -O ./models/musetalkV15/unet.pth https://huggingface.co/TMElyralab/MuseTalk/resolve/main/musetalkV15/unet.pth && \
     pip uninstall -y gdown
 
-# 8. Copy our API logic into the flattened project directory
+# 9. Copy our API logic into the flattened project directory
 COPY Docker/api_inference_logic.py /app/MuseTalk/
 COPY Docker/musetalk_api.py /app/MuseTalk/
 RUN pip install --no-cache-dir fastapi "uvicorn[standard]"
 
-# 9. Run the API from the simple, flat directory
+# 10. Run the API from the simple, flat directory
 EXPOSE 8000
 CMD ["uvicorn", "musetalk_api:app", "--host", "0.0.0.0", "--port", "8000"]
