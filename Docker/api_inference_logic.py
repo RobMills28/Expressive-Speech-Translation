@@ -1,4 +1,4 @@
-# Docker/api_inference_logic.py (v11 - The Final VAE Object Fix)
+# Docker/api_inference_logic.py (v13 - "In-Place" Execution)
 import os
 import sys
 from pathlib import Path
@@ -12,32 +12,18 @@ import subprocess
 import logging
 from tqdm import tqdm
 
-# Set up paths and logging
-MUSETALK_PROJECT_ROOT = Path("/app/MuseTalk").resolve()
-if str(MUSETALK_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(MUSETALK_PROJECT_ROOT))
-    sys.path.insert(0, str(MUSETALK_PROJECT_ROOT / "musetalk"))
-
-from utils.utils import load_all_model, get_video_fps, datagen
-from utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder
-from utils.blending import get_image
-from utils.audio_processor import AudioProcessor
+# Imports now work directly because the WORKDIR is correct.
+from musetalk.utils.utils import load_all_model, get_video_fps, datagen
+from musetalk.utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder
+from musetalk.utils.blending import get_image
+from musetalk.utils.audio_processor import AudioProcessor
 from mmpose.apis import init_model as init_pose_estimator, inference_topdown
 from mmpose.structures import merge_data_samples
 from transformers import WhisperModel
 
 logger = logging.getLogger(__name__)
 
-# Copied helper functions
-def smooth_facial_landmarks(landmarks, window_size=5):
-    smoothed_landmarks = []
-    for i in range(len(landmarks)):
-        start = max(0, i - window_size // 2)
-        end = min(len(landmarks), i + window_size // 2 + 1)
-        window = landmarks[start:end]
-        smoothed_landmarks.append(np.mean(window, axis=0))
-    return np.array(smoothed_landmarks)
-
+# This helper function is fine, no changes needed.
 def smooth_bbox(bboxes, window_size=5):
     smoothed_bboxes = []
     for i in range(len(bboxes)):
@@ -58,20 +44,24 @@ def load_models_for_api():
     if MODELS: return True
 
     logger.info("Loading all models for the API...")
-    device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
+    # This function now correctly finds its models because the WORKDIR is /app/MuseTalk
     vae, unet, pe = load_all_model(device=device)
     MODELS['vae'] = vae
     MODELS['unet'] = unet
     MODELS['pe'] = pe
 
-    models_dir = MUSETALK_PROJECT_ROOT / "models"
+    # Paths are now relative to the current WORKDIR (/app/MuseTalk)
+    models_dir = Path("./models")
     
-    pose_config = str(MUSETALK_PROJECT_ROOT / 'musetalk' / 'utils' / 'dwpose' / 'rtmpose-l_8xb32-270e_coco-ubody-wholebody-384x288.py')
-    pose_checkpoint = str(models_dir / 'dwpose' / 'dw-ll_ucoco_384.pth')
+    pose_config = str(Path('./musetalk/utils/dwpose/rtmpose-l_8xb32-270e_coco-ubody-wholebody-384x288.py'))
+    pose_checkpoint = str(models_dir / 'dwpose/dw-ll_ucoco_384.pth')
     MODELS['pose_estimator'] = init_pose_estimator(pose_config, pose_checkpoint, device=str(device))
 
     whisper_feature_extractor_path = str(models_dir / "whisper")
+    
+    # --- THIS IS THE CORRECTED/RE-INSERTED LINE ---
     MODELS['audio_processor'] = AudioProcessor(feature_extractor_path=whisper_feature_extractor_path)
 
     from musetalk.utils.face_parsing import FaceParsing
@@ -97,14 +87,14 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
     if not img_list: raise ValueError("FFmpeg failed to extract frames.")
 
     logger.info(f"Step 2: Preprocessing {len(img_list)} frames...")
-    # Fetch the loaded model from our dictionary
     pose_estimator_model = MODELS['pose_estimator']
     coords_list, original_frames = get_landmark_and_bbox(pose_estimator_model, img_list=img_list, upperbondrange=bbox_shift)
     
     if not coords_list: raise ValueError("Failed to get bboxes from video frames.")
 
     fps = get_video_fps(video_path_str)
-    bbox_results = smooth_bbox(coords_list, window_size=5)
+    # smooth_bbox is a good utility, let's keep it
+    coords_list = smooth_bbox(coords_list, window_size=5)
 
     audio_processor = MODELS['audio_processor']
     whisper_input_features, librosa_length = audio_processor.get_audio_feature(audio_path_str)
@@ -132,33 +122,40 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
     timesteps = torch.tensor([0], device=device)
     unet = MODELS['unet'].model
     
-    # <<< THE ONLY CORRECTION IS HERE >>>
-    # We use the entire VAE wrapper object, not the raw .vae inside it
     vae_wrapper = MODELS['vae']
     pe = MODELS['pe']
     fp = MODELS['face_parser']
     
-    gen = datagen(whisper_chunks, input_latent_list, batch_size=8, device=device)
+    # Use our corrected datagen
+    gen = datagen(whisper_chunks, input_latent_list, batch_size=8)
     
     res_frame_list = []
     for i, (whisper_batch, latent_batch) in enumerate(tqdm(gen, desc="Generating frames")):
         if latent_batch is None: continue
         
-        audio_feature_batch = pe(whisper_batch)
-        latent_batch = latent_batch.to(dtype=unet.dtype)
+        audio_feature_batch = pe(whisper_batch.to(device))
+        latent_batch = latent_batch.to(device=device, dtype=unet.dtype)
         
         pred_latents = unet(latent_batch, timesteps, encoder_hidden_states=audio_feature_batch).sample
         
-        # Use the correct method from our VAE wrapper class
         recon = vae_wrapper.decode_latents(pred_latents)
         for res_frame in recon:
             res_frame_list.append(res_frame)
 
     logger.info("Step 4: Blending frames...")
+    # Pad the original_frames and coords_list to match the length of res_frame_list
+    # This can happen if audio is longer than video
+    num_generated_frames = len(res_frame_list)
+    while len(original_frames) < num_generated_frames:
+        original_frames.append(original_frames[-1])
+        coords_list.append(coords_list[-1])
+
     for i, res_frame in enumerate(tqdm(res_frame_list, desc="Blending frames")):
-        if i >= len(coords_list): break
         bbox = coords_list[i]
-        if bbox == coord_placeholder: continue
+        if bbox == coord_placeholder: 
+            # If no face, just use the original frame
+            cv2.imwrite(str(generated_frames_dir / f"{i:08d}.png"), original_frames[i])
+            continue
         
         ori_frame = original_frames[i]
         x1, y1, x2, y2 = bbox
@@ -166,11 +163,11 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
         try:
             res_frame_resized = cv2.resize(res_frame.astype(np.uint8), (x2-x1, y2-y1))
         except Exception:
+            cv2.imwrite(str(generated_frames_dir / f"{i:08d}.png"), ori_frame)
             continue
             
         combine_frame = get_image(ori_frame, res_frame_resized, bbox, mode="jaw", fp=fp)
-        output_path = generated_frames_dir / f"{i:08d}.png"
-        cv2.imwrite(str(output_path), combine_frame)
+        cv2.imwrite(str(generated_frames_dir / f"{i:08d}.png"), combine_frame)
 
     logger.info("Step 5: Stitching frames into video...")
     temp_silent_video_path = temp_dir / "temp_silent.mp4"
