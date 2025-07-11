@@ -1,18 +1,23 @@
-# Dockerfile v10 - Systematic Debugging Step 1: Fix 'face_detection' import
-# This builds upon the successful "In-Place" execution model (v8).
+# Dockerfile v11 - The "No Assumptions" AWS Fix
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
 
-# 1. System Dependencies (No Change)
+# --- THE CRITICAL CHANGE - SET THE MASTER PATH ---
+# We tell Python explicitly to look in /app/MuseTalk for all 'musetalk' packages
+# and in /app/MuseTalk/musetalk/utils for all nested packages.
+# This should solve all import errors at once.
+ENV PYTHONPATH=/app/MuseTalk:/app/MuseTalk/musetalk/utils
+
+# 1. System Dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git wget ffmpeg build-essential cmake libgl1-mesa-glx && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. PyTorch & MMLab dependencies (No Change)
+# 2. PyTorch & MMLab dependencies - GPU VERSION FOR AWS
 WORKDIR /app
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118 && \
     pip install --no-cache-dir -U openmim && \
     mim install mmengine && \
     mim install "mmcv==2.0.1" && \
@@ -20,37 +25,36 @@ RUN pip install --no-cache-dir --upgrade pip && \
     mim install "mmdet==3.1.0" && \
     mim install "mmpose==1.1.0"
 
-# 3. Copy MuseTalk project and install its requirements (No Change)
+# 3. Copy MuseTalk project and install its requirements
 COPY MuseTalk /app/MuseTalk
-WORKDIR /app/MuseTalk
-RUN sed -i '/tensorflow/d' requirements.txt && \
-    sed -i '/tensorboard/d' requirements.txt && \
-    pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt
+RUN (cd /app/MuseTalk && \
+     sed -i '/tensorflow/d' requirements.txt && \
+     sed -i '/tensorboard/d' requirements.txt && \
+     pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt)
 
-# 4. Download Weights (No Change)
-RUN chmod +x ./download_weights.sh && ./download_weights.sh
+# 4. Download Weights
+RUN (cd /app/MuseTalk && chmod +x ./download_weights.sh && ./download_weights.sh)
 
-# 4.5. Manually download critical models (No Change)
-RUN mkdir -p ./models/face-parse-bisent/ && \
+# 4.5. Manually download critical models
+RUN (cd /app/MuseTalk && \
+    mkdir -p ./models/face-parse-bisent/ && \
     mkdir -p ./models/musetalkV15/ && \
     pip install --no-cache-dir gdown && \
     gdown --id 154JgKpzCPW82qINcVieuPH3fZ2e0P812 -O ./models/face-parse-bisent/79999_iter.pth && \
     wget -O ./models/face-parse-bisent/resnet18-5c106cde.pth https://download.pytorch.org/models/resnet18-5c106cde.pth && \
     wget -O ./models/musetalkV15/unet.pth https://huggingface.co/TMElyralab/MuseTalk/resolve/main/musetalkV15/unet.pth && \
-    pip uninstall -y gdown
+    pip uninstall -y gdown)
 
-# 5. Copy our API logic DIRECTLY INTO the MuseTalk project directory (No Change)
+# 5. Copy our API logic. We will place it in /app/MuseTalk for simplicity.
 COPY Docker/api_inference_logic.py /app/MuseTalk/
 COPY Docker/musetalk_api.py /app/MuseTalk/
 RUN pip install --no-cache-dir fastapi "uvicorn[standard]"
 
-# 6. --- THE NEXT LOGICAL STEP ---
-# The WORKDIR is /app/MuseTalk, which solved the first import error.
-# Now, we add a PYTHONPATH to solve the *second* import error.
-# This tells Python to also look inside the 'utils' directory for packages.
-ENV PYTHONPATH=/app/MuseTalk/musetalk/utils
+# 6. Set the final working directory
+WORKDIR /app/MuseTalk
 
-# 7. Run the API (No Change)
-# The CMD is executed from the WORKDIR, /app/MuseTalk
+# 7. Run the API
+# Uvicorn runs from the WORKDIR and will find the API scripts.
+# The PYTHONPATH will handle all imports.
 EXPOSE 8000
 CMD ["uvicorn", "musetalk_api:app", "--host", "0.0.0.0", "--port", "8000"]

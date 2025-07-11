@@ -73,7 +73,7 @@ def load_models_for_api():
     return True
 
 def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> str:
-    device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     input_video_path = Path(video_path_str)
     temp_dir = input_video_path.parent
     
