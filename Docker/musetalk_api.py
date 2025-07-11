@@ -1,4 +1,6 @@
 import sys
+sys.path.insert(0, '/app/MuseTalk') # Force Python to look in the MuseTalk project root
+
 import os
 from pathlib import Path
 import shutil
@@ -9,7 +11,7 @@ import logging
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import FileResponse
 
-# Import our custom logic from the other file
+# This import will now succeed because we have fixed the path above.
 from api_inference_logic import load_models_for_api, run_lip_sync
 
 # --- Logging Setup ---
