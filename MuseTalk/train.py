@@ -25,16 +25,16 @@ from einops import rearrange
 from omegaconf import OmegaConf
 from tqdm.auto import tqdm
 
-from musetalk.utils.utils import (
+from utils.utils import (
     delete_additional_ckpt, 
     seed_everything, 
     get_mouth_region,
     process_audio_features,
     save_models
 )
-from musetalk.loss.basic_loss import set_requires_grad
-from musetalk.loss.syncnet import get_sync_loss
-from musetalk.utils.training_utils import (
+from loss.basic_loss import set_requires_grad
+from loss.syncnet import get_sync_loss
+from utils.training_utils import (
     initialize_models_and_optimizers,
     initialize_dataloaders,
     initialize_loss_functions,

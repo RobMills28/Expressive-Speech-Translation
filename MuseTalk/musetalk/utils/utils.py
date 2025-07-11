@@ -8,8 +8,8 @@ from einops import rearrange
 import shutil
 import os.path as osp
 
-from musetalk.models.vae import VAE
-from musetalk.models.unet import UNet,PositionalEncoding
+from models.vae import VAE
+from models.unet import UNet,PositionalEncoding
 
 
 def load_all_model(

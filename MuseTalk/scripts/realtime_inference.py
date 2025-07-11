@@ -12,12 +12,12 @@ import copy
 import json
 from transformers import WhisperModel
 
-from musetalk.utils.face_parsing import FaceParsing
-from musetalk.utils.utils import datagen
-from musetalk.utils.preprocessing import get_landmark_and_bbox, read_imgs
-from musetalk.utils.blending import get_image_prepare_material, get_image_blending
-from musetalk.utils.utils import load_all_model
-from musetalk.utils.audio_processor import AudioProcessor
+from utils.face_parsing import FaceParsing
+from utils.utils import datagen
+from utils.preprocessing import get_landmark_and_bbox, read_imgs
+from utils.blending import get_image_prepare_material, get_image_blending
+from utils.utils import load_all_model
+from utils.audio_processor import AudioProcessor
 
 import shutil
 import threading

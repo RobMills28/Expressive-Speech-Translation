@@ -165,11 +165,11 @@ def download_model():
 
 download_model()  # for huggingface deployment.
 
-from musetalk.utils.blending import get_image
-from musetalk.utils.face_parsing import FaceParsing
-from musetalk.utils.audio_processor import AudioProcessor
-from musetalk.utils.utils import get_file_type, get_video_fps, datagen, load_all_model
-from musetalk.utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder, get_bbox_range
+from utils.blending import get_image
+from utils.face_parsing import FaceParsing
+from utils.audio_processor import AudioProcessor
+from utils.utils import get_file_type, get_video_fps, datagen, load_all_model
+from utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder, get_bbox_range
 
 
 def fast_check_ffmpeg():
