@@ -88,43 +88,29 @@ class CascadedBackend(TranslationBackend):
 
     def _check_cosyvoice_api_status(self) -> bool:
         try:
-            logger.info(f"Checking CosyVoice API status at {COSYVOICE_API_URL}/health") # Added log
-            response = requests.get(f"{COSYVOICE_API_URL}/health", timeout=15) # Slightly increased timeout
-
+            logger.info(f"Checking CosyVoice API status at {COSYVOICE_API_URL}/health")
+            response = requests.get(f"{COSYVOICE_API_URL}/health", timeout=15)
             if response.status_code == 200:
                 try:
                     health_data = response.json()
                     api_status = health_data.get("status")
-                    api_message = health_data.get("message", "") # Get message, default to empty string
-
-                    # --- THIS IS THE MODIFIED AND MORE ROBUST CHECK ---
-                    if api_status == "healthy" and \
-                       "CosyVoice model" in api_message and \
-                       "loaded" in api_message:
+                    api_message = health_data.get("message", "")
+                    if api_status == "healthy" and "CosyVoice model" in api_message and "loaded" in api_message:
                         logger.info(f"CosyVoice API is healthy: {api_message}")
                         return True
                     else:
                         logger.warning(f"CosyVoice API reported status '{api_status}' with message '{api_message}', which does not meet all health criteria. Full response: {health_data}")
                         return False
-                    # --- END OF MODIFIED CHECK ---
-
                 except json.JSONDecodeError as e_json:
                     logger.error(f"CosyVoice API health response was not valid JSON: {e_json}. Status: {response.status_code}. Response text: {response.text[:500]}")
                     return False
             else:
                 logger.warning(f"CosyVoice API status check HTTP request failed: {response.status_code} - {response.text[:200]}")
                 return False
-
-        except requests.exceptions.Timeout:
-            logger.error(f"CosyVoice API timed out connecting to {COSYVOICE_API_URL}/health after 15 seconds.")
-            return False
-        except requests.exceptions.ConnectionError as e_conn: # More specific for connection issues
-            logger.error(f"CosyVoice API connection error at {COSYVOICE_API_URL}/health: {e_conn}")
-            return False
-        except requests.exceptions.RequestException as e_req: # General requests error
+        except requests.exceptions.RequestException as e_req:
             logger.error(f"CosyVoice API request error for {COSYVOICE_API_URL}/health: {e_req}")
             return False
-        except Exception as e_gen_status: # General catch-all
+        except Exception as e_gen_status:
             logger.error(f"Unexpected error checking CosyVoice API status: {e_gen_status}", exc_info=True)
             return False
 
@@ -140,15 +126,11 @@ class CascadedBackend(TranslationBackend):
         word_level_timestamps: Optional[List[Dict[str,float]]] = []
 
         if np.abs(audio_numpy).max() < 1e-5:
-            logger.info(f"[{process_id_short}] Input audio near silent for ASR.")
             return "", [], []
-
         if not self.asr_model:
-            logger.error(f"[{process_id_short}] ASR model not loaded.")
             return "ASR_MODEL_UNAVAILABLE", [], []
-
+        
         simple_source_lang = source_lang[:2] if source_lang else None
-
         logger.info(f"[{process_id_short}] Whisper ASR with word_timestamps=True, lang_hint='{simple_source_lang or 'auto'}'")
         import whisper
         asr_result = self.asr_model.transcribe(audio_numpy, language=simple_source_lang, task="transcribe", fp16=(self.device.type == 'cuda' if isinstance(self.device, torch.device) else self.device == 'cuda'), word_timestamps=True)
@@ -161,26 +143,15 @@ class CascadedBackend(TranslationBackend):
                 if "words" in segment and segment["words"]:
                     for word_info in segment["words"]:
                         current_global_word_index += 1
-                        word = word_info.get("word", "").strip()
-                        start = word_info.get("start", 0.0)
-                        end = word_info.get("end", 0.0)
-
+                        word, start, end = word_info.get("word", "").strip(), word_info.get("start", 0.0), word_info.get("end", 0.0)
                         word_level_timestamps.append({"word": word, "start": start, "end": end})
-
                         if current_global_word_index > 0 and start > last_word_end_time:
-                            pause_duration = start - last_word_end_time
-                            if pause_duration > 0.250:
-                                pauses_info.append({
-                                    "start": round(last_word_end_time, 3),
-                                    "end": round(start, 3),
-                                    "duration": round(pause_duration, 3),
-                                    "insert_after_word_index": current_global_word_index -1
-                                })
+                            if (pause_duration := start - last_word_end_time) > 0.250:
+                                pauses_info.append({"start": round(last_word_end_time, 3), "end": round(start, 3), "duration": round(pause_duration, 3), "insert_after_word_index": current_global_word_index -1})
                         segment_text_parts.append(word)
                         last_word_end_time = end
                 elif "text" in segment:
                     segment_text_parts.append(segment.get("text", "").strip())
-                    logger.warning(f"[{process_id_short}] Segment without word timestamps: '{segment.get('text','')[:30]}...'. Pause accuracy might be affected for this part.")
                     last_word_end_time = segment.get("end", last_word_end_time)
 
                 if segment_text_parts:
@@ -189,16 +160,12 @@ class CascadedBackend(TranslationBackend):
         source_text = " ".join(full_text_parts).strip()
         if not source_text and asr_result.get("text", "").strip():
             source_text = asr_result.get("text", "").strip()
-            pauses_info = []
-            word_level_timestamps = []
+            pauses_info, word_level_timestamps = [], []
             logger.warning(f"[{process_id_short}] No text from segments, using full ASR text. Pause info lost.")
 
         detected_lang = asr_result.get('language', 'unknown')
         logger.info(f"[{process_id_short}] Whisper ASR (Detected Lang: {detected_lang}): '{source_text[:70]}...'")
         logger.info(f"[{process_id_short}] Detected {len(pauses_info)} significant pauses.")
-        if pauses_info: logger.debug(f"[{process_id_short}] Pauses: {json.dumps(pauses_info[:3], indent=2)}...")
-        if word_level_timestamps: logger.debug(f"[{process_id_short}] Word timestamps count: {len(word_level_timestamps)}")
-
         return source_text, pauses_info, word_level_timestamps
 
     def _save_debug_audio(self, audio_data: Union[np.ndarray, AudioSegment], filename: str, debug_audio_dir: Path, sr: Optional[int] = 16000):
@@ -210,18 +177,16 @@ class CascadedBackend(TranslationBackend):
                 sf.write(str(file_path), audio_data, sr)
             elif isinstance(audio_data, AudioSegment):
                 audio_data.export(str(file_path), format="wav")
-            logger.debug(f"Saved debug audio: {file_path} (Size: {file_path.stat().st_size if file_path.exists() else 'N/A'})")
+            logger.debug(f"Saved debug audio: {file_path}")
         except Exception as e:
             logger.error(f"Failed to save debug audio {filename}: {e}", exc_info=True)
 
     def _log_audio_properties(self, audio_path: Path, label: str, process_id_short: str):
         if not audio_path or not audio_path.exists():
-            logger.warning(f"[{process_id_short}] Cannot log properties for '{label}', file missing: {audio_path}")
             return
         try:
             y, sr_loaded = librosa.load(str(audio_path), sr=None, mono=True)
-            duration = librosa.get_duration(y=y, sr=sr_loaded)
-            peak_amp = np.abs(y).max()
+            duration, peak_amp = librosa.get_duration(y=y, sr=sr_loaded), np.abs(y).max()
             rms_amp = np.sqrt(np.mean(y**2))
             audio_segment = AudioSegment.from_file(str(audio_path))
             lufs = audio_segment.dBFS
@@ -233,60 +198,33 @@ class CascadedBackend(TranslationBackend):
                                      original_total_speech_time: float, generated_total_speech_time: float,
                                      temp_dir: Path, process_id_short: str) -> Path:
         if not original_pauses:
-            logger.info(f"[{process_id_short}] No original pauses to adjust in generated output.")
             return generated_audio_path
-
-        logger.info(f"[{process_id_short}] Attempting to adjust pauses in generated output based on original.")
-        logger.debug(f"Original total speech time: {original_total_speech_time:.2f}s, Generated total speech time: {generated_total_speech_time:.2f}s")
-
+        
+        logger.info(f"[{process_id_short}] Attempting to adjust pauses in generated output.")
         try:
             generated_audio = AudioSegment.from_wav(generated_audio_path)
-            output_frame_rate = generated_audio.frame_rate if generated_audio.frame_rate else 16000
-
+            output_frame_rate = generated_audio.frame_rate or 16000
             silence_thresh = generated_audio.dBFS - 16
-            logger.debug(f"[{process_id_short}] Detecting silences in generated output with threshold: {silence_thresh:.2f} dBFS")
-
-            generated_segments = silence.split_on_silence(
-                generated_audio,
-                min_silence_len=200,
-                silence_thresh=silence_thresh,
-                keep_silence=50
-            )
-
+            generated_segments = silence.split_on_silence(generated_audio, min_silence_len=200, silence_thresh=silence_thresh, keep_silence=50)
             if not generated_segments:
-                logger.warning(f"[{process_id_short}] Could not segment generated audio. Returning original generated output.")
                 return generated_audio_path
-
-            logger.info(f"[{process_id_short}] Generated audio split into {len(generated_segments)} speech segments.")
-
+            
             final_audio_parts = []
             time_scaling_factor = generated_total_speech_time / original_total_speech_time if original_total_speech_time > 0 else 1.0
-
-            num_pauses_to_insert = len(original_pauses)
-            num_gaps_in_generated = len(generated_segments) - 1
-
+            
             for i, segment in enumerate(generated_segments):
                 final_audio_parts.append(segment)
-                if i < num_gaps_in_generated:
-                    if i < num_pauses_to_insert:
-                        original_pause_duration_ms = int(original_pauses[i]['duration'] * 1000 * time_scaling_factor)
-                        max_pause_ms = 3000
-                        insert_pause_ms = min(original_pause_duration_ms, max_pause_ms)
-                        if insert_pause_ms < 50: insert_pause_ms = 50
-
-                        logger.debug(f"[{process_id_short}] Inserting adjusted pause of {insert_pause_ms}ms after generated segment {i+1}.")
-                        final_audio_parts.append(AudioSegment.silent(duration=insert_pause_ms, frame_rate=output_frame_rate))
-                    else:
-                        logger.debug(f"[{process_id_short}] Adding default short pause after generated segment {i+1}.")
-                        final_audio_parts.append(AudioSegment.silent(duration=200, frame_rate=output_frame_rate))
-
+                if i < len(generated_segments) - 1 and i < len(original_pauses):
+                    insert_pause_ms = min(int(original_pauses[i]['duration'] * 1000 * time_scaling_factor), 3000)
+                    final_audio_parts.append(AudioSegment.silent(duration=max(insert_pause_ms, 50), frame_rate=output_frame_rate))
+                elif i < len(generated_segments) - 1:
+                    final_audio_parts.append(AudioSegment.silent(duration=200, frame_rate=output_frame_rate))
+            
             adjusted_audio = sum(final_audio_parts, AudioSegment.empty())
             adjusted_audio_path = temp_dir / f"generated_adjusted_pauses_{process_id_short}.wav"
             adjusted_audio.export(adjusted_audio_path, format="wav")
-            logger.info(f"[{process_id_short}] Exported generated audio with adjusted pauses: {adjusted_audio_path.name}")
             self._log_audio_properties(adjusted_audio_path, "GeneratedAudio_AdjustedPauses", process_id_short)
             return adjusted_audio_path
-
         except Exception as e:
             logger.error(f"[{process_id_short}] Error adjusting pauses in generated output: {e}", exc_info=True)
             return generated_audio_path
@@ -308,29 +246,29 @@ class CascadedBackend(TranslationBackend):
             logger.info(f"[{process_id_short}] Using full input ({len(current_audio_np)/target_sr_for_ref:.2f}s) as reference for CosyVoice.")
 
         ref_audio_path = temp_dir / f"ref_for_cosyvoice_api_{process_id_short}_16k.wav"
-        sf.write(str(ref_audio_path), ref_audio_np, target_sr_for_ref)
+        sf.write(str(ref_audio_path), ref_audio_np, target_sr_for_ref, subtype='PCM_16')
 
         if debug_audio_storage_dir:
              self._save_debug_audio(ref_audio_np, f"{process_id_short}_ref_for_cosyAPI_sent_16k.wav", debug_audio_storage_dir, target_sr_for_ref)
         self._log_audio_properties(ref_audio_path, f"RefAudioForCosyVoiceAPI_16kHz", process_id_short)
         return ref_audio_path
 
-
     def translate_speech(self, audio_tensor: torch.Tensor, source_lang: str = "eng", target_lang: str = "fra") -> Dict[str, Any]:
         process_id_short = str(time.time_ns())[-6:]
         logger.info(f"[{process_id_short}] CascadedBackend (CosyVoice API).translate_speech CALLED. App Source: '{source_lang}', App Target: '{target_lang}'")
         if not self.initialized:
-            logger.error(f"[{process_id_short}] Backend not initialized. Aborting.")
-            return {"audio": torch.zeros((1,16000),dtype=torch.float32), "transcripts": {"source":"INIT_ERROR","target":"INIT_ERROR"}}
+            raise RuntimeError("Backend not initialized. Please wait and try again.")
         if not self.asr_model or not self.translator_model :
-             logger.error(f"[{process_id_short}] Essential models (ASR/NLLB) not initialized. Aborting.")
-             return {"audio": torch.zeros((1,16000),dtype=torch.float32), "transcripts": {"source":"MODEL_INIT_FAIL","target":"MODEL_INIT_FAIL"}}
+             raise RuntimeError("Essential models (ASR/NLLB) are not loaded.")
 
         start_time_translate_speech = time.time()
         with tempfile.TemporaryDirectory(prefix=f"cosy_s2st_api_{process_id_short}_") as temp_dir_str:
             temp_dir = Path(temp_dir_str)
             debug_audio_storage_dir = temp_dir / "debug_audio"
-            if SAVE_DEBUG_AUDIO_FILES: debug_audio_storage_dir.mkdir(parents=True, exist_ok=True)
+            # --- THIS IS THE FIX ---
+            # Create the debug directory BEFORE trying to write to it.
+            debug_audio_storage_dir.mkdir(parents=True, exist_ok=True)
+            # --- END OF FIX ---
 
             source_text_raw, original_pauses, word_timestamps = "ASR_FAILED", [], []
             target_text_raw = "TRANSLATION_FAILED"
@@ -343,136 +281,97 @@ class CascadedBackend(TranslationBackend):
                 audio_numpy_16k = audio_tensor.squeeze().cpu().numpy().astype(np.float32)
                 source_text_raw, original_pauses, word_timestamps = self._get_text_and_pauses_from_asr(audio_numpy_16k, source_lang, process_id_short)
                 original_total_speech_time = sum(item['end'] - item['start'] for item in word_timestamps) if word_timestamps else librosa.get_duration(y=audio_numpy_16k, sr=16000)
-                logger.info(f"[{process_id_short}] ASR time: {(time.time()-asr_start_time):.2f}s. Text: '{source_text_raw[:70]}...'. Pauses: {len(original_pauses)}")
-                if SAVE_DEBUG_AUDIO_FILES:
-                    sf.write(str(debug_audio_storage_dir / f"{process_id_short}_original_input_for_asr_16k.wav"), audio_numpy_16k, 16000)
+                logger.info(f"[{process_id_short}] ASR time: {(time.time()-asr_start_time):.2f}s.")
+                
+                if not source_text_raw.strip() or source_text_raw == "ASR_MODEL_UNAVAILABLE":
+                    raise RuntimeError("ASR failed or produced empty text.")
 
                 translation_start_time = time.time()
-                if not source_text_raw.strip() or source_text_raw == "ASR_MODEL_UNAVAILABLE":
-                    target_text_raw = ""
-                else:
-                    src_nllb_code = self._convert_to_nllb_code(source_lang)
-                    tgt_nllb_code = self._convert_to_nllb_code(target_lang)
-                    logger.info(f"[{process_id_short}] Translating NLLB '{src_nllb_code}' to '{tgt_nllb_code}'.")
-                    self.translator_tokenizer.src_lang = src_nllb_code
-                    input_ids = self.translator_tokenizer(source_text_raw, return_tensors="pt", padding=True).input_ids.to(self.device)
-
-                    forced_bos_token_id = self.translator_tokenizer.lang_code_to_id.get(tgt_nllb_code)
-                    if forced_bos_token_id is None:
-                        logger.warning(f"Could not get NLLB BOS token for {tgt_nllb_code}, translation might be suboptimal.")
-
-                    gen_kwargs = {"input_ids": input_ids, "max_length": max(256, len(input_ids[0]) * 3 + 50),
-                                  "num_beams": 5, "length_penalty": 1.0, "early_stopping": True}
-                    if forced_bos_token_id is not None:
-                        gen_kwargs["forced_bos_token_id"] = forced_bos_token_id
-
-                    with torch.no_grad(): translated_tokens = self.translator_model.generate(**gen_kwargs)
-                    target_text_raw = self.translator_tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
+                src_nllb_code = self._convert_to_nllb_code(source_lang)
+                tgt_nllb_code = self._convert_to_nllb_code(target_lang)
+                logger.info(f"[{process_id_short}] Translating NLLB '{src_nllb_code}' to '{tgt_nllb_code}'.")
+                self.translator_tokenizer.src_lang = src_nllb_code
+                input_ids = self.translator_tokenizer(source_text_raw, return_tensors="pt", padding=True).input_ids.to(self.device)
+                forced_bos_token_id = self.translator_tokenizer.lang_code_to_id.get(tgt_nllb_code)
+                if forced_bos_token_id is None: logger.warning(f"Could not get NLLB BOS token for {tgt_nllb_code}, translation might be suboptimal.")
+                gen_kwargs = {"input_ids": input_ids, "max_length": max(256, len(input_ids[0]) * 3 + 50), "num_beams": 5, "length_penalty": 1.0, "early_stopping": True}
+                if forced_bos_token_id is not None: gen_kwargs["forced_bos_token_id"] = forced_bos_token_id
+                with torch.no_grad(): translated_tokens = self.translator_model.generate(**gen_kwargs)
+                target_text_raw = self.translator_tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
                 logger.info(f"[{process_id_short}] NLLB Raw Translation: '{target_text_raw[:70]}...' ({(time.time()-translation_start_time):.2f}s)")
+
+                if not target_text_raw.strip():
+                    raise RuntimeError("Translation result was empty.")
+
+                if not self._check_cosyvoice_api_status():
+                    raise RuntimeError("CosyVoice API is not healthy.")
 
                 cosy_synthesis_start_time = time.time()
                 cosy_target_lang_code = self._get_cosyvoice_lang_code(target_lang)
-
-                reference_speaker_wav_for_api_path = self._get_reference_audio_for_cloning(
-                    audio_numpy_16k, process_id_short, temp_dir, debug_audio_storage_dir
-                )
-
-                generated_audio_path_cosy_sr = None
-
-                if not target_text_raw.strip():
-                    logger.warning(f"[{process_id_short}] Target text for CosyVoice API is empty. Using silent output tensor.")
-                elif not self._check_cosyvoice_api_status():
-                    logger.error(f"[{process_id_short}] CosyVoice API not healthy/available at time of synthesis. Using silent output tensor.")
-                else:
-                    logger.info(f"[{process_id_short}] Calling CosyVoice API. Target lang: '{cosy_target_lang_code}'. Ref: '{reference_speaker_wav_for_api_path.name}'. Text: '{target_text_raw[:70]}...'")
-
-                    files = {'reference_speaker_wav': (reference_speaker_wav_for_api_path.name, open(reference_speaker_wav_for_api_path, 'rb'), 'audio/wav')}
-                    data = {
-                        'text_to_synthesize': target_text_raw,
-                        'target_language_code': cosy_target_lang_code,
-                        'style_prompt_text': ""
-                    }
-
-                    try:
-                        response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=3600)
-                        files['reference_speaker_wav'][1].close()
-
-                        if response.status_code == 200:
-                            generated_audio_path_cosy_sr = temp_dir / f"cosyvoice_api_output_{process_id_short}.wav"
-                            with open(generated_audio_path_cosy_sr, 'wb') as f:
-                                f.write(response.content)
-                            if not generated_audio_path_cosy_sr.exists() or generated_audio_path_cosy_sr.stat().st_size < 1000:
-                                logger.error(f"[{process_id_short}] CosyVoice API returned 200 but output file is too small or missing.")
-                                generated_audio_path_cosy_sr = None
-                            else:
-                                logger.info(f"[{process_id_short}] Received audio from CosyVoice API: {generated_audio_path_cosy_sr.name}")
-                                self._log_audio_properties(generated_audio_path_cosy_sr, "CosyVoiceAPI_Output_NativeSR", process_id_short)
-                        else:
-                            logger.error(f"[{process_id_short}] CosyVoice API call failed: {response.status_code} - {response.text[:500]}")
-                    except requests.exceptions.RequestException as e_req:
-                        logger.error(f"[{process_id_short}] Request to CosyVoice API failed: {e_req}", exc_info=True)
+                reference_speaker_wav_for_api_path = self._get_reference_audio_for_cloning(audio_numpy_16k, process_id_short, temp_dir, debug_audio_storage_dir)
+                
+                files = {'reference_speaker_wav': (reference_speaker_wav_for_api_path.name, open(reference_speaker_wav_for_api_path, 'rb'), 'audio/wav')}
+                data = {'text_to_synthesize': target_text_raw, 'target_language_code': cosy_target_lang_code, 'style_prompt_text': ""}
+                
+                try:
+                    response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=3600)
+                    if response.status_code != 200:
+                        raise RuntimeError(f"CosyVoice API failed: {response.status_code} - {response.text[:200]}")
+                except requests.exceptions.RequestException as e_req:
+                    raise RuntimeError(f"Could not connect to CosyVoice API: {e_req}")
+                finally:
+                    files['reference_speaker_wav'][1].close()
 
                 logger.info(f"[{process_id_short}] CosyVoice API interaction took: {(time.time()-cosy_synthesis_start_time):.2f}s.")
+                
+                generated_audio_path_cosy_sr = temp_dir / f"cosyvoice_api_output_{process_id_short}.wav"
+                with open(generated_audio_path_cosy_sr, 'wb') as f: f.write(response.content)
 
-                if generated_audio_path_cosy_sr and generated_audio_path_cosy_sr.exists():
-                    y_cosy_native_sr, sr_cosy_native = librosa.load(str(generated_audio_path_cosy_sr), sr=None, mono=True)
-                    generated_total_speech_time = librosa.get_duration(y=y_cosy_native_sr, sr=sr_cosy_native)
-
-                    adjusted_audio_path = self._adjust_pauses_in_generated_audio(
-                        generated_audio_path_cosy_sr, original_pauses,
-                        original_total_speech_time, generated_total_speech_time,
-                        temp_dir, process_id_short
-                    )
-
-                    y_final_adjusted, sr_final_adjusted = librosa.load(str(adjusted_audio_path), sr=None, mono=True)
-                    if sr_final_adjusted != 16000:
-                        y_final_16k = librosa.resample(y_final_adjusted, orig_sr=sr_final_adjusted, target_sr=16000)
-                    else:
-                        y_final_16k = y_final_adjusted
-                    output_tensor = torch.from_numpy(y_final_16k.astype(np.float32)).unsqueeze(0)
-
-                    original_ref_for_eval_path = str(debug_audio_storage_dir / f"{process_id_short}_original_input_for_asr_16k.wav")
-
-                    temp_cloned_for_eval_path = temp_dir / f"cosyvoice_cloned_for_eval_{process_id_short}_16k.wav"
-                    sf.write(str(temp_cloned_for_eval_path), y_final_16k, 16000)
-                    cloned_audio_for_eval_path_16k = str(temp_cloned_for_eval_path)
-                    self._log_audio_properties(Path(cloned_audio_for_eval_path_16k), "CosyVoice_Final_16kHz_for_Eval", process_id_short)
+                if not generated_audio_path_cosy_sr.exists() or generated_audio_path_cosy_sr.stat().st_size < 1000:
+                    raise RuntimeError("CosyVoice API returned an empty or missing audio file.")
+                
+                self._log_audio_properties(generated_audio_path_cosy_sr, "CosyVoiceAPI_Output_NativeSR", process_id_short)
+                
+                y_cosy_native_sr, sr_cosy_native = librosa.load(str(generated_audio_path_cosy_sr), sr=None, mono=True)
+                generated_total_speech_time = librosa.get_duration(y=y_cosy_native_sr, sr=sr_cosy_native)
+                adjusted_audio_path = self._adjust_pauses_in_generated_audio(generated_audio_path_cosy_sr, original_pauses, original_total_speech_time, generated_total_speech_time, temp_dir, process_id_short)
+                
+                y_final_adjusted, sr_final_adjusted = librosa.load(str(adjusted_audio_path), sr=None, mono=True)
+                if sr_final_adjusted != 16000:
+                    y_final_16k = librosa.resample(y_final_adjusted, orig_sr=sr_final_adjusted, target_sr=16000)
                 else:
-                    logger.warning(f"[{process_id_short}] No valid audio received from CosyVoice API. Output tensor is silent 16kHz.")
+                    y_final_16k = y_final_adjusted
+                output_tensor = torch.from_numpy(y_final_16k.astype(np.float32)).unsqueeze(0)
 
+                # The `original_ref_for_eval_path` variable is now correctly defined before this block
+                original_ref_for_eval_path = str(debug_audio_storage_dir / f"{process_id_short}_original_input_for_asr_16k.wav")
+                sf.write(original_ref_for_eval_path, audio_numpy_16k, 16000)
 
-                if original_ref_for_eval_path and Path(original_ref_for_eval_path).exists() and \
-                   cloned_audio_for_eval_path_16k and Path(cloned_audio_for_eval_path_16k).exists():
+                cloned_audio_for_eval_path_16k = temp_dir / f"cosyvoice_cloned_for_eval_{process_id_short}_16k.wav"
+                sf.write(str(cloned_audio_for_eval_path_16k), y_final_16k, 16000)
+                self._log_audio_properties(Path(cloned_audio_for_eval_path_16k), "CosyVoice_Final_16kHz_for_Eval", process_id_short)
+                
+                if Path(original_ref_for_eval_path).exists() and Path(cloned_audio_for_eval_path_16k).exists():
                     try:
                         with open(original_ref_for_eval_path, 'rb') as f_orig, open(cloned_audio_for_eval_path_16k, 'rb') as f_cloned:
-                            files_to_compare = {
-                                'original_audio': (Path(original_ref_for_eval_path).name, f_orig, 'audio/wav'),
-                                'cloned_audio': (Path(cloned_audio_for_eval_path_16k).name, f_cloned, 'audio/wav')
-                            }
-                            logger.info(f"[{process_id_short}] Calling voice similarity API with 16kHz files.")
-                            api_response = requests.post(f"{VOICE_SIMILARITY_API_URL}/compare-voices/", files=files_to_compare, timeout=60)
-
-                        if api_response.status_code == 200:
-                            similarity_data = api_response.json()
-                            similarity_score = similarity_data.get("similarity_score")
-                            if similarity_score is not None: logger.info(f"[{process_id_short}] VOICE SIMILARITY SCORE (CosyVoice vs Original): {similarity_score:.4f}")
-                            else: logger.warning(f"[{process_id_short}] Similarity API response missing score: {similarity_data}")
-                        else: logger.error(f"[{process_id_short}] Voice similarity API call failed with status {api_response.status_code}: {api_response.text[:200]}")
+                            files_to_compare = {'original_audio': f_orig, 'cloned_audio': f_cloned}
+                            sim_response = requests.post(f"{VOICE_SIMILARITY_API_URL}/compare-voices/", files=files_to_compare, timeout=60)
+                        if sim_response.status_code == 200:
+                            logger.info(f"[{process_id_short}] VOICE SIMILARITY: {sim_response.json().get('similarity_score', 'N/A')}")
+                        else:
+                             logger.warning(f"[{process_id_short}] Similarity API call failed: {sim_response.status_code}")
                     except Exception as e_sim_eval:
-                        logger.error(f"[{process_id_short}] Error during voice similarity evaluation: {e_sim_eval}", exc_info=True)
+                        logger.warning(f"[{process_id_short}] Voice similarity check failed: {e_sim_eval}")
                 else:
-                    logger.warning(f"[{process_id_short}] Skipping similarity check due to missing audio files for evaluation.")
+                    logger.warning(f"[{process_id_short}] Skipping similarity check due to missing audio files.")
 
-                logger.info(f"[{process_id_short}] Final audio tensor for output: shape: {output_tensor.shape}, dtype: {output_tensor.dtype}, SR assumed 16kHz")
+                logger.info(f"[{process_id_short}] translate_speech completed successfully")
+                return {"audio": output_tensor, "transcripts": {"source": source_text_raw, "target": target_text_raw}}
 
             except Exception as e:
-                logger.error(f"[{process_id_short}] Error in CosyVoice API translate_speech pipeline: {e}", exc_info=True)
-                output_tensor = torch.zeros((1, 16000),dtype=torch.float32)
-                source_text_raw = source_text_raw if source_text_raw != "ASR_FAILED" else "PIPELINE_ASR_ERROR"
-                target_text_raw = "PIPELINE_ERROR"
-
-            logger.info(f"[{process_id_short}] translate_speech (CosyVoice API) completed in {time.time() - start_time_translate_speech:.2f}s")
-            return {"audio": output_tensor, "transcripts": {"source": source_text_raw, "target": target_text_raw}}
+                # This block will now catch the RuntimeErrors and gracefully return an empty result
+                logger.error(f"[{process_id_short}] Error in translate_speech pipeline: {e}", exc_info=True)
+                raise e # Re-raise the exception so the video_routes handler can catch it
 
     def is_language_supported(self, lang_code_app: str) -> bool:
         cosy_lang_code = self._get_cosyvoice_lang_code(lang_code_app)
@@ -483,13 +382,10 @@ class CascadedBackend(TranslationBackend):
 
     def cleanup(self):
         logger.info("Cleaning CascadedBackend (CosyVoice API) resources...")
-        if hasattr(self, 'asr_model') and self.asr_model: del self.asr_model; self.asr_model = None; logger.debug("Whisper ASR model unloaded.")
-        if hasattr(self, 'translator_model') and self.translator_model: del self.translator_model; self.translator_model = None; logger.debug("NLLB Translator model unloaded.")
-        if hasattr(self, 'translator_tokenizer') and self.translator_tokenizer: del self.translator_tokenizer; self.translator_tokenizer = None; logger.debug("NLLB Tokenizer unloaded.")
+        if hasattr(self, 'asr_model'): del self.asr_model; self.asr_model = None; logger.debug("Whisper ASR model unloaded.")
+        if hasattr(self, 'translator_model'): del self.translator_model; self.translator_model = None; logger.debug("NLLB Translator model unloaded.")
+        if hasattr(self, 'translator_tokenizer'): del self.translator_tokenizer; self.translator_tokenizer = None; logger.debug("NLLB Tokenizer unloaded.")
 
-        current_device_type = self.device.type if isinstance(self.device, torch.device) else self.device
-        if current_device_type == 'cuda' and torch.cuda.is_available():
-            torch.cuda.empty_cache(); logger.debug("CUDA cache emptied.")
-
+        if torch.cuda.is_available(): torch.cuda.empty_cache()
         import gc; gc.collect()
         logger.info("CascadedBackend (CosyVoice API) resources cleaned.")

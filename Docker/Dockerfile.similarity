@@ -1,49 +1,41 @@
-# Dockerfile.similarity
-FROM python:3.9-slim-buster
+# Dockerfile.similarity - v2 (No assumptions)
+
+# Base Python image using Debian Bullseye to fix the EOL repository issue.
+FROM python:3.9-slim-bullseye
 
 # Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
-ENV OMP_NUM_THREADS=1 
+ENV HF_HOME=/app/pretrained_models/huggingface_cache
 
-# --- ATTEMPT TO PRELOAD LIBGOMP ---
-# This path might vary by architecture (aarch64 vs amd64).
-# For a python:3.9-slim-buster (Debian Buster), libgomp.so.1 is usually in /usr/lib/x86_64-linux-gnu/ or /usr/lib/aarch64-linux-gnu/
-# We install libgomp1 below, which should place it in a standard path.
-# If errors persist, you might need to find the exact path after installation and set LD_PRELOAD.
-# For now, let's rely on the standard installation path.
-# ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgomp.so.1 # Example for amd64, adjust if needed after checking the built image
-
-WORKDIR /app
-
-# Install system dependencies: libsndfile1 (for soundfile) and libgomp1 (for PyTorch/Torchaudio)
+# Install essential system dependencies for audio processing
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libsndfile1 \
     libgomp1 \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PyTorch and torchaudio (CPU version is fine for this)
-RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+WORKDIR /app
 
-# Install SpeechBrain, scikit-learn, FastAPI, Uvicorn, and other dependencies
+# Install the necessary Python packages.
+# These are the standard dependencies for running a SpeechBrain ECAPA-TDNN model
+# (inferred from your 'spkrec-ecapa-voxceleb' folder) within a FastAPI service.
 RUN pip install --no-cache-dir \
-    speechbrain \
-    scikit-learn \
-    fastapi \
-    uvicorn[standard] \
-    python-multipart \
-    soundfile \
-    librosa 
+    "speechbrain==0.5.16" \
+    "torch==1.13.1" \
+    "torchaudio==0.13.1" \
+    "fastapi" \
+    "uvicorn[standard]" \
+    "numpy" \
+    "pydub" \
+    "soundfile"
 
-# Copy the similarity analyzer script and the API script
-COPY ./Backend/services/voice_similarity_analyzer.py /app/voice_similarity_analyzer.py
-COPY ./Docker/similarity_api.py /app/similarity_api.py
+# Copy your API script into the container.
+# This assumes the script is in the Docker directory as shown in your screenshot.
+COPY ./Docker/similarity_api.py .
+COPY ./Backend/services/voice_similarity_analyser.py .
 
-# Create a directory for pretrained models that SpeechBrain will download
-RUN mkdir -p /app/pretrained_models
-ENV SPEECHBRAIN_PRETRAINED_PATH=/app/pretrained_models 
-# This tells SpeechBrain where to cache models inside the container
-
+# Expose the port the app runs on
 EXPOSE 8001
 
-CMD ["uvicorn", "similarity_api:app", "--host", "0.0.0.0", "--port", "8001", "--log-level", "info"]
+# Run the API using uvicorn
+CMD ["uvicorn", "similarity_api:app", "--host", "0.0.0.0", "--port", "8001"]

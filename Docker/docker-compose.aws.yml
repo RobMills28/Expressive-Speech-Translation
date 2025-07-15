@@ -1,0 +1,50 @@
+services:
+  cosyvoice:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile.cosyvoice
+      args:
+        # Build for GPU on AMD64 architecture for AWS instances
+        TARGETPLATFORM: linux/amd64
+        BUILD_TARGET: gpu
+        CUDA_VERSION: 12.1 # Or match your AWS instance's CUDA version
+    platform: linux/amd64 # Standard platform for most cloud VMs
+    container_name: cosyvoice-container-aws
+    ports:
+      - "8002:8000"
+    deploy: # This section enables GPU access
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - PYTHONUNBUFFERED=1
+      - NVIDIA_VISIBLE_DEVICES=all
+    restart: unless-stopped
+    networks:
+      - magenta-net
+
+  voice-similarity:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile.similarity
+    platform: linux/amd64 # Match the AMD64 architecture for AWS
+    container_name: voice-similarity-container-aws
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./pretrained_models_similarity:/app/pretrained_models
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - magenta-net
+
+networks:
+  magenta-net:
+    driver: bridge
+
+volumes:
+  pretrained_models_similarity:

@@ -1,4 +1,4 @@
-# services/voice_similarity_analyzer.py
+# services/voice_similarity_analyser.py
 import torch
 import torchaudio
 import numpy as np
@@ -11,7 +11,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-class VoiceSimilarityAnalyzer:
+class VoiceSimilarityAnalyser:
     _model = None
     _device = None
 

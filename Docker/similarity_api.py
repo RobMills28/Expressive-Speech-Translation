@@ -8,8 +8,8 @@ import logging
 import os
 import uuid # For more unique request IDs
 
-# Import your VoiceSimilarityAnalyzer
-from voice_similarity_analyzer import VoiceSimilarityAnalyzer
+# Import your VoiceSimilarityAnalyser
+from voice_similarity_analyser import VoiceSimilarityAnalyser
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ app = FastAPI(title="Voice Similarity API", description="API for comparing voice
 @app.on_event("startup")
 async def startup_event():
     try:
-        VoiceSimilarityAnalyzer._load_model()
+        VoiceSimilarityAnalyser._load_model()
         logger.info("Speaker embedding model preloaded successfully on startup.")
     except Exception as e:
         logger.error(f"Failed to preload speaker embedding model on startup: {e}", exc_info=True)
@@ -57,14 +57,14 @@ async def compare_voices_endpoint(
             if cloned_audio.file: cloned_audio.file.close()
 
         try:
-            similarity_score = VoiceSimilarityAnalyzer.compare_audio_files(
+            similarity_score = VoiceSimilarityAnalyser.compare_audio_files(
                 str(original_audio_path),
                 str(cloned_audio_path)
             )
 
             if similarity_score is None:
                 logger.error(f"[{request_id}] Failed to calculate similarity score (compare_audio_files returned None).")
-                raise HTTPException(status_code=500, detail="Failed to calculate similarity score due to internal error in analyzer.")
+                raise HTTPException(status_code=500, detail="Failed to calculate similarity score due to internal error in analyser.")
 
             logger.info(f"[{request_id}] Similarity score: {similarity_score:.4f}")
             return JSONResponse(content={"similarity_score": similarity_score, "request_id": request_id, "status": "success"})
@@ -78,9 +78,9 @@ async def health_check():
     model_loaded_flag = False
     reason = "Speaker embedding model not loaded or error during check."
     try:
-        if VoiceSimilarityAnalyzer._model is None:
-             VoiceSimilarityAnalyzer._load_model() 
-        if VoiceSimilarityAnalyzer._model is not None:
+        if VoiceSimilarityAnalyser._model is None:
+             VoiceSimilarityAnalyser._load_model() 
+        if VoiceSimilarityAnalyser._model is not None:
             model_loaded_flag = True
             reason = "Speaker embedding model loaded."
             return {"status": "healthy", "model_loaded": True, "message": reason}
