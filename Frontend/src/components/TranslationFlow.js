@@ -1,26 +1,30 @@
 // src/components/TranslationFlow.js
 import React, { useState, useRef, useEffect } from 'react';
-import { Card /* CardContent was unused */ } from "./ui/card"; // Assuming Card is used, CardContent removed
+import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { AlertCircle, Upload, Loader2, Film, /* Mic was unused */ AudioWaveform, Zap } from 'lucide-react';
+import { AlertCircle, Upload, Loader2, Film, AudioWaveform, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
-import { Label } from "./ui/label"; // Label can still be used with HTML checkbox
+import { Label } from "./ui/label";
 
+// --- THIS IS THE UPDATED LANGUAGE LIST ---
+// Based on CosyVoice 2/3 documentation for supported languages.
 const LANGUAGES = {
-  'eng': { name: 'English', flag: '🇺🇸' },
+  'eng': { name: 'English', flag: '🇬🇧' },
+  'cmn': { name: 'Chinese (Mandarin)', flag: '🇨🇳' },
+  'yue': { name: 'Cantonese', flag: '🇭🇰' },
+  'jpn': { name: 'Japanese', flag: '🇯🇵' },
+  'kor': { name: 'Korean', flag: '🇰🇷' },
   'fra': { name: 'French', flag: '🇫🇷' },
   'spa': { name: 'Spanish', flag: '🇪🇸' },
   'deu': { name: 'German', flag: '🇩🇪' },
   'ita': { name: 'Italian', flag: '🇮🇹' },
-  'por': { name: 'Portuguese', flag: '🇵🇹' },
   'rus': { name: 'Russian', flag: '🇷🇺' },
-  'jpn': { name: 'Japanese', flag: '🇯🇵' },
-  'cmn': { name: 'Chinese (Simplified)', flag: '🇨🇳' },
-  'ukr': { name: 'Ukrainian', flag: '🇺🇦' }
-  // Add other languages from VideoSyncInterface if needed for consistency
+  // Additional languages can be added here if supported by both
+  // your translation model (NLLB) and TTS model (CosyVoice).
 };
+// --- END OF UPDATE ---
 
 const ContentTranslator = () => {
   const [currentScreen, setCurrentScreen] = useState('selection');
@@ -35,7 +39,7 @@ const ContentTranslator = () => {
   const [result, setResult] = useState(null);
   const [resultTranscripts, setResultTranscripts] = useState({ source: '', target: '' });
   const [applyLipSync, setApplyLipSync] = useState(true);
-  const [useVoiceCloningVideo, setUseVoiceCloningVideo] = useState(true); // Added state for voice cloning for video
+  const [useVoiceCloningVideo, setUseVoiceCloningVideo] = useState(true);
 
   const originalMediaRef = useRef(null);
   const translatedMediaRef = useRef(null);
@@ -48,7 +52,7 @@ const ContentTranslator = () => {
     setError(''); setProgress(0); setProcessPhase('');
     setTargetLanguage(type === 'audio' ? 'fra' : '');
     setApplyLipSync(true);
-    setUseVoiceCloningVideo(true); // Reset voice cloning for video
+    setUseVoiceCloningVideo(true);
   };
 
   const handleFileUpload = (e) => {
@@ -82,32 +86,28 @@ const ContentTranslator = () => {
     const fileKey = contentType === 'audio' ? 'file' : 'video';
     formData.append(fileKey, file);
     formData.append('target_language', targetLanguage);
-    formData.append('backend', 'cascaded'); // Currently hardcoded backend
+    formData.append('backend', 'cascaded');
 
     if (contentType === 'video' || contentType === 'both') {
       formData.append('apply_lip_sync', applyLipSync ? 'true' : 'false');
-      // Add use_voice_cloning for video types
       formData.append('use_voice_cloning', useVoiceCloningVideo ? 'true' : 'false');
-      console.log("Frontend sending apply_lip_sync:", applyLipSync, "use_voice_cloning:", useVoiceCloningVideo);
     }
 
     const endpoint = contentType === 'audio' ? 'http://localhost:5001/translate' : 'http://localhost:5001/process-video';
 
     try {
       const response = await fetch(endpoint, { method: 'POST', body: formData });
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }));
-        throw new Error(errData.error || `Request failed: ${response.statusText}`);
-      }
 
       if (contentType === 'audio') {
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }));
+          throw new Error(errData.error || `Request failed: ${response.statusText}`);
+        }
         const data = await response.json();
         if (data.error) throw new Error(data.error);
         const byteCharacters = atob(data.audio);
         const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
+        for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
         const byteArray = new Uint8Array(byteNumbers);
         const audioBlob = new Blob([byteArray], { type: 'audio/wav' });
         if (result) URL.revokeObjectURL(result);
@@ -133,14 +133,14 @@ const ContentTranslator = () => {
               try {
                 const data = JSON.parse(message.trim().slice(6));
                 if (data.error) {
-                    setError(data.error + (data.phase ? ` (during ${data.phase})` : ''));
+                    setError(data.error + (data.details ? `: ${data.details}` : ''));
                     setProcessPhase(`Error: ${data.phase || 'processing'}`);
                     setIsProcessing(false);
                     return;
                 }
                 if (data.progress !== undefined) setProgress(data.progress);
                 if (data.phase) setProcessPhase(data.phase);
-                if (data.result) { // Base64 video data
+                if (data.result) {
                   const byteChars = atob(data.result);
                   const byteNums = new Array(byteChars.length);
                   for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
@@ -154,7 +154,7 @@ const ContentTranslator = () => {
                 if (data.transcripts) setResultTranscripts(data.transcripts);
               } catch (e) {
                   console.error('SSE parse error:', e, "Message:", message);
-                  if (!error) setError("Error processing video stream from server.");
+                  if (!error) setError("Error processing server response.");
               }
             }
           }
@@ -164,9 +164,7 @@ const ContentTranslator = () => {
         setError(err.message);
         console.error("Translate error:", err);
         setProcessPhase('Failed.');
-    }
-    // Only set isProcessing to false if it wasn't already set by an error condition in SSE
-    if (isProcessing) { // Check if still true before setting
+    } finally {
         setIsProcessing(false);
     }
   };
@@ -215,7 +213,6 @@ const ContentTranslator = () => {
   );
 
   const renderAudioInterface = () => (
-    // ... (Audio interface remains the same, no voice cloning option here)
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="p-6 border-b flex justify-between items-center">
         <div><h1 className="text-2xl font-semibold">Audio Translation</h1><p className="text-gray-500">Translate speech in audio files</p></div>
@@ -317,7 +314,6 @@ const ContentTranslator = () => {
                     </label>
                   </div>
                 )}
-                 {/* Voice Cloning Toggle for Video */}
                 {(contentType === 'video' || contentType === 'both') && (
                     <div className="flex items-center space-x-2">
                         <input
