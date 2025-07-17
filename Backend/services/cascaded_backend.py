@@ -292,7 +292,7 @@ class CascadedBackend(TranslationBackend):
                 logger.info(f"[{process_id_short}] Translating NLLB '{src_nllb_code}' to '{tgt_nllb_code}'.")
                 self.translator_tokenizer.src_lang = src_nllb_code
                 input_ids = self.translator_tokenizer(source_text_raw, return_tensors="pt", padding=True).input_ids.to(self.device)
-                forced_bos_token_id = self.translator_tokenizer.lang_code_to_id.get(tgt_nllb_code)
+                forced_bos_token_id = self.translator_tokenizer.get_vocab().get(tgt_nllb_code)
                 if forced_bos_token_id is None: logger.warning(f"Could not get NLLB BOS token for {tgt_nllb_code}, translation might be suboptimal.")
                 gen_kwargs = {"input_ids": input_ids, "max_length": max(256, len(input_ids[0]) * 3 + 50), "num_beams": 5, "length_penalty": 1.0, "early_stopping": True}
                 if forced_bos_token_id is not None: gen_kwargs["forced_bos_token_id"] = forced_bos_token_id
