@@ -18,6 +18,7 @@ import uuid
 import re
 from scipy.signal import butter, lfilter
 
+from .temporal_mapper import TemporalMapper
 from .translation_strategy import TranslationBackend
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
@@ -42,6 +43,7 @@ class CascadedBackend(TranslationBackend):
         logger.info(f"Initializing CascadedBackend (to use CosyVoice API). Device: {device}")
         self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
         logger.info(f"CascadedBackend ML device: {self.device}")
+        self.temporal_mapper = TemporalMapper()
         self.initialized = False
         self.asr_model = None
         self.translator_model = None
@@ -194,39 +196,48 @@ class CascadedBackend(TranslationBackend):
         except Exception as e:
             logger.error(f"[{process_id_short}] Error logging properties for {label} ({audio_path.name}): {e}", exc_info=True)
 
-    def _adjust_pauses_in_generated_audio(self, generated_audio_path: Path, original_pauses: List[Dict[str, Any]],
-                                     original_total_speech_time: float, generated_total_speech_time: float,
-                                     temp_dir: Path, process_id_short: str) -> Path:
-        if not original_pauses:
-            return generated_audio_path
+    # Complete replacement for the problematic function in cascaded_backend.py
+    def _apply_natural_temporal_mapping(self, generated_audio_path: Path, 
+                                   word_timestamps: List[Dict[str, Any]],
+                                   source_audio_numpy: np.ndarray,
+                                   temp_dir: Path, process_id_short: str) -> Path:
+        """
+        Apply natural temporal mapping to preserve speech characteristics
+        """
+        logger.info(f"[{process_id_short}] Applying natural temporal mapping...")
         
-        logger.info(f"[{process_id_short}] Attempting to adjust pauses in generated output.")
         try:
-            generated_audio = AudioSegment.from_wav(generated_audio_path)
-            output_frame_rate = generated_audio.frame_rate or 16000
-            silence_thresh = generated_audio.dBFS - 16
-            generated_segments = silence.split_on_silence(generated_audio, min_silence_len=200, silence_thresh=silence_thresh, keep_silence=50)
-            if not generated_segments:
-                return generated_audio_path
+            # Load the generated audio
+            generated_audio, sr = librosa.load(str(generated_audio_path), sr=16000, mono=True)
             
-            final_audio_parts = []
-            time_scaling_factor = generated_total_speech_time / original_total_speech_time if original_total_speech_time > 0 else 1.0
+            # Extract timing profile from source audio
+            source_profile = self.temporal_mapper.extract_timing_profile(source_audio_numpy, word_timestamps)
             
-            for i, segment in enumerate(generated_segments):
-                final_audio_parts.append(segment)
-                if i < len(generated_segments) - 1 and i < len(original_pauses):
-                    insert_pause_ms = min(int(original_pauses[i]['duration'] * 1000 * time_scaling_factor), 3000)
-                    final_audio_parts.append(AudioSegment.silent(duration=max(insert_pause_ms, 50), frame_rate=output_frame_rate))
-                elif i < len(generated_segments) - 1:
-                    final_audio_parts.append(AudioSegment.silent(duration=200, frame_rate=output_frame_rate))
+            logger.info(f"[{process_id_short}] Source profile: "
+                    f"speaking_ratio={source_profile['speaking_ratio']:.2f}, "
+                    f"avg_pause={source_profile['average_pause']:.2f}s, "
+                    f"num_pauses={source_profile['num_pauses']}")
             
-            adjusted_audio = sum(final_audio_parts, AudioSegment.empty())
-            adjusted_audio_path = temp_dir / f"generated_adjusted_pauses_{process_id_short}.wav"
-            adjusted_audio.export(adjusted_audio_path, format="wav")
-            self._log_audio_properties(adjusted_audio_path, "GeneratedAudio_AdjustedPauses", process_id_short)
+            # Apply temporal guidance
+            adjusted_audio = self.temporal_mapper.apply_temporal_guidance(generated_audio, source_profile)
+            
+            # Save the adjusted audio
+            adjusted_audio_path = temp_dir / f"temporally_mapped_{process_id_short}.wav"
+            sf.write(str(adjusted_audio_path), adjusted_audio, 16000)
+            
+            # Log the results
+            original_duration = len(generated_audio) / 16000
+            adjusted_duration = len(adjusted_audio) / 16000
+            
+            logger.info(f"[{process_id_short}] Temporal mapping complete: "
+                    f"original={original_duration:.2f}s, "
+                    f"adjusted={adjusted_duration:.2f}s, "
+                    f"change={adjusted_duration - original_duration:+.2f}s")
+            
             return adjusted_audio_path
+            
         except Exception as e:
-            logger.error(f"[{process_id_short}] Error adjusting pauses in generated output: {e}", exc_info=True)
+            logger.error(f"[{process_id_short}] Error in temporal mapping: {e}", exc_info=True)
             return generated_audio_path
 
     def _get_reference_audio_for_cloning(self, input_audio_numpy_16k: np.ndarray,
@@ -253,65 +264,101 @@ class CascadedBackend(TranslationBackend):
         self._log_audio_properties(ref_audio_path, f"RefAudioForCosyVoiceAPI_16kHz", process_id_short)
         return ref_audio_path
 
+    # Modified translate_speech function - COMPLETE VERSION
     def translate_speech(self, audio_tensor: torch.Tensor, source_lang: str = "eng", target_lang: str = "fra") -> Dict[str, Any]:
         process_id_short = str(time.time_ns())[-6:]
-        logger.info(f"[{process_id_short}] CascadedBackend (CosyVoice API).translate_speech CALLED. App Source: '{source_lang}', App Target: '{target_lang}'")
+        logger.info(f"[{process_id_short}] CascadedBackend translate_speech with temporal mapping")
+        
         if not self.initialized:
             raise RuntimeError("Backend not initialized. Please wait and try again.")
-        if not self.asr_model or not self.translator_model :
-             raise RuntimeError("Essential models (ASR/NLLB) are not loaded.")
+        if not self.asr_model or not self.translator_model:
+            raise RuntimeError("Essential models (ASR/NLLB) are not loaded.")
 
         start_time_translate_speech = time.time()
+        
         with tempfile.TemporaryDirectory(prefix=f"cosy_s2st_api_{process_id_short}_") as temp_dir_str:
             temp_dir = Path(temp_dir_str)
             debug_audio_storage_dir = temp_dir / "debug_audio"
-            # --- THIS IS THE FIX ---
-            # Create the debug directory BEFORE trying to write to it.
             debug_audio_storage_dir.mkdir(parents=True, exist_ok=True)
-            # --- END OF FIX ---
 
-            source_text_raw, original_pauses, word_timestamps = "ASR_FAILED", [], []
+            source_text_raw = "ASR_FAILED"
             target_text_raw = "TRANSLATION_FAILED"
             output_tensor = torch.zeros((1, 16000), dtype=torch.float32)
             original_ref_for_eval_path = None
             cloned_audio_for_eval_path_16k = None
 
             try:
+                # ASR Processing
                 asr_start_time = time.time()
                 audio_numpy_16k = audio_tensor.squeeze().cpu().numpy().astype(np.float32)
-                source_text_raw, original_pauses, word_timestamps = self._get_text_and_pauses_from_asr(audio_numpy_16k, source_lang, process_id_short)
-                original_total_speech_time = sum(item['end'] - item['start'] for item in word_timestamps) if word_timestamps else librosa.get_duration(y=audio_numpy_16k, sr=16000)
+                source_text_raw, original_pauses, word_timestamps = self._get_text_and_pauses_from_asr(
+                    audio_numpy_16k, source_lang, process_id_short
+                )
+                
                 logger.info(f"[{process_id_short}] ASR time: {(time.time()-asr_start_time):.2f}s.")
                 
                 if not source_text_raw.strip() or source_text_raw == "ASR_MODEL_UNAVAILABLE":
                     raise RuntimeError("ASR failed or produced empty text.")
 
+                # Translation Processing
                 translation_start_time = time.time()
                 src_nllb_code = self._convert_to_nllb_code(source_lang)
                 tgt_nllb_code = self._convert_to_nllb_code(target_lang)
+                
                 logger.info(f"[{process_id_short}] Translating NLLB '{src_nllb_code}' to '{tgt_nllb_code}'.")
+                
                 self.translator_tokenizer.src_lang = src_nllb_code
                 input_ids = self.translator_tokenizer(source_text_raw, return_tensors="pt", padding=True).input_ids.to(self.device)
                 forced_bos_token_id = self.translator_tokenizer.get_vocab().get(tgt_nllb_code)
-                if forced_bos_token_id is None: logger.warning(f"Could not get NLLB BOS token for {tgt_nllb_code}, translation might be suboptimal.")
-                gen_kwargs = {"input_ids": input_ids, "max_length": max(256, len(input_ids[0]) * 3 + 50), "num_beams": 5, "length_penalty": 1.0, "early_stopping": True}
-                if forced_bos_token_id is not None: gen_kwargs["forced_bos_token_id"] = forced_bos_token_id
-                with torch.no_grad(): translated_tokens = self.translator_model.generate(**gen_kwargs)
+                
+                if forced_bos_token_id is None:
+                    logger.warning(f"Could not get NLLB BOS token for {tgt_nllb_code}")
+                
+                gen_kwargs = {
+                    "input_ids": input_ids,
+                    "max_length": max(256, len(input_ids[0]) * 3 + 50),
+                    "num_beams": 5,
+                    "length_penalty": 1.0,
+                    "early_stopping": True
+                }
+                
+                if forced_bos_token_id is not None:
+                    gen_kwargs["forced_bos_token_id"] = forced_bos_token_id
+                
+                with torch.no_grad():
+                    translated_tokens = self.translator_model.generate(**gen_kwargs)
+                
                 target_text_raw = self.translator_tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
-                logger.info(f"[{process_id_short}] NLLB Raw Translation: '{target_text_raw[:70]}...' ({(time.time()-translation_start_time):.2f}s)")
+                
+                logger.info(f"[{process_id_short}] Translation: '{target_text_raw[:70]}...' ({(time.time()-translation_start_time):.2f}s)")
 
                 if not target_text_raw.strip():
                     raise RuntimeError("Translation result was empty.")
 
+                # CosyVoice API Check
                 if not self._check_cosyvoice_api_status():
                     raise RuntimeError("CosyVoice API is not healthy.")
 
+                # CosyVoice Synthesis
                 cosy_synthesis_start_time = time.time()
                 cosy_target_lang_code = self._get_cosyvoice_lang_code(target_lang)
-                reference_speaker_wav_for_api_path = self._get_reference_audio_for_cloning(audio_numpy_16k, process_id_short, temp_dir, debug_audio_storage_dir)
+                reference_speaker_wav_for_api_path = self._get_reference_audio_for_cloning(
+                    audio_numpy_16k, process_id_short, temp_dir, debug_audio_storage_dir
+                )
                 
-                files = {'reference_speaker_wav': (reference_speaker_wav_for_api_path.name, open(reference_speaker_wav_for_api_path, 'rb'), 'audio/wav')}
-                data = {'text_to_synthesize': target_text_raw, 'target_language_code': cosy_target_lang_code, 'style_prompt_text': ""}
+                files = {
+                    'reference_speaker_wav': (
+                        reference_speaker_wav_for_api_path.name,
+                        open(reference_speaker_wav_for_api_path, 'rb'),
+                        'audio/wav'
+                    )
+                }
+                
+                data = {
+                    'text_to_synthesize': target_text_raw,
+                    'target_language_code': cosy_target_lang_code,
+                    'style_prompt_text': ""
+                }
                 
                 try:
                     response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=3600)
@@ -322,57 +369,69 @@ class CascadedBackend(TranslationBackend):
                 finally:
                     files['reference_speaker_wav'][1].close()
 
-                logger.info(f"[{process_id_short}] CosyVoice API interaction took: {(time.time()-cosy_synthesis_start_time):.2f}s.")
+                logger.info(f"[{process_id_short}] CosyVoice API: {(time.time()-cosy_synthesis_start_time):.2f}s.")
                 
+                # Save CosyVoice output
                 generated_audio_path_cosy_sr = temp_dir / f"cosyvoice_api_output_{process_id_short}.wav"
-                with open(generated_audio_path_cosy_sr, 'wb') as f: f.write(response.content)
+                with open(generated_audio_path_cosy_sr, 'wb') as f:
+                    f.write(response.content)
 
                 if not generated_audio_path_cosy_sr.exists() or generated_audio_path_cosy_sr.stat().st_size < 1000:
-                    raise RuntimeError("CosyVoice API returned an empty or missing audio file.")
+                    raise RuntimeError("CosyVoice API returned empty or missing audio file.")
                 
-                self._log_audio_properties(generated_audio_path_cosy_sr, "CosyVoiceAPI_Output_NativeSR", process_id_short)
+                # Apply Natural Temporal Mapping (REPLACEMENT FOR OLD PAUSE ADJUSTMENT)
+                temporal_mapping_start_time = time.time()
+                adjusted_audio_path = self._apply_natural_temporal_mapping(
+                    generated_audio_path_cosy_sr, word_timestamps or [], 
+                    audio_numpy_16k, temp_dir, process_id_short
+                )
                 
-                y_cosy_native_sr, sr_cosy_native = librosa.load(str(generated_audio_path_cosy_sr), sr=None, mono=True)
-                generated_total_speech_time = librosa.get_duration(y=y_cosy_native_sr, sr=sr_cosy_native)
-                adjusted_audio_path = self._adjust_pauses_in_generated_audio(generated_audio_path_cosy_sr, original_pauses, original_total_speech_time, generated_total_speech_time, temp_dir, process_id_short)
+                logger.info(f"[{process_id_short}] Temporal mapping: {(time.time()-temporal_mapping_start_time):.2f}s.")
                 
+                # Load final audio
                 y_final_adjusted, sr_final_adjusted = librosa.load(str(adjusted_audio_path), sr=None, mono=True)
+                
                 if sr_final_adjusted != 16000:
                     y_final_16k = librosa.resample(y_final_adjusted, orig_sr=sr_final_adjusted, target_sr=16000)
                 else:
                     y_final_16k = y_final_adjusted
+                
                 output_tensor = torch.from_numpy(y_final_16k.astype(np.float32)).unsqueeze(0)
 
-                # The `original_ref_for_eval_path` variable is now correctly defined before this block
-                original_ref_for_eval_path = str(debug_audio_storage_dir / f"{process_id_short}_original_input_for_asr_16k.wav")
+                # Voice Similarity Check
+                original_ref_for_eval_path = str(debug_audio_storage_dir / f"{process_id_short}_original_input_16k.wav")
                 sf.write(original_ref_for_eval_path, audio_numpy_16k, 16000)
 
-                cloned_audio_for_eval_path_16k = temp_dir / f"cosyvoice_cloned_for_eval_{process_id_short}_16k.wav"
+                cloned_audio_for_eval_path_16k = temp_dir / f"final_output_{process_id_short}_16k.wav"
                 sf.write(str(cloned_audio_for_eval_path_16k), y_final_16k, 16000)
-                self._log_audio_properties(Path(cloned_audio_for_eval_path_16k), "CosyVoice_Final_16kHz_for_Eval", process_id_short)
                 
                 if Path(original_ref_for_eval_path).exists() and Path(cloned_audio_for_eval_path_16k).exists():
                     try:
                         with open(original_ref_for_eval_path, 'rb') as f_orig, open(cloned_audio_for_eval_path_16k, 'rb') as f_cloned:
                             files_to_compare = {'original_audio': f_orig, 'cloned_audio': f_cloned}
                             sim_response = requests.post(f"{VOICE_SIMILARITY_API_URL}/compare-voices/", files=files_to_compare, timeout=60)
+                        
                         if sim_response.status_code == 200:
-                            logger.info(f"[{process_id_short}] VOICE SIMILARITY: {sim_response.json().get('similarity_score', 'N/A')}")
+                            similarity_score = sim_response.json().get('similarity_score', 'N/A')
+                            logger.info(f"[{process_id_short}] Voice similarity: {similarity_score}")
                         else:
-                             logger.warning(f"[{process_id_short}] Similarity API call failed: {sim_response.status_code}")
-                    except Exception as e_sim_eval:
-                        logger.warning(f"[{process_id_short}] Voice similarity check failed: {e_sim_eval}")
-                else:
-                    logger.warning(f"[{process_id_short}] Skipping similarity check due to missing audio files.")
+                            logger.warning(f"[{process_id_short}] Similarity API failed: {sim_response.status_code}")
+                    except Exception as e_sim:
+                        logger.warning(f"[{process_id_short}] Voice similarity check failed: {e_sim}")
 
                 logger.info(f"[{process_id_short}] translate_speech completed successfully")
-                return {"audio": output_tensor, "transcripts": {"source": source_text_raw, "target": target_text_raw}}
+                return {
+                    "audio": output_tensor,
+                    "transcripts": {
+                        "source": source_text_raw,
+                        "target": target_text_raw
+                    }
+                }
 
             except Exception as e:
-                # This block will now catch the RuntimeErrors and gracefully return an empty result
-                logger.error(f"[{process_id_short}] Error in translate_speech pipeline: {e}", exc_info=True)
-                raise e # Re-raise the exception so the video_routes handler can catch it
-
+                logger.error(f"[{process_id_short}] Error in translate_speech: {e}", exc_info=True)
+                raise e
+    
     def is_language_supported(self, lang_code_app: str) -> bool:
         cosy_lang_code = self._get_cosyvoice_lang_code(lang_code_app)
         return cosy_lang_code in self.simple_lang_code_map_cosy.values()
