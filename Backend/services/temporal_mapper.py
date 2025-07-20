@@ -9,6 +9,8 @@ from scipy.ndimage import gaussian_filter1d
 from scipy.signal import find_peaks
 import torch
 
+from typing import Optional
+
 logger = logging.getLogger(__name__)
 
 class TemporalMapper:
@@ -61,85 +63,212 @@ class TemporalMapper:
     
     def _energy_based_profile(self, audio: np.ndarray) -> Dict[str, Any]:
         """
-        Fallback method using energy analysis when word timestamps aren't available
+        Enhanced energy analysis with better silence detection
         """
-        # Frame-based energy analysis
         frame_length = int(0.025 * self.sample_rate)  # 25ms frames
         hop_length = int(0.010 * self.sample_rate)    # 10ms hop
         
-        # Calculate frame energy
+        # Multi-feature analysis
         frames = librosa.util.frame(audio, frame_length=frame_length, hop_length=hop_length)
         energy = np.mean(frames ** 2, axis=0)
         
-        # Smooth energy curve
-        energy_smooth = gaussian_filter1d(energy, sigma=2.0)
+        # Spectral features for better voice activity detection
+        stft = librosa.stft(audio, hop_length=hop_length, n_fft=1024)
+        spectral_centroids = librosa.feature.spectral_centroid(S=np.abs(stft), sr=self.sample_rate)[0]
+        spectral_rolloff = librosa.feature.spectral_rolloff(S=np.abs(stft), sr=self.sample_rate)[0]
         
-        # Voice activity detection
-        threshold = np.percentile(energy_smooth, 30)
-        voiced_frames = energy_smooth > threshold
+        # Smooth all features
+        energy_smooth = gaussian_filter1d(energy, sigma=3.0)
+        centroids_smooth = gaussian_filter1d(spectral_centroids, sigma=2.0)
+        rolloff_smooth = gaussian_filter1d(spectral_rolloff, sigma=2.0)
         
-        # Estimate speaking and pause segments
-        speaking_ratio = np.mean(voiced_frames)
+        # Enhanced voice activity detection using multiple features
+        energy_threshold = np.percentile(energy_smooth, 25)
+        centroid_threshold = np.percentile(centroids_smooth, 30)
+        rolloff_threshold = np.percentile(rolloff_smooth, 30)
         
-        # Find pause regions
-        unvoiced_regions = ~voiced_frames
-        pause_starts = np.where(np.diff(unvoiced_regions.astype(int)) == 1)[0]
-        pause_ends = np.where(np.diff(unvoiced_regions.astype(int)) == -1)[0]
+        # Combine features for more accurate VAD
+        voice_confidence = (
+            (energy_smooth > energy_threshold).astype(float) * 0.5 +
+            (centroids_smooth > centroid_threshold).astype(float) * 0.3 +
+            (rolloff_smooth > rolloff_threshold).astype(float) * 0.2
+        )
         
-        if len(pause_starts) > 0 and len(pause_ends) > 0:
-            if len(pause_ends) < len(pause_starts):
-                pause_ends = np.append(pause_ends, len(unvoiced_regions) - 1)
-            if len(pause_starts) < len(pause_ends):
-                pause_starts = np.insert(pause_starts, 0, 0)
-            
-            pause_durations = []
-            for start, end in zip(pause_starts, pause_ends):
-                duration = (end - start) * hop_length / self.sample_rate
-                if duration > self.min_significant_pause:
-                    pause_durations.append(duration)
-        else:
-            pause_durations = []
+        # More conservative voice activity detection
+        voiced_frames = voice_confidence > 0.6
+        
+        # Find speech onset and offset more accurately
+        speech_onset_frame = self._find_speech_onset(voiced_frames)
+        speech_offset_frame = self._find_speech_offset(voiced_frames)
+        
+        # Calculate timing with onset/offset awareness
+        total_frames = len(voiced_frames)
+        onset_time = speech_onset_frame * hop_length / self.sample_rate if speech_onset_frame else 0
+        offset_time = speech_offset_frame * hop_length / self.sample_rate if speech_offset_frame else len(audio) / self.sample_rate
+        
+        # More accurate pause detection
+        pause_segments = self._detect_pause_segments(voiced_frames, hop_length)
         
         duration = len(audio) / self.sample_rate
+        speaking_ratio = np.mean(voiced_frames)
         
         return {
             'total_duration': duration,
             'speaking_time': duration * speaking_ratio,
-            'pause_time': sum(pause_durations),
+            'pause_time': sum(p['duration'] for p in pause_segments),
             'speaking_ratio': speaking_ratio,
-            'average_pause': np.mean(pause_durations) if pause_durations else 0.3,
-            'num_pauses': len(pause_durations),
-            'speech_rate': speaking_ratio * 3.0  # Rough estimate
+            'average_pause': np.mean([p['duration'] for p in pause_segments]) if pause_segments else 0.3,
+            'num_pauses': len(pause_segments),
+            'speech_rate': speaking_ratio * 3.0,
+            'onset_time': onset_time,
+            'offset_time': offset_time,
+            'pause_segments': pause_segments
         }
+    def _find_speech_onset(self, voiced_frames: np.ndarray) -> Optional[int]:
+        """
+        Find the first significant speech onset
+        """
+        if len(voiced_frames) == 0:
+            return None
+        
+        # Look for sustained speech (not just a blip)
+        min_speech_duration = int(0.3 * self.sample_rate / (0.010 * self.sample_rate))  # 300ms in frames
+        
+        for i in range(len(voiced_frames) - min_speech_duration):
+            # Check if we have sustained speech
+            if np.mean(voiced_frames[i:i + min_speech_duration]) > 0.7:
+                return i
+        
+        # Fallback to first voiced frame
+        voiced_indices = np.where(voiced_frames)[0]
+        return voiced_indices[0] if len(voiced_indices) > 0 else None
+
+    def _find_speech_offset(self, voiced_frames: np.ndarray) -> Optional[int]:
+        """
+        Find the last significant speech offset
+        """
+        if len(voiced_frames) == 0:
+            return None
+        
+        # Look backwards for sustained speech
+        min_speech_duration = int(0.3 * self.sample_rate / (0.010 * self.sample_rate))  # 300ms in frames
+        
+        for i in range(len(voiced_frames) - 1, min_speech_duration, -1):
+            # Check if we have sustained speech ending here
+            if np.mean(voiced_frames[i - min_speech_duration:i]) > 0.7:
+                return i
+        
+        # Fallback to last voiced frame
+        voiced_indices = np.where(voiced_frames)[0]
+        return voiced_indices[-1] if len(voiced_indices) > 0 else None
+
+    def _detect_pause_segments(self, voiced_frames: np.ndarray, hop_length: int) -> List[Dict[str, float]]:
+        """
+        Detect meaningful pause segments with better accuracy
+        """
+        if len(voiced_frames) == 0:
+            return []
+        
+        # Find unvoiced regions
+        unvoiced_regions = ~voiced_frames
+        
+        # Find starts and ends of unvoiced regions
+        diff = np.diff(unvoiced_regions.astype(int))
+        pause_starts = np.where(diff == 1)[0] + 1
+        pause_ends = np.where(diff == -1)[0] + 1
+        
+        # Handle edge cases
+        if unvoiced_regions[0]:
+            pause_starts = np.insert(pause_starts, 0, 0)
+        if unvoiced_regions[-1]:
+            pause_ends = np.append(pause_ends, len(unvoiced_regions))
+        
+        pause_segments = []
+        for start, end in zip(pause_starts, pause_ends):
+            duration = (end - start) * hop_length / self.sample_rate
+            
+            # Only consider significant pauses
+            if duration > self.min_significant_pause:
+                pause_segments.append({
+                    'start_time': start * hop_length / self.sample_rate,
+                    'end_time': end * hop_length / self.sample_rate,
+                    'duration': duration,
+                    'position': (start + end) / 2 * hop_length / self.sample_rate
+                })
+        
+        return pause_segments
     
     def apply_temporal_guidance(self, target_audio: np.ndarray, source_profile: Dict[str, Any]) -> np.ndarray:
         """
-        Apply gentle temporal guidance to target audio based on source characteristics
-        This is the main function that does the temporal mapping
+        Apply enhanced temporal guidance with better onset/offset awareness
         """
         target_duration = len(target_audio) / self.sample_rate
-        source_duration = source_profile['total_duration']
         
-        # Calculate target speaking ratio based on source but don't force it
+        # Analyze target audio with enhanced detection
+        target_profile = self._energy_based_profile(target_audio)
+        
         source_speaking_ratio = source_profile['speaking_ratio']
-        target_speaking_ratio = self._estimate_speaking_ratio(target_audio)
+        target_speaking_ratio = target_profile['speaking_ratio']
         
-        # If the ratios are very different, apply gentle adjustment
-        ratio_difference = abs(source_speaking_ratio - target_speaking_ratio)
+        # Check if we need onset/offset adjustments
+        needs_onset_adjustment = abs(source_profile.get('onset_time', 0) - target_profile.get('onset_time', 0)) > 0.2
+        needs_pause_adjustment = abs(source_speaking_ratio - target_speaking_ratio) > 0.15
         
-        if ratio_difference > 0.2:  # Only adjust if significantly different
-            logger.info(f"Applying temporal guidance: source ratio {source_speaking_ratio:.2f}, target ratio {target_speaking_ratio:.2f}")
+        if needs_onset_adjustment or needs_pause_adjustment:
+            logger.info(f"Applying enhanced temporal guidance: source_onset={source_profile.get('onset_time', 0):.2f}s, "
+                    f"target_onset={target_profile.get('onset_time', 0):.2f}s, "
+                    f"source_ratio={source_speaking_ratio:.2f}, target_ratio={target_speaking_ratio:.2f}")
             
-            # Apply gentle tempo stretching
-            adjusted_audio = self._apply_gentle_stretching(target_audio, source_profile)
+            # Apply onset adjustment first
+            onset_adjusted_audio = self._apply_onset_adjustment(target_audio, source_profile, target_profile)
             
-            # Apply natural pause enhancement
-            final_audio = self._enhance_natural_pauses(adjusted_audio, source_profile)
+            # Then apply gentle stretching if needed
+            if abs(source_speaking_ratio - target_speaking_ratio) > 0.2:
+                tempo_adjusted_audio = self._apply_gentle_stretching(onset_adjusted_audio, source_profile)
+            else:
+                tempo_adjusted_audio = onset_adjusted_audio
+            
+            # Finally apply enhanced pause adjustments
+            final_audio = self._apply_enhanced_pause_adjustments(tempo_adjusted_audio, source_profile)
             
             return final_audio
         else:
-            logger.info("Target audio timing already natural, minimal adjustment needed")
-            return self._enhance_natural_pauses(target_audio, source_profile)
+            logger.info("Target audio timing already well-matched, applying minimal enhancement")
+            return self._apply_enhanced_pause_adjustments(target_audio, source_profile)
+        
+    def _apply_onset_adjustment(self, audio: np.ndarray, source_profile: Dict[str, Any], 
+                           target_profile: Dict[str, Any]) -> np.ndarray:
+        """
+        Adjust speech onset timing to better match source characteristics
+        """
+        source_onset = source_profile.get('onset_time', 0)
+        target_onset = target_profile.get('onset_time', 0)
+        
+        onset_difference = source_onset - target_onset
+        
+        # Only adjust if difference is significant and not too extreme
+        if abs(onset_difference) > 0.1 and abs(onset_difference) < 2.0:
+            if onset_difference > 0:
+                # Source starts later, add some initial silence/room tone
+                silence_samples = int(min(onset_difference, 1.0) * self.sample_rate)
+                
+                # Create natural-sounding initial pause
+                if len(audio) > 1000:
+                    # Use beginning of audio as room tone template
+                    room_tone_template = audio[:500]
+                    room_tone_level = np.std(room_tone_template) * 0.3
+                    initial_silence = np.random.normal(0, room_tone_level, silence_samples).astype(np.float32)
+                else:
+                    initial_silence = np.zeros(silence_samples, dtype=np.float32)
+                
+                return np.concatenate([initial_silence, audio])
+            else:
+                # Source starts earlier, trim some initial audio (be conservative)
+                trim_samples = int(min(abs(onset_difference) * 0.5, 0.5) * self.sample_rate)
+                if trim_samples < len(audio):
+                    return audio[trim_samples:]
+        
+        return audio
     
     def _estimate_speaking_ratio(self, audio: np.ndarray) -> float:
         """
@@ -185,7 +314,7 @@ class TemporalMapper:
         
         return stretched_audio
     
-    def _enhance_natural_pauses(self, audio: np.ndarray, source_profile: Dict[str, Any]) -> np.ndarray:
+    def _apply_enhanced_pause_adjustments(self, audio: np.ndarray, source_profile: Dict[str, Any]) -> np.ndarray:
         """
         Enhance natural pauses in the audio based on source characteristics
         """

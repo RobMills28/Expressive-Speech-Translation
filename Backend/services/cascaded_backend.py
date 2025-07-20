@@ -21,6 +21,7 @@ from scipy.signal import butter, lfilter
 from .temporal_mapper import TemporalMapper
 from .translation_strategy import TranslationBackend
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from .visual_temporal_mapper import VisualTemporalMapper
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,7 @@ class CascadedBackend(TranslationBackend):
         self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
         logger.info(f"CascadedBackend ML device: {self.device}")
         self.temporal_mapper = TemporalMapper()
+        self.visual_temporal_mapper = VisualTemporalMapper()
         self.initialized = False
         self.asr_model = None
         self.translator_model = None
@@ -81,6 +83,9 @@ class CascadedBackend(TranslationBackend):
                 logger.error("CosyVoice API is not healthy. CascadedBackend initialization failed.")
                 self.initialized = False
                 return
+
+            if not self.visual_temporal_mapper.initialize():
+               logger.warning("Visual temporal mapper initialization failed, falling back to audio-only mapping")
 
             self.initialized = True
             logger.info(f"CascadedBackend (for CosyVoice API) initialized successfully in {time.time() - start_time:.2f}s")
@@ -198,47 +203,82 @@ class CascadedBackend(TranslationBackend):
 
     # Complete replacement for the problematic function in cascaded_backend.py
     def _apply_natural_temporal_mapping(self, generated_audio_path: Path, 
-                                   word_timestamps: List[Dict[str, Any]],
-                                   source_audio_numpy: np.ndarray,
-                                   temp_dir: Path, process_id_short: str) -> Path:
+                               word_timestamps: List[Dict[str, Any]],
+                               source_audio_numpy: np.ndarray,
+                               original_video_path: Path,
+                               temp_dir: Path, process_id_short: str) -> Path:
         """
-        Apply natural temporal mapping to preserve speech characteristics
+        Apply natural temporal mapping that preserves speech characteristics without forcing duration
         """
-        logger.info(f"[{process_id_short}] Applying natural temporal mapping...")
+        logger.info(f"[{process_id_short}] Applying simplified temporal mapping")
         
         try:
             # Load the generated audio
             generated_audio, sr = librosa.load(str(generated_audio_path), sr=16000, mono=True)
+            original_duration = len(generated_audio) / 16000
             
-            # Extract timing profile from source audio
-            source_profile = self.temporal_mapper.extract_timing_profile(source_audio_numpy, word_timestamps)
-            
-            logger.info(f"[{process_id_short}] Source profile: "
-                    f"speaking_ratio={source_profile['speaking_ratio']:.2f}, "
-                    f"avg_pause={source_profile['average_pause']:.2f}s, "
-                    f"num_pauses={source_profile['num_pauses']}")
-            
-            # Apply temporal guidance
-            adjusted_audio = self.temporal_mapper.apply_temporal_guidance(generated_audio, source_profile)
+            # Try visual-guided mapping if video is provided
+            if original_video_path and original_video_path.exists():
+                try:
+                    adjusted_audio = self.visual_temporal_mapper.apply_visual_temporal_mapping(
+                        generated_audio, original_video_path, process_id_short
+                    )
+                    mapping_method = "visual-guided"
+                except Exception as e_visual:
+                    logger.warning(f"[{process_id_short}] Visual mapping failed: {e_visual}")
+                    # Fallback: just ensure audio has natural flow
+                    adjusted_audio = self._ensure_natural_flow(generated_audio, source_audio_numpy)
+                    mapping_method = "natural flow fallback"
+            else:
+                # No video provided, ensure natural audio flow
+                adjusted_audio = self._ensure_natural_flow(generated_audio, source_audio_numpy)
+                mapping_method = "natural flow only"
             
             # Save the adjusted audio
-            adjusted_audio_path = temp_dir / f"temporally_mapped_{process_id_short}.wav"
+            adjusted_audio_path = temp_dir / f"naturally_mapped_{process_id_short}.wav"
             sf.write(str(adjusted_audio_path), adjusted_audio, 16000)
             
-            # Log the results
-            original_duration = len(generated_audio) / 16000
-            adjusted_duration = len(adjusted_audio) / 16000
+            final_duration = len(adjusted_audio) / 16000
+            duration_change = final_duration - original_duration
             
-            logger.info(f"[{process_id_short}] Temporal mapping complete: "
-                    f"original={original_duration:.2f}s, "
-                    f"adjusted={adjusted_duration:.2f}s, "
-                    f"change={adjusted_duration - original_duration:+.2f}s")
+            logger.info(f"[{process_id_short}] Temporal mapping complete ({mapping_method}): "
+                    f"original={original_duration:.2f}s, final={final_duration:.2f}s, "
+                    f"change={duration_change:+.2f}s")
             
             return adjusted_audio_path
             
         except Exception as e:
             logger.error(f"[{process_id_short}] Error in temporal mapping: {e}", exc_info=True)
             return generated_audio_path
+        
+    def _ensure_natural_flow(self, audio: np.ndarray, source_audio: np.ndarray) -> np.ndarray:
+        """
+        Ensure the audio has natural flow based on source characteristics
+        """
+        # Analyze source audio for basic characteristics
+        source_duration = len(source_audio) / self.sample_rate if hasattr(self, 'sample_rate') else len(source_audio) / 16000
+        audio_duration = len(audio) / 16000
+        
+        # If the translated audio is much shorter than source, it might need some natural pauses
+        if source_duration > audio_duration * 1.8:
+            # Add some natural leading pause (not forced duration matching)
+            natural_pause_duration = min(1.0, (source_duration - audio_duration) * 0.2)
+            pause_samples = int(natural_pause_duration * 16000)
+            
+            # Create subtle room tone instead of silence
+            if len(source_audio) > 1000:
+                # Use beginning of source as room tone template
+                room_tone_template = source_audio[:500]
+                room_tone_level = np.std(room_tone_template) * 0.05  # Very quiet
+                natural_pause = np.random.normal(0, room_tone_level, pause_samples).astype(np.float32)
+            else:
+                natural_pause = np.zeros(pause_samples, dtype=np.float32)
+            
+            return np.concatenate([natural_pause, audio])
+        
+        # Audio duration is reasonable, return as-is
+        return audio
+
 
     def _get_reference_audio_for_cloning(self, input_audio_numpy_16k: np.ndarray,
                                          process_id_short: str, temp_dir: Path,
@@ -265,7 +305,7 @@ class CascadedBackend(TranslationBackend):
         return ref_audio_path
 
     # Modified translate_speech function - COMPLETE VERSION
-    def translate_speech(self, audio_tensor: torch.Tensor, source_lang: str = "eng", target_lang: str = "fra") -> Dict[str, Any]:
+    def translate_speech(self, audio_tensor: torch.Tensor, source_lang: str = "eng", target_lang: str = "fra", original_video_path: Optional[Path] = None) -> Dict[str, Any]:
         process_id_short = str(time.time_ns())[-6:]
         logger.info(f"[{process_id_short}] CascadedBackend translate_speech with temporal mapping")
         
@@ -383,7 +423,7 @@ class CascadedBackend(TranslationBackend):
                 temporal_mapping_start_time = time.time()
                 adjusted_audio_path = self._apply_natural_temporal_mapping(
                     generated_audio_path_cosy_sr, word_timestamps or [], 
-                    audio_numpy_16k, temp_dir, process_id_short
+                    audio_numpy_16k, original_video_path, temp_dir, process_id_short
                 )
                 
                 logger.info(f"[{process_id_short}] Temporal mapping: {(time.time()-temporal_mapping_start_time):.2f}s.")
@@ -444,6 +484,11 @@ class CascadedBackend(TranslationBackend):
         if hasattr(self, 'asr_model'): del self.asr_model; self.asr_model = None; logger.debug("Whisper ASR model unloaded.")
         if hasattr(self, 'translator_model'): del self.translator_model; self.translator_model = None; logger.debug("NLLB Translator model unloaded.")
         if hasattr(self, 'translator_tokenizer'): del self.translator_tokenizer; self.translator_tokenizer = None; logger.debug("NLLB Tokenizer unloaded.")
+        
+        # ADD THESE LINES:
+        if hasattr(self, 'visual_temporal_mapper'): 
+            self.visual_temporal_mapper.cleanup()
+            logger.debug("Visual temporal mapper cleaned up.")
 
         if torch.cuda.is_available(): torch.cuda.empty_cache()
         import gc; gc.collect()

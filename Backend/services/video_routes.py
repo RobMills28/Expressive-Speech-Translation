@@ -282,7 +282,7 @@ class VideoProcessor:
             yield self._progress_event(30, current_phase_for_error)
             translation_start_time = time.time()
             translation_result = backend_instance.translate_speech(
-                audio_tensor=audio_tensor, source_lang="eng", target_lang=target_language
+                audio_tensor=audio_tensor, source_lang="eng", target_lang=target_language, original_video_path=temp_original_video_path
             )
             final_translated_cloned_audio_tensor = translation_result["audio"]
             source_text = translation_result["transcripts"]["source"]
