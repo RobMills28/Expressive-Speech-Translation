@@ -18,6 +18,7 @@ import uuid
 import re
 from scipy.signal import butter, lfilter
 
+from .audio_debug_analyzer import AudioDebugAnalyzer
 from .temporal_mapper import TemporalMapper
 from .translation_strategy import TranslationBackend
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
@@ -46,6 +47,7 @@ class CascadedBackend(TranslationBackend):
         logger.info(f"CascadedBackend ML device: {self.device}")
         self.temporal_mapper = TemporalMapper()
         self.visual_temporal_mapper = VisualTemporalMapper()
+        self.debug_analyzer = AudioDebugAnalyzer()
         self.initialized = False
         self.asr_model = None
         self.translator_model = None
@@ -208,48 +210,121 @@ class CascadedBackend(TranslationBackend):
                                original_video_path: Path,
                                temp_dir: Path, process_id_short: str) -> Path:
         """
-        Apply natural temporal mapping that preserves speech characteristics without forcing duration
+        Enhanced temporal mapping with comprehensive debugging
         """
-        logger.info(f"[{process_id_short}] Applying simplified temporal mapping")
+        logger.info(f"[{process_id_short}] Starting ENHANCED temporal mapping with comprehensive debugging")
         
         try:
             # Load the generated audio
             generated_audio, sr = librosa.load(str(generated_audio_path), sr=16000, mono=True)
             original_duration = len(generated_audio) / 16000
             
+            logger.info(f"[{process_id_short}] Loaded generated audio: {original_duration:.2f}s, "
+                    f"{len(generated_audio)} samples at {sr}Hz")
+            
+            # Debug: Analyze original generated audio
+            debug_dir = temp_dir / "debug_analysis"
+            debug_dir.mkdir(exist_ok=True)
+            
+            logger.info(f"[{process_id_short}] Analyzing original generated audio...")
+            original_analysis = self.debug_analyzer.analyze_audio_placement(
+                generated_audio, f"{process_id_short}_original", debug_dir
+            )
+            
             # Try visual-guided mapping if video is provided
             if original_video_path and original_video_path.exists():
                 try:
+                    logger.info(f"[{process_id_short}] Attempting visual-guided mapping with video: {original_video_path.name}")
+                    
                     adjusted_audio = self.visual_temporal_mapper.apply_visual_temporal_mapping(
                         generated_audio, original_video_path, process_id_short
                     )
+                    
+                    # Debug: Analyze adjusted audio
+                    logger.info(f"[{process_id_short}] Analyzing temporally mapped audio...")
+                    mapped_analysis = self.debug_analyzer.analyze_audio_placement(
+                        adjusted_audio, f"{process_id_short}_mapped", debug_dir
+                    )
+                    
+                    # Compare before and after
+                    comparison = self.debug_analyzer.compare_before_after(
+                        generated_audio, adjusted_audio, process_id_short, debug_dir
+                    )
+                    
+                    adjusted_duration = len(adjusted_audio) / 16000
+                    duration_change = adjusted_duration - original_duration
+                    
+                    logger.info(f"[{process_id_short}] Visual mapping SUCCESS: "
+                            f"original={original_duration:.2f}s → adjusted={adjusted_duration:.2f}s "
+                            f"(change: {duration_change:+.2f}s)")
+                    
+                    # Detailed content analysis
+                    if mapped_analysis['has_content']:
+                        logger.info(f"[{process_id_short}] Mapped audio content span: "
+                                f"{mapped_analysis['content_start_time']:.2f}s - "
+                                f"{mapped_analysis['content_end_time']:.2f}s "
+                                f"({mapped_analysis['content_duration']:.2f}s content)")
+                    else:
+                        logger.error(f"[{process_id_short}] CRITICAL: Mapped audio has NO CONTENT!")
+                    
                     mapping_method = "visual-guided"
+                    
                 except Exception as e_visual:
-                    logger.warning(f"[{process_id_short}] Visual mapping failed: {e_visual}")
-                    # Fallback: just ensure audio has natural flow
+                    logger.error(f"[{process_id_short}] Visual mapping FAILED: {e_visual}", exc_info=True)
+                    
+                    # Fallback: ensure natural audio flow
                     adjusted_audio = self._ensure_natural_flow(generated_audio, source_audio_numpy)
                     mapping_method = "natural flow fallback"
+                    
+                    # Debug fallback too
+                    fallback_analysis = self.debug_analyzer.analyze_audio_placement(
+                        adjusted_audio, f"{process_id_short}_fallback", debug_dir
+                    )
+                    
+                    adjusted_duration = len(adjusted_audio) / 16000
+                    logger.info(f"[{process_id_short}] Fallback mapping: {adjusted_duration:.2f}s")
             else:
                 # No video provided, ensure natural audio flow
+                logger.info(f"[{process_id_short}] No video provided, using natural flow only")
                 adjusted_audio = self._ensure_natural_flow(generated_audio, source_audio_numpy)
                 mapping_method = "natural flow only"
+                
+                # Debug natural flow
+                natural_analysis = self.debug_analyzer.analyze_audio_placement(
+                    adjusted_audio, f"{process_id_short}_natural", debug_dir
+                )
+                
+                adjusted_duration = len(adjusted_audio) / 16000
+                logger.info(f"[{process_id_short}] Natural flow mapping: {adjusted_duration:.2f}s")
             
             # Save the adjusted audio
-            adjusted_audio_path = temp_dir / f"naturally_mapped_{process_id_short}.wav"
+            adjusted_audio_path = temp_dir / f"debug_temporally_mapped_{process_id_short}.wav"
             sf.write(str(adjusted_audio_path), adjusted_audio, 16000)
             
             final_duration = len(adjusted_audio) / 16000
             duration_change = final_duration - original_duration
             
-            logger.info(f"[{process_id_short}] Temporal mapping complete ({mapping_method}): "
-                    f"original={original_duration:.2f}s, final={final_duration:.2f}s, "
-                    f"change={duration_change:+.2f}s")
+            # Final verification
+            final_peak = np.max(np.abs(adjusted_audio))
+            final_rms = np.sqrt(np.mean(adjusted_audio ** 2))
+            
+            logger.info(f"[{process_id_short}] TEMPORAL MAPPING COMPLETE ({mapping_method}):")
+            logger.info(f"  Duration: {original_duration:.2f}s → {final_duration:.2f}s (change: {duration_change:+.2f}s)")
+            logger.info(f"  Final audio peak: {final_peak:.4f}, RMS: {final_rms:.4f}")
+            logger.info(f"  Debug files saved in: {debug_dir}")
+            logger.info(f"  Final mapped audio: {adjusted_audio_path.name}")
+            
+            if final_peak < 0.001:
+                logger.error(f"[{process_id_short}] ⚠️  CRITICAL WARNING: Final audio appears to be silent!")
+            else:
+                logger.info(f"[{process_id_short}] ✅ Final audio has content")
             
             return adjusted_audio_path
             
         except Exception as e:
-            logger.error(f"[{process_id_short}] Error in temporal mapping: {e}", exc_info=True)
+            logger.error(f"[{process_id_short}] CRITICAL ERROR in temporal mapping: {e}", exc_info=True)
             return generated_audio_path
+
         
     def _ensure_natural_flow(self, audio: np.ndarray, source_audio: np.ndarray) -> np.ndarray:
         """
