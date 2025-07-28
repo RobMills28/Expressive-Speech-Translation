@@ -1,43 +1,24 @@
-# Dockerfile.cosyvoice - v8 (The Minimalist "Land and Expand" Build)
-# This file has one job: build a working CPU image from your fork for your Mac.
-# No Conda. No premature optimizations.
+# Dockerfile.cosyvoice - Minimal Environment Setup
+# This version does NOT download any models. It prepares the environment
+# to use the models mounted from your local machine via docker-compose.
 
-# Use a standard, stable base image for your Mac's ARM64 architecture.
 FROM --platform=linux/arm64 python:3.10-slim-bullseye
 
-# Set environment variables for a clean build.
-ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on
+ENV PYTHONUNBUFFERED=1
 
-# Install only the absolute necessary system packages.
-# build-essential and cmake are needed for some pip packages to compile.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    git-lfs \
-    sox \
-    libsndfile1 \
-    build-essential \
-    cmake \
-    unzip \
+    git git-lfs sox libsndfile1 build-essential cmake unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-# Upgrade pip for better dependency resolution.
 RUN pip install --upgrade pip
 
-# --- Core Logic: Your Fork & Dependencies ---
-
-# 1. Clone YOUR fork of the repository. This is the #1 priority.
+# Clone your fork of the repository
 RUN git clone --recursive https://github.com/RobMills28/CosyVoice.git
 WORKDIR /app/CosyVoice
 
-# 2. Install PyTorch for CPU first. This is crucial.
+# Install dependencies
 RUN pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cpu
-
-# 3. Install all dependencies directly from the requirements.txt file.
-# We remove problematic lines and let pip handle the rest.
 RUN cp requirements.txt requirements.txt.processed && \
     sed -i -e '/--hash=/d' \
            -e '/--extra-index-url/s/^/#/' \
@@ -45,26 +26,14 @@ RUN cp requirements.txt requirements.txt.processed && \
            -e '/onnxruntime-gpu/s/^/#/' requirements.txt.processed && \
     pip install -r requirements.txt.processed
 
-# 4. *** ADD THIS LINE ***
 RUN pip install onnxruntime==1.18.0
-
-# 5. Install the API server dependencies.
 RUN pip install fastapi uvicorn[standard] python-multipart
 
-# --- Model & App Setup ---
-
-# 6. Download the latest runnable models (CosyVoice2).
-RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice2-0.5B', local_dir='pretrained_models/CosyVoice2-0.5B')"
-RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice-ttsfrd', local_dir='pretrained_models/CosyVoice-ttsfrd')"
-
-WORKDIR /app/CosyVoice/pretrained_models/CosyVoice-ttsfrd
-RUN if [ -f resource.zip ]; then unzip -o resource.zip -d .; fi
-
-# --- Final Setup ---
+# --- FINAL SETUP ---
+# Copy the API script and set the Python path.
+# We DO NOT download any models in this Dockerfile.
 WORKDIR /app
 COPY Docker/cosyvoice_api.py .
-
-# Set the Python path so the app can find the CosyVoice library.
 ENV PYTHONPATH=/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS
 
 EXPOSE 8000
