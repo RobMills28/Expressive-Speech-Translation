@@ -21,6 +21,8 @@ import requests
 from .audio_processor import AudioProcessor
 from .translation_strategy import TranslationBackend 
 
+MUSETALK_API_URL = os.getenv("MUSETALK_API_URL", "http://musetalk-api:8000")
+
 logger = logging.getLogger(__name__)
 
 class VideoProcessor:
@@ -33,36 +35,6 @@ class VideoProcessor:
         self.base_temp_dir = self.base_project_dir / 'temp_video_processing_requests' 
         self.base_temp_dir.mkdir(parents=True, exist_ok=True) 
         logger.info(f"VideoProcessor base temp directory for requests: {self.base_temp_dir.resolve()}")
-        
-        self.wav2lip_path = self.base_project_dir / "Wav2Lip" 
-        self._check_wav2lip_setup()
-
-    def _check_wav2lip_setup(self):
-        logger.info(f"Checking Wav2Lip setup in: {self.wav2lip_path}")
-        if not self.wav2lip_path.is_dir():
-            logger.error(f"Wav2Lip directory not found at {self.wav2lip_path}! Lip sync will fail.")
-            self.wav2lip_inference_script_abs_path = None 
-            self.wav2lip_checkpoint_abs_path = None
-            self.wav2lip_gan_checkpoint_abs_path = None
-            return
-
-        self.wav2lip_inference_script_abs_path = (self.wav2lip_path / "inference.py").resolve()
-        self.wav2lip_checkpoint_abs_path = (self.wav2lip_path / "checkpoints" / "wav2lip.pth").resolve()
-        self.wav2lip_gan_checkpoint_abs_path = (self.wav2lip_path / "checkpoints" / "wav2lip_gan.pth").resolve()
-
-        if not self.wav2lip_inference_script_abs_path.exists():
-            logger.error(f"Wav2Lip inference script NOT FOUND: {self.wav2lip_inference_script_abs_path}")
-        else:
-            logger.info(f"Found Wav2Lip inference script: {self.wav2lip_inference_script_abs_path}")
-
-        if not self.wav2lip_checkpoint_abs_path.exists():
-            logger.warning(f"Primary Wav2Lip checkpoint NOT FOUND: {self.wav2lip_checkpoint_abs_path}")
-            if self.wav2lip_gan_checkpoint_abs_path.exists():
-                logger.info(f"Found Wav2Lip GAN checkpoint (will use as fallback): {self.wav2lip_gan_checkpoint_abs_path}")
-            else:
-                logger.error(f"CRITICAL: NEITHER Wav2Lip standard nor GAN checkpoint found. Lip sync will fail.")
-        else:
-            logger.info(f"Found Wav2Lip standard checkpoint: {self.wav2lip_checkpoint_abs_path}")
 
     def _progress_event(self, progress: int, phase: str) -> str:
         logger.debug(f"Progress: {progress}% - {phase}")
@@ -125,7 +97,7 @@ class VideoProcessor:
         Returns True on success, False on failure.
         """
         request_id_short = lip_synced_video_output_path.stem.split('_')[0]
-        musetalk_url = "http://musetalk-api:8000/lipsync-video/"
+        musetalk_url = f"{MUSETALK_API_URL}/lipsync-video/"
         logger.info(f"[{request_id_short}] Calling MuseTalk API for lip sync at: {musetalk_url}")
 
         try:
@@ -244,7 +216,7 @@ class VideoProcessor:
             final_video_to_serve_path: Optional[Path] = None 
             
             if apply_lip_sync_enabled:
-                current_phase_for_error = "Applying lip synchronization (Wav2Lip)"
+                current_phase_for_error = "Applying lip synchronization (MuseTalk)"
                 yield self._progress_event(60, "Applying lip synchronization (this may take some time)...")
                 lipsync_start_time = time.time()
                 path_for_lip_synced_video = request_temp_dir / f"{request_id}_lip_synced_video.mp4" 
