@@ -20,8 +20,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
     mim install "mmdet==3.1.0" && \
     mim install "mmpose==1.1.0"
 
-# 3. Copy MuseTalk project and install its requirements (No Change)
-COPY MuseTalk /app/MuseTalk
+# 3. Copy MuseTalk project and install its requirements
+RUN git clone https://github.com/RobMills28/MuseTalk.git /app/MuseTalk
 WORKDIR /app/MuseTalk
 RUN sed -i '/tensorflow/d' requirements.txt && \
     sed -i '/tensorboard/d' requirements.txt && \

@@ -1,10 +1,11 @@
-# Dockerfile.cosyvoice - Minimal Environment Setup
-# This version does NOT download any models. It prepares the environment
-# to use the models mounted from your local machine via docker-compose.
+# Dockerfile.cosyvoice - The Proven, Working Version
+# This builds a self-contained image with the models baked in.
 
 FROM --platform=linux/arm64 python:3.10-slim-bullseye
 
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git git-lfs sox libsndfile1 build-essential cmake unzip \
@@ -13,12 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 RUN pip install --upgrade pip
 
-# Clone your fork of the repository
+# --- Core Logic from your working branch ---
 RUN git clone --recursive https://github.com/RobMills28/CosyVoice.git
 WORKDIR /app/CosyVoice
 
-# Install dependencies
 RUN pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+
 RUN cp requirements.txt requirements.txt.processed && \
     sed -i -e '/--hash=/d' \
            -e '/--extra-index-url/s/^/#/' \
@@ -29,11 +30,17 @@ RUN cp requirements.txt requirements.txt.processed && \
 RUN pip install onnxruntime==1.18.0
 RUN pip install fastapi uvicorn[standard] python-multipart
 
-# --- FINAL SETUP ---
-# Copy the API script and set the Python path.
-# We DO NOT download any models in this Dockerfile.
+# --- Model baking from your working branch ---
+RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice2-0.5B', local_dir='pretrained_models/CosyVoice2-0.5B')"
+RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice-ttsfrd', local_dir='pretrained_models/CosyVoice-ttsfrd')"
+
+WORKDIR /app/CosyVoice/pretrained_models/CosyVoice-ttsfrd
+RUN if [ -f resource.zip ]; then unzip -o resource.zip -d .; fi
+
+# --- Final Setup from your working branch ---
 WORKDIR /app
 COPY Docker/cosyvoice_api.py .
+
 ENV PYTHONPATH=/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS
 
 EXPOSE 8000

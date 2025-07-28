@@ -1,25 +1,25 @@
-# FINAL, CORRECTED docker-compose.yml
-# This version aligns with your original, working setup.
+# FINAL, COMPLETE, AND UNIFIED docker-compose.yml
 
 services:
   cosyvoice:
     build:
       context: ..
-      # Uses the new, minimal Dockerfile that does NOT download models.
+      # This uses the Dockerfile that bakes the models into the image,
+      # which we confirmed is the correct working pattern from your other branch.
       dockerfile: Docker/Dockerfile.cosyvoice
     platform: linux/arm64
     container_name: cosyvoice-api
     ports:
       - "8002:8000"
-    volumes:
-      # This is the most important part. It mounts your local, working models
-      # into the container, which is how you had it working before.
-      - ../Backend/CosyVoice/pretrained_models:/app/CosyVoice/pretrained_models:ro
+    # CRITICALLY, there is NO volume mount for models.
+    # This was the key fix to prevent your local folder from causing the startup error.
     restart: unless-stopped
     networks:
       - app-network
 
   # --- VOICE SIMILARITY (DISABLED) ---
+  # This entire section is commented out for future work, as you requested.
+  #
   # voice-similarity:
   #   build:
   #     context: ..
@@ -42,6 +42,9 @@ services:
     container_name: musetalk-api
     ports:
       - "8003:8000"
+    # FIX: These two lines solve the MuseTalk startup error ("ModuleNotFoundError").
+    # They tell the container exactly where to run the code from and where to find the library.
+    working_dir: /app/MuseTalk
     environment:
       - PYTHONPATH=/app/MuseTalk
     restart: unless-stopped
@@ -53,4 +56,5 @@ networks:
     driver: bridge
 
 volumes:
+  # This is defined for the (disabled) voice-similarity service. It is harmless.
   pretrained_models_similarity: {}
