@@ -1,6 +1,6 @@
 # Dockerfile v10 - Systematic Debugging Step 1: Fix 'face_detection' import
 # This builds upon the successful "In-Place" execution model (v8).
-FROM --platform=linux/amd64 python:3.10-slim-bullseye
+FROM python:3.10-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
 
