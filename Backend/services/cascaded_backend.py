@@ -96,32 +96,33 @@ class CascadedBackend(TranslationBackend):
             self.initialized = False; raise
 
     def _check_cosyvoice_api_status(self) -> bool:
-        try:
-            logger.info(f"Checking CosyVoice API status at {COSYVOICE_API_URL}/health")
-            response = requests.get(f"{COSYVOICE_API_URL}/health", timeout=15)
-            if response.status_code == 200:
-                try:
+        max_retries = 5
+        retry_delay_seconds = 10  # Wait 10 seconds between retries
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"Checking CosyVoice API status at {COSYVOICE_API_URL}/health (Attempt {attempt + 1}/{max_retries})")
+                response = requests.get(f"{COSYVOICE_API_URL}/health", timeout=20) # Increased timeout
+                
+                if response.status_code == 200:
                     health_data = response.json()
                     api_status = health_data.get("status")
                     api_message = health_data.get("message", "")
-                    if api_status == "healthy" and "CosyVoice model" in api_message and "loaded" in api_message:
-                        logger.info(f"CosyVoice API is healthy: {api_message}")
+                    if api_status == "healthy":
+                        logger.info(f"SUCCESS: CosyVoice API is healthy: {api_message}")
                         return True
                     else:
-                        logger.warning(f"CosyVoice API reported status '{api_status}' with message '{api_message}', which does not meet all health criteria. Full response: {health_data}")
-                        return False
-                except json.JSONDecodeError as e_json:
-                    logger.error(f"CosyVoice API health response was not valid JSON: {e_json}. Status: {response.status_code}. Response text: {response.text[:500]}")
-                    return False
-            else:
-                logger.warning(f"CosyVoice API status check HTTP request failed: {response.status_code} - {response.text[:200]}")
-                return False
-        except requests.exceptions.RequestException as e_req:
-            logger.error(f"CosyVoice API request error for {COSYVOICE_API_URL}/health: {e_req}")
-            return False
-        except Exception as e_gen_status:
-            logger.error(f"Unexpected error checking CosyVoice API status: {e_gen_status}", exc_info=True)
-            return False
+                        logger.warning(f"CosyVoice API reported status '{api_status}'. Retrying...")
+                else:
+                    logger.warning(f"CosyVoice API status check failed with HTTP {response.status_code}. Retrying...")
+
+            except requests.exceptions.RequestException as e_req:
+                logger.warning(f"CosyVoice API request error: {e_req}. Retrying in {retry_delay_seconds}s...")
+
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay_seconds)
+
+        logger.error(f"CRITICAL: CosyVoice API did not become healthy after {max_retries} attempts.")
+        return False
 
     def _convert_to_nllb_code(self, lang_code_app: str) -> str:
         mapping = {'eng':'eng_Latn','fra':'fra_Latn','spa':'spa_Latn','deu':'deu_Latn','ita':'ita_Latn','por':'por_Latn','rus':'rus_Cyrl','cmn':'zho_Hans','jpn':'jpn_Jpan','kor':'kor_Hang','ara':'ara_Arab','hin':'hin_Deva','nld':'nld_Latn','pol':'pol_Latn','tur':'tur_Latn','ukr':'ukr_Cyrl','ces':'ces_Latn','hun':'hun_Latn'}
