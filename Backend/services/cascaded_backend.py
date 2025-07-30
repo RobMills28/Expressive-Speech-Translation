@@ -61,6 +61,7 @@ class CascadedBackend(TranslationBackend):
         if SAVE_DEBUG_AUDIO_FILES: logger.info("SAVE_DEBUG_AUDIO_FILES is enabled.")
 
     def initialize(self):
+        start_time = time.time()
         if not self.visual_temporal_mapper.initialize():
            logger.warning("Visual temporal mapper initialization failed, falling back to audio-only mapping")
         
