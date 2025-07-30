@@ -61,26 +61,25 @@ class CascadedBackend(TranslationBackend):
         if SAVE_DEBUG_AUDIO_FILES: logger.info("SAVE_DEBUG_AUDIO_FILES is enabled.")
 
     def initialize(self):
-        if self.initialized: return
-        logger.info(f"Initializing CascadedBackend components on device: {self.device}")
-        start_time = time.time()
+        if not self.visual_temporal_mapper.initialize():
+           logger.warning("Visual temporal mapper initialization failed, falling back to audio-only mapping")
+        
+        # --- NEW WARM-UP CODE ---
+        logger.info("Performing a warm-up inference on CosyVoice API to ensure models are loaded...")
         try:
-            # We no longer load heavy models on startup.
-            # We only verify that dependent services are reachable.
-            api_healthy = self._check_cosyvoice_api_status()
-            if not api_healthy:
-                logger.error("CosyVoice API is not healthy. CascadedBackend initialization failed.")
-                self.initialized = False
-                return
-
-            if not self.visual_temporal_mapper.initialize():
-                logger.warning("Visual temporal mapper initialization failed, falling back to audio-only mapping")
-
+            self._warmup_cosyvoice_api()
+            logger.info("CosyVoice API warmed up successfully.")
+        except Exception as e_warmup:
+            logger.error(f"CosyVoice API warm-up failed: {e_warmup}. The service may be slow on the first request.")
+            # We don't fail initialization here, just warn the user.
+        # --- END OF NEW WARM-UP CODE ---
+        try:
             self.initialized = True
-            logger.info(f"CascadedBackend connections verified successfully in {time.time() - start_time:.2f}s. Models will be loaded on-demand.")
+            logger.info(f"CascadedBackend connections verified and warmed up successfully in {time.time() - start_time:.2f}s. Models will be loaded on-demand.")
         except Exception as e:
             logger.error(f"Failed to initialize CascadedBackend: {e}", exc_info=True)
-            self.initialized = False; raise
+            self.initialized = False
+            raise
 
     def _check_cosyvoice_api_status(self) -> bool:
         max_retries = 5
@@ -110,6 +109,29 @@ class CascadedBackend(TranslationBackend):
 
         logger.error(f"CRITICAL: CosyVoice API did not become healthy after {max_retries} attempts.")
         return False
+
+    sdef _warmup_cosyvoice_api(self):
+        """
+        Sends a short, silent audio file and a simple text prompt to the CosyVoice API.
+        This forces the API to load all its models into memory before the backend
+        reports itself as fully initialized, preventing timeouts on the first real request.
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir_path = Path(temp_dir)
+            # Create a 1-second silent WAV file for the reference audio
+            silent_audio = np.zeros(16000, dtype=np.float32)
+            silent_wav_path = temp_dir_path / "warmup.wav"
+            sf.write(str(silent_wav_path), silent_audio, 16000)
+
+            with open(silent_wav_path, 'rb') as ref_audio_file:
+                files = {'reference_speaker_wav': ref_audio_file}
+                data = {
+                    'text_to_synthesize': 'Hello world.',
+                    'target_language_code': 'en'
+                }
+                # Use a long timeout for this first call
+                response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=300)
+                response.raise_for_status() # Raise an exception if the warmup fails
 
     def _convert_to_nllb_code(self, lang_code_app: str) -> str:
         mapping = {'eng':'eng_Latn','fra':'fra_Latn','spa':'spa_Latn','deu':'deu_Latn','ita':'ita_Latn','por':'por_Latn','rus':'rus_Cyrl','cmn':'zho_Hans','jpn':'jpn_Jpan','kor':'kor_Hang','ara':'ara_Arab','hin':'hin_Deva','nld':'nld_Latn','pol':'pol_Latn','tur':'tur_Latn','ukr':'ukr_Cyrl','ces':'ces_Latn','hun':'hun_Latn'}
