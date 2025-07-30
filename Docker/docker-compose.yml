@@ -11,6 +11,12 @@ services:
     container_name: cosyvoice-api
     ports:
       - "8002:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
     # CRITICALLY, there is NO volume mount for models.
     # This was the key fix to prevent your local folder from causing the startup error.
     restart: unless-stopped
@@ -63,3 +69,6 @@ networks:
 volumes:
   # This is defined for the (disabled) voice-similarity service. It is harmless.
   pretrained_models_similarity: {}
+
+
+  
