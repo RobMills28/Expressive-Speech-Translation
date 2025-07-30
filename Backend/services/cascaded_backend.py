@@ -110,7 +110,7 @@ class CascadedBackend(TranslationBackend):
         logger.error(f"CRITICAL: CosyVoice API did not become healthy after {max_retries} attempts.")
         return False
 
-    sdef _warmup_cosyvoice_api(self):
+    def _warmup_cosyvoice_api(self):
         """
         Sends a short, silent audio file and a simple text prompt to the CosyVoice API.
         This forces the API to load all its models into memory before the backend
