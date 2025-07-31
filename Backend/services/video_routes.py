@@ -126,8 +126,8 @@ class VideoProcessor:
 
             with open(converted_video_path, "rb") as video_file, open(translated_audio_path, "rb") as audio_file:
                 files = {
-                    "video_file": (original_video_path.name, video_file, "video/mp4"),
-                    "audio_file": (translated_audio_path.name, audio_file, "audio/wav"),
+                    "video_file": video_file,
+                    "audio_file": audio_file,
                 }
                 data = {"bbox_shift": 0} # This can be parameterized later if needed
 
