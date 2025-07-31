@@ -21,7 +21,7 @@ import requests
 from .audio_processor import AudioProcessor
 from .translation_strategy import TranslationBackend 
 
-MUSETALK_API_URL = os.getenv("MUSETALK_API_URL", "http://musetalk-api:8000")
+MUSETALK_API_URL = os.getenv("MUSETALK_API_URL", "http://localhost:8003")
 
 logger = logging.getLogger(__name__)
 
