@@ -3,6 +3,7 @@ import psutil
 import torch
 from datetime import datetime
 import logging
+import os
 
 # Removed: from .model_manager import ModelManager
 # If TranslationManager type hint is desired for clarity:
