@@ -93,8 +93,8 @@ const ContentTranslator = () => {
       formData.append('use_voice_cloning', useVoiceCloningVideo ? 'true' : 'false');
     }
 
-    const endpoint = contentType === 'audio' ? 'http://35.168.110.70:5001/translate' : 'http://35.168.110.70:5001/process-video';
-    
+    const endpoint = contentType === 'audio' ? 'http://44.200.66.105:5001/translate' : 'http://44.200.66.105:5001/process-video';
+
     try {
       const response = await fetch(endpoint, { method: 'POST', body: formData });
 
