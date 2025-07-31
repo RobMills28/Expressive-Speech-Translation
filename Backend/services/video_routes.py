@@ -36,6 +36,26 @@ class VideoProcessor:
         self.base_temp_dir.mkdir(parents=True, exist_ok=True) 
         logger.info(f"VideoProcessor base temp directory for requests: {self.base_temp_dir.resolve()}")
 
+    def _convert_to_mp4(self, input_path: Path, output_path: Path) -> Path:
+        """Converts any video file to a standard MP4 format."""
+        logger.info(f"Converting video {input_path.name} to MP4 format at {output_path}.")
+        command = [
+            'ffmpeg', '-y', '-i', str(input_path), 
+            '-c:v', 'libx264', '-preset', 'medium', '-crf', '23', 
+            '-c:a', 'aac', '-b:a', '128k', 
+            str(output_path)
+        ]
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True, timeout=300)
+            logger.info("Video successfully converted to MP4.")
+            return output_path
+        except subprocess.CalledProcessError as e:
+            logger.error(f"FFmpeg conversion failed. STDERR: {e.stderr}")
+            raise ValueError(f"FFmpeg conversion error: {e.stderr}")
+        except Exception as e:
+            logger.error(f"An unexpected error occurred during video conversion: {e}", exc_info=True)
+            raise
+    
     def _progress_event(self, progress: int, phase: str) -> str:
         logger.debug(f"Progress: {progress}% - {phase}")
         return f"data: {json.dumps({'progress': progress, 'phase': phase})}\n\n"
@@ -101,7 +121,10 @@ class VideoProcessor:
         logger.info(f"[{request_id_short}] Calling MuseTalk API for lip sync at: {musetalk_url}")
 
         try:
-            with open(original_video_path, "rb") as video_file, open(translated_audio_path, "rb") as audio_file:
+            converted_video_path = original_video_path.with_suffix('.mp4')
+            self._convert_to_mp4(original_video_path, converted_video_path)
+
+            with open(converted_video_path, "rb") as video_file, open(translated_audio_path, "rb") as audio_file:
                 files = {
                     "video_file": (original_video_path.name, video_file, "video/mp4"),
                     "audio_file": (translated_audio_path.name, audio_file, "audio/wav"),
