@@ -17,6 +17,8 @@ import shutil
 from typing import Generator, Dict, Any, Union, Optional, Tuple
 import uuid
 import requests
+from datetime import datetime
+from audiowmark import WaterMark
 
 from .audio_processor import AudioProcessor
 from .translation_strategy import TranslationBackend 
@@ -235,12 +237,42 @@ class VideoProcessor:
             self.save_audio_tensor(final_translated_cloned_audio_tensor, path_for_final_audio)
             temp_paths_to_cleanup.append(path_for_final_audio)
             logger.info(f"{phase_logger_str} Translated audio saved: {path_for_final_audio.name}")
+
+            # --- WATERMARKING CODE BLOCK (IMPROVED VERSION) ---
+            current_phase_for_error = "Embedding watermark"
+            yield self._progress_event(55, "Embedding provenance watermark...")
+            logger.info(f"{phase_logger_str} Embedding secret watermark into final audio...")
+            try:
+                # 1. Dynamically get the backend's class name for the pipeline
+                pipeline_name = type(backend_instance).__name__
+
+                # 2. Create a detailed, dynamically generated payload
+                payload_data = {
+                    "app": "Thesis-2025",
+                    "v": "1.0-thesis",
+                    "req_id": request_id,
+                    "ts_utc": datetime.utcnow().isoformat() + "Z",
+                    "pipeline": pipeline_name  # <-- Now it's dynamic! e.g., "CascadedBackend"
+                }
+                payload_str = json.dumps(payload_data)
+                payload_bytes = payload_str.encode('utf-8')
+
+                # 3. Load, watermark, and save back
+                audio_data = WaterMark.read_audio(str(path_for_final_audio))
+                audio_with_wm = WaterMark.add_watermark(audio_data, payload_bytes)
+                WaterMark.write_audio(audio_with_wm, str(path_for_final_audio))
+
+                logger.info(f"{phase_logger_str} Secret watermark embedded successfully.")
+            except Exception as e_wm:
+                logger.warning(f"{phase_logger_str} Could not embed watermark (continuing without it): {e_wm}")
+            # --- END OF BLOCK ---
             
             final_video_to_serve_path: Optional[Path] = None 
             
             if apply_lip_sync_enabled:
                 current_phase_for_error = "Applying lip synchronization (MuseTalk)"
                 yield self._progress_event(60, "Applying lip synchronization (this may take some time)...")
+                # ... (rest of the lip-sync and video combination logic is unchanged) ...
                 lipsync_start_time = time.time()
                 path_for_lip_synced_video = request_temp_dir / f"{request_id}_lip_synced_video.mp4" 
                 
@@ -269,7 +301,7 @@ class VideoProcessor:
                 final_video_to_serve_path = path_for_combined_video
                 logger.info(f"{phase_logger_str} Video with new audio (no lip sync) created ({(time.time()-combine_start_time):.2f}s)")
 
-
+            # ... (rest of the function is unchanged) ...
             if not final_video_to_serve_path or not final_video_to_serve_path.exists() or final_video_to_serve_path.stat().st_size < 10000: 
                 error_msg = f"{phase_logger_str} Final video output missing/empty after processing."
                 logger.error(error_msg)
@@ -291,7 +323,7 @@ class VideoProcessor:
             yield f"data: {json.dumps({'error': str(e), 'phase': f'Error during: {phase_at_error}'})}\n\n"
         finally:
             logger.info(f"{phase_logger_str} Entering finally block for cleanup. Total processing time before cleanup: {(time.time()-overall_start_time):.2f}s")
-            self._cleanup_request_files(request_temp_dir) 
+            self._cleanup_request_files(request_temp_dir)
 
 # MODIFIED: Added apply_lip_sync to the function signature
 def handle_video_processing(request_files: Dict[str, Any], target_language: str, backend_instance: TranslationBackend, apply_lip_sync: bool):
