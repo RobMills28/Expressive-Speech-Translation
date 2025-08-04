@@ -7,6 +7,7 @@ import { AlertCircle, Upload, Loader2, Film, AudioWaveform, Zap } from 'lucide-r
 import { Alert, AlertDescription } from "./ui/alert";
 import { Progress } from "./ui/progress";
 import { Label } from "./ui/label";
+import WaveformPlayer from './WaveformPlayer';
 
 // --- THIS IS THE UPDATED LANGUAGE LIST ---
 // Based on CosyVoice 2/3 documentation for supported languages.
@@ -63,7 +64,7 @@ const ContentTranslator = () => {
     const isAudio = uploadedFile.type.startsWith('audio/');
     const isVideo = uploadedFile.type.startsWith('video/');
 
-    if (contentType === 'audio' && isAudio) valid = true;
+    if (contentType === 'audio' && (isAudio || isVideo)) valid = true;
     else if ((contentType === 'video' || contentType === 'both') && isVideo) valid = true;
 
     if (!valid) { setError(`Please upload a valid ${contentType} file.`); return; }
@@ -105,15 +106,24 @@ const ContentTranslator = () => {
         }
         const data = await response.json();
         if (data.error) throw new Error(data.error);
+
+        // --- THIS IS THE CORRECT WAY TO HANDLE THE BASE64 AUDIO ---
         const byteCharacters = atob(data.audio);
         const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
         const byteArray = new Uint8Array(byteNumbers);
         const audioBlob = new Blob([byteArray], { type: 'audio/wav' });
+        
+        // Revoke the old URL if it exists, then create a new one for the blob.
         if (result) URL.revokeObjectURL(result);
         setResult(URL.createObjectURL(audioBlob));
+        // --- END OF FIX ---
+        
         setResultTranscripts(data.transcripts || { source: '', target: '' });
-        setProgress(100); setProcessPhase('Completed!');
+        setProgress(100);
+        setProcessPhase('Completed!');
       } else { // Video processing with SSE
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -215,23 +225,36 @@ const ContentTranslator = () => {
   const renderAudioInterface = () => (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="p-6 border-b flex justify-between items-center">
-        <div><h1 className="text-2xl font-semibold">Audio Translation</h1><p className="text-gray-500">Translate speech in audio files</p></div>
+        <div><h1 className="text-2xl font-semibold">Audio Translation</h1><p className="text-gray-500">Translate speech from audio or video files</p></div>
         <Button variant="outline" onClick={handleReset}>Change Type</Button>
       </div>
       {error && <div className="px-6 pt-6"><Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert></div>}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
         <div>
           <h3 className="font-medium text-lg mb-3">Original Audio</h3>
-          <div className="min-h-[200px] bg-gray-100 rounded-lg mb-3 p-4">
-            {fileUrl ? (<><audio ref={originalMediaRef} src={fileUrl} className="w-full" controls /><p className="text-xs text-gray-500 mt-2 truncate">{file?.name}</p></>)
-             : (<label className="cursor-pointer flex flex-col items-center justify-center h-full min-h-[150px]"><Upload className="w-10 h-10 text-fuchsia-600" /><span className="text-gray-600 mt-2">Upload Audio</span><input type="file" className="hidden" accept="audio/*" onChange={handleFileUpload} /></label>)}
+          <div className="min-h-[200px] flex flex-col items-center justify-center bg-gray-100 rounded-lg mb-3 p-4">
+            {fileUrl ? (<>
+              <WaveformPlayer url={fileUrl} />
+              <p className="text-xs text-gray-500 mt-2 truncate self-start">{file?.name}</p>
+            </>) : (<label className="cursor-pointer flex flex-col items-center justify-center h-full min-h-[150px]">
+              <Upload className="w-10 h-10 text-fuchsia-600" />
+              <span className="text-gray-600 mt-2">Upload Audio or Video File</span>
+              {/* This input now accepts both audio and video files */}
+              <input type="file" className="hidden" accept="audio/*,video/*" onChange={handleFileUpload} />
+            </label>)}
           </div>
         </div>
         <div>
           <h3 className="font-medium text-lg mb-3">{targetLanguage && LANGUAGES[targetLanguage] ? `${LANGUAGES[targetLanguage].name} Translation` : 'Translated Audio'}</h3>
-          <div className="min-h-[200px] bg-gray-100 rounded-lg p-4">
-            {result ? (<><audio ref={translatedMediaRef} src={result} className="w-full" controls /><p className="text-xs text-gray-500 mt-2">Translated output</p></>)
-             : (<div className="flex items-center justify-center h-full min-h-[150px] text-gray-500">{isProcessing ? <><Loader2 className="w-8 h-8 animate-spin text-fuchsia-600 mr-2" /><div><p>{processPhase || "Processing..."}</p>{progress > 0 && <Progress value={progress} className="w-32 mt-1 [&>div]:bg-fuchsia-600"/>}</div></> : "Translation will appear here"}</div>)}
+          <div className="min-h-[200px] flex flex-col items-center justify-center bg-gray-100 rounded-lg p-4">
+            {result ? (<>
+                <WaveformPlayer url={result} />
+                <p className="text-xs text-gray-500 mt-2 self-start">Translated output</p>
+              </>) : (<div className="flex items-center justify-center h-full min-h-[150px] text-gray-500">{
+                isProcessing ? 
+                <><Loader2 className="w-8 h-8 animate-spin text-fuchsia-600 mr-2" /><div><p>{processPhase || "Processing..."}</p>{progress > 0 && <Progress value={progress} className="w-32 mt-1 [&>div]:bg-fuchsia-600"/>}</div></> : 
+                "Translation will appear here"
+              }</div>)}
           </div>
         </div>
       </div>
