@@ -21,7 +21,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-fuchsia-600">
-              Magenta AI
+              Content Converter AI
             </Link>
           </div>
           
