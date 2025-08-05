@@ -111,7 +111,7 @@ class AudioProcessor:
             logger.error(f"Audio validation failed: {str(e)}")
             return False
         
-    def validate_audio_length(self, audio_path: str) -> Tuple[bool, str]:
+    def validate_audio_length(self, audio_path: str, max_length_seconds: int) -> Tuple[bool, str]: # <-- CHANGE 1: ADDED THE NEW ARGUMENT HERE
         """Validates audio file length and basic integrity"""
         try:
             if Path(audio_path).suffix.lower() not in self.SUPPORTED_FORMATS:
@@ -138,8 +138,9 @@ class AudioProcessor:
             if duration <= 0:
                 return False, "Invalid audio duration"
                 
-            if duration > self.MAX_AUDIO_LENGTH:
-                return False, f"Audio duration ({duration:.1f}s) exceeds maximum allowed ({self.MAX_AUDIO_LENGTH}s)"
+            # --- CHANGE 2: USE THE NEW ARGUMENT INSTEAD OF THE OLD HARDCODED VALUE ---
+            if duration > max_length_seconds:
+                return False, f"Audio duration ({duration:.1f}s) exceeds maximum allowed ({max_length_seconds}s)"
 
             return True, ""
 
