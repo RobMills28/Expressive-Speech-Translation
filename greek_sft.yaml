@@ -1,0 +1,103 @@
+# Filename: greek_sft.yaml
+# Config for fine-tuning CosyVoice-2 on a new language (Greek SFT).
+
+# set random seed, so that you may reproduce your result.
+__set_seed1: !apply:random.seed [1986]
+__set_seed2: !apply:numpy.random.seed [1986]
+__set_seed3: !apply:torch.manual_seed [1986]
+__set_seed4: !apply:torch.cuda.manual_seed_all [1986]
+
+# fixed params
+sample_rate: 24000
+llm_input_size: 896
+llm_output_size: 896
+spk_embed_dim: 192
+qwen_pretrain_path: ''
+token_frame_rate: 25
+token_mel_ratio: 2
+
+# stream related params
+chunk_size: 25
+num_decoding_left_chunks: -1
+
+# model params
+llm: !new:cosyvoice.llm.llm.Qwen2LM
+    llm_input_size: !ref <llm_input_size>
+    llm_output_size: !ref <llm_output_size>
+    speech_token_size: 6561
+    length_normalized_loss: True
+    lsm_weight: 0
+    mix_ratio: [5, 15]
+    llm: !new:cosyvoice.llm.llm.Qwen2Encoder
+        pretrain_path: !ref <qwen_pretrain_path>
+    sampling: !name:cosyvoice.utils.common.ras_sampling
+        top_p: 0.8
+        top_k: 25
+        win_size: 10
+        tau_r: 0.1
+
+# processor functions
+parquet_opener: !name:cosyvoice.dataset.processor.parquet_opener
+get_tokenizer: !name:cosyvoice.tokenizer.tokenizer.get_qwen_tokenizer
+    token_path: !ref <qwen_pretrain_path>
+    skip_special_tokens: True
+allowed_special: 'all'
+tokenize: !name:cosyvoice.dataset.processor.tokenize
+    get_tokenizer: !ref <get_tokenizer>
+    allowed_special: !ref <allowed_special>
+filter: !name:cosyvoice.dataset.processor.filter
+    max_length: 40960
+    min_length: 100
+    token_max_length: 200
+    token_min_length: 1
+resample: !name:cosyvoice.dataset.processor.resample
+    resample_rate: !ref <sample_rate>
+feat_extractor: !name:matcha.utils.audio.mel_spectrogram
+    n_fft: 1920
+    num_mels: 80
+    sampling_rate: !ref <sample_rate>
+    hop_size: 480
+    win_size: 1920
+    fmin: 0
+    fmax: 8000
+    center: False
+compute_fbank: !name:cosyvoice.dataset.processor.compute_fbank
+    feat_extractor: !ref <feat_extractor>
+    token_mel_ratio: 2
+parse_embedding: !name:cosyvoice.dataset.processor.parse_embedding
+    normalize: True
+shuffle: !name:cosyvoice.dataset.processor.shuffle
+    shuffle_size: 1000
+sort: !name:cosyvoice.dataset.processor.sort
+    sort_size: 500
+batch: !name:cosyvoice.dataset.processor.batch
+    batch_type: 'dynamic'
+    max_frames_in_batch: 2000
+padding: !name:cosyvoice.dataset.processor.padding
+    use_spk_embedding: False
+
+# dataset processor pipeline
+data_pipeline: [
+    !ref <parquet_opener>,
+    !ref <tokenize>,
+    !ref <filter>,
+    !ref <resample>,
+    !ref <compute_fbank>,
+    !ref <parse_embedding>,
+    !ref <shuffle>,
+    !ref <sort>,
+    !ref <batch>,
+    !ref <padding>,
+]
+
+# llm fine-tuning configuration
+train_conf:
+    optim: adamw
+    optim_conf:
+        lr: 1e-5
+    scheduler: constantlr
+    max_epoch: 10
+    grad_clip: 5
+    accum_grad: 4
+    log_interval: 100
+    save_per_step: 1000
