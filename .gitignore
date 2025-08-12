@@ -12,3 +12,4 @@ cv-corpus-*/
 # Ignore Python artifacts globally
 __pycache__/
 *.pyc
+*.pt
