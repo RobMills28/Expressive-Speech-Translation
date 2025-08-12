@@ -30,14 +30,25 @@ RUN cp requirements.txt requirements.txt.processed && \
 RUN pip install onnxruntime==1.18.0
 RUN pip install fastapi uvicorn[standard] python-multipart
 
-# --- Model baking from your working branch ---
-RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice2-0.5B', local_dir='pretrained_models/CosyVoice2-0.5B')"
-RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice-ttsfrd', local_dir='pretrained_models/CosyVoice-ttsfrd')"
+# --- Model baking and final setup ---
+# Create a standard location for all models
+RUN mkdir -p /app/models
 
-WORKDIR /app/CosyVoice/pretrained_models/CosyVoice-ttsfrd
+# Download standard models directly into this new, correct location
+RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice2-0.5B', local_dir='/app/models/CosyVoice2-0.5B')"
+RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice-ttsfrd', local_dir='/app/models/CosyVoice-ttsfrd')"
+
+WORKDIR /app/models/CosyVoice-ttsfrd
 RUN if [ -f resource.zip ]; then unzip -o resource.zip -d .; fi
 
-# --- Final Setup from your working branch ---
+# --- Create a Proper Directory for the Greek Model ---
+# 1. Copy the entire standard model directory to a new "greek" directory. This now works because the source path is correct.
+RUN cp -r /app/models/CosyVoice2-0.5B /app/models/CosyVoice-Greek
+
+# 2. Copy your fine-tuned greek_llm.pt file, REPLACING the original one inside the new directory.
+COPY Docker/greek_llm.pt /app/models/CosyVoice-Greek/llm/model.pt
+
+# --- Final Application Setup ---
 WORKDIR /app
 COPY Docker/cosyvoice_api.py .
 

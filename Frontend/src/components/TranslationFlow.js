@@ -22,6 +22,7 @@ const LANGUAGES = {
   'deu': { name: 'German', flag: '🇩🇪' },
   'ita': { name: 'Italian', flag: '🇮🇹' },
   'rus': { name: 'Russian', flag: '🇷🇺' },
+  'ell': { name: 'Greek', flag: '🇬🇷' },
 };
 
 const ContentTranslator = () => {

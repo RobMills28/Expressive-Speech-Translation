@@ -40,27 +40,27 @@ services:
   #   networks:
   #     - app-network
 
-  musetalk:
-    build:
-      context: ..
-      dockerfile: Docker/Dockerfile.musetalk
-    platform: linux/amd64
-    container_name: musetalk-api
-    ports:
-      - "8003:8000"
-    working_dir: /app/MuseTalk
-    environment:
-      - PYTHONPATH=/app/MuseTalk
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    restart: unless-stopped
-    networks:
-      - app-network
+  # musetalk:
+  #  build:
+  #    context: ..
+  #    dockerfile: Docker/Dockerfile.musetalk
+  #  platform: linux/amd64
+  #  container_name: musetalk-api
+  #  ports:
+  #    - "8003:8000"
+  #  working_dir: /app/MuseTalk
+  #  environment:
+  #    - PYTHONPATH=/app/MuseTalk
+  #  deploy:
+  #    resources:
+  #      reservations:
+  #        devices:
+  #          - driver: nvidia
+  #           count: 1
+  #            capabilities: [gpu]
+  #  restart: unless-stopped
+  #  networks:
+  #    - app-network
 
 networks:
   app-network:
@@ -69,6 +69,3 @@ networks:
 volumes:
   # This is defined for the (disabled) voice-similarity service. It is harmless.
   pretrained_models_similarity: {}
-
-
-  
