@@ -4,3 +4,12 @@ Backend/.env
 .venv/
 Backend/.env
 Backend/new_venv/
+# Ignore All Language Training Data
+data/
+cv-corpus-*/
+*.tar.gz
+
+# Ignore Python artifacts globally
+__pycache__/
+*.pyc
+*.pt

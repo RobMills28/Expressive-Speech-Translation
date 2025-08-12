@@ -53,12 +53,14 @@ class CascadedBackend(TranslationBackend):
         self.simple_lang_code_map_cosy = {
             'eng': 'en', 'spa': 'es', 'fra': 'fr', 'deu': 'de', 'ita': 'it', 'por': 'pt', 'pol': 'pl',
             'tur': 'tr', 'rus': 'ru', 'nld': 'nl', 'ces': 'cs', 'ara': 'ar', 'cmn': 'zh',
-            'jpn': 'ja', 'hun': 'hu', 'kor': 'ko', 'hin': 'hi'
+            'jpn': 'ja', 'hun': 'hu', 'kor': 'ko', 'hin': 'hi',
+            'ell': 'el'  # Map Greek ('ell') to its CosyVoice code ('el')
         }
         self.display_language_names = {k: name.capitalize() for k, name in self.simple_lang_code_map_cosy.items()}
         self.display_language_names['cmn'] = 'Chinese (Mandarin)'
+        self.display_language_names['ell'] = 'Greek' # Add the display name for the frontend
 
-        if SAVE_DEBUG_AUDIO_FILES: logger.info("SAVE_DEBUG_AUDIO_FILES is enabled.")
+    if SAVE_DEBUG_AUDIO_FILES: logger.info("SAVE_DEBUG_AUDIO_FILES is enabled.")
 
     def initialize(self):
         start_time = time.time()
@@ -135,7 +137,7 @@ class CascadedBackend(TranslationBackend):
                 response.raise_for_status() # Raise an exception if the warmup fails
 
     def _convert_to_nllb_code(self, lang_code_app: str) -> str:
-        mapping = {'eng':'eng_Latn','fra':'fra_Latn','spa':'spa_Latn','deu':'deu_Latn','ita':'ita_Latn','por':'por_Latn','rus':'rus_Cyrl','cmn':'zho_Hans','jpn':'jpn_Jpan','kor':'kor_Hang','ara':'ara_Arab','hin':'hin_Deva','nld':'nld_Latn','pol':'pol_Latn','tur':'tur_Latn','ukr':'ukr_Cyrl','ces':'ces_Latn','hun':'hun_Latn'}
+        mapping = {'eng':'eng_Latn','fra':'fra_Latn','spa':'spa_Latn','deu':'deu_Latn','ita':'ita_Latn','por':'por_Latn','rus':'rus_Cyrl','cmn':'zho_Hans','jpn':'jpn_Jpan','kor':'kor_Hang','ara':'ara_Arab','hin':'hin_Deva','nld':'nld_Latn','pol':'pol_Latn','tur':'tur_Latn','ukr':'ukr_Cyrl','ces':'ces_Latn','hun':'hun_Latn', 'ell': 'ell_Grek'}
         return mapping.get(lang_code_app.lower(), 'eng_Latn')
 
     def _get_cosyvoice_lang_code(self, lang_code_app: str) -> str:
@@ -457,7 +459,11 @@ class CascadedBackend(TranslationBackend):
             
             with open(reference_speaker_wav_path, 'rb') as ref_audio_file:
                 files = {'reference_speaker_wav': ref_audio_file}
-                data = {'text_to_synthesize': target_text_raw, 'target_language_code': self._get_cosyvoice_lang_code(target_lang)}
+                data = {
+                    'text_to_synthesize': target_text_raw,
+                    # This now sends the correct code ('el' for Greek) to the CosyVoice API
+                    'target_language_code': self._get_cosyvoice_lang_code(target_lang)
+                }
                 
                 response = requests.post(f"{COSYVOICE_API_URL}/generate-speech/", files=files, data=data, timeout=3600)
 

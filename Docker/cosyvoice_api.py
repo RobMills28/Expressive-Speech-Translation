@@ -13,7 +13,7 @@ import io # Import the in-memory I/O library
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 # We need StreamingResponse, not FileResponse
 from fastapi.responses import StreamingResponse
-from typing import Optional
+from typing import Optional, Dict
 
 # Add CosyVoice to the Python path
 sys.path.insert(0, '/app/CosyVoice')
@@ -25,44 +25,91 @@ from cosyvoice.utils.file_utils import load_wav
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="CosyVoice API v2", description="API for TTS with voice cloning using CosyVoice2.")
+app = FastAPI(title="CosyVoice API v3 (Multi-Model)", description="API for TTS with voice cloning using specific models per language.")
 
-cosy_model: Optional[CosyVoice2] = None
-MODEL_PATH = "/app/CosyVoice/pretrained_models/CosyVoice2-0.5B"
+# --- Model Management ---
+# Use a dictionary to hold loaded models to avoid reloading
+loaded_models: Dict[str, CosyVoice2] = {}
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Define paths for your models inside the Docker container
+# IMPORTANT: These paths must match where you put them in your Dockerfile
+MODEL_PATHS = {
+    "default": "/app/models/CosyVoice2-0.5B",  # For ja, ko, zh, etc.
+    "greek": "/app/models/CosyVoice-Greek"         # For the new Greek model
+}
+
+def get_model(language_code: str) -> Optional[CosyVoice2]:
+    """Loads a model into memory if not already loaded, based on the language code."""
+    # Decide which model key to use. 'el' is the code for Greek.
+    model_key = "greek" if language_code == 'el' else "default"
+    
+    if model_key in loaded_models:
+        logger.info(f"Using cached model for key: '{model_key}'")
+        return loaded_models[model_key]
+
+    model_path_str = MODEL_PATHS.get(model_key)
+    if not model_path_str:
+        logger.error(f"No model path configured for model key '{model_key}'")
+        return None
+    
+    model_path = Path(model_path_str)
+    if not model_path.exists():
+        logger.error(f"Model file does not exist for key '{model_key}': {model_path}")
+        return None
+
+    logger.info(f"Loading model for '{model_key}' from path: {model_path}")
+    try:
+        model = CosyVoice2(str(model_path))
+        loaded_models[model_key] = model
+        logger.info(f"SUCCESS: CosyVoice model '{model_path.name}' loaded. Sample rate: {model.sample_rate}")
+        return model
+    except Exception as e:
+        logger.error(f"CRITICAL ERROR loading model for '{model_key}': {e}", exc_info=True)
+        return None
 
 @app.on_event("startup")
 def startup_event():
-    global cosy_model
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    """
+    On startup, we just log the device info and pre-warm the default model.
+    """
     logger.info(f"PyTorch environment detected device: {device}")
-    logger.info(f"Attempting to load CosyVoice2 model from: {MODEL_PATH}")
-    
-    try:
-        cosy_model = CosyVoice2(MODEL_PATH)
-        logger.info(f"SUCCESS: CosyVoice model '{Path(MODEL_PATH).name}' loaded. Sample rate: {cosy_model.sample_rate}")
-    except Exception as e:
-        logger.error(f"CRITICAL ERROR loading CosyVoice model: {e}", exc_info=True)
-        cosy_model = None
+    logger.info("CosyVoice API started. Models will be loaded on demand.")
+    logger.info("Pre-warming the default model...")
+    # This will load the main model into memory so it's ready.
+    get_model('default')
 
 @app.get("/health")
 def health_check():
-    if cosy_model:
-        return {"status": "healthy", "message": f"CosyVoice model ({Path(MODEL_PATH).name}) loaded."}
+    """
+    Health check is healthy if the default model is either already
+    loaded or can be successfully loaded on demand.
+    """
+    if "default" in loaded_models:
+        return {"status": "healthy", "message": "Default CosyVoice model is loaded and ready."}
+    
+    if get_model('default'):
+        return {"status": "healthy", "message": "CosyVoice default model is available and loads successfully."}
     else:
-        return {"status": "unhealthy", "message": "CosyVoice model is not loaded."}
+        return {"status": "unhealthy", "message": "FATAL: CosyVoice default model could not be loaded."}
 
 @app.post("/generate-speech/")
 async def generate_speech(
     text_to_synthesize: str = Form(...),
     reference_speaker_wav: UploadFile = File(...),
+    # This new field is crucial for selecting the right model
+    target_language_code: str = Form(...), # e.g., 'ja', 'ko', 'zh', 'el'
     style_prompt_text: Optional[str] = Form("")
 ):
     req_id = str(uuid.uuid4())[:8]
     logger.info(f"[{req_id}] /generate-speech called for file '{reference_speaker_wav.filename}'.")
 
-    if not cosy_model:
-        raise HTTPException(status_code=503, detail="TTS Service not available: Model not loaded.")
+    # Dynamically get the correct model for the requested language
+    cosy_model = get_model(target_language_code)
 
+    if not cosy_model:
+        raise HTTPException(status_code=503, detail=f"TTS Service not available: A model for the language '{target_language_code}' could not be loaded.")
+        
     # We still need a temp directory for the UPLOADED reference file
     with tempfile.TemporaryDirectory(prefix=f"cosy_api_ref_{req_id}_") as temp_dir:
         temp_dir_path = Path(temp_dir)
