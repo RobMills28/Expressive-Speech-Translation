@@ -22,7 +22,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-fuchsia-600">
-              Magenta AI
+              Content Converter AI
             </Link>
           </div>
           
@@ -56,7 +56,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-fuchsia-600 rounded-lg flex items-center justify-center">
                 <AudioWaveform className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-semibold">Magenta AI</span>
+              <span className="text-xl font-semibold">Content Converter AI</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
@@ -85,7 +85,7 @@ const LandingPage = () => {
               In Any Language
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Magenta helps creators reach global audiences by translating content while 
+              Content Converter helps creators reach global audiences by translating content while 
               preserving their authentic voice and style.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -304,7 +304,7 @@ const LandingPage = () => {
                 <div className="w-8 h-8 bg-fuchsia-600 rounded-lg flex items-center justify-center">
                   <AudioWaveform className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-semibold">Magenta AI</span>
+                <span className="text-xl font-semibold">Content Converter AI</span>
               </div>
               <p className="text-gray-600 mb-4 max-w-md">
                 Pioneering expressive speech-to-speech translation that preserves the full spectrum of human communication.
@@ -321,7 +321,7 @@ const LandingPage = () => {
               <ul className="space-y-2 text-gray-600">
                 <li><a href="#" className="hover:text-gray-900 transition-colors">Features</a></li>
                 <li><a href="#" className="hover:text-gray-900 transition-colors">API</a></li>
-                <li><Link to="/pricing" className="hover:text-gray-900 transition-colors">Pricing</Link></li>
+                <li><a href="#" className="hover:text-gray-900 transition-colors">Pricing</a></li>
                 <li><a href="#" className="hover:text-gray-900 transition-colors">Documentation</a></li>
               </ul>
             </div>
@@ -338,7 +338,7 @@ const LandingPage = () => {
           </div>
           
           <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-600">© {new Date().getFullYear()} Magenta AI. All rights reserved.</p>
+            <p className="text-gray-600">© {new Date().getFullYear()} Content Converter. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Privacy</a>
               <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Terms</a>
