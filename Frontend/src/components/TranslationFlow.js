@@ -541,7 +541,7 @@ const ContentTranslator = () => {
                 </h1>
                 <p className="text-muted-foreground">
                   {contentType === 'both' 
-                    ? 'Complete video transformation with voice-over and lip synchronization' 
+                    ? 'Complete video transformation with voice-over and lip synchronisation' 
                     : 'Translate the audio track of your video content'}
                 </p>
               </div>
