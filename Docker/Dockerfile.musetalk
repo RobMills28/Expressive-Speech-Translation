@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Dockerfile v12 - The ENTRYPOINT Bootstrap Fix
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
 =======
@@ -6,27 +7,15 @@ FROM --platform=linux/amd64 python:3.10-slim-bullseye
 # This builds upon the successful "In-Place" execution model (v8).
 FROM python:3.10-slim-bullseye
 >>>>>>> initial-batch-work
+=======
+# Dockerfile v17 - Final Debug Attempt
+FROM python:3.10-slim-bullseye
+>>>>>>> 4d07f226e347c3bb14a2db7dcce70b2d981ced52
 
-ENV PYTHONUNBUFFERED=1
-
-# We no longer need ENV PYTHONPATH here, the script will handle it.
-
-# 1. System Dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git wget ffmpeg build-essential cmake libgl1-mesa-glx && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# 2. PyTorch & MMLab dependencies - GPU VERSION FOR AWS
 WORKDIR /app
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118 && \
-    pip install --no-cache-dir -U openmim && \
-    mim install mmengine && \
-    mim install "mmcv==2.0.1" && \
-    pip install --no-cache-dir "xtcocotools>=1.12" && \
-    mim install "mmdet==3.1.0" && \
-    mim install "mmpose==1.1.0"
+COPY MuseTalk /app/MuseTalk_project
 
+<<<<<<< HEAD
 # 3. Copy MuseTalk project and install its requirements
 <<<<<<< HEAD
 COPY MuseTalk /app/MuseTalk
@@ -70,3 +59,10 @@ WORKDIR /app/MuseTalk
 # The CMD is now empty, as the command is in the script.
 EXPOSE 8000
 ENTRYPOINT ["/app/MuseTalk/run_api.sh"]
+=======
+# --- THE DEBUGGING STEP ---
+# This command will first list the contents of /app/MuseTalk_project.
+# Then it will try to list the contents of a subdirectory. If the subdirectory
+# name is wrong, the build will fail here and show us the output of the first ls.
+RUN ls -la /app/MuseTalk_project && ls -la /app/MuseTalk_project/THIS_WILL_FAIL
+>>>>>>> 4d07f226e347c3bb14a2db7dcce70b2d981ced52

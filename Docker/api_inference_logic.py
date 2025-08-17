@@ -13,10 +13,10 @@ import logging
 from tqdm import tqdm
 
 # Imports now work directly because the WORKDIR is correct.
-from musetalk.utils.utils import load_all_model, get_video_fps, datagen
-from musetalk.utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder
-from musetalk.utils.blending import get_image
-from musetalk.utils.audio_processor import AudioProcessor
+from utils.utils import load_all_model, get_video_fps, datagen
+from utils.preprocessing import get_landmark_and_bbox, read_imgs, coord_placeholder
+from utils.blending import get_image
+from utils.audio_processor import AudioProcessor
 from mmpose.apis import init_model as init_pose_estimator, inference_topdown
 from mmpose.structures import merge_data_samples
 from transformers import WhisperModel
@@ -64,7 +64,7 @@ def load_models_for_api():
     # --- THIS IS THE CORRECTED/RE-INSERTED LINE ---
     MODELS['audio_processor'] = AudioProcessor(feature_extractor_path=whisper_feature_extractor_path)
 
-    from musetalk.utils.face_parsing import FaceParsing
+    from utils.face_parsing import FaceParsing
     MODELS['face_parser'] = FaceParsing()
     
     MODELS['whisper_model'] = WhisperModel.from_pretrained(whisper_feature_extractor_path).to(device=device).eval()
