@@ -1,91 +1,71 @@
-version: '3.8' # Retained for compatibility, though becoming obsolete
+# FINAL, COMPLETE, AND UNIFIED docker-compose.yml
 
 services:
-  openvoice:
-    build:
-      context: .. # Relative to this docker-compose.yml, context is "Magenta AI"
-      dockerfile: Docker/Dockerfile # Path to Dockerfile relative to context
-    container_name: docker-openvoice
-    ports:
-      - "8000:8000"
-    volumes:
-      # Assumes checkpoints_v2 is in "Magenta AI/checkpoints_v2"
-      - ../checkpoints_v2:/app/checkpoints_v2:ro
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
-    networks:
-      - app-network
-
-  voice-similarity:
-    build:
-      context: .. # Relative to this docker-compose.yml, context is "Magenta AI"
-      dockerfile: Docker/Dockerfile.similarity # Path to Dockerfile relative to context
-    container_name: docker-voice-similarity
-    ports:
-      - "8001:8001"
-    volumes:
-      # This volume caches downloaded SpeechBrain models on your host
-      # Creates/uses "Magenta AI/Docker/pretrained_models_similarity" on the host
-      - ./pretrained_models_similarity:/app/pretrained_models
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
-    networks:
-      - app-network
-
   cosyvoice:
     build:
-      context: .. # Relative to this docker-compose.yml, context is "Magenta AI"
-      dockerfile: Docker/Dockerfile.cosyvoice # Path to Dockerfile relative to context
-    container_name: docker-cosyvoice
+      context: ..
+      # This uses the Dockerfile that bakes the models into the image,
+      # which we confirmed is the correct working pattern from your other branch.
+      dockerfile: Docker/Dockerfile.cosyvoice
+    platform: linux/amd64
+    container_name: cosyvoice-api
     ports:
-      - "8002:8000" # Expose CosyVoice API on host port 8002, container port 8000
-    volumes:
-      # Host path is relative to THIS docker-compose.yml file (which is in Magenta AI/Docker/)
-      # So, ../ goes up to "Magenta AI", then we go into "Backend/CosyVoice/pretrained_models"
-      - ../Backend/CosyVoice/pretrained_models:/app/CosyVoice/pretrained_models:ro
-    environment:
-      - PYTHONUNBUFFERED=1
-      - TOKENIZERS_PARALLELISM=false # Good practice for Hugging Face tokenizers
+      - "8002:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    # CRITICALLY, there is NO volume mount for models.
+    # This was the key fix to prevent your local folder from causing the startup error.
     restart: unless-stopped
     networks:
       - app-network
 
-  musetalk: # NEW SERVICE
-    build:
-      context: .. # Build context is "Magenta AI/" (one level up from this docker-compose.yml)
-      dockerfile: Docker/Dockerfile.musetalk # Path relative to context
-    container_name: docker-musetalk
-    ports:
-      - "8003:8000" # MuseTalk API on host port 8003, container port 8000
-    # The provided Dockerfile.musetalk COPIES models into the image.
-    # If you change it to mount models, add a volume like this:
-    # volumes:
-    #   - ../MuseTalk/MuseTalk/models:/app/MuseTalk/models:ro 
-    #   # Ensure Magenta AI/MuseTalk/MuseTalk/models exists on your host
-    environment:
-      - PYTHONUNBUFFERED=1
-      # Add any specific env vars MuseTalk might need for inference
-      # e.g., HF_HOME=/app/huggingface_cache if any sub-component tries to download more things
-    restart: unless-stopped
-    networks:
-      - app-network
-    # If running on a machine with limited resources and multiple containers, 
-    # you might consider adding resource limits for development, though this
-    # can also cause unexpected failures if limits are too low.
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '2.0' # Example: limit to 2 CPUs for this container if needed
-    #       memory: 8G  # Example: limit to 8GB RAM for this container if needed
+  # --- VOICE SIMILARITY (DISABLED) ---
+  # This entire section is commented out for future work, as you requested.
+  #
+  # voice-similarity:
+  #   build:
+  #     context: ..
+  #     dockerfile: Docker/Dockerfile.similarity
+  #   platform: linux/amd64
+  #   container_name: voice-similarity-api
+  #   ports:
+  #     - "8001:8001"
+  #   volumes:
+  #     - pretrained_models_similarity:/app/pretrained_models
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
+
+  # musetalk:
+  #  build:
+  #    context: ..
+  #    dockerfile: Docker/Dockerfile.musetalk
+  #  platform: linux/amd64
+  #  container_name: musetalk-api
+  #  ports:
+  #    - "8003:8000"
+  #  working_dir: /app/MuseTalk
+  #  environment:
+  #    - PYTHONPATH=/app/MuseTalk
+  #  deploy:
+  #    resources:
+  #      reservations:
+  #        devices:
+  #          - driver: nvidia
+  #           count: 1
+  #            capabilities: [gpu]
+  #  restart: unless-stopped
+  #  networks:
+  #    - app-network
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  pretrained_models_similarity: {} # Defines the named volume used by voice-similarity
-  # pretrained_cosyvoice_models: # This was defined but cosyvoice uses a bind mount. Can be removed if not used elsewhere.
-  # If you were to use a named volume for MuseTalk models (instead of COPY or bind mount), define it here:
-  # pretrained_musetalk_models: {} 
+  # This is defined for the (disabled) voice-similarity service. It is harmless.
+  pretrained_models_similarity: {}

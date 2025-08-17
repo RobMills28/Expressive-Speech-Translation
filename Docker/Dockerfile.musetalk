@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 # Dockerfile v12 - The ENTRYPOINT Bootstrap Fix
 FROM --platform=linux/amd64 python:3.10-slim-bullseye
+=======
+# Dockerfile v10 - Systematic Debugging Step 1: Fix 'face_detection' import
+# This builds upon the successful "In-Place" execution model (v8).
+FROM python:3.10-slim-bullseye
+>>>>>>> initial-batch-work
 
 ENV PYTHONUNBUFFERED=1
 
@@ -22,11 +28,19 @@ RUN pip install --no-cache-dir --upgrade pip && \
     mim install "mmpose==1.1.0"
 
 # 3. Copy MuseTalk project and install its requirements
+<<<<<<< HEAD
 COPY MuseTalk /app/MuseTalk
 RUN (cd /app/MuseTalk && \
      sed -i '/tensorflow/d' requirements.txt && \
      sed -i '/tensorboard/d' requirements.txt && \
      pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt)
+=======
+RUN git clone https://github.com/RobMills28/MuseTalk.git /app/MuseTalk
+WORKDIR /app/MuseTalk
+RUN sed -i '/tensorflow/d' requirements.txt && \
+    sed -i '/tensorboard/d' requirements.txt && \
+    pip install --no-cache-dir --retries 5 --timeout 30 -r requirements.txt
+>>>>>>> initial-batch-work
 
 # 4. Download Weights
 RUN (cd /app/MuseTalk && chmod +x ./download_weights.sh && ./download_weights.sh)

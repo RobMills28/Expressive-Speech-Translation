@@ -1,0 +1,34 @@
+services:
+  cosyvoice:
+    build:
+      context: .. # The root of your "Magenta AI" project
+      dockerfile: Docker/Dockerfile.cosyvoice # Path to the Dockerfile
+    platform: linux/arm64 # Explicitly build for and run on your Mac's architecture
+    container_name: cosyvoice-container
+    ports:
+      - "8002:8000"
+    restart: unless-stopped
+    networks:
+      - magenta-net
+
+  # --- VOICE SIMILARITY SERVICE TEMPORARILY DISABLED ---
+  # voice-similarity:
+  #   build:
+  #     context: ..
+  #    dockerfile: Docker/Dockerfile.similarity
+  #  platform: linux/arm64
+  #  container_name: voice-similarity-container
+  #  ports:
+  #    - "8001:8001"
+  #  volumes:
+ #     - ./pretrained_models_similarity:/app/pretrained_models
+  #  restart: unless-stopped
+  #   networks:
+  #     - magenta-net
+
+networks:
+  magenta-net:
+    driver: bridge
+
+volumes:
+  pretrained_models_similarity:

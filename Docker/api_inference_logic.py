@@ -88,7 +88,7 @@ def run_lip_sync(video_path_str: str, audio_path_str: str, bbox_shift: int) -> s
 
     logger.info(f"Step 2: Preprocessing {len(img_list)} frames...")
     pose_estimator_model = MODELS['pose_estimator']
-    coords_list, original_frames = get_landmark_and_bbox(pose_estimator_model, img_list=img_list, upperbondrange=bbox_shift)
+    coords_list, original_frames = get_landmark_and_bbox(img_list, upperbondrange=bbox_shift)
     
     if not coords_list: raise ValueError("Failed to get bboxes from video frames.")
 

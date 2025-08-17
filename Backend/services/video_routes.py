@@ -16,9 +16,14 @@ import sys
 import shutil
 from typing import Generator, Dict, Any, Union, Optional, Tuple
 import uuid
+import requests
+from datetime import datetime
+from audiowmark import WaterMark
 
 from .audio_processor import AudioProcessor
 from .translation_strategy import TranslationBackend 
+
+MUSETALK_API_URL = os.getenv("MUSETALK_API_URL", "http://localhost:8003")
 
 logger = logging.getLogger(__name__)
 
@@ -32,37 +37,27 @@ class VideoProcessor:
         self.base_temp_dir = self.base_project_dir / 'temp_video_processing_requests' 
         self.base_temp_dir.mkdir(parents=True, exist_ok=True) 
         logger.info(f"VideoProcessor base temp directory for requests: {self.base_temp_dir.resolve()}")
-        
-        self.wav2lip_path = self.base_project_dir / "Wav2Lip" 
-        self._check_wav2lip_setup()
 
-    def _check_wav2lip_setup(self):
-        logger.info(f"Checking Wav2Lip setup in: {self.wav2lip_path}")
-        if not self.wav2lip_path.is_dir():
-            logger.error(f"Wav2Lip directory not found at {self.wav2lip_path}! Lip sync will fail.")
-            self.wav2lip_inference_script_abs_path = None 
-            self.wav2lip_checkpoint_abs_path = None
-            self.wav2lip_gan_checkpoint_abs_path = None
-            return
-
-        self.wav2lip_inference_script_abs_path = (self.wav2lip_path / "inference.py").resolve()
-        self.wav2lip_checkpoint_abs_path = (self.wav2lip_path / "checkpoints" / "wav2lip.pth").resolve()
-        self.wav2lip_gan_checkpoint_abs_path = (self.wav2lip_path / "checkpoints" / "wav2lip_gan.pth").resolve()
-
-        if not self.wav2lip_inference_script_abs_path.exists():
-            logger.error(f"Wav2Lip inference script NOT FOUND: {self.wav2lip_inference_script_abs_path}")
-        else:
-            logger.info(f"Found Wav2Lip inference script: {self.wav2lip_inference_script_abs_path}")
-
-        if not self.wav2lip_checkpoint_abs_path.exists():
-            logger.warning(f"Primary Wav2Lip checkpoint NOT FOUND: {self.wav2lip_checkpoint_abs_path}")
-            if self.wav2lip_gan_checkpoint_abs_path.exists():
-                logger.info(f"Found Wav2Lip GAN checkpoint (will use as fallback): {self.wav2lip_gan_checkpoint_abs_path}")
-            else:
-                logger.error(f"CRITICAL: NEITHER Wav2Lip standard nor GAN checkpoint found. Lip sync will fail.")
-        else:
-            logger.info(f"Found Wav2Lip standard checkpoint: {self.wav2lip_checkpoint_abs_path}")
-
+    def _convert_to_mp4(self, input_path: Path, output_path: Path) -> Path:
+        """Converts any video file to a standard MP4 format."""
+        logger.info(f"Converting video {input_path.name} to MP4 format at {output_path}.")
+        command = [
+            'ffmpeg', '-y', '-i', str(input_path), 
+            '-c:v', 'libx264', '-preset', 'medium', '-crf', '23', 
+            '-c:a', 'aac', '-b:a', '128k', 
+            str(output_path)
+        ]
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True, timeout=300)
+            logger.info("Video successfully converted to MP4.")
+            return output_path
+        except subprocess.CalledProcessError as e:
+            logger.error(f"FFmpeg conversion failed. STDERR: {e.stderr}")
+            raise ValueError(f"FFmpeg conversion error: {e.stderr}")
+        except Exception as e:
+            logger.error(f"An unexpected error occurred during video conversion: {e}", exc_info=True)
+            raise
+    
     def _progress_event(self, progress: int, phase: str) -> str:
         logger.debug(f"Progress: {progress}% - {phase}")
         return f"data: {json.dumps({'progress': progress, 'phase': phase})}\n\n"
@@ -117,103 +112,52 @@ class VideoProcessor:
         except Exception as e:
             logger.error(f"Failed to save audio tensor to {output_path}: {e}", exc_info=True); raise
 
+    # REPLACE the old apply_lip_sync method in VideoProcessor class with this one.
     def apply_lip_sync(self, original_video_path: Path, translated_audio_path: Path, lip_synced_video_output_path: Path) -> bool:
-        request_id_short = lip_synced_video_output_path.stem.split('_')[0] 
-        logger.info(f"[{request_id_short}] Wav2Lip Attempt: Video='{original_video_path.name}', Audio='{translated_audio_path.name}' -> Output='{lip_synced_video_output_path.name}'")
+        """
+        Calls the MuseTalk API to perform lip-sync.
+        Returns True on success, False on failure.
+        """
+        request_id_short = lip_synced_video_output_path.stem.split('_')[0]
+        musetalk_url = f"{MUSETALK_API_URL}/lipsync-video/"
+        logger.info(f"[{request_id_short}] Calling MuseTalk API for lip sync at: {musetalk_url}")
 
-        wav2lip_python_path = self.wav2lip_path / "venv_wav2lip" / "bin" / "python"
-        if sys.platform == "win32":
-            wav2lip_python_path = self.wav2lip_path / "venv_wav2lip" / "Scripts" / "python.exe"
-        
-        if not wav2lip_python_path.exists():
-            logger.error(f"[{request_id_short}] Wav2Lip Python interpreter not found at {wav2lip_python_path}. "
-                         "Ensure 'venv_wav2lip' is created correctly in the Wav2Lip directory and its Python path is correct.")
-            return False
-
-        if not self.wav2lip_inference_script_abs_path or not self.wav2lip_inference_script_abs_path.exists():
-            logger.error(f"[{request_id_short}] Wav2Lip inference.py not found (expected at {self.wav2lip_inference_script_abs_path}). Cannot perform lip sync.")
-            return False
-        
-        checkpoint_to_use_abs_path: Optional[Path] = None
-        if self.wav2lip_checkpoint_abs_path and self.wav2lip_checkpoint_abs_path.exists():
-            checkpoint_to_use_abs_path = self.wav2lip_checkpoint_abs_path
-        elif self.wav2lip_gan_checkpoint_abs_path and self.wav2lip_gan_checkpoint_abs_path.exists():
-            checkpoint_to_use_abs_path = self.wav2lip_gan_checkpoint_abs_path
-            logger.info(f"[{request_id_short}] Using Wav2Lip GAN checkpoint as standard one was not found.")
-        else:
-            logger.error(f"[{request_id_short}] CRITICAL: No Wav2Lip checkpoint (.pth file) found. Lip sync cannot proceed.")
-            return False
-        
-        logger.info(f"[{request_id_short}] Using Wav2Lip checkpoint: {checkpoint_to_use_abs_path}")
-
-        abs_original_video_path = str(original_video_path.resolve())
-        abs_translated_audio_path = str(translated_audio_path.resolve())
-        abs_lip_synced_video_output_path = str(lip_synced_video_output_path.resolve())
-
-        command = [
-            str(wav2lip_python_path), 
-            str(self.wav2lip_inference_script_abs_path),
-            "--checkpoint_path", str(checkpoint_to_use_abs_path),
-            "--face", abs_original_video_path,
-            "--audio", abs_translated_audio_path,
-            "--outfile", abs_lip_synced_video_output_path,
-            "--nosmooth", 
-            "--resize_factor", "1" # Keep at 1 for now, or make it a parameter
-        ]
-        logger.info(f"[{request_id_short}] Executing Wav2Lip command: {' '.join(command)}")
-        
-        wav2lip_working_dir = str(self.wav2lip_path)
-
-        subprocess_env = os.environ.copy()
-        keys_to_remove_from_env = ['CONDA_PREFIX', 'CONDA_DEFAULT_ENV', 'CONDA_PROMPT_MODIFIER', 'VIRTUAL_ENV', 'PYTHONHOME']
-        for key in keys_to_remove_from_env:
-            if key in subprocess_env:
-                logger.debug(f"[{request_id_short}] Removing '{key}' from subprocess env. Value was: {subprocess_env[key]}")
-                del subprocess_env[key]
-        
-        venv_bin_path = str((self.wav2lip_path / "venv_wav2lip" / "bin").resolve())
-        existing_path = subprocess_env.get('PATH', '')
-        subprocess_env['PATH'] = f"{venv_bin_path}{os.pathsep}{existing_path}"
-        logger.debug(f"[{request_id_short}] Subprocess PATH for Wav2Lip: {subprocess_env['PATH']}")
-        # logger.debug(f"[{request_id_short}] Full subprocess_env keys: {list(subprocess_env.keys())}") # Can be too verbose
-
-        logger.info(f"[{request_id_short}] Starting Wav2Lip subprocess with 2-hour timeout...")
-        process_start_time = time.time()
         try:
-            process = subprocess.run(command, cwd=wav2lip_working_dir, 
-                                     capture_output=True, text=True, 
-                                     timeout=7200, # 2 HOURS TIMEOUT
-                                     check=False,
-                                     env=subprocess_env) 
-            
-            process_duration = time.time() - process_start_time
-            logger.info(f"[{request_id_short}] Wav2Lip subprocess finished in {process_duration:.2f} seconds.")
-            
-            # Log STDOUT/STDERR regardless of exit code for better debugging
-            if process.stdout:
-                logger.info(f"[{request_id_short}] Wav2Lip STDOUT:\n{process.stdout}")
-            if process.stderr:
-                logger.warning(f"[{request_id_short}] Wav2Lip STDERR:\n{process.stderr}")
+            converted_video_path = original_video_path.with_suffix('.mp4')
+            self._convert_to_mp4(original_video_path, converted_video_path)
 
-            if process.returncode != 0:
-                logger.error(f"[{request_id_short}] Wav2Lip process failed with code {process.returncode}.")
-                return False # Detailed logs already printed
-            
-            if not lip_synced_video_output_path.exists() or lip_synced_video_output_path.stat().st_size < 10000: 
-                size_info = lip_synced_video_output_path.stat().st_size if lip_synced_video_output_path.exists() else 'DOES NOT EXIST'
-                logger.error(f"[{request_id_short}] Wav2Lip ran (exit code 0) but output file is missing or too small: {lip_synced_video_output_path} (Size: {size_info})")
-                return False
+            with open(converted_video_path, "rb") as video_file, open(translated_audio_path, "rb") as audio_file:
+                files = {
+                    "video_file": video_file,
+                    "audio_file": audio_file,
+                }
+                data = {"bbox_shift": 0} # This can be parameterized later if needed
+
+                # Use a long timeout as lip-sync can be slow
+                response = requests.post(musetalk_url, files=files, data=data, timeout=7200) # 2-hour timeout
+
+            if response.status_code == 200:
+                # Save the returned video content directly to the output path
+                with open(lip_synced_video_output_path, "wb") as f_out:
+                    f_out.write(response.content)
                 
-            logger.info(f"[{request_id_short}] Wav2Lip lip sync successful. Output: {lip_synced_video_output_path} (Size: {lip_synced_video_output_path.stat().st_size})")
-            return True
-            
-        except subprocess.TimeoutExpired:
-            process_duration = time.time() - process_start_time
-            logger.error(f"[{request_id_short}] Wav2Lip process timed out after {process_duration:.2f} seconds (limit was 7200s).")
+                if lip_synced_video_output_path.exists() and lip_synced_video_output_path.stat().st_size > 1000:
+                    logger.info(f"[{request_id_short}] MuseTalk API call successful. Saved lip-synced video to {lip_synced_video_output_path.name}")
+                    return True
+                else:
+                    logger.error(f"[{request_id_short}] MuseTalk API returned success but output file is missing or empty.")
+                    return False
+            else:
+                # Log the error response from the MuseTalk API
+                error_detail = response.text[:500] # Get first 500 chars of error
+                logger.error(f"[{request_id_short}] MuseTalk API call failed with status {response.status_code}. Detail: {error_detail}")
+                return False
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"[{request_id_short}] Failed to connect or communicate with MuseTalk API: {e}", exc_info=True)
             return False
         except Exception as e:
-            process_duration = time.time() - process_start_time
-            logger.error(f"[{request_id_short}] Exception during Wav2Lip execution after {process_duration:.2f} seconds: {e}", exc_info=True)
+            logger.error(f"[{request_id_short}] An unexpected error occurred during the MuseTalk API call: {e}", exc_info=True)
             return False
 
     def combine_audio_video(self, final_audio_path: Path, original_video_path: Path, output_video_path: Path):
@@ -282,7 +226,7 @@ class VideoProcessor:
             yield self._progress_event(30, current_phase_for_error)
             translation_start_time = time.time()
             translation_result = backend_instance.translate_speech(
-                audio_tensor=audio_tensor, source_lang="eng", target_lang=target_language
+                audio_tensor=audio_tensor, source_lang="eng", target_lang=target_language, original_video_path=temp_original_video_path
             )
             final_translated_cloned_audio_tensor = translation_result["audio"]
             source_text = translation_result["transcripts"]["source"]
@@ -293,12 +237,42 @@ class VideoProcessor:
             self.save_audio_tensor(final_translated_cloned_audio_tensor, path_for_final_audio)
             temp_paths_to_cleanup.append(path_for_final_audio)
             logger.info(f"{phase_logger_str} Translated audio saved: {path_for_final_audio.name}")
+
+            # --- WATERMARKING CODE BLOCK (IMPROVED VERSION) ---
+            current_phase_for_error = "Embedding watermark"
+            yield self._progress_event(55, "Embedding provenance watermark...")
+            logger.info(f"{phase_logger_str} Embedding secret watermark into final audio...")
+            try:
+                # 1. Dynamically get the backend's class name for the pipeline
+                pipeline_name = type(backend_instance).__name__
+
+                # 2. Create a detailed, dynamically generated payload
+                payload_data = {
+                    "app": "Thesis-2025",
+                    "v": "1.0-thesis",
+                    "req_id": request_id,
+                    "ts_utc": datetime.utcnow().isoformat() + "Z",
+                    "pipeline": pipeline_name  # <-- Now it's dynamic! e.g., "CascadedBackend"
+                }
+                payload_str = json.dumps(payload_data)
+                payload_bytes = payload_str.encode('utf-8')
+
+                # 3. Load, watermark, and save back
+                audio_data = WaterMark.read_audio(str(path_for_final_audio))
+                audio_with_wm = WaterMark.add_watermark(audio_data, payload_bytes)
+                WaterMark.write_audio(audio_with_wm, str(path_for_final_audio))
+
+                logger.info(f"{phase_logger_str} Secret watermark embedded successfully.")
+            except Exception as e_wm:
+                logger.warning(f"{phase_logger_str} Could not embed watermark (continuing without it): {e_wm}")
+            # --- END OF BLOCK ---
             
             final_video_to_serve_path: Optional[Path] = None 
             
             if apply_lip_sync_enabled:
-                current_phase_for_error = "Applying lip synchronization (Wav2Lip)"
+                current_phase_for_error = "Applying lip synchronization (MuseTalk)"
                 yield self._progress_event(60, "Applying lip synchronization (this may take some time)...")
+                # ... (rest of the lip-sync and video combination logic is unchanged) ...
                 lipsync_start_time = time.time()
                 path_for_lip_synced_video = request_temp_dir / f"{request_id}_lip_synced_video.mp4" 
                 
@@ -327,7 +301,7 @@ class VideoProcessor:
                 final_video_to_serve_path = path_for_combined_video
                 logger.info(f"{phase_logger_str} Video with new audio (no lip sync) created ({(time.time()-combine_start_time):.2f}s)")
 
-
+            # ... (rest of the function is unchanged) ...
             if not final_video_to_serve_path or not final_video_to_serve_path.exists() or final_video_to_serve_path.stat().st_size < 10000: 
                 error_msg = f"{phase_logger_str} Final video output missing/empty after processing."
                 logger.error(error_msg)
@@ -349,7 +323,7 @@ class VideoProcessor:
             yield f"data: {json.dumps({'error': str(e), 'phase': f'Error during: {phase_at_error}'})}\n\n"
         finally:
             logger.info(f"{phase_logger_str} Entering finally block for cleanup. Total processing time before cleanup: {(time.time()-overall_start_time):.2f}s")
-            self._cleanup_request_files(request_temp_dir) 
+            self._cleanup_request_files(request_temp_dir)
 
 # MODIFIED: Added apply_lip_sync to the function signature
 def handle_video_processing(request_files: Dict[str, Any], target_language: str, backend_instance: TranslationBackend, apply_lip_sync: bool):

@@ -1,190 +1,58 @@
-# Dockerfile.cosyvoice
-FROM --platform=linux/amd64 python:3.10-slim-bullseye
+# Dockerfile.cosyvoice - The Proven, Working Version
+# This builds a self-contained image with the models baked in.
 
-LABEL maintainer="Rob Mills"
-LABEL description="Ultimate CPU Emulation Attempt: Robust Docker image for CosyVoice API service"
+FROM python:3.10-slim-bullseye
 
-# --- Environment Variables for Build & Runtime ---
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=600 \
-    CONDA_DIR=/opt/conda \
-    LC_ALL=C.UTF-8 \
-    LANG=C.UTF-8
-ENV PATH=${CONDA_DIR}/bin:${PATH}
+    PIP_DISABLE_PIP_VERSION_CHECK=on
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git git-lfs sox libsndfile1 build-essential cmake unzip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+RUN pip install --upgrade pip
 
-# --- System Dependencies ---
-RUN echo "Updating package lists and installing system dependencies..." && \
-    apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-    wget \
-    git \
-    git-lfs \
-    sox \
-    libsox-dev \
-    ffmpeg \
-    ca-certificates \
-    bzip2 \
-    unzip \
-    build-essential \
-    nano \
-    sed \
-    libsndfile1 \
-    libfftw3-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN echo "Initializing git-lfs..." && \
-    git lfs install
-
-# --- Miniconda Installation ---
-RUN echo "Downloading and installing Miniconda..." && \
-    wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    chmod +x /tmp/miniconda.sh && \
-    echo "Executing Miniconda installer: /tmp/miniconda.sh -b -p ${CONDA_DIR}" && \
-    /tmp/miniconda.sh -b -p "${CONDA_DIR}" && \
-    rm /tmp/miniconda.sh && \
-    echo "Initializing Conda for bash..." && \
-    "${CONDA_DIR}/bin/conda" init bash && \
-    echo "Cleaning Conda cache..." && \
-    "${CONDA_DIR}/bin/conda" clean --all --yes && \
-    echo "Miniconda installation complete."
-
-# Activate Conda base environment for subsequent RUN commands
-SHELL ["/bin/bash", "--login", "-c"]
-
-# --- Conda, Python & Core Packaging Tools Verification & Upgrade ---
-RUN echo "Verifying Conda and Python installations (from 'base' Conda env)..." && \
-    which conda && conda --version && \
-    which python && python --version && \
-    which pip && pip --version && \
-    echo "Updating pip, setuptools, and wheel in base Conda env..." && \
-    pip install --upgrade pip setuptools wheel && \
-    echo "Verification of upgraded tools:" && \
-    pip --version && \
-    python -c "import setuptools; print(f'setuptools version: {setuptools.__version__}')" && \
-    python -c "import wheel; print(f'wheel version: {wheel.__version__}')" && \
-    echo "Base Python packaging tools updated and verified."
-
-# --- CosyVoice Repository Clone ---
-RUN echo "Cloning CosyVoice repository..." && \
-    git clone --recursive https://github.com/FunAudioLLM/CosyVoice.git CosyVoice && \
-    echo "CosyVoice repository cloned."
-
+# --- Core Logic from your working branch ---
+RUN git clone --recursive https://github.com/RobMills28/CosyVoice.git
 WORKDIR /app/CosyVoice
 
-# --- MODIFIED: Install libstdcxx-ng from conda-forge BEFORE pynini ---
-    RUN echo "Installing libstdcxx-ng from conda-forge..." && \
-    conda install -y -c conda-forge libstdcxx-ng && \
-    echo "libstdcxx-ng installation attempt finished."
-# --- END MODIFICATION ---
+RUN pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cpu
 
-# --- Pynini Installation (Essential for WeTextProcessing fallback) ---
-RUN echo "Installing pynini via Conda..." && \
-    conda install -y -c conda-forge pynini==2.1.5 && \
-    echo "Pynini installation finished. Verifying pynini:" && \
-    conda list pynini
+RUN cp requirements.txt requirements.txt.processed && \
+    sed -i -e '/--hash=/d' \
+           -e '/--extra-index-url/s/^/#/' \
+           -e '/tensorrt/s/^/#/' \
+           -e '/onnxruntime-gpu/s/^/#/' requirements.txt.processed && \
+    pip install -r requirements.txt.processed
 
-# --- Pre-Process requirements.txt ---
-RUN echo "Pre-processing requirements.txt..." && \
-    # Create a backup
-    cp requirements.txt requirements.txt.original && \
-    # 1. Comment out TensorRT
-    echo "Commenting out TensorRT lines..." && \
-    sed -i '/tensorrt-cu12/s/^/#TRT_COMMENTED /' requirements.txt && \
-    # 2. Comment out onnxruntime-gpu (we will install generic onnxruntime later if needed)
-    echo "Commenting out onnxruntime-gpu lines..." && \
-    sed -i '/onnxruntime-gpu/s/^/#ONNXGPU_COMMENTED /' requirements.txt && \
-    # 3. Comment out ALL --extra-index-url lines
-    echo "Commenting out --extra-index-url lines..." && \
-    sed -i '/^--extra-index-url/s/^/#INDEX_COMMENTED /' requirements.txt && \
-    # 4. Aggressively strip all hash specifications
-    echo "Aggressively stripping all hash specifications..." && \
-    sed -i -e '/^[[:space:]]*--hash=/d' \
-           -e 's/[[:space:]]--hash=[^[:space:]]*//g' \
-           -e 's/[[:space:]]--hash=[^[:space:]]*$//g' requirements.txt && \
-    echo "requirements.txt pre-processing finished."
+RUN pip install onnxruntime==1.18.0
+RUN pip install fastapi uvicorn[standard] python-multipart
 
-# --- Verify Cleaned requirements.txt ---
-RUN echo "--- Verifying cleaned requirements.txt ---" && \
-    echo "Searching for uncommented 'tensorrt-cu12':" && \
-    (grep -v '^#' requirements.txt | grep 'tensorrt-cu12' || echo "OK: No uncommented tensorrt-cu12 found.") && \
-    echo "Searching for uncommented 'onnxruntime-gpu':" && \
-    (grep -v '^#' requirements.txt | grep 'onnxruntime-gpu' || echo "OK: No uncommented onnxruntime-gpu found.") && \
-    echo "Searching for uncommented '--extra-index-url':" && \
-    (grep -v '^#' requirements.txt | grep '\--extra-index-url' || echo "OK: No uncommented --extra-index-url found.") && \
-    echo "Searching for uncommented '--hash=':" && \
-    (grep -v '^#' requirements.txt | grep '\--hash=' || echo "OK: No uncommented --hash= found.") && \
-    echo "--- End requirements.txt verification ---"
+# --- Model baking and final setup ---
+# Create a standard location for all models
+RUN mkdir -p /app/models
 
-# --- Install CPU-Specific PyTorch and Torchaudio First ---
-# This is crucial to avoid pulling in GPU-related dependencies from a generic torch install
-RUN echo "Installing CPU-specific PyTorch (2.3.1) and Torchaudio (2.3.1)..." && \
-    pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cpu && \
-    echo "CPU-specific PyTorch and Torchaudio installed." && \
-    echo "Verifying torch installation..." && \
-    python -c "import torch; print(f'Torch version: {torch.__version__}'); print(f'Torch CUDA available: {torch.cuda.is_available()}')"
+# Download standard models directly into this new, correct location
+RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice2-0.5B', local_dir='/app/models/CosyVoice2-0.5B')"
+RUN python -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('iic/CosyVoice-ttsfrd', local_dir='/app/models/CosyVoice-ttsfrd')"
 
-# --- Main Python Dependencies Installation (from modified requirements.txt) ---
-# torch and torchaudio should already be installed, pip will recognize this.
-RUN echo "Installing remaining Python packages from the modified requirements.txt..." && \
-    pip install --timeout 600 --retries 10 -r requirements.txt && \
-    echo "Remaining Python packages installed."
+WORKDIR /app/models/CosyVoice-ttsfrd
+RUN if [ -f resource.zip ]; then unzip -o resource.zip -d .; fi
 
-# --- Install ONNXRuntime (CPU version) ---
-# If onnxruntime-gpu was commented out, ensure a CPU version is available.
-# The requirements.txt has "onnxruntime==1.18.0; sys_platform == 'darwin' or sys_platform == 'win32'"
-# We need to ensure a linux CPU version is installed if not already by another dependency.
-RUN echo "Ensuring ONNXRuntime (CPU) is installed..." && \
-    pip install onnxruntime==1.18.0 && \
-    echo "ONNXRuntime (CPU) installed/verified."
+# --- Create a Proper Directory for the Greek Model ---
+# 1. Copy the entire standard model directory to a new "greek" directory. This now works because the source path is correct.
+RUN cp -r /app/models/CosyVoice2-0.5B /app/models/CosyVoice-Greek
 
-# --- Model Downloading (into the image) ---
-RUN echo "Creating pretrained_models directory in /app/CosyVoice/..." && \
-    mkdir -p pretrained_models
-COPY Docker/download_cosy_models_in_docker.py .
-RUN echo "Running model download script (downloads into /app/CosyVoice/pretrained_models/)..." && \
-    python download_cosy_models_in_docker.py && \
-    echo "Model download script finished."
-
-# --- Configuration File Adjustments ---
-RUN YAML_V2_PATH="/app/CosyVoice/pretrained_models/CosyVoice2-0.5B/cosyvoice2.yaml" && \
-    YAML_V1_PATH="/app/CosyVoice/pretrained_models/CosyVoice2-0.5B/cosyvoice.yaml" && \
-    if [ -f "$YAML_V2_PATH" ]; then \
-        echo "Renaming $YAML_V2_PATH to $YAML_V1_PATH for CosyVoice2-0.5B..."; \
-        mv "$YAML_V2_PATH" "$YAML_V1_PATH"; \
-        echo "Rename complete for CosyVoice2-0.5B YAML."; \
-    else \
-        echo "INFO: CosyVoice2-0.5B YAML: $YAML_V2_PATH not found or $YAML_V1_PATH already exists."; \
-    fi
-
-# --- ttsfrd Resource Preparation (Unzip only, no wheel install) ---
-WORKDIR /app/CosyVoice/pretrained_models/CosyVoice-ttsfrd
-RUN if [ -f resource.zip ]; then \
-        echo "Unzipping ttsfrd resource.zip into current directory..."; \
-        unzip -o resource.zip -d .; \
-        echo "ttsfrd resource.zip unzipped."; \
-    else \
-        echo "WARNING: ttsfrd resource.zip not found, skipping unzip."; \
-    fi
-RUN echo "SKIPPED TTSFRD WHEEL INSTALLATION (using WeTextProcessing fallback)."
+# 2. Copy your fine-tuned greek_llm.pt file, REPLACING the original one inside the new directory.
+COPY Docker/greek_llm.pt /app/models/CosyVoice-Greek/llm/model.pt
 
 # --- Final Application Setup ---
 WORKDIR /app
-RUN echo "Installing FastAPI and Uvicorn (final check/install)..." && \
-    pip install fastapi uvicorn[standard] python-multipart && \
-    echo "FastAPI and Uvicorn installed."
 COPY Docker/cosyvoice_api.py .
 
-ENV PYTHONPATH /app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}
-EXPOSE 8000
+ENV PYTHONPATH=/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS
 
-# --- CMD TO START THE API SERVICE (Explicitly setting LD_LIBRARY_PATH) ---
-    CMD export CONDA_LIB_PATH="${CONDA_DIR}/lib" && \
-    export LD_LIBRARY_PATH="${CONDA_LIB_PATH}:${LD_LIBRARY_PATH}" && \
-    echo "DEBUG: Set LD_LIBRARY_PATH to: ${LD_LIBRARY_PATH}" && \
-    export PYTHONPATH="/app/CosyVoice:/app/CosyVoice/third_party/Matcha-TTS:${PYTHONPATH}" && \
-    echo "Attempting to start Uvicorn API service with CosyVoice-300M..." && \
-    echo "Running command: ${CONDA_DIR}/bin/python -m uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info --workers 1" && \
-    "${CONDA_DIR}/bin/python" -m uvicorn cosyvoice_api:app --host 0.0.0.0 --port 8000 --log-level info --workers 1
+EXPOSE 8000
+CMD ["uvicorn", "cosyvoice_api:app", "--host", "0.0.0.0", "--port", "8000"]

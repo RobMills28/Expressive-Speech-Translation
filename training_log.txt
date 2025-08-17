@@ -1,0 +1,458 @@
+nohup: ignoring input
+[2025-08-10 22:24:40,181] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/opt/conda/envs/pytorch/lib/python3.10/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/opt/conda/envs/pytorch/lib/python3.10/site-packages/torchvision/image.so: undefined symbol: _ZN3c1017RegisterOperatorsD1Ev'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
+  warn(
+2025-08-10 22:24:55,854 INFO training on multiple gpus, this gpu 0, rank 0, world_size 1
+2025-08-10 22:25:28,417 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/init.pt
+start step 0 start epoch -1
+2025-08-10 22:25:28,450 INFO Epoch 0 TRAIN info lr 1e-05 rank 0
+2025-08-10 22:25:28,450 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[rank0]:[W reducer.cpp:1389] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+2025-08-10 22:25:42,979 WARNING get infinite grad_norm, check your code/data if it appears frequently
+/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:143: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+2025-08-10 22:25:43,389 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-10 22:25:46,002 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-10 22:26:36,482 DEBUG TRAIN Batch 0/100 loss 3.830355 acc 0.201183 lr 0.00001000 grad_norm 7.991808 rank 0
+2025-08-10 22:27:31,466 DEBUG TRAIN Batch 0/200 loss 3.609026 acc 0.192982 lr 0.00001000 grad_norm 6.013335 rank 0
+2025-08-10 22:28:28,033 DEBUG TRAIN Batch 0/300 loss 3.257808 acc 0.335886 lr 0.00001000 grad_norm 4.093009 rank 0
+2025-08-10 22:29:23,258 DEBUG TRAIN Batch 0/400 loss 3.322236 acc 0.325638 lr 0.00001000 grad_norm 4.864433 rank 0
+2025-08-10 22:30:20,992 DEBUG TRAIN Batch 0/500 loss 3.799577 acc 0.239035 lr 0.00001000 grad_norm 4.359265 rank 0
+2025-08-10 22:31:14,603 DEBUG TRAIN Batch 0/600 loss 3.712376 acc 0.268672 lr 0.00001000 grad_norm 3.302856 rank 0
+2025-08-10 22:32:11,043 DEBUG TRAIN Batch 0/700 loss 3.836897 acc 0.215278 lr 0.00001000 grad_norm 3.050775 rank 0
+2025-08-10 22:33:04,830 DEBUG TRAIN Batch 0/800 loss 3.459757 acc 0.236548 lr 0.00001000 grad_norm 3.403000 rank 0
+2025-08-10 22:34:02,274 DEBUG TRAIN Batch 0/900 loss 3.999026 acc 0.150963 lr 0.00001000 grad_norm 2.587201 rank 0
+2025-08-10 22:34:56,693 DEBUG TRAIN Batch 0/1000 loss 3.865422 acc 0.176471 lr 0.00001000 grad_norm 2.724639 rank 0
+2025-08-10 22:34:56,693 INFO Epoch 0 Step 1000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 22:35:52,691 DEBUG CV Batch 0/100 loss 3.661371 acc 0.271222  rank 0
+2025-08-10 22:36:35,177 DEBUG CV Batch 0/200 loss 3.891309 acc 0.226415  rank 0
+2025-08-10 22:36:47,691 INFO Epoch 0 Step 1000 CV info lr 1e-05 0 rank loss 3.8732482417821883 acc 0.22791039703041316
+2025-08-10 22:37:04,212 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_0_step_1000.pt
+2025-08-10 22:38:01,256 DEBUG TRAIN Batch 0/1100 loss 3.771575 acc 0.189774 lr 0.00001000 grad_norm 3.119586 rank 0
+2025-08-10 22:38:56,174 DEBUG TRAIN Batch 0/1200 loss 3.772356 acc 0.217895 lr 0.00001000 grad_norm 2.618353 rank 0
+2025-08-10 22:39:50,705 DEBUG TRAIN Batch 0/1300 loss 3.806695 acc 0.214807 lr 0.00001000 grad_norm 2.707312 rank 0
+2025-08-10 22:40:48,231 DEBUG TRAIN Batch 0/1400 loss 3.490981 acc 0.205915 lr 0.00001000 grad_norm 2.646758 rank 0
+2025-08-10 22:41:41,396 DEBUG TRAIN Batch 0/1500 loss 3.368800 acc 0.232258 lr 0.00001000 grad_norm 2.986983 rank 0
+2025-08-10 22:42:42,850 DEBUG TRAIN Batch 0/1600 loss 3.508952 acc 0.233091 lr 0.00001000 grad_norm 3.056239 rank 0
+2025-08-10 22:42:56,143 INFO Epoch 0 Step 1626 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 22:43:51,747 DEBUG CV Batch 0/100 loss 4.039691 acc 0.191810  rank 0
+2025-08-10 22:44:34,752 DEBUG CV Batch 0/200 loss 4.259122 acc 0.182195  rank 0
+2025-08-10 22:44:47,061 INFO Epoch 0 Step 1626 CV info lr 1e-05 0 rank loss 3.977515119075775 acc 0.22426168198883534
+2025-08-10 22:45:03,839 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_0_whole.pt
+2025-08-10 22:45:03,861 INFO Epoch 1 TRAIN info lr 1e-05 rank 0
+2025-08-10 22:45:03,861 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 22:46:12,000 DEBUG TRAIN Batch 1/100 loss 3.613190 acc 0.217143 lr 0.00001000 grad_norm 4.559441 rank 0
+2025-08-10 22:47:09,438 DEBUG TRAIN Batch 1/200 loss 3.393904 acc 0.234960 lr 0.00001000 grad_norm 3.011189 rank 0
+2025-08-10 22:48:04,711 DEBUG TRAIN Batch 1/300 loss 3.591810 acc 0.213048 lr 0.00001000 grad_norm 3.134250 rank 0
+2025-08-10 22:48:45,348 INFO Epoch 1 Step 2000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 22:49:41,814 DEBUG CV Batch 1/100 loss 4.048612 acc 0.185185  rank 0
+2025-08-10 22:50:24,612 DEBUG CV Batch 1/200 loss 3.944727 acc 0.216855  rank 0
+2025-08-10 22:50:36,426 INFO Epoch 1 Step 2000 CV info lr 1e-05 0 rank loss 3.826528504014015 acc 0.23091966607421638
+2025-08-10 22:50:53,022 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_1_step_2000.pt
+2025-08-10 22:51:06,508 DEBUG TRAIN Batch 1/400 loss 3.674801 acc 0.198381 lr 0.00001000 grad_norm 3.472958 rank 0
+2025-08-10 22:52:03,291 DEBUG TRAIN Batch 1/500 loss 3.251735 acc 0.287568 lr 0.00001000 grad_norm 3.186841 rank 0
+2025-08-10 22:52:58,266 DEBUG TRAIN Batch 1/600 loss 3.317400 acc 0.266667 lr 0.00001000 grad_norm 3.309654 rank 0
+2025-08-10 22:53:57,120 DEBUG TRAIN Batch 1/700 loss 3.211829 acc 0.265690 lr 0.00001000 grad_norm 3.160269 rank 0
+2025-08-10 22:54:51,092 DEBUG TRAIN Batch 1/800 loss 3.125422 acc 0.275148 lr 0.00001000 grad_norm 3.272420 rank 0
+2025-08-10 22:55:48,633 DEBUG TRAIN Batch 1/900 loss 3.502375 acc 0.240240 lr 0.00001000 grad_norm 3.072554 rank 0
+2025-08-10 22:56:44,133 DEBUG TRAIN Batch 1/1000 loss 3.508698 acc 0.238994 lr 0.00001000 grad_norm 2.860374 rank 0
+2025-08-10 22:57:38,909 DEBUG TRAIN Batch 1/1100 loss 4.176423 acc 0.177914 lr 0.00001000 grad_norm 2.954448 rank 0
+2025-08-10 22:58:35,215 DEBUG TRAIN Batch 1/1200 loss 3.879705 acc 0.183967 lr 0.00001000 grad_norm 2.596885 rank 0
+2025-08-10 22:59:29,985 DEBUG TRAIN Batch 1/1300 loss 4.013400 acc 0.175258 lr 0.00001000 grad_norm 3.077283 rank 0
+2025-08-10 23:00:15,178 INFO Epoch 1 Step 3000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:01:10,759 DEBUG CV Batch 1/100 loss 3.995137 acc 0.194357  rank 0
+2025-08-10 23:01:53,330 DEBUG CV Batch 1/200 loss 3.973510 acc 0.184845  rank 0
+2025-08-10 23:02:05,635 INFO Epoch 1 Step 3000 CV info lr 1e-05 0 rank loss 3.847781154036522 acc 0.229239825733006
+2025-08-10 23:02:22,171 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_1_step_3000.pt
+2025-08-10 23:02:35,677 DEBUG TRAIN Batch 1/1400 loss 3.732607 acc 0.190591 lr 0.00001000 grad_norm 3.166444 rank 0
+2025-08-10 23:03:29,789 DEBUG TRAIN Batch 1/1500 loss 3.398333 acc 0.215886 lr 0.00001000 grad_norm 3.391768 rank 0
+2025-08-10 23:04:27,875 DEBUG TRAIN Batch 1/1600 loss 3.473965 acc 0.273319 lr 0.00001000 grad_norm 2.553369 rank 0
+2025-08-10 23:04:40,807 INFO Epoch 1 Step 3250 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:05:36,986 DEBUG CV Batch 1/100 loss 3.951909 acc 0.205422  rank 0
+2025-08-10 23:06:19,283 DEBUG CV Batch 1/200 loss 4.058148 acc 0.194014  rank 0
+2025-08-10 23:06:31,176 INFO Epoch 1 Step 3250 CV info lr 1e-05 0 rank loss 3.8337269686460496 acc 0.23091832575947047
+2025-08-10 23:06:47,773 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_1_whole.pt
+2025-08-10 23:06:47,791 INFO Epoch 2 TRAIN info lr 1e-05 rank 0
+2025-08-10 23:06:47,791 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:07:55,539 DEBUG TRAIN Batch 2/100 loss 3.185109 acc 0.289934 lr 0.00001000 grad_norm 3.113365 rank 0
+2025-08-10 23:08:49,788 DEBUG TRAIN Batch 2/200 loss 3.570162 acc 0.241042 lr 0.00001000 grad_norm 3.278839 rank 0
+2025-08-10 23:09:48,578 DEBUG TRAIN Batch 2/300 loss 3.149308 acc 0.271078 lr 0.00001000 grad_norm 3.583746 rank 0
+2025-08-10 23:10:42,114 DEBUG TRAIN Batch 2/400 loss 3.314760 acc 0.227733 lr 0.00001000 grad_norm 3.747929 rank 0
+2025-08-10 23:11:39,234 DEBUG TRAIN Batch 2/500 loss 3.097003 acc 0.302374 lr 0.00001000 grad_norm 3.287467 rank 0
+2025-08-10 23:12:33,765 DEBUG TRAIN Batch 2/600 loss 2.885337 acc 0.307150 lr 0.00001000 grad_norm 3.166553 rank 0
+2025-08-10 23:13:32,023 DEBUG TRAIN Batch 2/700 loss 3.452872 acc 0.267198 lr 0.00001000 grad_norm 3.132480 rank 0
+2025-08-10 23:13:59,708 INFO Epoch 2 Step 4000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:14:56,549 DEBUG CV Batch 2/100 loss 3.934713 acc 0.223834  rank 0
+2025-08-10 23:15:38,865 DEBUG CV Batch 2/200 loss 3.920776 acc 0.226762  rank 0
+2025-08-10 23:15:51,100 INFO Epoch 2 Step 4000 CV info lr 1e-05 0 rank loss 3.883007535099983 acc 0.2271703647300601
+2025-08-10 23:15:53,901 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_2_step_4000.pt
+2025-08-10 23:16:20,504 DEBUG TRAIN Batch 2/800 loss 3.245277 acc 0.263676 lr 0.00001000 grad_norm 3.025213 rank 0
+2025-08-10 23:17:17,403 DEBUG TRAIN Batch 2/900 loss 3.321343 acc 0.276360 lr 0.00001000 grad_norm 3.824727 rank 0
+2025-08-10 23:18:12,919 DEBUG TRAIN Batch 2/1000 loss 2.711570 acc 0.393640 lr 0.00001000 grad_norm 3.521954 rank 0
+2025-08-10 23:19:11,290 DEBUG TRAIN Batch 2/1100 loss 3.224460 acc 0.303912 lr 0.00001000 grad_norm 3.642838 rank 0
+2025-08-10 23:20:05,938 DEBUG TRAIN Batch 2/1200 loss 4.145361 acc 0.170681 lr 0.00001000 grad_norm 3.328884 rank 0
+2025-08-10 23:21:00,183 DEBUG TRAIN Batch 2/1300 loss 3.887263 acc 0.180110 lr 0.00001000 grad_norm 3.132111 rank 0
+2025-08-10 23:21:55,580 DEBUG TRAIN Batch 2/1400 loss 3.490711 acc 0.216463 lr 0.00001000 grad_norm 3.327030 rank 0
+2025-08-10 23:22:49,429 DEBUG TRAIN Batch 2/1500 loss 3.409553 acc 0.251553 lr 0.00001000 grad_norm 3.066467 rank 0
+2025-08-10 23:23:50,478 DEBUG TRAIN Batch 2/1600 loss 3.320718 acc 0.228070 lr 0.00001000 grad_norm 3.131727 rank 0
+2025-08-10 23:24:03,301 INFO Epoch 2 Step 4874 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:25:00,027 DEBUG CV Batch 2/100 loss 3.925644 acc 0.213592  rank 0
+2025-08-10 23:25:42,597 DEBUG CV Batch 2/200 loss 3.916201 acc 0.213793  rank 0
+2025-08-10 23:25:55,146 INFO Epoch 2 Step 4874 CV info lr 1e-05 0 rank loss 3.8702967879772188 acc 0.2289696949273348
+2025-08-10 23:25:57,936 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_2_whole.pt
+2025-08-10 23:25:57,951 INFO Epoch 3 TRAIN info lr 1e-05 rank 0
+2025-08-10 23:25:57,951 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:27:07,097 DEBUG TRAIN Batch 3/100 loss 3.496089 acc 0.232044 lr 0.00001000 grad_norm 4.088136 rank 0
+2025-08-10 23:27:21,598 INFO Epoch 3 Step 5000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:28:18,315 DEBUG CV Batch 3/100 loss 3.909530 acc 0.201655  rank 0
+2025-08-10 23:29:00,617 DEBUG CV Batch 3/200 loss 3.860683 acc 0.224138  rank 0
+2025-08-10 23:29:13,143 INFO Epoch 3 Step 5000 CV info lr 1e-05 0 rank loss 3.9304281469583513 acc 0.2234653193280101
+2025-08-10 23:29:15,996 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_3_step_5000.pt
+2025-08-10 23:29:58,887 DEBUG TRAIN Batch 3/200 loss 3.070993 acc 0.299117 lr 0.00001000 grad_norm 3.607052 rank 0
+2025-08-10 23:30:54,382 DEBUG TRAIN Batch 3/300 loss 3.159013 acc 0.247168 lr 0.00001000 grad_norm 4.319394 rank 0
+2025-08-10 23:31:48,127 DEBUG TRAIN Batch 3/400 loss 3.283887 acc 0.242457 lr 0.00001000 grad_norm 4.549644 rank 0
+2025-08-10 23:32:45,088 DEBUG TRAIN Batch 3/500 loss 3.395733 acc 0.227178 lr 0.00001000 grad_norm 3.852773 rank 0
+2025-08-10 23:33:39,525 DEBUG TRAIN Batch 3/600 loss 3.333952 acc 0.228395 lr 0.00001000 grad_norm 4.372102 rank 0
+2025-08-10 23:34:36,151 DEBUG TRAIN Batch 3/700 loss 4.003080 acc 0.202544 lr 0.00001000 grad_norm 4.425524 rank 0
+2025-08-10 23:35:30,633 DEBUG TRAIN Batch 3/800 loss 3.707442 acc 0.225941 lr 0.00001000 grad_norm 4.120368 rank 0
+2025-08-10 23:36:31,106 DEBUG TRAIN Batch 3/900 loss 3.089544 acc 0.269271 lr 0.00001000 grad_norm 4.422762 rank 0
+2025-08-10 23:37:24,489 DEBUG TRAIN Batch 3/1000 loss 2.837601 acc 0.316116 lr 0.00001000 grad_norm 3.777848 rank 0
+2025-08-10 23:38:20,537 DEBUG TRAIN Batch 3/1100 loss 3.577193 acc 0.222571 lr 0.00001000 grad_norm 4.236462 rank 0
+2025-08-10 23:38:35,372 INFO Epoch 3 Step 6000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:39:32,527 DEBUG CV Batch 3/100 loss 3.493941 acc 0.251282  rank 0
+2025-08-10 23:40:14,938 DEBUG CV Batch 3/200 loss 3.897674 acc 0.217593  rank 0
+2025-08-10 23:40:27,135 INFO Epoch 3 Step 6000 CV info lr 1e-05 0 rank loss 3.9112047271728514 acc 0.22682484869658948
+2025-08-10 23:40:29,950 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_3_step_6000.pt
+2025-08-10 23:41:10,383 DEBUG TRAIN Batch 3/1200 loss 3.098353 acc 0.302966 lr 0.00001000 grad_norm 4.802161 rank 0
+2025-08-10 23:42:05,608 DEBUG TRAIN Batch 3/1300 loss 2.743266 acc 0.406479 lr 0.00001000 grad_norm 4.626046 rank 0
+2025-08-10 23:43:03,121 DEBUG TRAIN Batch 3/1400 loss 3.057152 acc 0.253012 lr 0.00001000 grad_norm 4.538984 rank 0
+2025-08-10 23:43:57,293 DEBUG TRAIN Batch 3/1500 loss 3.267662 acc 0.233508 lr 0.00001000 grad_norm 4.686904 rank 0
+2025-08-10 23:44:54,275 DEBUG TRAIN Batch 3/1600 loss 3.508071 acc 0.226216 lr 0.00001000 grad_norm 3.837617 rank 0
+2025-08-10 23:45:08,218 INFO Epoch 3 Step 6500 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:46:03,952 DEBUG CV Batch 3/100 loss 3.972450 acc 0.210031  rank 0
+2025-08-10 23:46:46,802 DEBUG CV Batch 3/200 loss 4.163864 acc 0.152874  rank 0
+2025-08-10 23:46:59,231 INFO Epoch 3 Step 6500 CV info lr 1e-05 0 rank loss 3.9265572551488876 acc 0.2255988495796919
+2025-08-10 23:47:02,033 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_3_whole.pt
+2025-08-10 23:47:02,052 INFO Epoch 4 TRAIN info lr 1e-05 rank 0
+2025-08-10 23:47:02,052 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:48:10,718 DEBUG TRAIN Batch 4/100 loss 3.223273 acc 0.247046 lr 0.00001000 grad_norm 7.840384 rank 0
+2025-08-10 23:49:04,532 DEBUG TRAIN Batch 4/200 loss 3.052359 acc 0.274770 lr 0.00001000 grad_norm 6.683606 rank 0
+2025-08-10 23:49:55,847 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-10 23:50:02,757 DEBUG TRAIN Batch 4/300 loss 2.488947 acc 0.339175 lr 0.00001000 grad_norm 5.950484 rank 0
+2025-08-10 23:50:57,570 DEBUG TRAIN Batch 4/400 loss 2.762125 acc 0.320551 lr 0.00001000 grad_norm 5.928339 rank 0
+2025-08-10 23:51:55,875 DEBUG TRAIN Batch 4/500 loss 3.317787 acc 0.230134 lr 0.00001000 grad_norm 6.104966 rank 0
+2025-08-10 23:51:56,394 INFO Epoch 4 Step 7000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-10 23:52:52,814 DEBUG CV Batch 4/100 loss 3.998639 acc 0.217666  rank 0
+2025-08-10 23:53:35,779 DEBUG CV Batch 4/200 loss 3.946726 acc 0.187627  rank 0
+2025-08-10 23:53:47,740 INFO Epoch 4 Step 7000 CV info lr 1e-05 0 rank loss 4.004848256111145 acc 0.22221944811195135
+2025-08-10 23:53:50,559 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_4_step_7000.pt
+2025-08-10 23:54:44,241 DEBUG TRAIN Batch 4/600 loss 2.953007 acc 0.286008 lr 0.00001000 grad_norm 5.145048 rank 0
+2025-08-10 23:55:41,977 DEBUG TRAIN Batch 4/700 loss 2.931748 acc 0.303226 lr 0.00001000 grad_norm 6.452068 rank 0
+2025-08-10 23:56:35,430 DEBUG TRAIN Batch 4/800 loss 2.881824 acc 0.282427 lr 0.00001000 grad_norm 5.944849 rank 0
+2025-08-10 23:57:33,957 DEBUG TRAIN Batch 4/900 loss 2.847779 acc 0.315055 lr 0.00001000 grad_norm 5.545820 rank 0
+2025-08-10 23:58:28,232 DEBUG TRAIN Batch 4/1000 loss 2.525890 acc 0.375532 lr 0.00001000 grad_norm 4.954789 rank 0
+2025-08-10 23:59:24,089 DEBUG TRAIN Batch 4/1100 loss 2.669617 acc 0.325203 lr 0.00001000 grad_norm 7.753296 rank 0
+2025-08-11 00:00:21,695 DEBUG TRAIN Batch 4/1200 loss 2.952768 acc 0.274617 lr 0.00001000 grad_norm 6.274918 rank 0
+2025-08-11 00:01:17,254 DEBUG TRAIN Batch 4/1300 loss 2.909870 acc 0.293527 lr 0.00001000 grad_norm 6.420675 rank 0
+2025-08-11 00:02:12,849 DEBUG TRAIN Batch 4/1400 loss 3.159209 acc 0.242616 lr 0.00001000 grad_norm 7.160029 rank 0
+2025-08-11 00:03:07,518 DEBUG TRAIN Batch 4/1500 loss 3.303519 acc 0.212245 lr 0.00001000 grad_norm 5.692597 rank 0
+2025-08-11 00:03:08,042 INFO Epoch 4 Step 8000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:04:04,820 DEBUG CV Batch 4/100 loss 3.924341 acc 0.201485  rank 0
+2025-08-11 00:04:47,365 DEBUG CV Batch 4/200 loss 3.822864 acc 0.240275  rank 0
+2025-08-11 00:04:59,796 INFO Epoch 4 Step 8000 CV info lr 1e-05 0 rank loss 4.02366067302227 acc 0.21889602413773537
+2025-08-11 00:05:02,592 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_4_step_8000.pt
+2025-08-11 00:05:55,914 DEBUG TRAIN Batch 4/1600 loss 3.581604 acc 0.216017 lr 0.00001000 grad_norm 6.402715 rank 0
+2025-08-11 00:06:09,899 INFO Epoch 4 Step 8126 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:07:06,456 DEBUG CV Batch 4/100 loss 4.070939 acc 0.245047  rank 0
+2025-08-11 00:07:49,117 DEBUG CV Batch 4/200 loss 4.248925 acc 0.174227  rank 0
+2025-08-11 00:08:01,565 INFO Epoch 4 Step 8126 CV info lr 1e-05 0 rank loss 4.060094821095467 acc 0.2187327379360795
+2025-08-11 00:08:04,429 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_4_whole.pt
+2025-08-11 00:08:04,447 INFO Epoch 5 TRAIN info lr 1e-05 rank 0
+2025-08-11 00:08:04,447 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:09:13,064 DEBUG TRAIN Batch 5/100 loss 2.807753 acc 0.330744 lr 0.00001000 grad_norm 8.851044 rank 0
+2025-08-11 00:10:06,967 DEBUG TRAIN Batch 5/200 loss 2.423696 acc 0.357542 lr 0.00001000 grad_norm 8.642836 rank 0
+2025-08-11 00:11:03,857 DEBUG TRAIN Batch 5/300 loss 2.568854 acc 0.314406 lr 0.00001000 grad_norm 9.453661 rank 0
+2025-08-11 00:11:56,521 DEBUG TRAIN Batch 5/400 loss 2.857569 acc 0.285439 lr 0.00001000 grad_norm 8.604518 rank 0
+2025-08-11 00:12:52,645 DEBUG TRAIN Batch 5/500 loss 3.180404 acc 0.299569 lr 0.00001000 grad_norm 7.832771 rank 0
+2025-08-11 00:13:46,989 DEBUG TRAIN Batch 5/600 loss 3.106287 acc 0.291502 lr 0.00001000 grad_norm 8.436349 rank 0
+2025-08-11 00:14:43,011 DEBUG TRAIN Batch 5/700 loss 2.731191 acc 0.323791 lr 0.00001000 grad_norm 7.722988 rank 0
+2025-08-11 00:15:37,094 DEBUG TRAIN Batch 5/800 loss 2.394464 acc 0.374600 lr 0.00001000 grad_norm 8.590994 rank 0
+2025-08-11 00:16:17,984 INFO Epoch 5 Step 9000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:17:13,571 DEBUG CV Batch 5/100 loss 4.105619 acc 0.229211  rank 0
+2025-08-11 00:17:56,161 DEBUG CV Batch 5/200 loss 4.566351 acc 0.155530  rank 0
+2025-08-11 00:18:08,499 INFO Epoch 5 Step 9000 CV info lr 1e-05 0 rank loss 4.2819649482965465 acc 0.20885131090134382
+2025-08-11 00:18:11,273 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_5_step_9000.pt
+2025-08-11 00:18:24,789 DEBUG TRAIN Batch 5/900 loss 2.540887 acc 0.375000 lr 0.00001000 grad_norm 12.470413 rank 0
+2025-08-11 00:18:59,552 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-11 00:19:21,728 DEBUG TRAIN Batch 5/1000 loss 2.210639 acc 0.414286 lr 0.00001000 grad_norm 9.809042 rank 0
+2025-08-11 00:20:16,329 DEBUG TRAIN Batch 5/1100 loss 2.214383 acc 0.382080 lr 0.00001000 grad_norm 8.855999 rank 0
+2025-08-11 00:21:13,316 DEBUG TRAIN Batch 5/1200 loss 2.013918 acc 0.462882 lr 0.00001000 grad_norm 9.441514 rank 0
+2025-08-11 00:22:08,343 DEBUG TRAIN Batch 5/1300 loss 2.248398 acc 0.428571 lr 0.00001000 grad_norm 10.115276 rank 0
+2025-08-11 00:23:05,959 DEBUG TRAIN Batch 5/1400 loss 2.399959 acc 0.361169 lr 0.00001000 grad_norm 8.175742 rank 0
+2025-08-11 00:23:59,854 DEBUG TRAIN Batch 5/1500 loss 2.641233 acc 0.341683 lr 0.00001000 grad_norm 9.394188 rank 0
+2025-08-11 00:24:57,450 DEBUG TRAIN Batch 5/1600 loss 2.990322 acc 0.264674 lr 0.00001000 grad_norm 9.093557 rank 0
+2025-08-11 00:25:11,109 INFO Epoch 5 Step 9751 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:26:06,922 DEBUG CV Batch 5/100 loss 4.060682 acc 0.227225  rank 0
+2025-08-11 00:26:49,298 DEBUG CV Batch 5/200 loss 4.413260 acc 0.180498  rank 0
+2025-08-11 00:27:01,326 INFO Epoch 5 Step 9751 CV info lr 1e-05 0 rank loss 4.332217936515808 acc 0.20928147410601378
+2025-08-11 00:27:04,132 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_5_whole.pt
+2025-08-11 00:27:04,156 INFO Epoch 6 TRAIN info lr 1e-05 rank 0
+2025-08-11 00:27:04,156 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:28:11,871 DEBUG TRAIN Batch 6/100 loss 1.521560 acc 0.535332 lr 0.00001000 grad_norm 12.100218 rank 0
+2025-08-11 00:29:06,117 DEBUG TRAIN Batch 6/200 loss 1.986915 acc 0.465164 lr 0.00001000 grad_norm 12.125984 rank 0
+2025-08-11 00:29:36,268 INFO Epoch 6 Step 10000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:30:32,462 DEBUG CV Batch 6/100 loss 4.219397 acc 0.209711  rank 0
+2025-08-11 00:31:14,896 DEBUG CV Batch 6/200 loss 4.679481 acc 0.199597  rank 0
+2025-08-11 00:31:27,077 INFO Epoch 6 Step 10000 CV info lr 1e-05 0 rank loss 4.6012950360775 acc 0.199310012280941
+2025-08-11 00:31:29,890 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_6_step_10000.pt
+2025-08-11 00:31:56,615 DEBUG TRAIN Batch 6/300 loss 2.154484 acc 0.409924 lr 0.00001000 grad_norm 11.306915 rank 0
+2025-08-11 00:32:49,652 DEBUG TRAIN Batch 6/400 loss 2.201659 acc 0.423280 lr 0.00001000 grad_norm 11.664753 rank 0
+2025-08-11 00:33:46,189 DEBUG TRAIN Batch 6/500 loss 2.485651 acc 0.361746 lr 0.00001000 grad_norm 12.195220 rank 0
+2025-08-11 00:34:40,175 DEBUG TRAIN Batch 6/600 loss 2.551384 acc 0.345214 lr 0.00001000 grad_norm 11.794729 rank 0
+2025-08-11 00:35:36,864 DEBUG TRAIN Batch 6/700 loss 2.469771 acc 0.341414 lr 0.00001000 grad_norm 11.259863 rank 0
+2025-08-11 00:36:31,836 DEBUG TRAIN Batch 6/800 loss 2.464126 acc 0.380575 lr 0.00001000 grad_norm 10.209018 rank 0
+2025-08-11 00:37:29,660 DEBUG TRAIN Batch 6/900 loss 2.580543 acc 0.373841 lr 0.00001000 grad_norm 12.581025 rank 0
+2025-08-11 00:38:23,980 DEBUG TRAIN Batch 6/1000 loss 2.470415 acc 0.391304 lr 0.00001000 grad_norm 10.225188 rank 0
+2025-08-11 00:39:18,417 DEBUG TRAIN Batch 6/1100 loss 2.581518 acc 0.352806 lr 0.00001000 grad_norm 12.638731 rank 0
+2025-08-11 00:40:14,807 DEBUG TRAIN Batch 6/1200 loss 1.714039 acc 0.506961 lr 0.00001000 grad_norm 13.731413 rank 0
+2025-08-11 00:40:41,727 INFO Epoch 6 Step 11000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:41:37,465 DEBUG CV Batch 6/100 loss 5.023152 acc 0.180570  rank 0
+2025-08-11 00:42:19,931 DEBUG CV Batch 6/200 loss 4.911603 acc 0.157128  rank 0
+2025-08-11 00:42:32,245 INFO Epoch 6 Step 11000 CV info lr 1e-05 0 rank loss 4.688336400389671 acc 0.19479316343739628
+2025-08-11 00:42:35,040 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_6_step_11000.pt
+2025-08-11 00:43:02,333 DEBUG TRAIN Batch 6/1300 loss 2.238451 acc 0.425080 lr 0.00001000 grad_norm 12.892270 rank 0
+2025-08-11 00:43:24,505 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-11 00:43:58,619 DEBUG TRAIN Batch 6/1400 loss 2.086451 acc 0.440045 lr 0.00001000 grad_norm 13.350807 rank 0
+2025-08-11 00:44:53,122 DEBUG TRAIN Batch 6/1500 loss 2.299208 acc 0.402010 lr 0.00001000 grad_norm 11.825614 rank 0
+2025-08-11 00:45:51,263 DEBUG TRAIN Batch 6/1600 loss 2.434312 acc 0.355533 lr 0.00001000 grad_norm 11.150972 rank 0
+2025-08-11 00:46:04,944 INFO Epoch 6 Step 11377 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:47:00,907 DEBUG CV Batch 6/100 loss 4.244949 acc 0.241885  rank 0
+2025-08-11 00:47:43,526 DEBUG CV Batch 6/200 loss 4.909284 acc 0.176080  rank 0
+2025-08-11 00:47:55,469 INFO Epoch 6 Step 11377 CV info lr 1e-05 0 rank loss 4.650818420648575 acc 0.19700306215509772
+2025-08-11 00:47:58,335 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_6_whole.pt
+2025-08-11 00:47:58,357 INFO Epoch 7 TRAIN info lr 1e-05 rank 0
+2025-08-11 00:47:58,358 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:49:06,828 DEBUG TRAIN Batch 7/100 loss 1.553812 acc 0.574054 lr 0.00001000 grad_norm 16.807919 rank 0
+2025-08-11 00:49:14,017 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-11 00:49:59,606 DEBUG TRAIN Batch 7/200 loss 1.729433 acc 0.531085 lr 0.00001000 grad_norm 13.310579 rank 0
+2025-08-11 00:50:56,197 DEBUG TRAIN Batch 7/300 loss 1.641515 acc 0.549656 lr 0.00001000 grad_norm 13.400356 rank 0
+2025-08-11 00:51:49,649 DEBUG TRAIN Batch 7/400 loss 1.666853 acc 0.537190 lr 0.00001000 grad_norm 13.575511 rank 0
+2025-08-11 00:52:47,780 DEBUG TRAIN Batch 7/500 loss 1.836574 acc 0.492477 lr 0.00001000 grad_norm 15.311677 rank 0
+2025-08-11 00:53:41,270 DEBUG TRAIN Batch 7/600 loss 1.569415 acc 0.581152 lr 0.00001000 grad_norm 12.645462 rank 0
+2025-08-11 00:53:54,219 INFO Epoch 7 Step 12000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 00:54:50,171 DEBUG CV Batch 7/100 loss 4.818213 acc 0.214135  rank 0
+2025-08-11 00:55:32,141 DEBUG CV Batch 7/200 loss 5.030146 acc 0.183411  rank 0
+2025-08-11 00:55:44,733 INFO Epoch 7 Step 12000 CV info lr 1e-05 0 rank loss 5.0437754747867585 acc 0.18729545579478143
+2025-08-11 00:55:47,596 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_7_step_12000.pt
+2025-08-11 00:56:30,162 DEBUG TRAIN Batch 7/700 loss 1.774775 acc 0.529476 lr 0.00001000 grad_norm 14.370040 rank 0
+2025-08-11 00:57:27,240 DEBUG TRAIN Batch 7/800 loss 1.842746 acc 0.502543 lr 0.00001000 grad_norm 14.847444 rank 0
+2025-08-11 00:58:22,373 DEBUG TRAIN Batch 7/900 loss 2.335515 acc 0.419652 lr 0.00001000 grad_norm 15.055009 rank 0
+2025-08-11 00:59:19,175 DEBUG TRAIN Batch 7/1000 loss 2.096550 acc 0.467842 lr 0.00001000 grad_norm 13.466841 rank 0
+2025-08-11 01:00:15,294 DEBUG TRAIN Batch 7/1100 loss 2.094164 acc 0.442442 lr 0.00001000 grad_norm 15.353491 rank 0
+2025-08-11 01:01:10,981 DEBUG TRAIN Batch 7/1200 loss 2.128637 acc 0.428719 lr 0.00001000 grad_norm 14.548301 rank 0
+2025-08-11 01:02:08,025 DEBUG TRAIN Batch 7/1300 loss 2.072063 acc 0.463693 lr 0.00001000 grad_norm 13.835083 rank 0
+2025-08-11 01:03:04,464 DEBUG TRAIN Batch 7/1400 loss 2.137030 acc 0.450203 lr 0.00001000 grad_norm 14.670817 rank 0
+2025-08-11 01:03:58,650 DEBUG TRAIN Batch 7/1500 loss 1.762088 acc 0.554205 lr 0.00001000 grad_norm 13.983513 rank 0
+2025-08-11 01:04:55,504 DEBUG TRAIN Batch 7/1600 loss 1.453396 acc 0.603509 lr 0.00001000 grad_norm 13.280427 rank 0
+2025-08-11 01:05:08,999 INFO Epoch 7 Step 13000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 01:06:04,758 DEBUG CV Batch 7/100 loss 5.028802 acc 0.188025  rank 0
+2025-08-11 01:06:47,080 DEBUG CV Batch 7/200 loss 5.285339 acc 0.133867  rank 0
+2025-08-11 01:06:59,522 INFO Epoch 7 Step 13000 CV info lr 1e-05 0 rank loss 5.107079549312592 acc 0.19055360470339655
+2025-08-11 01:07:02,345 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_7_step_13000.pt
+2025-08-11 01:07:03,458 INFO Epoch 7 Step 13003 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 01:07:58,972 DEBUG CV Batch 7/100 loss 5.282668 acc 0.167024  rank 0
+2025-08-11 01:08:41,064 DEBUG CV Batch 7/200 loss 4.879506 acc 0.198413  rank 0
+2025-08-11 01:08:53,777 INFO Epoch 7 Step 13003 CV info lr 1e-05 0 rank loss 5.088517348766327 acc 0.19262542771175503
+2025-08-11 01:08:56,559 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_7_whole.pt
+2025-08-11 01:08:56,581 INFO Epoch 8 TRAIN info lr 1e-05 rank 0
+2025-08-11 01:08:56,581 INFO using accumulate grad, new batch size is 1 times larger than before
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 01:10:05,272 DEBUG TRAIN Batch 8/100 loss 1.091469 acc 0.717218 lr 0.00001000 grad_norm 15.291866 rank 0
+2025-08-11 01:10:59,164 DEBUG TRAIN Batch 8/200 loss 1.009495 acc 0.732143 lr 0.00001000 grad_norm 17.613140 rank 0
+2025-08-11 01:11:57,227 DEBUG TRAIN Batch 8/300 loss 0.789533 acc 0.809886 lr 0.00001000 grad_norm 14.303105 rank 0
+2025-08-11 01:12:52,503 DEBUG TRAIN Batch 8/400 loss 1.169651 acc 0.700127 lr 0.00001000 grad_norm 16.939663 rank 0
+2025-08-11 01:13:49,688 DEBUG TRAIN Batch 8/500 loss 0.978359 acc 0.731308 lr 0.00001000 grad_norm 17.384085 rank 0
+2025-08-11 01:14:43,268 DEBUG TRAIN Batch 8/600 loss 0.967631 acc 0.712849 lr 0.00001000 grad_norm 14.489278 rank 0
+2025-08-11 01:15:43,006 DEBUG TRAIN Batch 8/700 loss 1.558459 acc 0.578709 lr 0.00001000 grad_norm 17.133760 rank 0
+2025-08-11 01:16:36,148 DEBUG TRAIN Batch 8/800 loss 1.708919 acc 0.556291 lr 0.00001000 grad_norm 18.289845 rank 0
+2025-08-11 01:17:31,071 DEBUG TRAIN Batch 8/900 loss 1.584580 acc 0.584403 lr 0.00001000 grad_norm 18.229204 rank 0
+2025-08-11 01:18:25,572 INFO Epoch 8 Step 14000 on_batch_end False CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 01:19:21,686 DEBUG CV Batch 8/100 loss 4.787600 acc 0.221881  rank 0
+2025-08-11 01:20:04,058 DEBUG CV Batch 8/200 loss 4.946719 acc 0.234611  rank 0
+2025-08-11 01:20:16,118 INFO Epoch 8 Step 14000 CV info lr 1e-05 0 rank loss 5.508328494071961 acc 0.17834180972725153
+2025-08-11 01:20:32,097 INFO [Rank 0] Checkpoint: save to checkpoint exp/greek_sft/epoch_8_step_14000.pt
+2025-08-11 01:20:33,162 DEBUG TRAIN Batch 8/1000 loss 1.575983 acc 0.561492 lr 0.00001000 grad_norm 16.027975 rank 0
+2025-08-11 01:21:01,317 WARNING get infinite grad_norm, check your code/data if it appears frequently
+2025-08-11 01:21:29,714 DEBUG TRAIN Batch 8/1100 loss 1.792243 acc 0.539920 lr 0.00001000 grad_norm 17.578432 rank 0
+2025-08-11 01:22:26,691 DEBUG TRAIN Batch 8/1200 loss 1.632043 acc 0.564356 lr 0.00001000 grad_norm 16.210642 rank 0
+2025-08-11 01:23:21,251 DEBUG TRAIN Batch 8/1300 loss 1.478952 acc 0.605428 lr 0.00001000 grad_norm 14.255738 rank 0
+2025-08-11 01:24:17,877 DEBUG TRAIN Batch 8/1400 loss 1.510322 acc 0.560241 lr 0.00001000 grad_norm 15.102030 rank 0
+2025-08-11 01:25:12,567 DEBUG TRAIN Batch 8/1500 loss 0.704955 acc 0.832618 lr 0.00001000 grad_norm 19.369165 rank 0
+2025-08-11 01:26:10,406 DEBUG TRAIN Batch 8/1600 loss 1.767485 acc 0.519412 lr 0.00001000 grad_norm 17.043036 rank 0
+2025-08-11 01:26:23,865 INFO Epoch 8 Step 14628 on_batch_end True CV rank 0
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+2025-08-11 01:27:20,545 DEBUG CV Batch 8/100 loss 5.768520 acc 0.165638  rank 0
+2025-08-11 01:28:01,986 DEBUG CV Batch 8/200 loss 5.717160 acc 0.166497  rank 0
+2025-08-11 01:28:14,152 INFO Epoch 8 Step 14628 CV info lr 1e-05 0 rank loss 5.460527142763138 acc 0.18029731697030366
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/serialization.py", line 628, in save
+[rank0]:     _save(obj, opened_zipfile, pickle_module, pickle_protocol, _disable_byteorder_record)
+[rank0]:   File "/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/serialization.py", line 862, in _save
+[rank0]:     zip_file.write_record(name, storage, num_bytes)
+[rank0]: RuntimeError: [enforce fail at inline_container.cc:764] . PytorchStreamWriter failed writing file data/105: file write failed
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 347, in wrapper
+[rank0]:     return f(*args, **kwargs)
+[rank0]:   File "/home/ubuntu/audio-translation/CosyVoice_Repo/cosyvoice/bin/train.py", line 190, in main
+[rank0]:     executor.train_one_epoc(model, optimizer, scheduler, train_data_loader, cv_data_loader, writer, info_dict, scaler, group_join, ref_model=ref_model)
+[rank0]:   File "/home/ubuntu/audio-translation/CosyVoice_Repo/cosyvoice/utils/executor.py", line 86, in train_one_epoc
+[rank0]:     self.cv(model, cv_data_loader, writer, info_dict, on_batch_end=True)
+[rank0]:   File "/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/ubuntu/audio-translation/CosyVoice_Repo/cosyvoice/utils/executor.py", line 176, in cv
+[rank0]:     save_model(model, model_name, info_dict)
+[rank0]:   File "/home/ubuntu/audio-translation/CosyVoice_Repo/cosyvoice/utils/train_utils.py", line 202, in save_model
+[rank0]:     torch.save({**model.module.state_dict(), 'epoch': info_dict['epoch'], 'step': info_dict['step']}, save_model_path)
+[rank0]:   File "/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/serialization.py", line 627, in save
+[rank0]:     with _open_zipfile_writer(f) as opened_zipfile:
+[rank0]:   File "/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/serialization.py", line 475, in __exit__
+[rank0]:     self.file_like.write_end_of_file()
+[rank0]: RuntimeError: [enforce fail at inline_container.cc:595] . unexpected pos 566152832 vs 566152720
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: OSError: [Errno 28] No space left on device
+
+[rank0]: During handling of the above exception, another exception occurred:
+
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/ubuntu/audio-translation/CosyVoice_Repo/cosyvoice/bin/train.py", line 195, in <mod

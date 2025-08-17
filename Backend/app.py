@@ -11,6 +11,10 @@ from pathlib import Path
 import gc
 import warnings
 
+import subprocess
+from werkzeug.utils import secure_filename
+
+
 # --- Warnings and Environment Configuration ---
 warnings.filterwarnings("ignore", category=FutureWarning, module="espnet2") # If you still have ESPnet code
 warnings.filterwarnings("ignore", message=".*torch.cuda.amp.autocast.*is deprecated.*", category=FutureWarning)
@@ -28,6 +32,29 @@ LOG_LEVEL_FILE_ERROR = logging.ERROR
 DETAILED_FORMATTER = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d (%(funcName)s)] - %(message)s'
 )
+
+def extract_audio_from_any_file(media_file_path: Path, output_wav_path: Path) -> Path:
+    """A robust helper function to extract audio from any media file using ffmpeg."""
+    command = [
+        'ffmpeg', '-y', '-i', str(media_file_path),
+        '-vn',  # This flag strips any video, leaving only the audio.
+        '-acodec', 'pcm_s16le',  # Standard, uncompressed WAV format.
+        '-ar', '16000',          # The sample rate your ML models expect.
+        '-ac', '1',              # Mono audio.
+        str(output_wav_path)
+    ]
+    try:
+        subprocess.run(command, check=True, capture_output=True, text=True, timeout=300)
+        if not output_wav_path.exists() or output_wav_path.stat().st_size == 0:
+            raise IOError("FFmpeg ran but created an empty or missing output file.")
+        logger.info(f"Successfully extracted audio to {output_wav_path}")
+        return output_wav_path
+    except subprocess.CalledProcessError as e:
+        logger.error(f"FFmpeg error during audio extraction: {e.stderr}")
+        raise IOError(f"Failed to extract audio. FFmpeg returned an error.")
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during audio extraction: {e}")
+        raise
 
 def initial_logging_setup():
     root_logger = logging.getLogger()
@@ -224,77 +251,86 @@ def central_error_handler(e: Exception):
 
 # --- API Routes ---
 @app.route('/translate', methods=['POST', 'OPTIONS'])
-@limiter.limit("20 per minute") # Adjusted limit for audio
+@limiter.limit("20 per minute")
 @performance_logger
 def translate_audio_route():
-    if request.method == 'OPTIONS': return make_response() # Handle CORS preflight
+    if request.method == 'OPTIONS':
+        return make_response() # Handle CORS preflight
     
-    temp_files_to_clean = []
-    try:
-        backend_to_use = translation_manager.get_backend() 
-        logger.info(f"Using backend: {type(backend_to_use).__name__} for /translate")
-        
-        if 'file' not in request.files: return ErrorHandler.format_validation_error('No file part found in request.')
-        file = request.files['file']
-        if not file or not file.filename: return ErrorHandler.format_validation_error('No file selected or filename is empty.')
-        
-        target_language_app_code = request.form.get('target_language', 'fra') # Default to French
-        logger.info(f"/translate request: Target='{target_language_app_code}' for file '{file.filename}'")
-
-        audio_processor = AudioProcessor()
-        temp_suffix = Path(secure_filename(file.filename)).suffix or '.tmp' # Ensure a suffix
-        temp_dir_uploads = Path(tempfile.gettempdir()) / "magenta_translate_uploads"
-        temp_dir_uploads.mkdir(parents=True, exist_ok=True)
-
-        # Save uploaded file temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix=temp_suffix, dir=temp_dir_uploads) as tmp_in_file:
-            file.save(tmp_in_file.name)
-            temp_files_to_clean.append(tmp_in_file.name)
-            logger.debug(f"Uploaded audio file saved to temp path: {tmp_in_file.name}")
-        
-        # Validate audio length
-        is_valid_length, length_error_msg = audio_processor.validate_audio_length(tmp_in_file.name, max_length_seconds=MAX_AUDIO_LENGTH_SECONDS)
-        if not is_valid_length:
-             logger.error(f"Audio length validation failed for {tmp_in_file.name}: {length_error_msg}")
-             return ErrorHandler.format_validation_error(length_error_msg)
-        
-        # Process audio to 16kHz mono tensor
-        audio_tensor = audio_processor.process_audio(tmp_in_file.name) # Returns 16kHz tensor
-        if not audio_processor.is_valid_audio(audio_tensor): # Basic check for silence/validity
-            logger.error(f"Processed audio tensor is invalid (e.g., silent) for {tmp_in_file.name}")
-            return ErrorHandler.handle_error(ValueError("Processed audio is invalid or silent."))
-
-        # Perform translation using the backend (now CosyVoice API via CascadedBackend)
-        result = backend_to_use.translate_speech(
-            audio_tensor=audio_tensor, # This is the 16kHz source audio
-            source_lang="eng", # Assuming source is English for now
-            target_lang=target_language_app_code
-        )
-        
-        # Backend should return audio tensor at 16kHz
-        translated_audio_tensor = result["audio"] 
-        
-        with tempfile.NamedTemporaryFile(suffix='.wav', delete=False, dir=temp_dir_uploads) as tmp_out_file:
-            temp_files_to_clean.append(tmp_out_file.name)
-            # Ensure tensor is 2D [channels, samples] for torchaudio.save
-            if translated_audio_tensor.ndim == 1: translated_audio_tensor = translated_audio_tensor.unsqueeze(0)
-            if translated_audio_tensor.shape[0] > 1 and translated_audio_tensor.shape[1] == 1: # Handle [samples, 1]
-                translated_audio_tensor = translated_audio_tensor.transpose(0,1)
-
-            torchaudio.save(tmp_out_file.name, translated_audio_tensor.cpu(), SAMPLE_RATE) # Save at 16kHz
-            logger.debug(f"Translated audio (16kHz) saved to temp path: {tmp_out_file.name}")
+    # Use a single, self-cleaning temporary directory for all files for this request.
+    with tempfile.TemporaryDirectory() as temp_dir:
+        try:
+            temp_dir_path = Path(temp_dir)
             
-            with open(tmp_out_file.name, 'rb') as audio_data_obj:
+            # 1. Get the correct backend for the translation task.
+            backend_to_use = translation_manager.get_backend() 
+            logger.info(f"Using backend: {type(backend_to_use).__name__} for /translate")
+            
+            # 2. Validate the incoming request for file and language.
+            if 'file' not in request.files:
+                return ErrorHandler.format_validation_error('No file part found in request.')
+            file = request.files['file']
+            if not file or not file.filename:
+                return ErrorHandler.format_validation_error('No file selected or filename is empty.')
+            
+            target_language_app_code = request.form.get('target_language', 'fra') # Default to French
+            logger.info(f"/translate request: Target='{target_language_app_code}' for file '{file.filename}'")
+
+            # 3. Save the uploaded file (regardless of type) to a temporary location.
+            original_filename = secure_filename(file.filename)
+            original_temp_path = temp_dir_path / original_filename
+            file.save(str(original_temp_path))
+
+            # 4. CRITICAL STEP: Always extract audio to a clean, standardized WAV file.
+            # This makes the pipeline robust to any input file type (mp4, mov, mp3, etc.).
+            processed_wav_path = temp_dir_path / "processed_for_pipeline.wav"
+            extract_audio_from_any_file(original_temp_path, processed_wav_path)
+
+            # 5. Perform all validations and processing on the GUARANTEED clean WAV file.
+            audio_processor = AudioProcessor()
+            is_valid_length, length_error_msg = audio_processor.validate_audio_length(str(processed_wav_path), max_length_seconds=MAX_AUDIO_LENGTH_SECONDS)
+            if not is_valid_length:
+                 logger.error(f"Audio length validation failed for {processed_wav_path}: {length_error_msg}")
+                 return ErrorHandler.format_validation_error(length_error_msg)
+            
+            # Process the clean audio file into a tensor for the model.
+            audio_tensor = audio_processor.process_audio(str(processed_wav_path))
+            if not audio_processor.is_valid_audio(audio_tensor):
+                logger.error(f"Processed audio tensor is invalid (e.g., silent) for {processed_wav_path}")
+                return ErrorHandler.handle_error(ValueError("Processed audio is invalid or silent."))
+
+            # 6. Perform the translation using the selected backend.
+            result = backend_to_use.translate_speech(
+                audio_tensor=audio_tensor,
+                source_lang="eng",
+                target_lang=target_language_app_code
+            )
+            
+            translated_audio_tensor = result["audio"] 
+            
+            # 7. Prepare the final audio file and encode it for the JSON response.
+            final_audio_path = temp_dir_path / "final_output.wav"
+            
+            # Ensure the tensor has the correct shape for torchaudio.save
+            if translated_audio_tensor.ndim == 1:
+                translated_audio_tensor = translated_audio_tensor.unsqueeze(0)
+            if translated_audio_tensor.shape[0] > 1 and translated_audio_tensor.shape[1] == 1:
+                translated_audio_tensor = translated_audio_tensor.transpose(0, 1)
+
+            torchaudio.save(str(final_audio_path), translated_audio_tensor.cpu(), SAMPLE_RATE)
+            
+            with open(final_audio_path, 'rb') as audio_data_obj:
                 audio_b64 = base64.b64encode(audio_data_obj.read()).decode('utf-8')
         
-        return jsonify({'audio': audio_b64, 'transcripts': result["transcripts"]})
+            # 8. Return the final JSON payload to the frontend.
+            return jsonify({
+                'audio': audio_b64, 
+                'transcripts': result["transcripts"]
+            })
 
-    except Exception as e:
-        logger.error(f"Error in /translate route: {e}", exc_info=True)
-        return ErrorHandler.handle_error(e) # Use your centralized error handler
-    finally:
-        for f_path in temp_files_to_clean: cleanup_file(f_path)
-
+        except Exception as e:
+            logger.error(f"Error in /translate route: {e}", exc_info=True)
+            return ErrorHandler.handle_error(e)
 
 @app.route('/process-video', methods=['POST', 'OPTIONS'])
 @limiter.limit("10 per minute") # Adjusted for video
