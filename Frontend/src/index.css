@@ -15,3 +15,86 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* ========================================
+   COGNITO AUTHENTICATOR CUSTOMIZATION
+   ======================================== */
+
+/* Override Authenticator CSS variables */
+[data-amplify-authenticator] {
+  --amplify-components-authenticator-router-box-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.1), 0 4px 6px -2px rgba(217, 70, 239, 0.05);
+  --amplify-components-authenticator-router-border-width: 0;
+  --amplify-components-button-primary-background-color: #d946ef;
+  --amplify-components-button-primary-hover-background-color: #c026d3;
+  --amplify-components-button-primary-active-background-color: #a21caf;
+  --amplify-components-fieldcontrol-focus-border-color: #d946ef;
+  --amplify-components-tabs-item-active-color: #d946ef;
+  --amplify-components-tabs-item-active-border-color: #d946ef;
+  --amplify-colors-font-interactive: #d946ef;
+}
+
+/* Style the authenticator container */
+[data-amplify-authenticator] [data-amplify-router] {
+  background: linear-gradient(to bottom right, #ffffff, #fdf4ff);
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(217, 70, 239, 0.1), 0 10px 10px -5px rgba(217, 70, 239, 0.04);
+}
+
+/* Add gradient background to page when authenticator is present */
+body:has([data-amplify-authenticator]) {
+  background: linear-gradient(to bottom right, #ffffff, #fdf4ff, #fae8ff);
+  min-height: 100vh;
+}
+
+/* Style input fields */
+[data-amplify-authenticator] input {
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+[data-amplify-authenticator] input:focus {
+  border-color: #d946ef;
+  box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.1);
+  outline: none;
+}
+
+/* Style buttons */
+[data-amplify-authenticator] button[type="submit"] {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px -1px rgba(217, 70, 239, 0.25);
+}
+
+[data-amplify-authenticator] button[type="submit"]:hover {
+  box-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Style tabs (Sign In / Create Account) */
+[data-amplify-authenticator] [role="tab"] {
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+[data-amplify-authenticator] [role="tab"][aria-selected="true"] {
+  color: #d946ef;
+  border-bottom: 2px solid #d946ef;
+}
+
+/* Style links (Forgot password, etc.) */
+[data-amplify-authenticator] a {
+  color: #d946ef;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+[data-amplify-authenticator] a:hover {
+  color: #c026d3;
+}
+
+/* Add padding around the authenticator */
+[data-amplify-authenticator] {
+  padding: 2rem 1rem;
+}
