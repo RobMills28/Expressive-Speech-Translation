@@ -1,22 +1,19 @@
+// src/index.js
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import { AuthProvider } from "react-oidc-context";
 
-// const cognitoAuthConfig = {
-//   authority: "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_u9DeSOC1s",
-//   client_id: "6pr8qneun0lhjorncf8bgi61t2",  // Use your actual client ID
-//   redirect_uri: "http://localhost:3000/dashboard",
-//   response_type: "code",
-//   scope: "phone openid email"
-// };
+import '@aws-amplify/ui-react/styles.css'; // 1. Import default styles FIRST
+import './index.css';                     // 2. Import your theme overrides SECOND
+
+import App from './App';
+import { Amplify } from 'aws-amplify';
+
+Amplify.configure({ /* ... your config object ... */ });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <AuthProvider {...cognitoAuthConfig}> */}
-      <App />
-    {/* </AuthProvider> */}
+    <App />
   </React.StrictMode>
 );

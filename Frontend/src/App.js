@@ -1,18 +1,119 @@
+// src/App.js
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
-import { Globe, Youtube, Music, Video, AudioWaveform, Heart, Clock, Mic, Zap, Users, ArrowRight, Play, Volume2 } from 'lucide-react';
+import { Globe, Youtube, Music, Video, AudioWaveform, Heart, Clock, Mic, Zap, Users, ArrowRight, Play, LogOut } from 'lucide-react';
 import Dashboard from "./components/Dashboard";
 import PricingPage from './components/PricingPage';
+
+// --- START: CORRECTED AMPLIFY IMPORTS ---
+// ThemeProvider is the key to our new solution
+import { Authenticator, useAuthenticator, ThemeProvider, defaultTheme } from '@aws-amplify/ui-react';
+// --- END: CORRECTED AMPLIFY IMPORTS ---
+
+
+// --- START: THEME OBJECT ---
+// This is the official way to theme the Authenticator component.
+const theme = {
+  name: 'content-converter-theme',
+  tokens: {
+    colors: {
+      brand: {
+        primary: {
+          10: { value: '#fdf4ff' },  // Very light fuchsia
+          20: { value: '#fae8ff' },  // Light fuchsia background
+          40: { value: '#f0abfc' },  // Lighter fuchsia
+          60: { value: '#e879f9' },  // Medium fuchsia
+          80: { value: '#d946ef' },  // fuchsia-600 for main button
+          90: { value: '#c026d3' },  // fuchsia-700 for button hover
+          100: { value: '#a21caf' }, // fuchsia-800 for active/click
+        },
+      },
+      background: {
+        primary: { value: '#ffffff' },
+        secondary: { value: '#fdf4ff' }, // Very light fuchsia tint
+      },
+      font: {
+        interactive: { value: '#d946ef' }, // Links in fuchsia
+      },
+    },
+    components: {
+      authenticator: {
+        router: {
+          borderWidth: { value: '0' },
+          backgroundColor: { value: '#ffffff' },
+          boxShadow: {
+            value: '0 10px 15px -3px rgba(217, 70, 239, 0.1), 0 4px 6px -2px rgba(217, 70, 239, 0.05)'
+          },
+        },
+        form: {
+          padding: { value: '{space.xl}' },
+        },
+      },
+      button: {
+        primary: {
+          backgroundColor: { value: '{colors.brand.primary.80}' },
+          _hover: {
+            backgroundColor: { value: '{colors.brand.primary.90}' },
+          },
+          _focus: {
+            backgroundColor: { value: '{colors.brand.primary.90}' },
+          },
+          _active: {
+            backgroundColor: { value: '{colors.brand.primary.100}' },
+          },
+        },
+      },
+      fieldcontrol: {
+        _focus: {
+          borderColor: { value: '{colors.brand.primary.80}' },
+        },
+      },
+      tabs: {
+        item: {
+          color: { value: '{colors.font.secondary}' },
+          _active: {
+            borderColor: { value: '{colors.brand.primary.80}' },
+            color: { value: '{colors.brand.primary.80}' },
+          },
+          _hover: {
+            color: { value: '{colors.brand.primary.90}' },
+          },
+        },
+      },
+    },
+    radii: {
+      small: { value: '0.375rem' },   // 6px
+      medium: { value: '0.5rem' },    // 8px  
+      large: { value: '0.75rem' },    // 12px
+      xl: { value: '0.75rem' },       // 12px
+    },
+    space: {
+      xl: { value: '2rem' },
+    },
+  },
+};
+// --- END: THEME OBJECT ---
+
 
 // Navigation Component
 const Navigation = () => {
   const location = useLocation();
+  const { route, user, signOut } = useAuthenticator((context) => [
+    context.route,
+    context.user,
+    context.signOut,
+  ]);
 
-  // Don't show navigation on landing page
   if (location.pathname === '/') {
+    return null;
+  }
+
+  // Only show navigation if the user is authenticated
+  if (route !== 'authenticated') {
     return null;
   }
   
@@ -26,17 +127,14 @@ const Navigation = () => {
             </Link>
           </div>
           
-          <div className="flex items-center gap-12">
-            <Link 
-              to="/creator-studio"
-              className={`px-4 py-2 rounded-lg hover:bg-fuchsia-700 ${
-                location.pathname === '/creator-studio' 
-                  ? 'bg-fuchsia-700 text-white'
-                  : 'bg-fuchsia-600 text-white'
-              }`}
-            >
-              Creator Studio
-            </Link>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              {user?.attributes?.email}
+            </span>
+            <Button variant="outline" size="sm" onClick={signOut}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
           </div>
         </div>
       </div>
@@ -110,8 +208,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
+       {/* Features Section */}
+       <section id="features" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl mb-4 font-bold">
@@ -342,7 +440,7 @@ const LandingPage = () => {
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Privacy</a>
               <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Terms</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Security</a>
+              <a href="#" className="hover:text-gray-900 transition-colors">Security</a>
             </div>
           </div>
         </div>
@@ -351,19 +449,69 @@ const LandingPage = () => {
   );
 };
 
+
 // Main App Component
 const App = () => {
   return (
-    <Router>
-      <div className="min-h-screen bg-white">
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/creator-studio" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </Router>
+    <Authenticator.Provider>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <div className="min-h-screen bg-white">
+            <Navigation />
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route 
+                path="/creator-studio" 
+                element={
+                  <>
+                    <Authenticator
+                      hideSignUp={false}
+                      components={{
+                        SignIn: {
+                          Header() {
+                            return (
+                              <div className="text-center pb-8">
+                                <div className="flex justify-center mb-4">
+                                  <div className="w-16 h-16 bg-fuchsia-600 rounded-2xl flex items-center justify-center">
+                                    <AudioWaveform className="w-10 h-10 text-white" />
+                                  </div>
+                                </div>
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Content Converter AI</h1>
+                                <p className="text-gray-600">Sign in to access your creator studio</p>
+                              </div>
+                            );
+                          },
+                        },
+                        SignUp: {
+                          Header() {
+                            return (
+                              <div className="text-center pb-8">
+                                <div className="flex justify-center mb-4">
+                                  <div className="w-16 h-16 bg-fuchsia-600 rounded-2xl flex items-center justify-center">
+                                    <AudioWaveform className="w-10 h-10 text-white" />
+                                  </div>
+                                </div>
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Content Converter AI</h1>
+                                <p className="text-gray-600">Create your account to get started</p>
+                              </div>
+                            );
+                          },
+                        },
+                      }}
+                    >
+                      <Dashboard />
+                    </Authenticator>
+                  </>
+                } 
+              />
+                } 
+              />
+            </Routes>
+          </div>
+        </Router>
+      </ThemeProvider>
+    </Authenticator.Provider>
   );
 };
 
