@@ -2,7 +2,7 @@ import requests
 import os
 
 # --- Configuration ---
-# Make sure these file paths are correct relative to where you run the script.
+# Make sure these file paths are correct relative to where I run the script.
 VIDEO_PATH = "input_video_short.mov" 
 AUDIO_PATH = "input_audio_short.wav"
 OUTPUT_PATH = "lipsynced_result.mp4"

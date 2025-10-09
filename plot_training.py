@@ -37,7 +37,7 @@ final_cv_df = df.groupby('epoch').last().reset_index()
 
 # --- We need training data too ---
 # Simplified: We'll manually add the final training stats we found earlier
-# In a real scenario, you'd parse the final TRAIN batch line for each epoch
+# In a real scenario, I'd parse the final TRAIN batch line for each epoch
 train_stats = {
     0: {'train_loss': 3.508, 'train_acc': 0.233},
     1: {'train_loss': 3.251, 'train_acc': 0.287},

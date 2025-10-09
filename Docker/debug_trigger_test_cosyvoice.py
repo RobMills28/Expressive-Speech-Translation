@@ -1,4 +1,4 @@
-# THIS IS THE TEMPORARY DEBUG FILE: Magenta AI/Docker/debug_trigger_test_cosyvoice.py
+# THIS IS THE TEMPORARY DEBUG FILE: /Docker/debug_trigger_test_cosyvoice.py
 # It will be COPIED into the Docker image to replace the original library file for testing.
 
 print("DEBUG cosyvoice.py (debug_trigger_test_cosyvoice.py): TOP OF FILE") # Modified print

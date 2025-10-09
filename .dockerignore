@@ -28,7 +28,7 @@ MuseTalk_env/
 *.egg-info/
 build/ 
 dist/  
-# *.so # Commented out: if your COPIED MuseTalk code includes pre-compiled .so files you want to use.
+# *.so # Commented out: if COPIED MuseTalk code includes pre-compiled .so files I want to use.
        # However, it's generally better for Docker to build/use Linux .so files.
 
 # --- Node.js (Frontend and MobileApp) ---
@@ -60,13 +60,13 @@ Backend/temp_video_processing_requests/
 Docker/pretrained_cosyvoice_models/ 
 Docker/pretrained_models_similarity/  
 
-# --- MuseTalk Specific Exclusions from your LOCAL clone ---
-# The Dockerfile will COPY the contents of Magenta AI/MuseTalk/MuseTalk/ (the code)
-# BUT we want to exclude very large subdirectories from that COPY operation's CONTEXT,
+# --- MuseTalk Specific Exclusions from LOCAL clone ---
+# The Dockerfile will COPY the contents of /MuseTalk/MuseTalk/ (the code)
+# BUT I want to exclude very large subdirectories from that COPY operation's CONTEXT,
 # as the Dockerfile handles some of these differently (e.g., downloads weights).
 
-MuseTalk/MuseTalk/.git/         # Exclude the .git history of your local MuseTalk clone
-MuseTalk/MuseTalk/models/       # Exclude your LOCAL downloaded WEIGHTS; Dockerfile will download fresh ones.
+MuseTalk/MuseTalk/.git/         # Exclude the .git history of local MuseTalk clone
+MuseTalk/MuseTalk/models/       # Exclude LOCAL downloaded WEIGHTS; Dockerfile will download fresh ones.
 MuseTalk/MuseTalk/results/      # Exclude local test results
 MuseTalk/MuseTalk/build/        # Exclude local build artifacts for MuseTalk if any
 # MuseTalk/MuseTalk/**/__pycache__/ # Covered by global pattern

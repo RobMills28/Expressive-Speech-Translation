@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script launches the fine-tuning job for Greek on CosyVoice-2.
 
-# Configure GPU usage. Set to the number of GPUs you want to use inside the container.
+# Configure GPU usage. Set to the number of GPUs I want to use inside the container.
 export CUDA_VISIBLE_DEVICES="0"
 NUM_GPUS=$(echo $CUDA_VISIBLE_DEVICES | awk -F "," '{print NF}')
 

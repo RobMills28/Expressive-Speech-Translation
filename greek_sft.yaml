@@ -1,7 +1,7 @@
 # Filename: greek_sft.yaml
 # Config for fine-tuning CosyVoice-2 on a new language (Greek SFT).
 
-# set random seed, so that you may reproduce your result.
+# set random seed, so that may reproduce result.
 __set_seed1: !apply:random.seed [1986]
 __set_seed2: !apply:numpy.random.seed [1986]
 __set_seed3: !apply:torch.manual_seed [1986]
