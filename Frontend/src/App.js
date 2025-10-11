@@ -467,6 +467,27 @@ const App = () => {
                   <>
                     <Authenticator
                       hideSignUp={false}
+                      formFields={{
+                        signIn: {
+                          username: {
+                            label: 'Email',
+                            placeholder: 'Enter your Email',
+                          },
+                        },
+                        signUp: {
+                          username: {
+                            label: 'Email',
+                            placeholder: 'Enter your Email Address',
+                            order: 1
+                          },
+                          password: {
+                            order: 2
+                          },
+                          confirm_password: {
+                            order: 3
+                          }
+                        },
+                      }}
                       components={{
                         SignIn: {
                           Header() {
@@ -503,8 +524,6 @@ const App = () => {
                       <Dashboard />
                     </Authenticator>
                   </>
-                } 
-              />
                 } 
               />
             </Routes>
