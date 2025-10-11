@@ -1,0 +1,12 @@
+<!-- favicon.svg -->
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The fuchsia-600 rounded background -->
+  <rect width="32" height="32" rx="8" fill="#d946ef"/>
+  
+  <!-- The white AudioWaveform icon path, centered -->
+  <path d="M2 13.1111V18.8889M8.44444 8.22222V23.7778M14.8889 2V30M21.3333 8.22222V23.7778M27.7778 13.1111V18.8889" 
+        stroke="white" 
+        stroke-width="2.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+</svg>
