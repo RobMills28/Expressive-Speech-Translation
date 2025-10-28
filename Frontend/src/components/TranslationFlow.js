@@ -9,6 +9,9 @@ import { Label } from "./ui/label";
 import WaveformPlayer from './WaveformPlayer';
 import { PlaceholderWaveform } from './PlaceholderWaveform';
 import InputSelector from './InputSelector';
+import { Auth } from '@aws-amplify/auth'; 
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 
 // --- THIS IS THE UPDATED LANGUAGE LIST ---
 const LANGUAGES = {
@@ -76,101 +79,88 @@ const ContentTranslator = () => {
   };
 
   const handleTranslate = async () => {
-    if (!file) { setError('Please upload a file.'); return; }
-    if (!targetLanguage) { setError('Please select a target language.'); return; }
-
-    setIsProcessing(true); setProgress(0); setProcessPhase('Preparing...'); setError(''); setResult(null); setResultTranscripts({ source: '', target: ''});
-
-    const formData = new FormData();
-    const fileKey = contentType === 'audio' ? 'file' : 'video';
-    formData.append(fileKey, file);
-    formData.append('target_language', targetLanguage);
-    formData.append('backend', 'cascaded');
-
-    if (contentType === 'video' || contentType === 'both') {
-      formData.append('apply_lip_sync', applyLipSync ? 'true' : 'false');
-      formData.append('use_voice_cloning', useVoiceCloningVideo ? 'true' : 'false');
+    // Step 1: Basic validation to ensure a file and language are selected.
+    if (!file) {
+      setError('Please upload a file.');
+      return;
+    }
+    if (!targetLanguage) {
+      setError('Please select a target language.');
+      return;
     }
 
-    const endpoint = contentType === 'audio' ? 'http://localhost:5001/translate' : 'http://localhost:5001/process-video';
+    // Step 2: Set the initial UI state to show processing has started.
+    setIsProcessing(true);
+    setProgress(5);
+    setProcessPhase('Securing upload link...');
+    setError('');
+    setResult(null);
+    setResultTranscripts({ source: '', target: '' });
 
     try {
-      const response = await fetch(endpoint, { method: 'POST', body: formData });
-
-      if (contentType === 'audio') {
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }));
-          throw new Error(errData.error || `Request failed: ${response.statusText}`);
-        }
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-
-        const byteCharacters = atob(data.audio);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const audioBlob = new Blob([byteArray], { type: 'audio/wav' });
-        
-        if (result) URL.revokeObjectURL(result);
-        setResult(URL.createObjectURL(audioBlob));
-        
-        setResultTranscripts(data.transcripts || { source: '', target: '' });
-        setProgress(100);
-        setProcessPhase('Completed!');
-      } else {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            setProcessPhase(prev => error || prev.includes('Error') ? prev : 'Final video processed.');
-            if(!error) setProgress(100);
-            break;
-          }
-          buffer += decoder.decode(value, { stream: true });
-          const messages = buffer.split('\n\n');
-          buffer = messages.pop() || '';
-          for (const message of messages) {
-            if (message.trim().startsWith('data: ')) {
-              try {
-                const data = JSON.parse(message.trim().slice(6));
-                if (data.error) {
-                    setError(data.error + (data.details ? `: ${data.details}` : ''));
-                    setProcessPhase(`Error: ${data.phase || 'processing'}`);
-                    setIsProcessing(false);
-                    return;
-                }
-                if (data.progress !== undefined) setProgress(data.progress);
-                if (data.phase) setProcessPhase(data.phase);
-                if (data.result) {
-                  const byteChars = atob(data.result);
-                  const byteNums = new Array(byteChars.length);
-                  for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
-                  const byteArr = new Uint8Array(byteNums);
-                  const videoBlob = new Blob([byteArr], { type: 'video/mp4' });
-                  if (result) URL.revokeObjectURL(result);
-                  setResult(URL.createObjectURL(videoBlob));
-                  setProcessPhase('Video ready!');
-                  setProgress(100);
-                }
-                if (data.transcripts) setResultTranscripts(data.transcripts);
-              } catch (e) {
-                  console.error('SSE parse error:', e, "Message:", message);
-                  if (!error) setError("Error processing server response.");
-              }
-            }
-          }
-        }
+      // Step 3: Get the current user's session token from AWS Amplify.
+      // This token is our proof of login (our "ID badge").
+      const session = await fetchAuthSession();
+      // The idToken is found inside the 'tokens' property of the session object.
+      const idToken = session.tokens?.idToken?.toString();
+      // Add a check to ensure we actually got a token.
+      if (!idToken) {
+        throw new Error('Could not get user authentication token. Please try signing in again.');
       }
+
+      // Step 4: Define the endpoint for our secure AWS API Gateway.
+      // IMPORTANT: Replace this placeholder with your actual "Invoke URL".
+      const API_ENDPOINT = 'https://1xtilz85qg.execute-api.us-east-1.amazonaws.com/get-upload-url';
+      
+      console.log("Requesting secure upload URL from:", API_ENDPOINT);
+
+      // Step 5: Make the secure API call to our backend.
+      const getUrlResponse = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          // The 'Authorization' header is what our Cognito Authorizer will check.
+          'Authorization': idToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          // We send the filename to the Lambda so it can create the S3 key.
+          fileName: file.name 
+        })
+      });
+
+      // Step 6: Check if the API call was successful.
+      if (!getUrlResponse.ok) {
+        // If not, read the error from the server and stop.
+        const errorData = await getUrlResponse.json();
+        throw new Error(errorData.error || 'Failed to get a secure upload link from the server.');
+      }
+
+      // Step 7: If successful, parse the response from our Lambda function.
+      // This response contains the secure URL and the S3 key.
+      const { uploadUrl, s3Key } = await getUrlResponse.json();
+
+      console.log('SUCCESS! Received secure URL. Details:', uploadUrl);
+      console.log('File will be saved in S3 with key:', s3Key);
+      
+      setProcessPhase('Secure link received. Now uploading file...');
+      setProgress(10);
+      
+      // The connection to the backend is now successfully tested.
+      // The next step in our development will be to add the code here
+      // to actually upload the 'file' object to the 'uploadUrl'.
+      // For now, we will stop here to confirm this part works.
+      
+      // To simulate completion for testing purposes, you can uncomment these lines:
+      // setProcessPhase('Test complete. Upload logic is next.');
+      // setProgress(100);
+      // setIsProcessing(false);
+
     } catch (err) {
-        setError(err.message);
-        console.error("Translate error:", err);
-        setProcessPhase('Failed.');
-    } finally {
-        setIsProcessing(false);
+      // Step 8: If any part of this process fails, catch the error.
+      console.error("An error occurred during the secure upload process:", err);
+      setError(`Process failed: ${err.message}`);
+      setProcessPhase('Failed.');
+      setIsProcessing(false);
     }
   };
 
