@@ -206,7 +206,7 @@ except Exception as e_backend_reg:
     sys.exit(1) # Exit if backend cannot be registered
 
 app = Flask(__name__); logger.info("Flask app instance created.")
-CORS(app, resources={ r"/*": { "origins": ["http://localhost:3000", "http://localhost:3001"], "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type", "Accept", "Authorization", "X-Requested-With", "Range", "Accept-Ranges", "Origin"], "expose_headers": ["Content-Type", "Content-Length", "Content-Range", "Content-Disposition", "Accept-Ranges", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"], "supports_credentials": True, "max_age": 120, "automatic_options": True }})
+CORS(app, resources={ r"/*": { "origins": ["http://localhost:3000", "http://localhost:3001", "https://www.contentconverter.ai"], "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type", "Accept", "Authorization", "X-Requested-With", "Range", "Accept-Ranges", "Origin"], "expose_headers": ["Content-Type", "Content-Length", "Content-Range", "Content-Disposition", "Accept-Ranges", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"], "supports_credentials": True, "max_age": 120, "automatic_options": True }})
 logger.info("CORS configured.")
 limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["500 per day", "100 per hour"]) # Generous limits for testing
 logger.info("Flask-Limiter initialized.")

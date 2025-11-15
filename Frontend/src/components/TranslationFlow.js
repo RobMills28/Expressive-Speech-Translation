@@ -79,7 +79,7 @@ const ContentTranslator = () => {
   };
 
   const handleTranslate = async () => {
-    // Step 1: Basic validation to ensure a file and language are selected.
+    // Step 1: Basic validation.
     if (!file) {
       setError('Please upload a file.');
       return;
@@ -89,7 +89,7 @@ const ContentTranslator = () => {
       return;
     }
 
-    // Step 2: Set the initial UI state to show processing has started.
+    // Step 2: Set initial UI state.
     setIsProcessing(true);
     setProgress(5);
     setProcessPhase('Securing upload link...');
@@ -98,65 +98,76 @@ const ContentTranslator = () => {
     setResultTranscripts({ source: '', target: '' });
 
     try {
-      // Step 3: Get the current user's session token from AWS Amplify.
-      // This token is our proof of login (our "ID badge").
+      // Step 3: Get user's auth token.
       const session = await fetchAuthSession();
-      // The idToken is found inside the 'tokens' property of the session object.
       const idToken = session.tokens?.idToken?.toString();
-      // Add a check to ensure we actually got a token.
       if (!idToken) {
         throw new Error('Could not get user authentication token. Please try signing in again.');
       }
 
-      // Step 4: Define the endpoint for our secure AWS API Gateway.
-      // IMPORTANT: Replace this placeholder with your actual "Invoke URL".
+      // Step 4: Define API endpoint.
       const API_ENDPOINT = 'https://1xtilz85qg.execute-api.us-east-1.amazonaws.com/get-upload-url';
       
       console.log("Requesting secure upload URL from:", API_ENDPOINT);
 
-      // Step 5: Make the secure API call to our backend.
+      // Step 5: Get the pre-signed URL from our backend.
       const getUrlResponse = await fetch(API_ENDPOINT, {
         method: 'POST',
         headers: {
-          // The 'Authorization' header is what our Cognito Authorizer will check.
           'Authorization': idToken,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          // We send the filename to the Lambda so it can create the S3 key.
-          fileName: file.name 
+          fileName: file.name,
+          targetLanguage: targetLanguage 
         })
       });
 
-      // Step 6: Check if the API call was successful.
       if (!getUrlResponse.ok) {
-        // If not, read the error from the server and stop.
         const errorData = await getUrlResponse.json();
-        throw new Error(errorData.error || 'Failed to get a secure upload link from the server.');
+        throw new Error(errorData.error || 'Failed to get a secure upload link.');
       }
 
-      // Step 7: If successful, parse the response from our Lambda function.
-      // This response contains the secure URL and the S3 key.
-      const { uploadUrl, s3Key } = await getUrlResponse.json();
+      // Step 6: Parse the response from our Lambda.
+      const { uploadUrl, jobId } = await getUrlResponse.json();
 
-      console.log('SUCCESS! Received secure URL. Details:', uploadUrl);
-      console.log('File will be saved in S3 with key:', s3Key);
+      console.log('SUCCESS! Received secure URL data.');
+      console.log('New job created with ID:', jobId);
       
-      setProcessPhase('Secure link received. Now uploading file...');
+      setProcessPhase('Secure link received. Uploading file...');
       setProgress(10);
       
-      // The connection to the backend is now successfully tested.
-      // The next step in our development will be to add the code here
-      // to actually upload the 'file' object to the 'uploadUrl'.
-      // For now, we will stop here to confirm this part works.
-      
-      // To simulate completion for testing purposes, you can uncomment these lines:
-      // setProcessPhase('Test complete. Upload logic is next.');
-      // setProgress(100);
-      // setIsProcessing(false);
+      // Step 7: Construct a new FormData payload for the S3 upload.
+      const s3UploadFormData = new FormData();
+      Object.entries(uploadUrl.fields).forEach(([key, value]) => {
+        s3UploadFormData.append(key, value);
+      });
+      s3UploadFormData.append('file', file);
 
+      // Step 8: Upload the file directly to S3.
+      const uploadResponse = await fetch(uploadUrl.url, {
+        method: 'POST',
+        body: s3UploadFormData,
+      });
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error('S3 Upload Error Response:', errorText);
+        throw new Error('File upload to our storage service failed.');
+      }
+      
+      // Step 9: Update UI to show upload is complete.
+      console.log('SUCCESS! File uploaded to S3.');
+      setProcessPhase('File uploaded. Awaiting translation...');
+      setProgress(50);
+
+      // Final success simulation for the UI.
+      setProcessPhase('Processing complete! (Placeholder)');
+      setProgress(100);
+      setIsProcessing(false);
+      
     } catch (err) {
-      // Step 8: If any part of this process fails, catch the error.
+      // Step 10: Catch any errors.
       console.error("An error occurred during the secure upload process:", err);
       setError(`Process failed: ${err.message}`);
       setProcessPhase('Failed.');
