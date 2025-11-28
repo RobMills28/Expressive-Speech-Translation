@@ -5,7 +5,7 @@ import logging
 import numpy as np
 import scipy.signal
 import scipy.stats
-import timex
+import time  # Fixed typo v1
 from pathlib import Path
 from typing import Dict, Any, Tuple, Union
 
