@@ -30,5 +30,14 @@ scipy>=1.11.0
 tqdm==4.64.1
 
 # Add any other core AI dependencies from your `cascaded_backend.py` here.
-# For example, if CosyVoice has its own pip package, it would go here.psutil==5.9.8
 psutil==5.9.8
+
+# Web Framework (needed for health checks and APIs)
+flask==3.0.0
+flask-cors==4.0.0
+
+# Environment and Utils
+python-dotenv==1.0.0
+
+# Monitoring
+prometheus_client==0.19.0
